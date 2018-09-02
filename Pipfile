@@ -9,8 +9,9 @@ verify_ssl = true
 django = "*"
 gunicorn = "*"
 django-heroku = "*"
+Flask = "*"
 
 
 [requires]
 
-python_version = "3.6"
+python_version = "3.7"
