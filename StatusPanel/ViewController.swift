@@ -11,7 +11,8 @@ import EventKit
 
 class ViewController: UIViewController {
 
-	var eventStore: EKEventStore?
+	// var eventStore: EKEventStore?
+	var calendarSource: CalendarSource?
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -19,16 +20,19 @@ class ViewController: UIViewController {
 		let evs = EKEventStore()
 		evs.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
 			if (granted) {
-				self.eventStore = evs
+				self.calendarSource = CalendarSource(eventStore: evs)
+				print(self.calendarSource!.get())
 			}
-			print("Granted EKEventStore access \(granted) err \(String(describing: err))")
+			// print("Granted EKEventStore access \(granted) err \(String(describing: err))")
 		}
 
+		/*
 		TFLApi().get(what:"line/mode/tube/status") { (result: Any?, err: Error?) in
 			if let result = result {
 				print("Got Tube data \(result)")
 			}
 		}
+		*/
 	}
 
 	override func didReceiveMemoryWarning() {

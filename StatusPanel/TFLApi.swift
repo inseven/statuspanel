@@ -25,12 +25,12 @@ class TFLApi {
 			guard let httpResponse = response as? HTTPURLResponse,
 					httpResponse.statusCode == 200 else {
 				print("Server errored! resp = \(response!)")
-				// TODO onCompletion(nil, Error()
+				let err = NSError(domain: NSURLErrorDomain, code: URLError.badServerResponse.rawValue, userInfo: ["response": response!])
+				onCompletion(nil, err)
 				return
 			}
 			do {
 				let obj = try JSONSerialization.jsonObject(with: data!)
-				// print("Got \(obj)")
 				onCompletion(obj, nil)
 			} catch {
 				print("Failed to decode obj from \(data!)")
