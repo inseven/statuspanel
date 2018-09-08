@@ -12,6 +12,7 @@
 		DBCA98822143E2920084B710 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBCA98802143E2920084B710 /* Main.storyboard */; };
 		DBCA98842143E2920084B710 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DBCA98832143E2920084B710 /* Assets.xcassets */; };
 		DBCA98872143E2920084B710 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBCA98852143E2920084B710 /* LaunchScreen.storyboard */; };
+		DBCA98B12143F2B30084B710 /* TFLApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B02143F2B30084B710 /* TFLApi.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		DBCA98832143E2920084B710 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DBCA98862143E2920084B710 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DBCA98882143E2920084B710 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DBCA98B02143F2B30084B710 /* TFLApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLApi.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 				DBCA98832143E2920084B710 /* Assets.xcassets */,
 				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
 				DBCA98882143E2920084B710 /* Info.plist */,
+				DBCA98B02143F2B30084B710 /* TFLApi.swift */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
@@ -136,6 +139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBCA98B12143F2B30084B710 /* TFLApi.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
 			);
