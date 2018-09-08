@@ -14,6 +14,7 @@
 		DBCA98872143E2920084B710 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBCA98852143E2920084B710 /* LaunchScreen.storyboard */; };
 		DBCA98B12143F2B30084B710 /* TFLApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B02143F2B30084B710 /* TFLApi.swift */; };
 		DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B221440CD90084B710 /* CalendarSource.swift */; };
+		DBCA98B52144421F0084B710 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B42144421F0084B710 /* DataSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		DBCA98882143E2920084B710 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBCA98B02143F2B30084B710 /* TFLApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLApi.swift; sourceTree = "<group>"; };
 		DBCA98B221440CD90084B710 /* CalendarSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSource.swift; sourceTree = "<group>"; };
+		DBCA98B42144421F0084B710 /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 				DBCA98832143E2920084B710 /* Assets.xcassets */,
 				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
 				DBCA98882143E2920084B710 /* Info.plist */,
+				DBCA98B42144421F0084B710 /* DataSource.swift */,
 				DBCA98B02143F2B30084B710 /* TFLApi.swift */,
 				DBCA98B221440CD90084B710 /* CalendarSource.swift */,
 			);
@@ -145,6 +148,7 @@
 				DBCA98B12143F2B30084B710 /* TFLApi.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */,
+				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -9,14 +9,14 @@
 import Foundation
 import EventKit
 
-class CalendarSource {
+class CalendarSource : DataSource {
 	var eventStore: EKEventStore
 
 	init(eventStore: EKEventStore) {
 		self.eventStore = eventStore
 	}
 
-	func get() -> [Dictionary<String, Any>] {
+	func getData() {
 		let df = DateFormatter()
 		df.timeStyle = DateFormatter.Style.short
 		let timeZoneFormatter = DateFormatter()
@@ -26,7 +26,7 @@ class CalendarSource {
 		let now = Date()
 		let pred = eventStore.predicateForEvents(withStart: now, end: now.addingTimeInterval(24*60*60), calendars: calendars)
 		let events = eventStore.events(matching: pred)
-		var results = [Dictionary<String, Any>]()
+		var results = [DataItem]()
 		for event in events {
 			var timeStr = df.string(from: event.startDate)
 			if event.timeZone != tz {
@@ -37,8 +37,8 @@ class CalendarSource {
 				let tzStr = timeZoneFormatter.string(from: event.startDate)
 				timeStr = "\(timeStr) (\(eventLocalTime) \(tzStr))"
 			}
-			results.append(["text": "\(timeStr): \(event.title!)"])
+			results.append(DataItem("\(timeStr): \(event.title!)"))
 		}
-		return results
+		print(results)
 	}
 }
