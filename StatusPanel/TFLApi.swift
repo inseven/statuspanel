@@ -8,13 +8,16 @@
 
 import Foundation
 
-class TFLApi {
+class TFLApi : DataSource {
 	// See https://api-portal.tfl.gov.uk/admin/applications/1409617922524
 	let app_id = "KEY"
 	let app_key = "KEY"
 
+	var linesOfInterest = ["northern", "central"]
+	var dataItems = [DataItem]()
+
 	// TODO genericise this
-	func request(url: URL, onCompletion: @escaping (Any?, Error?) -> Void) {
+	static func jsonRequest<T>(url: URL, onCompletion: @escaping (T?, Error?) -> Void) where T : Decodable {
 		let session = URLSession.shared
 		let task = session.dataTask(with: url) { (data: Data?, response: URLResponse?, err: Error?) in
 			if let err = err {
@@ -23,26 +26,56 @@ class TFLApi {
 				return
 			}
 			guard let httpResponse = response as? HTTPURLResponse,
-					httpResponse.statusCode == 200 else {
+				httpResponse.statusCode == 200,
+				let data = data
+			else {
 				print("Server errored! resp = \(response!)")
 				let err = NSError(domain: NSURLErrorDomain, code: URLError.badServerResponse.rawValue, userInfo: ["response": response!])
 				onCompletion(nil, err)
 				return
 			}
 			do {
-				let obj = try JSONSerialization.jsonObject(with: data!)
+				let obj = try JSONDecoder().decode(T.self, from: data)
 				onCompletion(obj, nil)
 			} catch {
-				print("Failed to decode obj from \(data!)")
+				print("Failed to decode obj from \(data)")
 				onCompletion(nil, error)
 			}
 		}
 		task.resume()
 	}
 
-	func get(what: String, onCompletion: @escaping (Any?, Error?) -> Void) {
-		let url = URL(string: "https://api.tfl.gov.uk/" + what + "?app_id=\(app_id)&app_key=\(app_key)")!
-		request(url: url, onCompletion: onCompletion)
+	func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) where T : Decodable {
+		let sep = what.contains("?") ? "&" : "?"
+		let url = URL(string: "https://api.tfl.gov.uk/" + what + sep + "app_id=\(app_id)&app_key=\(app_key)")!
+		TFLApi.jsonRequest(url: url, onCompletion: onCompletion)
 	}
 
+	func getData() {
+		let lines = linesOfInterest.joined(separator: ",")
+		get("Line/\(lines)/Status?detail=false", onCompletion: gotLineData)
+	}
+
+	struct LineStatus: Decodable {
+		var name: String
+		var lineStatuses: [LineStatusItem]
+
+		struct LineStatusItem: Codable {
+			var statusSeverity: Int
+			var statusSeverityDescription: String
+		}
+	}
+
+	func gotLineData(data: [LineStatus]?, err: Error?) {
+		dataItems = []
+		for line in data ?? [] {
+			if line.lineStatuses.count < 1 {
+				continue
+			}
+			let desc = line.lineStatuses[0].statusSeverityDescription
+			let sev = line.lineStatuses[0].statusSeverity
+			dataItems.append(DataItem("\(line.name): \(desc)", sev: sev < 10 ? "warn" : "info"))
+		}
+		print(dataItems)
+	}
 }
