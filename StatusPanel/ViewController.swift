@@ -12,6 +12,7 @@ import EventKit
 class ViewController: UIViewController {
 
 	var sources = DataSourceController()
+	var data = [DataItem]()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -26,6 +27,11 @@ class ViewController: UIViewController {
 		}
 
 		sources.add(dataSource:TFLDataSource())
+		sources.fetchAllData(onCompletion:gotData)
+	}
+
+	func gotData(data:[DataItem], done:Bool) {
+
 	}
 
 	override func didReceiveMemoryWarning() {

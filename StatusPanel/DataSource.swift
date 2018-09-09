@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol DataSource {
+protocol DataSource : class {
 	typealias Callback = (DataSource, [DataItem], Error?) -> Void
 	func fetchData(onCompletion:@escaping Callback)
 }
