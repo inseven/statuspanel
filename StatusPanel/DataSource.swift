@@ -12,11 +12,15 @@ protocol DataSource {
 	func getData()
 }
 
+enum DataItemFlag {
+	case warning
+}
+
 struct DataItem {
-	init(_ text: String, sev: String = "info") {
+	init(_ text: String, flags: Set<DataItemFlag> = Set()) {
 	self.text = text
-	self.sev = sev
+	self.flags = flags
 	}
 	let text: String
-	let sev: String
+	let flags: Set<DataItemFlag>
 }

@@ -74,7 +74,11 @@ class TFLApi : DataSource {
 			}
 			let desc = line.lineStatuses[0].statusSeverityDescription
 			let sev = line.lineStatuses[0].statusSeverity
-			dataItems.append(DataItem("\(line.name): \(desc)", sev: sev < 10 ? "warn" : "info"))
+			var flags: Set<DataItemFlag> = []
+			if sev < 10 {
+				flags.insert(.warning)
+			}
+			dataItems.append(DataItem("\(line.name): \(desc)", flags: flags))
 		}
 		print(dataItems)
 	}
