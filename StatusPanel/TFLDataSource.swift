@@ -83,6 +83,6 @@ class TFLDataSource : DataSource {
 			dataItems.append(DataItem("\(line.name): \(desc)", flags: flags))
 		}
 		// print(dataItems)
-		completion!(self, dataItems, err)
+		completion?(self, dataItems, err)
 	}
 }
