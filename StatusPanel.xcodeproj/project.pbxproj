@@ -15,6 +15,7 @@
 		DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B02143F2B30084B710 /* TFLDataSource.swift */; };
 		DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B221440CD90084B710 /* CalendarSource.swift */; };
 		DBCA98B52144421F0084B710 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B42144421F0084B710 /* DataSource.swift */; };
+		DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B6214518EF0084B710 /* DataSourceController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		DBCA98B02143F2B30084B710 /* TFLDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLDataSource.swift; sourceTree = "<group>"; };
 		DBCA98B221440CD90084B710 /* CalendarSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSource.swift; sourceTree = "<group>"; };
 		DBCA98B42144421F0084B710 /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
+		DBCA98B6214518EF0084B710 /* DataSourceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 				DBCA98B42144421F0084B710 /* DataSource.swift */,
 				DBCA98B02143F2B30084B710 /* TFLDataSource.swift */,
 				DBCA98B221440CD90084B710 /* CalendarSource.swift */,
+				DBCA98B6214518EF0084B710 /* DataSourceController.swift */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
@@ -147,6 +150,7 @@
 			files = (
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
+				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */,
 				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,

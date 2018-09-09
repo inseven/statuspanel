@@ -16,7 +16,7 @@ class CalendarSource : DataSource {
 		self.eventStore = eventStore
 	}
 
-	func getData() {
+	func fetchData(onCompletion: @escaping Callback) {
 		let df = DateFormatter()
 		df.timeStyle = DateFormatter.Style.short
 		let timeZoneFormatter = DateFormatter()
@@ -46,6 +46,6 @@ class CalendarSource : DataSource {
 			}
 			results.append(DataItem("\(timeStr): \(event.title!)"))
 		}
-		print(results)
+		onCompletion(self, results, nil)
 	}
 }

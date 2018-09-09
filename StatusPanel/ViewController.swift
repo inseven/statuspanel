@@ -11,7 +11,7 @@ import EventKit
 
 class ViewController: UIViewController {
 
-	var sources = [DataSource]()
+	var sources = DataSourceController()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -20,13 +20,12 @@ class ViewController: UIViewController {
 		evs.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
 			if (granted) {
 				let calendarSource = CalendarSource(eventStore: evs)
-				self.sources.append(calendarSource)
-				calendarSource.getData()
+				self.sources.add(dataSource:calendarSource)
 			}
 			// print("Granted EKEventStore access \(granted) err \(String(describing: err))")
 		}
 
-		TFLApi().getData()
+		sources.add(dataSource:TFLDataSource())
 	}
 
 	override func didReceiveMemoryWarning() {

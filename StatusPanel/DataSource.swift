@@ -9,7 +9,8 @@
 import Foundation
 
 protocol DataSource {
-	func getData()
+	typealias Callback = (DataSource, [DataItem], Error?) -> Void
+	func fetchData(onCompletion:@escaping Callback)
 }
 
 enum DataItemFlag {
