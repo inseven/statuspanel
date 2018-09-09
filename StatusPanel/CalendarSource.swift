@@ -22,14 +22,21 @@ class CalendarSource : DataSource {
 		let timeZoneFormatter = DateFormatter()
 		timeZoneFormatter.dateFormat = "z"
 		let calendars: [EKCalendar]? = nil // TODO allow controlling of which calendars to check?
-		let tz = Calendar.current.timeZone
+		let cal = Calendar.current
+		let tz = cal.timeZone
 		let now = Date()
-		let pred = eventStore.predicateForEvents(withStart: now, end: now.addingTimeInterval(24*60*60), calendars: calendars)
+		let dayComponents = cal.dateComponents([.year, .month, .day], from: now)
+		let dayStart = cal.date(from: dayComponents)!
+		let dayEnd = cal.date(byAdding: DateComponents(day: 1, second: -1), to: dayStart)!
+		let pred = eventStore.predicateForEvents(withStart: dayStart, end: dayEnd, calendars: calendars)
 		let events = eventStore.events(matching: pred)
 		var results = [DataItem]()
 		for event in events {
 			var timeStr = df.string(from: event.startDate)
-			if event.timeZone != tz {
+			if event.isAllDay {
+				timeStr = "All day"
+			} else if event.timeZone != nil && event.timeZone != tz {
+				// a nil timezone means floating time
 				df.timeZone = event.timeZone
 				timeZoneFormatter.timeZone = event.timeZone
 				let eventLocalTime = df.string(from: event.startDate)
