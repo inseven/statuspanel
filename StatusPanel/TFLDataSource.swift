@@ -15,6 +15,7 @@ class TFLDataSource : DataSource {
 
 	var linesOfInterest = ["northern", "central"]
 	var dataItems = [DataItem]()
+	var completion: DataSource.Callback?
 
 	// TODO genericise this
 	static func jsonRequest<T>(url: URL, onCompletion: @escaping (T?, Error?) -> Void) where T : Decodable {
@@ -48,10 +49,11 @@ class TFLDataSource : DataSource {
 	func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) where T : Decodable {
 		let sep = what.contains("?") ? "&" : "?"
 		let url = URL(string: "https://api.tfl.gov.uk/" + what + sep + "app_id=\(app_id)&app_key=\(app_key)")!
-		TFLApi.jsonRequest(url: url, onCompletion: onCompletion)
+		TFLDataSource.jsonRequest(url: url, onCompletion: onCompletion)
 	}
 
-	func getData() {
+	func fetchData(onCompletion: @escaping Callback) {
+		completion = onCompletion
 		let lines = linesOfInterest.joined(separator: ",")
 		get("Line/\(lines)/Status?detail=false", onCompletion: gotLineData)
 	}
@@ -80,6 +82,7 @@ class TFLDataSource : DataSource {
 			}
 			dataItems.append(DataItem("\(line.name): \(desc)", flags: flags))
 		}
-		print(dataItems)
+		// print(dataItems)
+		completion!(self, dataItems, err)
 	}
 }
