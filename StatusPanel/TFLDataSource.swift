@@ -1,5 +1,5 @@
 //
-//  TFLApi.swift
+//  TFLDataSource.swift
 //  StatusPanel
 //
 //  Created by Tom Sutcliffe on 08/09/2018.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class TFLApi : DataSource {
+class TFLDataSource : DataSource {
 	// See https://api-portal.tfl.gov.uk/admin/applications/1409617922524
 	let app_id = "1f85b5bb"
 	let app_key = "49b995489314995e79c9b4faa0d1d43c"
