@@ -9,6 +9,8 @@
 import Foundation
 
 // Isn't there something that can do this in the standard library?
+// TODO Y U NO WORK?
+/*
 class HashWrapper<T:AnyObject> : Hashable {
 	let value: T
 	init(_ obj: T) {
@@ -21,12 +23,26 @@ class HashWrapper<T:AnyObject> : Hashable {
         return ObjectIdentifier(value).hashValue
     }
 }
+*/
+
+class DataSourceWrapper : Hashable {
+	let value: DataSource
+	init(_ obj: DataSource) {
+		value = obj
+	}
+	static func ==(lhs: DataSourceWrapper, rhs: DataSourceWrapper) -> Bool {
+		return lhs.value === rhs.value
+	}
+	var hashValue: Int {
+        return ObjectIdentifier(value).hashValue
+    }
+}
 
 class DataSourceController {
 	var sources: [DataSource] = []
 	var completionFn: (([DataItem], Bool) -> Void)?
-	//var data = [DataSource:[DataItem]]()
-	var completed: [HashWrapper<DataSource> : [DataItem]] = [:]
+	// var completed: [HashWrapper<DataSource> : [DataItem]] = [:]
+	var completed: [DataSourceWrapper: [DataItem]] = [:]
 
 	func add(dataSource: DataSource) {
 		sources.append(dataSource)
@@ -41,8 +57,16 @@ class DataSourceController {
 
 	func gotData(source: DataSource, data:[DataItem], error: Error?) {
 		print(data)
-		var obj = HashWrapper<DataSource>(source)
+		// let obj = HashWrapper<DataSource>(source)
+		let obj = DataSourceWrapper(source)
 		completed[obj] = data
 		// TODO something with error
+
+		let allCompleted = (completed.count == sources.count)
+		var items = [DataItem]()
+		for (_, completedItems) in completed {
+			items += completedItems
+		}
+		completionFn?(items, allCompleted)
 	}
 }

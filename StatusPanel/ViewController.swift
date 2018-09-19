@@ -31,7 +31,9 @@ class ViewController: UIViewController {
 	}
 
 	func gotData(data:[DataItem], done:Bool) {
-
+		for item in data {
+			print(item)
+		}
 	}
 
 	override func didReceiveMemoryWarning() {
