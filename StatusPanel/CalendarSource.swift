@@ -10,13 +10,23 @@ import Foundation
 import EventKit
 
 class CalendarSource : DataSource {
-	var eventStore: EKEventStore
+	let eventStore: EKEventStore
 
-	init(eventStore: EKEventStore) {
-		self.eventStore = eventStore
+	init() {
+		eventStore = EKEventStore()
+	}
+	func fetchData(onCompletion: @escaping Callback) {
+		eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
+			if (granted) {
+				self.getData(callback: onCompletion)
+			} else {
+				onCompletion(self, [], err)
+			}
+			// print("Granted EKEventStore access \(granted) err \(String(describing: err))")
+		}
 	}
 
-	func fetchData(onCompletion: @escaping Callback) {
+	func getData(callback: Callback) {
 		let df = DateFormatter()
 		df.timeStyle = DateFormatter.Style.short
 		let timeZoneFormatter = DateFormatter()
@@ -46,6 +56,14 @@ class CalendarSource : DataSource {
 			}
 			results.append(DataItem("\(timeStr): \(event.title!)"))
 		}
-		onCompletion(self, results, nil)
+		callback(self, results, nil)
+	}
+
+	static func getHeader() -> DataItem {
+		let df = DateFormatter()
+		//df.dateStyle = .long
+		df.setLocalizedDateFormatFromTemplate("yMMMMdEEEE")
+		let val = df.string(from: Date())
+		return DataItem(val, flags: [.header])
 	}
 }
