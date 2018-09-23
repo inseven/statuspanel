@@ -71,6 +71,9 @@ class DataSourceController {
 
 		let allCompleted = (completed.count == sources.count)
 		var items = [DataItem]()
+		// We always want the calendar data source header as the first item
+		items.append(CalendarSource.getHeader())
+
 		for (_, completedItems) in completed {
 			items += completedItems
 		}

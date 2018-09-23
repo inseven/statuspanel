@@ -15,6 +15,7 @@ protocol DataSource : class {
 
 enum DataItemFlag {
 	case warning
+	case header
 }
 
 struct DataItem {
@@ -32,7 +33,7 @@ class DummyDataSource : DataSource {
 		let data = [
 			DataItem("All day: Some event"),
 			DataItem("6:00 PM: Something else"),
-			DataItem("Northern line: part suspended", flags: [DataItemFlag.warning])
+			DataItem("Northern line: part suspended", flags: [.warning])
 		]
 		onCompletion(self, data, nil)
 	}
