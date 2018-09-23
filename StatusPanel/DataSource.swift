@@ -25,3 +25,15 @@ struct DataItem {
 	let text: String
 	let flags: Set<DataItemFlag>
 }
+
+
+class DummyDataSource : DataSource {
+	func fetchData(onCompletion:@escaping Callback) {
+		let data = [
+			DataItem("All day: Some event"),
+			DataItem("6:00 PM: Something else"),
+			DataItem("Northern line: part suspended", flags: [DataItemFlag.warning])
+		]
+		onCompletion(self, data, nil)
+	}
+}

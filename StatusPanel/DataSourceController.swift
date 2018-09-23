@@ -46,6 +46,13 @@ class DataSourceController {
 
 	func add(dataSource: DataSource) {
 		sources.append(dataSource)
+		if fetching() {
+			dataSource.fetchData(onCompletion: gotData)
+		}
+	}
+
+	func fetching() -> Bool {
+		return completionFn != nil
 	}
 
 	func fetchAllData(onCompletion:@escaping ([DataItem], Bool) -> Void) {
@@ -56,7 +63,7 @@ class DataSourceController {
 	}
 
 	func gotData(source: DataSource, data:[DataItem], error: Error?) {
-		print(data)
+		// print(data)
 		// let obj = HashWrapper<DataSource>(source)
 		let obj = DataSourceWrapper(source)
 		completed[obj] = data
