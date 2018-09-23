@@ -13,13 +13,13 @@ class TFLDataSource : DataSource {
 	let app_id = "1f85b5bb"
 	let app_key = "49b995489314995e79c9b4faa0d1d43c"
 
-	var linesOfInterest = ["northern", "central"]
+	var linesOfInterest = ["northern" /*, "central"*/]
 	var dataItems = [DataItem]()
 	var completion: DataSource.Callback?
 
 	// TODO genericise this
-	static func jsonRequest<T>(url: URL, onCompletion: @escaping (T?, Error?) -> Void) where T : Decodable {
-		let session = URLSession.shared
+	static func jsonRequest<T>(url: URL, session: URLSession? = nil, onCompletion: @escaping (T?, Error?) -> Void) where T : Decodable {
+		let session = session ?? URLSession.shared
 		let task = session.dataTask(with: url) { (data: Data?, response: URLResponse?, err: Error?) in
 			if let err = err {
 				print("Error fetching \(url): \(err)")
@@ -80,7 +80,7 @@ class TFLDataSource : DataSource {
 			if sev < 10 {
 				flags.insert(.warning)
 			}
-			dataItems.append(DataItem("\(line.name): \(desc)", flags: flags))
+			dataItems.append(DataItem("\(line.name) line: \(desc)", flags: flags))
 		}
 		// print(dataItems)
 		completion?(self, dataItems, err)

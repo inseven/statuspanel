@@ -74,8 +74,10 @@ class DataSourceController {
 		// We always want the calendar data source header as the first item
 		items.append(CalendarSource.getHeader())
 
-		for (_, completedItems) in completed {
-			items += completedItems
+		// Use the ordering of sources, not completedItems
+		for source in sources {
+			let completedItems = completed[DataSourceWrapper(source)]
+			items += completedItems ?? []
 		}
 		completionFn?(items, allCompleted)
 	}
