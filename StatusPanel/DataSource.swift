@@ -32,8 +32,20 @@ class DummyDataSource : DataSource {
 	func fetchData(onCompletion:@escaping Callback) {
 		let data = [
 			DataItem("All day: Some event"),
-			DataItem("6:00 PM: Something else"),
-			DataItem("Northern line: part suspended", flags: [.warning])
+			DataItem("6:00 PM: Something else that has really long text that needs to wrap"),
+			DataItem("Northern line: part suspended", flags: [.warning]),
+			DataItem("Stuff 1"),
+			DataItem("Stuff 2"),
+			DataItem("Stuff 3"),
+			DataItem("Stuff 4"),
+			DataItem("Stuff 5"),
+			DataItem("Stuff 6"),
+			DataItem("Stuff 7"),
+			DataItem("Stuff 8"),
+			DataItem("Stuff 9"),
+			DataItem("Stuff 10"),
+			DataItem("Stuff 11"),
+			DataItem("Stuff 12"),
 		]
 		onCompletion(self, data, nil)
 	}

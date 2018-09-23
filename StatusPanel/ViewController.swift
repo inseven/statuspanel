@@ -20,10 +20,9 @@ class ViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		// Do any additional setup after loading the view, typically from a nib.
 		/*
-		sources.add(dataSource:CalendarSource())
 		sources.add(dataSource:TFLDataSource())
+		sources.add(dataSource:CalendarSource())
 		*/
 		sources.add(dataSource: DummyDataSource())
 
@@ -50,17 +49,21 @@ class ViewController: UIViewController {
 			}
 		}
 
-		// Construct the contentView's contents
+		// Construct the contentView's contents. For now just make labels and flow them into 2 columns
+		// TODO move this to UICollectionView?
 		contentView.backgroundColor = UIColor.white
 		let rect = contentView.frame
-		let colWidth = rect.width / 2 - 10
-		let itemHeight : CGFloat = 40
+		let midx = rect.width / 2
+		var x : CGFloat = 20
 		var y : CGFloat = 0
-		let x : CGFloat = 20
+		let colWidth = rect.width / 2 - x
+		let itemGap : CGFloat = 10
+		var colStart = y
 		for item in data {
 			print(item)
 			let w = item.flags.contains(.header) ? rect.width : colWidth
-			let view = UILabel(frame: CGRect(x: x, y: y, width: w, height: itemHeight))
+			let view = UILabel(frame: CGRect(x: x, y: y, width: w, height: 0))
+			view.numberOfLines = 0
 			var text = item.text
 			if item.flags.contains(.warning) {
 				// TODO colourise the warning, or use an icon?
@@ -70,8 +73,20 @@ class ViewController: UIViewController {
 				view.font = UIFont.boldSystemFont(ofSize: 24)
 			}
 			view.text = text
+			view.sizeToFit()
+			let sz = view.frame
+			// Enough space for this item?
+			if (sz.height > rect.height - y) {
+				// overflow to 2nd column
+				x += midx
+				y = colStart
+				view.frame = CGRect(x: x, y: y, width: sz.width, height: sz.height)
+			}
 			contentView.addSubview(view)
-			y = y + itemHeight
+			y = y + sz.height + itemGap
+			if item.flags.contains(.header) {
+				colStart = y
+			}
 		}
 
 		// And render it into an image
@@ -82,7 +97,6 @@ class ViewController: UIViewController {
 		let context = UIGraphicsGetCurrentContext()!
 		context.setStrokeColor(UIColor.black.cgColor)
 		context.beginPath()
-		let midx = rect.size.width / 2
 		context.move(to: CGPoint(x: midx, y: 40))
 		context.addLine(to: CGPoint(x: midx, y: rect.height - 20))
 		context.drawPath(using: .stroke)
