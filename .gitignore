@@ -5,3 +5,4 @@ staticfiles
 db.sqlite3
 *~
 .DS_Store
+uploads
