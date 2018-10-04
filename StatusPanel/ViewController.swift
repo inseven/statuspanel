@@ -13,15 +13,17 @@ class ViewController: UIViewController {
 
 	@IBOutlet var scrollView: UIScrollView?
 	var contentView: UIView?
+    var sourceController: DataSourceController!
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-	}
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        sourceController = appDelegate.sourceController
+    }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.sourceController.fetchAllData { (data, done) in
+        sourceController.fetchAllData { (data, done) in
             DispatchQueue.main.async {
                 self.drawTheThings(data: data)
             }
