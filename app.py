@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, send_from_directory, request
+from flask import Flask, send_from_directory, request, redirect
 
 
 app = Flask(__name__)
@@ -30,7 +30,7 @@ def upload():
     except Exception as e:
         print(e)
     # TODO: Return a meaningful JSON response.
-    return "<h1>DONE!</h1>"
+    return redirect('/')
 
 
 @app.route('/api/v1', methods=['GET'])
