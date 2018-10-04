@@ -7,6 +7,7 @@ app = Flask(__name__)
 app.config['CONTENT_DIRECTORY'] = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOADS_DIRECTORY'] = os.path.join(app.config['CONTENT_DIRECTORY'], "uploads")
 app.config['UPLOAD_FILE'] = os.path.join(app.config['UPLOADS_DIRECTORY'], 'upload.jpg')
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 if not os.path.exists(app.config['UPLOADS_DIRECTORY']):
     os.makedirs(app.config['UPLOADS_DIRECTORY'])
