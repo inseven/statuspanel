@@ -24,7 +24,8 @@ class ViewController: UIViewController {
 		sources.add(dataSource:TFLDataSource())
 		sources.add(dataSource:CalendarSource())
 		*/
-		sources.add(dataSource: DummyDataSource())
+        sources.add(dataSource:CalendarSource())
+//        sources.add(dataSource: DummyDataSource())
 
 		sources.fetchAllData(onCompletion:gotData)
 	}
@@ -106,11 +107,63 @@ class ViewController: UIViewController {
 		let img = UIGraphicsGetImageFromCurrentImageContext()
 		UIGraphicsEndImageContext()
 
+        guard let image = img else {
+            print("Unable to generate image")
+            return
+        }
+
 		// Finally, do something with that image
-		let imgview = UIImageView(image: img)
+		let imgview = UIImageView(image: image)
 		scrollView?.contentSize = rect.size
 		scrollView?.addSubview(imgview)
+
+        uploadImage(image)
 	}
+
+    func uploadImage(_ image: UIImage) {
+
+        guard let data = UIImagePNGRepresentation(image) else {
+            print("Unable to get PNG representation")
+            return
+        }
+
+        let path = "https://calendar-image-server.herokuapp.com/api/v1"
+
+        guard let url = URL(string: path) else {
+            print("Unable to create URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+
+        let boundary = "---------------------------14737809831466499882746641449"
+        let contentType = "multipart/form-data; boundary=\(boundary)"
+
+        request.addValue(contentType, forHTTPHeaderField: "Content-Type")
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: String.Encoding.utf8)!)
+        body.append("Content-Disposition:form-data; name=\"test\"\r\n\r\n".data(using: String.Encoding.utf8)!)
+        body.append("hi\r\n".data(using: String.Encoding.utf8)!)
+
+        let fname = "test.png"
+        let mimetype = "image/png"
+
+        body.append("--\(boundary)\r\n".data(using: String.Encoding.utf8)!)
+        body.append("Content-Disposition:form-data; name=\"file\"; filename=\"\(fname)\"\r\n".data(using: String.Encoding.utf8)!)
+        body.append("Content-Type: \(mimetype)\r\n\r\n".data(using: String.Encoding.utf8)!)
+        body.append(data)
+        body.append("\r\n".data(using: String.Encoding.utf8)!)
+        body.append("--\(boundary)--\r\n".data(using: String.Encoding.utf8)!)
+
+        request.httpBody = body
+        let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+            print(response ?? "")
+            print(error ?? "")
+        })
+        task.resume()
+
+    }
 
 	override func didReceiveMemoryWarning() {
 		super.didReceiveMemoryWarning()
