@@ -19,16 +19,15 @@ class ViewController: UIViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-
-		/*
-		sources.add(dataSource:TFLDataSource())
-		sources.add(dataSource:CalendarSource())
-		*/
+        sources.add(dataSource:TFLDataSource())
         sources.add(dataSource:CalendarSource())
 //        sources.add(dataSource: DummyDataSource())
-
-		sources.fetchAllData(onCompletion:gotData)
 	}
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        sources.fetchAllData(onCompletion:gotData)
+    }
 
 	func gotData(data:[DataItem], done:Bool) {
 		self.data = data
