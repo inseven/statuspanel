@@ -14,27 +14,22 @@ class ViewController: UIViewController {
 	@IBOutlet var scrollView: UIScrollView?
 	var contentView: UIView?
 
-	var sources = DataSourceController()
 	var data = [DataItem]()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-        sources.add(dataSource:TFLDataSource())
-        sources.add(dataSource:CalendarSource())
-//        sources.add(dataSource: DummyDataSource())
 	}
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        sources.fetchAllData(onCompletion:gotData)
-    }
-
-	func gotData(data:[DataItem], done:Bool) {
-		self.data = data
-        DispatchQueue.main.async {
-            self.drawTheThings()
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.sourceController.fetchAllData { (data, done) in
+            DispatchQueue.main.async {
+                self.data = data
+                self.drawTheThings()
+            }
         }
-	}
+    }
 
 	func drawTheThings() {
 		// Set up contentView and scrollView
