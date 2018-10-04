@@ -25,6 +25,10 @@ class HashWrapper<T:AnyObject> : Hashable {
 }
 */
 
+protocol DataSourceControllerDelegate: class {
+    func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItem])
+}
+
 class DataSourceWrapper : Hashable {
 	let value: DataSource
 	init(_ obj: DataSource) {
@@ -39,24 +43,17 @@ class DataSourceWrapper : Hashable {
 }
 
 class DataSourceController {
+    weak var delegate: DataSourceControllerDelegate?
 	var sources: [DataSource] = []
-	var completionFn: (([DataItem], Bool) -> Void)?
+
 	// var completed: [HashWrapper<DataSource> : [DataItem]] = [:]
 	var completed: [DataSourceWrapper: [DataItem]] = [:]
 
 	func add(dataSource: DataSource) {
 		sources.append(dataSource)
-		if fetching() {
-			dataSource.fetchData(onCompletion: gotData)
-		}
 	}
 
-	func fetching() -> Bool {
-		return completionFn != nil
-	}
-
-	func fetchAllData(onCompletion:@escaping ([DataItem], Bool) -> Void) {
-		completionFn = onCompletion
+	func fetch() {
 		for source in sources {
 			source.fetchData(onCompletion: gotData)
 		}
@@ -79,6 +76,16 @@ class DataSourceController {
 			let completedItems = completed[DataSourceWrapper(source)]
 			items += completedItems ?? []
 		}
-		completionFn?(items, allCompleted)
+
+        // Don't call the completion function until we have all the content to display.
+        if !allCompleted {
+            return
+        }
+
+        guard let delegate = delegate else {
+            return
+        }
+
+        delegate.dataSourceController(self, didUpdateData: items)
 	}
 }
