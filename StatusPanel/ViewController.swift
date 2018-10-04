@@ -120,6 +120,7 @@ class ViewController: UIViewController {
         uploadImage(image)
 	}
 
+    // TODO: Completion block
     func uploadImage(_ image: UIImage) {
 
         guard let data = UIImagePNGRepresentation(image) else {
