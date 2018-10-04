@@ -12,10 +12,12 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	var window: UIWindow?
-
+    var sourceController = DataSourceController()
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-		// Override point for customization after application launch.
+        sourceController.add(dataSource:TFLDataSource())
+        sourceController.add(dataSource:CalendarSource())
+//        sourceController.add(dataSource: DummyDataSource())
 		return true
 	}
 
