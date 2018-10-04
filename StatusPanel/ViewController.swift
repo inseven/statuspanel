@@ -31,10 +31,12 @@ class ViewController: UIViewController {
 
 	func gotData(data:[DataItem], done:Bool) {
 		self.data = data
-		performSelector(onMainThread: #selector(ViewController.drawTheThings), with: nil, waitUntilDone: false)
+        DispatchQueue.main.async {
+            self.drawTheThings()
+        }
 	}
 
-	@objc func drawTheThings() {
+	func drawTheThings() {
 		// Set up contentView and scrollView
 		if (self.contentView == nil) {
 			self.contentView = UIView(frame: CGRect(x: 0, y: 0, width: 640, height: 384))
