@@ -21,7 +21,7 @@ def homepage():
 def send_static(path):
     return send_from_directory('static', path)
 
-    
+
 @app.route('/api/v1', methods=['POST'])
 def upload():
     try:
