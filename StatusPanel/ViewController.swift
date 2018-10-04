@@ -14,8 +14,6 @@ class ViewController: UIViewController {
 	@IBOutlet var scrollView: UIScrollView?
 	var contentView: UIView?
 
-	var data = [DataItem]()
-
 	override func viewDidLoad() {
 		super.viewDidLoad()
 	}
@@ -25,13 +23,12 @@ class ViewController: UIViewController {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appDelegate.sourceController.fetchAllData { (data, done) in
             DispatchQueue.main.async {
-                self.data = data
-                self.drawTheThings()
+                self.drawTheThings(data: data)
             }
         }
     }
 
-	func drawTheThings() {
+    func drawTheThings(data: [DataItem]) {
 		// Set up contentView and scrollView
 		if (self.contentView == nil) {
 			self.contentView = UIView(frame: CGRect(x: 0, y: 0, width: 640, height: 384))
