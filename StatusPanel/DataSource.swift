@@ -34,6 +34,7 @@ class DummyDataSource : DataSource {
 			DataItem("All day: Some event"),
 			DataItem("6:00 PM: Something else that has really long text that needs to wrap"),
 			DataItem("Northern line: part suspended", flags: [.warning]),
+			DataItem("07:44 to CBG: Cancelled", flags: [.warning]),
 			DataItem("Stuff 1"),
 			DataItem("Stuff 2"),
 			DataItem("Stuff 3"),

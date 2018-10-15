@@ -16,6 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         sourceController.add(dataSource:TFLDataSource())
+		sourceController.add(dataSource: NationalRailDataSource())
         sourceController.add(dataSource:CalendarSource())
 //        sourceController.add(dataSource: DummyDataSource())
 		return true

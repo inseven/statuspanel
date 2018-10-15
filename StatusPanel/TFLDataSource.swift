@@ -17,39 +17,11 @@ class TFLDataSource : DataSource {
 	var dataItems = [DataItem]()
 	var completion: DataSource.Callback?
 
-	// TODO genericise this
-	static func jsonRequest<T>(url: URL, session: URLSession? = nil, onCompletion: @escaping (T?, Error?) -> Void) where T : Decodable {
-		let session = session ?? URLSession.shared
-		let task = session.dataTask(with: url) { (data: Data?, response: URLResponse?, err: Error?) in
-			if let err = err {
-				print("Error fetching \(url): \(err)")
-				onCompletion(nil, err)
-				return
-			}
-			guard let httpResponse = response as? HTTPURLResponse,
-				httpResponse.statusCode == 200,
-				let data = data
-			else {
-				print("Server errored! resp = \(response!)")
-				let err = NSError(domain: NSURLErrorDomain, code: URLError.badServerResponse.rawValue, userInfo: ["response": response!])
-				onCompletion(nil, err)
-				return
-			}
-			do {
-				let obj = try JSONDecoder().decode(T.self, from: data)
-				onCompletion(obj, nil)
-			} catch {
-				print("Failed to decode obj from \(data)")
-				onCompletion(nil, error)
-			}
-		}
-		task.resume()
-	}
 
 	func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) where T : Decodable {
 		let sep = what.contains("?") ? "&" : "?"
 		let url = URL(string: "https://api.tfl.gov.uk/" + what + sep + "app_id=\(app_id)&app_key=\(app_key)")!
-		TFLDataSource.jsonRequest(url: url, onCompletion: onCompletion)
+		JSONRequest.makeRequest(url: url, onCompletion: onCompletion)
 	}
 
 	func fetchData(onCompletion: @escaping Callback) {
