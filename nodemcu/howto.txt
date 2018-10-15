@@ -4,10 +4,7 @@ ESP8266:
 
 esptool.py --port /dev/tty.SLAB_USBtoUART write_flash -fm qio 0 nodemcu-master-12-modules-2018-09-29-16-30-32-integer.bin
 
-python ../esp8266/nodemcu-uploader/nodemcu-uploader.py --port /dev/tty.SLAB_USBtoUART upload panel.lua:init.lua
--OR-
-python ../esp8266/nodemcu-uploader/nodemcu-uploader.py --port /dev/tty.SLAB_USBtoUART --baud 57600 --start_baud 115200 upload panel.lua:init.lua
-
+python ~/Documents/Dev/esp8266/nodemcu-uploader/nodemcu-uploader.py --port /dev/tty.SLAB_USBtoUART upload panel.lua:init.lua
 
 minicom -D /dev/tty.SLAB_USBtoUART -b 115200
 
@@ -18,12 +15,9 @@ minicom -D /dev/tty.SLAB_USBtoUART -b 115200
 ESP32
 
 RIGHT!
-esptool.py --chip esp32 --port /dev/cu.SLAB_USBtoUART --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 /Users/tomsci/Documents/Dev/nodemcu/esp32/build/bootloader/bootloader.bin 0x10000 /Users/tomsci/Documents/Dev/nodemcu/esp32/build/NodeMCU.bin 0x8000 /Users/tomsci/Documents/Dev/nodemcu/esp32/build/partitions_singleapp.bin
+esptool.py --chip esp32 --port /dev/cu.SLAB_USBtoUART --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 ~/Documents/Dev/nodemcu/esp32/build/bootloader/bootloader.bin 0x10000 ~/Documents/Dev/nodemcu/esp32/build/NodeMCU.bin 0x8000 ~/Documents/Dev/nodemcu/esp32/build/partitions_singleapp.bin
 
-
-Right?
-esptool.py --chip esp32 --port /dev/cu.SLAB_USBtoUART --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0xe000 /Users/tomsci/Library/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/partitions/boot_app0.bin 0x1000 /Users/tomsci/Library/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/bin/bootloader_dio_80m.bin 0x10000 /Users/tomsci/Documents/Dev/nodemcu/esp32/build/NodeMCU.bin 0x8000 /Users/tomsci/Documents/Dev/nodemcu/esp32/build/partitions_singleapp.bin
-
+python ~/Documents/Dev/esp8266/nodemcu-uploader/nodemcu-uploader.py --port /dev/tty.SLAB_USBtoUART --baud 9600 --start_baud 115200 upload panel.lua:init.lua
 
 
 vs Arduino:
@@ -31,5 +25,8 @@ vs Arduino:
 
 ------
 
+TODO:
 
-python ../esp8266/nodemcu-uploader/nodemcu-uploader.py --port /dev/tty.SLAB_USBtoUART --baud 9600 --start_baud 115200 upload /Users/tomsci/Library/Developer/CoreSimulator/Devices/7A4A4942-DD84-4834-AAE4-963FB03B05DC/data/Containers/Data/Application/79252643-3F80-4868-A975-5492E93C51F3/Documents/img.bmp 
+Error in tmr_register /Users/tomsci/Documents/Dev/nodemcu/esp32/components/modules/tmr.c if interval < configured configTICK_RATE_HZ (from CONFIG_FREERTOS_HZ) rather than asserting
+
+Last known good dev-esp32: bf58084

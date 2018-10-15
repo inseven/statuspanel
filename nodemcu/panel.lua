@@ -71,7 +71,7 @@ local spidevice
 local spidevice_transfer
 local ch = string.char
 local print, select = print, select
-local tmr_now = tmr.now
+local tmr_now = tmr.now or function() return 0 end
 local Busy, Reset, DC, CS, Sck, Mso, SpiId = Busy, Reset, DC, CS, Sck, Mso, SpiId
 
 local sendByte
