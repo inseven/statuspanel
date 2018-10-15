@@ -326,18 +326,49 @@ function displayImg()
 end
 
 function getImg()
-	local f = assert(file.open("img_panel_rle", "w"))
-	local req = "GET /api/v1 HTTP/1.1\r\nHost: calendar-image-server.herokuapp.com\r\nConnection: close\r\n\r\n"
+	local lastModified
+	lastModifiedFile = file.open("last_modified", "r")
+	if lastModifiedFile then
+		lastModified = lastModifiedFile:read(32)
+		lastModifiedFile:close()
+	end
+
+	local ifModifiedHeader = ""
+	if lastModified then
+		ifModifiedHeader = "\r\nIf-Modified-Since: "..lastModified
+		lastModified = nil
+	end
+	local req = "GET /api/v1 HTTP/1.1\r\nHost: calendar-image-server.herokuapp.com\r\nConnection: close"..ifModifiedHeader.."\r\n\r\n"
 	local conn = net.createConnection(net.TCP, 0)
 	conn:on("connection", function(sock)
 		print("Connected, sending")
 		sock:send(req)
 	end)
+	local status
 	local bytesRead = 0
+	local lastModified
+	local f
 	conn:on("receive", function(sock, data)
 		-- print("Got ", #data)
+		if not status then
+			status = tonumber(data:match("^HTTP/1.1 (%d+)"))
+			if status ~= 200 then
+				print("Error fetching image", status)
+			end
+		end
+		if status ~= 200 then
+			if status ~= 304 then
+				print(data) -- Is probably detailed error description
+			end
+			return
+		end
+
 		if bytesRead == 0 then
-			-- Need to strip HTTP headers
+			-- Initial data is the HTTP headers
+			if not lastModified then
+				lastModified = data:match("Last%-Modified: (.-)[\r\n]")
+			end
+			-- Strip remaining headers
 			local _, pos = data:find("\r\n\r\n", 1, true)
 			if pos then
 				data = data:sub(pos + 1)
@@ -345,12 +376,24 @@ function getImg()
 				return
 			end
 		end
+		if not f then
+			f = assert(file.open("img_panel_rle", "w"))
+		end
 		bytesRead = bytesRead + #data
 		f:write(data)
 	end)
 	conn:on("disconnection", function(sock)
-		f:close()
-		print(string.format("Got %d bytes", bytesRead))
+		if f then
+			f:close()
+		end
+		if lastModified then
+			local lastModifiedFile = assert(file.open("last_modified", "w"))
+			lastModifiedFile:write(lastModified)
+			lastModifiedFile:close()
+		end
+		if status == 200 then
+			print(string.format("Got %d bytes written at %s", bytesRead, lastModified or ""))
+		end
 	end)
 	local _, _, gw = wifi.sta.getip()
 	if gw then
