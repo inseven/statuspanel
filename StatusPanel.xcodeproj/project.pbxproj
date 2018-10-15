@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB51C2E221749A2A00F016DB /* JSONRequest.swift */; };
 		DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987C2143E2920084B710 /* AppDelegate.swift */; };
 		DBCA987F2143E2920084B710 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987E2143E2920084B710 /* ViewController.swift */; };
 		DBCA98822143E2920084B710 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBCA98802143E2920084B710 /* Main.storyboard */; };
@@ -16,10 +17,12 @@
 		DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B221440CD90084B710 /* CalendarSource.swift */; };
 		DBCA98B52144421F0084B710 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B42144421F0084B710 /* DataSource.swift */; };
 		DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B6214518EF0084B710 /* DataSourceController.swift */; };
+		DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */; };
 		DBF15EFF215C1134006B0A58 /* amiga4ever.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DB51C2E221749A2A00F016DB /* JSONRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRequest.swift; sourceTree = "<group>"; };
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA987C2143E2920084B710 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DBCA987E2143E2920084B710 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -31,6 +34,7 @@
 		DBCA98B221440CD90084B710 /* CalendarSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSource.swift; sourceTree = "<group>"; };
 		DBCA98B42144421F0084B710 /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		DBCA98B6214518EF0084B710 /* DataSourceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceController.swift; sourceTree = "<group>"; };
+		DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalRailDataSource.swift; sourceTree = "<group>"; };
 		DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = amiga4ever.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,6 +79,8 @@
 				DBCA98B02143F2B30084B710 /* TFLDataSource.swift */,
 				DBCA98B221440CD90084B710 /* CalendarSource.swift */,
 				DBCA98B6214518EF0084B710 /* DataSourceController.swift */,
+				DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */,
+				DB51C2E221749A2A00F016DB /* JSONRequest.swift */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
@@ -152,7 +158,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
+				DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */,
