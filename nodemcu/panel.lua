@@ -403,3 +403,21 @@ function getImg()
 		print("No gateway!")
 	end
 end
+
+function displayText()
+	local text = "Hello, World!"
+	local font = require("font")
+	local oldh = h
+	local charw, charh = font.charw, font.charh
+	local function getPixel(x, y)
+		if x >= #text * charw or y >= charh then
+			return WHITE
+		end
+		local textPos = 1 + math.floor(x / charw)
+		local char = text:sub(textPos, textPos)
+		local chx = x % charw
+		return font.getPixel(char, chx, y) and BLACK or WHITE
+	end
+	h = charh
+	display(getPixel, function() h = oldh end)
+end
