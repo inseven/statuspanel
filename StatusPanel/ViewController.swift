@@ -60,10 +60,9 @@ class ViewController: UIViewController {
 			let w = item.flags.contains(.header) ? rect.width : colWidth
 			let view = UILabel(frame: CGRect(x: x, y: y, width: w, height: 0))
 			view.numberOfLines = 0
-			var text = item.text
+			view.lineBreakMode = .byWordWrapping
 			if item.flags.contains(.warning) {
-				// TODO colourise the warning, or use an icon?
-				text = "⚠︎ " + text
+				// Icons don't render well on the panel, use a coloured background instead
 				view.backgroundColor = UIColor.yellow
 			}
 			let fname = "Amiga Forever"
@@ -72,7 +71,7 @@ class ViewController: UIViewController {
 			} else {
 				view.font = UIFont(name: fname, size: 16)
 			}
-			view.text = text
+			view.text = item.text
 			view.sizeToFit()
 			view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: w, height: view.frame.height)
 			let sz = view.frame
