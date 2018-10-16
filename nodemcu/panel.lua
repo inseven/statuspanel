@@ -315,15 +315,37 @@ function displayImg()
 		end
 	end
 	local ctx = rle.beginDecode(reader)
+	local font, statusLineStart, charh, charw
+	local statusText = table.concat(statusTable, " | ")
+	if esp32 then
+		-- Not enough RAM for this on esp8266 (try lcross?)
+		font = require("font")
+		statusLineStart = h - font.charh
+		charw, charh = font.charw, font.charh
+	end
+
 	local function getPixel(x, y)
-		-- getPixel is always called in sequence, so don't need to seek
-		return rle.getByte(ctx)
+		if statusLineStart and y >= statusLineStart then
+			y = y - statusLineStart
+			if x >= #statusText * charw or y >= charh then
+				return WHITE
+			end
+			local textPos = 1 + math.floor(x / charw)
+			local char = statusText:sub(textPos, textPos)
+			local chx = x % charw
+			return font.getPixel(char, chx, y) and BLACK or WHITE
+		else
+			-- getPixel is always called in sequence, so don't need to seek
+			return rle.getByte(ctx)
+		end
 	end
 
 	display(getPixel, function()
 		f:close()
 	end)
 end
+
+statusTable = {}
 
 function getImg()
 	local lastModified
@@ -338,10 +360,11 @@ function getImg()
 		ifModifiedHeader = "\r\nIf-Modified-Since: "..lastModified
 		lastModified = nil
 	end
+	statusTable = {}
 	local req = "GET /api/v1 HTTP/1.1\r\nHost: calendar-image-server.herokuapp.com\r\nConnection: close"..ifModifiedHeader.."\r\n\r\n"
 	local conn = net.createConnection(net.TCP, 0)
 	conn:on("connection", function(sock)
-		print("Connected, sending")
+		print("Connected, sending request")
 		sock:send(req)
 	end)
 	local status
@@ -354,6 +377,7 @@ function getImg()
 			status = tonumber(data:match("^HTTP/1.1 (%d+)"))
 			if status ~= 200 then
 				print("Error fetching image", status)
+				addStatus("Error %d returned from server", status)
 			end
 		end
 		if status ~= 200 then
@@ -393,14 +417,20 @@ function getImg()
 		end
 		if status == 200 then
 			print(string.format("Got %d bytes written at %s", bytesRead, lastModified or ""))
+			addStatus("Last updated: %s", lastModified or "?")
 		end
 	end)
-	local _, _, gw = wifi.sta.getip()
+	local _
+	if not gw and wifi.sta.getip then
+		-- TODO remove this after retesting esp8266 code
+		_, _, gw = wifi.sta.getip()
+	end
 	if gw then
+		addStatus("IP address = %s", ip)
 		local dest = "calendar-image-server.herokuapp.com"
 		conn:connect(80, dest)
 	else
-		print("No gateway!")
+		addStatus("No internet connection!")
 	end
 end
 
@@ -420,4 +450,24 @@ function displayText()
 	end
 	h = charh
 	display(getPixel, function() h = oldh end)
+end
+
+function addStatus(...)
+	local status = string.format(...)
+	print(status)
+	table.insert(statusTable, status)
+end
+
+if esp32 then
+	wifi.mode(wifi.STATION)
+	wifi.sta.on("got_ip", function(name, event)
+		print("Got IP "..event.ip)
+		ip = event.ip
+		gw = event.gw
+	end)
+	wifi.start()
+	local ok, err = pcall(wifi.sta.connect)
+	if not ok then
+		addStatus("%s", err)
+	end
 end
