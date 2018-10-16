@@ -49,6 +49,7 @@ class ViewController: UIViewController {
 		// TODO move this to UICollectionView?
 		contentView.backgroundColor = UIColor.white
 		let rect = contentView.frame
+		let maxy = rect.height - 10 // Leave space for status line
 		let midx = rect.width / 2
 		var x : CGFloat = 10
 		var y : CGFloat = 0
@@ -76,7 +77,7 @@ class ViewController: UIViewController {
 			view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: w, height: view.frame.height)
 			let sz = view.frame
 			// Enough space for this item?
-			if (sz.height > rect.height - y) {
+			if (sz.height > maxy - y) {
 				// overflow to 2nd column
 				x += midx
 				y = colStart
