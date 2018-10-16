@@ -63,7 +63,7 @@ end
 
 
 local bytesSent = 0
-local CMD_BYTE, DATA_BYTE = 0, 1
+local DC_CMD, DC_DATA = 0, 1
 
 -- Make these local for performance
 local gpio_write = gpio.write
@@ -77,15 +77,8 @@ local Busy, Reset, DC, CS, Sck, Mso, SpiId = Busy, Reset, DC, CS, Sck, Mso, SpiI
 local sendByte
 if esp32 then
 	function sendByte(b, dc)
-		-- spidevice:transfer(ch(b))
-		-- gpio_write(CS, 0)
-		-- spidevice_transfer(spidevice, ch(b))
-		-- gpio_write(CS, 1)
-
-		spidevice_transfer(spidevice, {
-			cmd = dc,
-			txdata = ch(b),
-		})
+		gpio_write(DC, dc)
+		spidevice_transfer(spidevice, ch(b))
 		bytesSent = bytesSent + 1
 	end
 else
@@ -101,12 +94,12 @@ end
 
 local function cmd(id, ...)
 	assert(id, "Bad ID??")
-	sendByte(id, CMD_BYTE)
+	sendByte(id, DC_CMD)
 	local nargs = select("#", ...)
 	if nargs > 0 then
 		local data = { ... }
 		for i = 1, nargs do
-			sendByte(data[i], DATA_BYTE)
+			sendByte(data[i], DC_DATA)
 		end
 	end
 end
@@ -120,25 +113,24 @@ end
 function init1()
 	if esp32 then
 		gpio.config({
-			gpio = { Reset, DC, --[[CS]] },
+			gpio = { Reset, DC },
 			dir = gpio.OUT,
 		}, {
 			gpio = Busy,
 			dir = gpio.IN
 		})
+		-- See https://github.com/nodemcu/nodemcu-firmware/issues/1617 for best documentation of new API
 		local spimaster = spi.master(SpiId, {
 			sclk = Sck,
 			mosi = Mosi,
 			max_transfer_sz = 0,
-		}, 0) -- 0 means disable DMA
+		}, 1) -- 1 means enable DMA
 		spidevice = spimaster:device({
 			cs = CS,
 			mode = 0,
 			freq = 2*1000*1000, -- ie 2 MHz
-			command_bits = 1,
 		})
 		spidevice_transfer = spidevice.transfer
-		-- gpio_write(CS, 1)
 	else
 		gpio.mode(Reset, gpio.OUTPUT)
 		gpio.mode(DC, gpio.OUTPUT)
@@ -153,27 +145,20 @@ end
 
 function init2(completion)
 	if not completion then completion = doneFn end
-	print("init2")
 	reset(function()
 		cmd(POWER_SETTING, 0x37, 0x00)
 		cmd(PANEL_SETTING, 0xCF, 0x08)
 		cmd(BOOSTER_SOFT_START, 0xC7, 0xCC, 0x28)
 		cmd(POWER_ON)
 		waitUntilIdle(function()
-			print("powered on")
+			print("Powered on")
 			cmd(PLL_CONTROL, 0x3C)
-			-- print("cmd6")
 			cmd(TEMPERATURE_CALIBRATION, 0x00)
-			-- print("cmd7")
 			cmd(VCOM_AND_DATA_INTERVAL_SETTING, 0x77)
-			-- print("cmd8")
 			cmd(TCON_SETTING, 0x22)
-			-- print("cmd9")
 			cmd(TCON_RESOLUTION, 0x02, 0x80, 0x01, 0x80) -- 0x0280 = 640, 0x0180 = 384
-			-- print("cmd10")
 			cmd(VCM_DC_SETTING, 0x1E)
 			cmd(0xE5, 0x03) -- FLASH MODE
-			-- print("cmd11")
 			completion()
 		end)
 	end)
@@ -197,7 +182,7 @@ function waitUntilIdle(completion)
 		node.task.post(completion)
 		return
 	end
-	print("waitUntilIdle...")
+	print("WaitUntilIdle...")
 
 	tmr.create():alarm(100, tmr.ALARM_SEMI, function(t)
 		if gpio.read(Busy) == 0 then
@@ -244,6 +229,9 @@ function display(getPixelFn, completion)
 	cmd(DATA_START_TRANSMISSION_1)
 	local y = 0
 	bytesSent = 0
+	if esp32 then
+		gpio_write(DC, DC_DATA)
+	end
 	local function drawLine()
 		if y == h then
 			local pixels = bytesSent * 2
@@ -261,13 +249,25 @@ function display(getPixelFn, completion)
 		end
 
 		-- print("Line " ..tostring(y))
-		for x = 0, w - 1, 2 do
-			local b = getPixelFn(x, y) * 16 + getPixelFn(x + 1, y)
-			sendByte(b, DATA_BYTE)
+		if esp32 then
+			local line = {}
+			for i = 0, (w / 2) - 1 do
+				local x = i * 2
+				local b = getPixelFn(x, y) * 16 + getPixelFn(x + 1, y)
+				line[i+1] = ch(b)
+			end
+			local data = table.concat(line)
+			spidevice_transfer(spidevice, data)
+			bytesSent = bytesSent + #data
+		else
+			for x = 0, w - 1, 2 do
+				local b = getPixelFn(x, y) * 16 + getPixelFn(x + 1, y)
+				sendByte(b, DC_DATA)
+			end
 		end
 		y = y + 1
 		node.task.post(drawLine)
-		-- tmr.create():alarm(100, tmr.ALARM_SINGLE, drawLine)
+		-- tmr.create():alarm(10, tmr.ALARM_SINGLE, drawLine)
 	end
 	node.task.post(drawLine)
 end
