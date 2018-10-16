@@ -23,5 +23,10 @@ def client():
 
 def test_index(client):
     response = client.get('/')
-    print(response)
-    assert(response.status_code == 200, "Successfully index fetch")
+    assert(response.status_code == 200, "Fetching index succeeds")
+
+
+def test_api_v1_get_empty(client):
+    response = client.get('/api/v1')
+    print(response.status_code)
+    assert(response.status_code == 200, "Fetching missing upload fails correctly")
