@@ -39,36 +39,13 @@ TCON_RESOLUTION = 0x61
 -- READ_VCOM_VALUE = 0x81
 VCM_DC_SETTING = 0x82
 
-
-esp32 = (gpio.mode == nil)
-
-if esp32 then
-	-- No more horrible mappings from SDK pin numbers to GPIO numbers!
-	Busy = 13
-	Reset = 27
-	DC = 33
-	CS = 15
-	Sck = 5 -- I can't find this documented anywhere other than pins_arduino.h...
-	Mosi = 18 -- Ditto
-	SpiId = 1 -- HSPI (doesn't place any restriction on pins)
-else
-	-- See https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/pinouts
-	Busy = 4 -- GPIO 2
-	Reset = 1 -- GPIO 5
-	DC = 2 -- GPIO 4
-	CS = 0 -- GPIO 16
-	SpiId = 1 -- HSPI (CLK=14, MOSI=13, MISO=12)
-	SpiClockDiv = 40
-end
-
-
 local bytesSent = 0
 local DC_CMD, DC_DATA = 0, 1
 
 -- Make these local for performance
 local gpio_write = gpio.write
-local spidevice
-local spidevice_transfer
+local spidevice = spidevice
+local spidevice_transfer = spidevice.transfer
 local ch = string.char
 local print, select = print, select
 local tmr_now = tmr.now or function() return 0 end
@@ -104,46 +81,11 @@ local function cmd(id, ...)
 	end
 end
 
-_G.cmd = cmd
-
 local function doneFn()
 	print("Done!")
 end
 
-function init1()
-	if esp32 then
-		gpio.config({
-			gpio = { Reset, DC },
-			dir = gpio.OUT,
-		}, {
-			gpio = Busy,
-			dir = gpio.IN
-		})
-		-- See https://github.com/nodemcu/nodemcu-firmware/issues/1617 for best documentation of new API
-		local spimaster = spi.master(SpiId, {
-			sclk = Sck,
-			mosi = Mosi,
-			max_transfer_sz = 0,
-		}, 1) -- 1 means enable DMA
-		spidevice = spimaster:device({
-			cs = CS,
-			mode = 0,
-			freq = 2*1000*1000, -- ie 2 MHz
-		})
-		spidevice_transfer = spidevice.transfer
-	else
-		gpio.mode(Reset, gpio.OUTPUT)
-		gpio.mode(DC, gpio.OUTPUT)
-		gpio.mode(CS, gpio.OUTPUT)
-		gpio.mode(Busy, gpio.INPUT)
-		-- See https://www.waveshare.com/wiki/7.5inch_e-Paper_HAT_(B)#Communication_protocol
-		spi.setup(SpiId, spi.MASTER, spi.CPOL_LOW, spi.CPHA_LOW, 8, SpiClockDiv)
-		gpio_write(CS, 1)
-	end
-	gpio_write(Reset, 0)
-end
-
-function init2(completion)
+function initp(completion)
 	if not completion then completion = doneFn end
 	reset(function()
 		cmd(POWER_SETTING, 0x37, 0x00)
@@ -193,15 +135,6 @@ function waitUntilIdle(completion)
 			node.task.post(completion)
 		end
 	end)
-
-	-- while gpio.read(Busy) == 0 do -- 0 = Busy, 1 = Idle
-	-- 	tmr.delay(100 * 1000)
-	-- end
-end
-
-function init(completion)
-	init1()
-	init2(completion)
 end
 
 function sleep(completion)
@@ -222,6 +155,7 @@ w, h = 640, 384
 -- The actual display code!
 
 function display(getPixelFn, completion)
+	setStatusLed(1)
 	if not getPixelFn then
 		getPixelFn = whiteColourBlack
 	end
@@ -240,6 +174,7 @@ function display(getPixelFn, completion)
 				local elapsed = (tmr_now() - t) / 1000000
 				sleep(function()
 					print(string.format("Wrote %d pixels, took %ds", pixels, elapsed))
+					setStatusLed(0)
 					if completion then
 						completion()
 					end
@@ -248,7 +183,7 @@ function display(getPixelFn, completion)
 			return
 		end
 
-		-- print("Line " ..tostring(y))
+		print("Line " ..tostring(y))
 		if esp32 then
 			local line = {}
 			for i = 0, (w / 2) - 1 do
@@ -276,13 +211,6 @@ local mod3 = { [0] = WHITE, [1] = COLOURED, [2] = BLACK }
 function whiteColourBlack(x, y)
 	-- Draw alternate lines of white, colour and black
 	return mod3[y % 3]
-end
-
-function main()
-	init(function()
-		-- display()
-		displayImg()
-	end)
 end
 
 function white()
@@ -345,100 +273,6 @@ function displayImg()
 	end)
 end
 
-statusTable = {}
-
-function getImg(completion)
-	local currentLastModified
-	lastModifiedFile = file.open("last_modified", "r")
-	if lastModifiedFile then
-		currentLastModified = lastModifiedFile:read(32)
-		lastModifiedFile:close()
-	end
-
-	local ifModifiedHeader = ""
-	if currentLastModified then
-		ifModifiedHeader = "\r\nIf-Modified-Since: "..currentLastModified
-	end
-	statusTable = {}
-	local req = "GET /api/v1 HTTP/1.1\r\nHost: calendar-image-server.herokuapp.com\r\nConnection: close"..ifModifiedHeader.."\r\n\r\n"
-	local conn = net.createConnection(net.TCP, 0)
-	conn:on("connection", function(sock)
-		print("Connected, sending request")
-		sock:send(req)
-	end)
-	local status
-	local bytesRead = 0
-	local lastModifiedHeader
-	local f
-	conn:on("receive", function(sock, data)
-		-- print("Got ", #data)
-		if not status then
-			status = tonumber(data:match("^HTTP/1.1 (%d+)"))
-			if status == 304 then
-				print("Image not modified since "..currentLastModified)
-			elseif status ~= 200 then
-				addStatus("Error %d returned from server", status)
-			end
-		end
-		if status ~= 200 then
-			if status ~= 304 then
-				print(data) -- Is probably detailed error description
-			end
-			return
-		end
-
-		if bytesRead == 0 then
-			-- Initial data is the HTTP headers
-			if not lastModifiedHeader then
-				lastModifiedHeader = data:match("Last%-Modified: (.-)[\r\n]")
-			end
-			-- Strip remaining headers
-			local _, pos = data:find("\r\n\r\n", 1, true)
-			if pos then
-				data = data:sub(pos + 1)
-			else
-				return
-			end
-		end
-		if not f then
-			f = assert(file.open("img_panel_rle", "w"))
-		end
-		bytesRead = bytesRead + #data
-		f:write(data)
-	end)
-	conn:on("disconnection", function(sock)
-		if f then
-			f:close()
-		end
-		if lastModifiedHeader and lastModifiedHeader ~= currentLastModified then
-			local lastModifiedFile = assert(file.open("last_modified", "w"))
-			lastModifiedFile:write(lastModifiedHeader)
-			lastModifiedFile:close()
-		end
-		if status == 200 then
-			print(string.format("Got %d bytes written at %s", bytesRead, lastModifiedHeader or ""))
-			addStatus("Last updated: %s", lastModifiedHeader or "?")
-		elseif status == 304 then
-			addStatus("Last updated: %s", currentLastModified)
-		end
-		if completion then
-			node.task.post(completion)
-		end
-	end)
-	local _
-	if not gw and wifi.sta.getip then
-		-- TODO remove this after retesting esp8266 code
-		_, _, gw = wifi.sta.getip()
-	end
-	if gw then
-		addStatus("IP address = %s", ip)
-		local dest = "calendar-image-server.herokuapp.com"
-		conn:connect(80, dest)
-	else
-		addStatus("No internet connection!")
-	end
-end
-
 function displayText()
 	local text = "Hello, World!"
 	local font = require("font")
@@ -455,24 +289,4 @@ function displayText()
 	end
 	h = charh
 	display(getPixel, function() h = oldh end)
-end
-
-function addStatus(...)
-	local status = string.format(...)
-	print(status)
-	table.insert(statusTable, status)
-end
-
-if esp32 then
-	wifi.mode(wifi.STATION)
-	wifi.sta.on("got_ip", function(name, event)
-		print("Got IP "..event.ip)
-		ip = event.ip
-		gw = event.gw
-	end)
-	wifi.start()
-	local ok, err = pcall(wifi.sta.connect)
-	if not ok then
-		addStatus("%s", err)
-	end
 end
