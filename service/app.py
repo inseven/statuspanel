@@ -1,16 +1,14 @@
 import os
 
-from flask import Flask, send_from_directory, request, redirect
+from flask import Flask, send_from_directory, request, redirect, abort
 
 
 app = Flask(__name__)
 app.config['CONTENT_DIRECTORY'] = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOADS_DIRECTORY'] = os.path.join(app.config['CONTENT_DIRECTORY'], "uploads")
-app.config['UPLOAD_FILE'] = os.path.join(app.config['UPLOADS_DIRECTORY'], 'upload.jpg')
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
-if not os.path.exists(app.config['UPLOADS_DIRECTORY']):
-    os.makedirs(app.config['UPLOADS_DIRECTORY'])
+UPLOAD_FILENAME = "upload.jpg"
 
 
 @app.route('/')
@@ -26,19 +24,19 @@ def send_static(path):
 @app.route('/api/v1', methods=['POST'])
 def upload():
     try:
+        if not os.path.exists(app.config['UPLOADS_DIRECTORY']):
+            os.makedirs(app.config['UPLOADS_DIRECTORY'])
         file = request.files['file']
-        file.save(app.config['UPLOAD_FILE'])
+        file.save(os.path.join(app.config['UPLOADS_DIRECTORY'], UPLOAD_FILENAME))
     except Exception as e:
-        print(e)
-    # TODO: Return a meaningful JSON response.
+        abort(e)
     return redirect('/')
 
 
 @app.route('/api/v1', methods=['GET'])
 def download():
-    return send_from_directory(app.config['UPLOADS_DIRECTORY'], 'upload.jpg')
+    return send_from_directory(app.config['UPLOADS_DIRECTORY'], UPLOAD_FILENAME)
 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
-
