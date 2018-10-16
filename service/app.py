@@ -1,4 +1,5 @@
 import os
+import re
 
 from flask import Flask, send_from_directory, request, redirect, abort
 
@@ -36,6 +37,30 @@ def upload():
 @app.route('/api/v1', methods=['GET'])
 def download():
     return send_from_directory(app.config['UPLOADS_DIRECTORY'], UPLOAD_FILENAME)
+
+
+def check_identifier(identifier):
+    if not re.match(r"^[0-9a-z]{8}$", identifier):
+        abort(400)
+
+
+@app.route('/api/v2/<identifier>', methods=['POST'])
+def v2_upload(identifier):
+    check_identifier(identifier)
+    try:
+        if not os.path.exists(app.config['UPLOADS_DIRECTORY']):
+            os.makedirs(app.config['UPLOADS_DIRECTORY'])
+        file = request.files['file']
+        file.save(os.path.join(app.config['UPLOADS_DIRECTORY'], identifier))
+    except Exception as e:
+        abort(e)
+    return redirect('/')
+
+
+@app.route('/api/v2/<identifier>', methods=['GET'])
+def v2_download(identifier):
+    check_identifier(identifier)
+    return send_from_directory(app.config['UPLOADS_DIRECTORY'], identifier)
 
 
 if __name__ == '__main__':
