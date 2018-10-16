@@ -10,4 +10,4 @@ Install the test dependencies:
 
 Run the tests:
 
-    python3 -m pytest service/tests
+    python3 -m pytest -v service/tests
