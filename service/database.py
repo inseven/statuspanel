@@ -34,9 +34,8 @@ class Database(object):
             self.set_metadata(Metadata.SCHEMA_VERSION, 0)
         except psycopg2.IntegrityError:
             logging.info("schema_version key already exists")
-            pass
         
-    def set_metadata(key, value):
+    def set_metadata(self, key, value):
         self.db.run("INSERT INTO metadata VALUES (%(key)s, %(value)d)", {"key": key, "value": value})
 
     def migrate(self):
