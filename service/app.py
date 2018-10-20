@@ -20,7 +20,6 @@ def require_ssl(fn):
             return fn(*args, **kwargs)
         else:
             return redirect(request.url.replace("http://", "https://")
-        return fn(*args, **kwargs)
     return wrapper
 
 
