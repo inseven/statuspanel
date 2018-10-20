@@ -8,10 +8,6 @@ class Metadata(object):
     SCHEMA_VERSION = "schema_version"
 
 
-def empty_migration(cursor):
-    logging.error("Running empty migration...")
-
-
 class Transaction(object):
 
     def __init__(self, connection):
@@ -29,13 +25,22 @@ class Transaction(object):
         self.cursor.close()
 
 
+def empty_migration(cursor):
+    logging.error("Running empty migration...")
+
+
+def create_image_table(cursor):
+    cursor.execute("CREATE TABLE data (id text NOT NULL, data bytea NOT NULL, UNIQUE(id))")
+
+
 class Database(object):
 
-    SCHEMA_VERSION = 1
+    SCHEMA_VERSION = 2
 
     # TODO: Ensure the migration structure is correct.
     MIGRATIONS = {
-        1: empty_migration
+        1: empty_migration,
+        2: create_image_table
     }
 
     def __init__(self):
