@@ -12,6 +12,7 @@ django-heroku = "*"
 Flask = "*"
 postgres = "*"
 pytest = "*"
+psycopg2 = "*"
 
 
 [requires]
