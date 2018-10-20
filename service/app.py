@@ -1,4 +1,5 @@
 import functools
+import logging
 import os
 import re
 
@@ -6,6 +7,7 @@ from flask import Flask, send_from_directory, request, redirect, abort
 
 import database
 
+logging.info("Connecting to the database...")
 db = Database()
 
 
