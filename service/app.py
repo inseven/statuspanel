@@ -6,6 +6,8 @@ from flask import Flask, send_from_directory, request, redirect, abort
 
 import database
 
+db = Database()
+
 
 app = Flask(__name__)
 app.config['CONTENT_DIRECTORY'] = os.path.dirname(os.path.abspath(__file__))
