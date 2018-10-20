@@ -2,7 +2,6 @@
   "environments": {
     "test": {
       "scripts": {
-        "test-setup": "pip3 install -r service/tests/requirements.txt",
         "test": "python3 -m pytest -v service/tests"
       }
     }
