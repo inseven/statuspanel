@@ -11,9 +11,6 @@ logging.info("Connecting to the database...")
 db = database.Database()
 
 
-raise AssertionError("We're all doomed.")
-
-
 app = Flask(__name__)
 app.config['CONTENT_DIRECTORY'] = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOADS_DIRECTORY'] = os.path.join(app.config['CONTENT_DIRECTORY'], "uploads")
