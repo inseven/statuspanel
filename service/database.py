@@ -25,7 +25,7 @@ class Database(object):
         
         # Create the metadata table (used for versioning).
         self.db.run("CREATE TABLE IF NOT EXISTS metadata (key TEXT NOT NULL, value INT, UNIQUE(key))")
-        
+         {
         # Create the initial version if necessary.
         # If this statement fails, we can safely assume that there's already a version
         # present in the database.
@@ -36,7 +36,7 @@ class Database(object):
             logging.info("schema_version key already exists")
         
     def set_metadata(self, key, value):
-        self.db.run("INSERT INTO metadata VALUES (%(key)s, %(value)d)", {"key": key, "value": value})
+        self.db.run("INSERT INTO metadata VALUES (%(key)s, %(value)s)", {"key": key, "value": value})
 
     def migrate(self):
         pass
