@@ -13,17 +13,6 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 UPLOAD_FILENAME = "upload.jpg"
 
 
-def require_ssl(fn):
-    @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
-        if request.is_secure:
-            return fn(*args, **kwargs)
-        else:
-            return redirect(request.url.replace("http://", "https://")
-    return wrapper
-
-
-@require_ssl
 @app.route('/')
 def homepage():
     return send_from_directory('static', 'index.html')
