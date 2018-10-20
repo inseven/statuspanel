@@ -11,6 +11,7 @@ gunicorn = "*"
 django-heroku = "*"
 Flask = "*"
 postgres = "*"
+pytest = "*"
 
 
 [requires]
