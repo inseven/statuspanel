@@ -1,6 +1,7 @@
 import logging
 import os
 import postgres
+import psycopg2
 
 
 class Metadata(object):
@@ -28,7 +29,12 @@ class Database(object):
         # Create the initial version if necessary.
         # If this statement fails, we can safely assume that there's already a version
         # present in the database.
-        self.set_metadata(Metadata.SCHEMA_VERSION, 0)
+        try:
+            logging.info("Attempting to set initial schema_version...")
+            self.set_metadata(Metadata.SCHEMA_VERSION, 0)
+        except psycopg2.IntegrityError:
+            logging.info("schema_version key already exists")
+            pass
         
     def set_metadata(key, value):
         self.db.run("INSERT INTO metadata VALUES (%(key)s, %(value)d)", {"key": key, "value": value})
