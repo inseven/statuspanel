@@ -25,7 +25,7 @@ class Database(object):
         
         # Create the metadata table (used for versioning).
         self.db.run("CREATE TABLE IF NOT EXISTS metadata (key TEXT NOT NULL, value INT, UNIQUE(key))")
-         {
+
         # Create the initial version if necessary.
         # If this statement fails, we can safely assume that there's already a version
         # present in the database.
