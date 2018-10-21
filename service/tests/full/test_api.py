@@ -4,7 +4,7 @@ import shutil
 import sys
 import tempfile
 
-TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+TESTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVICE_DIR = os.path.dirname(TESTS_DIR)
 ROOT_DIR = os.path.dirname(SERVICE_DIR)
 IMAGES_DIR = os.path.join(ROOT_DIR, "images")
@@ -99,18 +99,18 @@ def test_api_v2_put_get_different_identifiers_fails(client):
     response = client.get('/api/v2/01234567')
     assert response.status_code == 404, "Getting the uploaded file succeeds"
 
-    
+
 def test_api_v2_put_get_multiple_success(client):
     url_1 = '/api/v2/abcdefgh'
     url_2 = '/api/v2/bcdefghi'
     image_path_1 = os.path.join(IMAGES_DIR, "paisley.png")
     image_path_2 = os.path.join(IMAGES_DIR, "red.png")
-    
+
     response = upload(client, url_1, image_path_1)
     assert response.status_code == 200, "Upload succeeds"
     response = upload(client, url_2, image_path_2)
     assert response.status_code == 200, "Upload succeeds"
-    
+
     response = client.get(url_1)
     assert response.status_code == 200, "Getting the uploaded file succeeds"
     with open(image_path_1, 'rb') as fh:
