@@ -146,9 +146,11 @@ function sleep(completion)
 	end)
 end
 
-local WHITE = 3
-local COLOURED = 4 
-local BLACK = 0
+WHITE = 3
+COLOURED = 4 
+BLACK = 0
+
+local WHITE, COLOURED, BLACK = WHITE, COLOURED, BLACK
 
 w, h = 640, 384
 
@@ -243,25 +245,17 @@ function displayImg()
 		end
 	end
 	local ctx = rle.beginDecode(reader)
-	local font, statusLineStart, charh, charw
-	local statusText = table.concat(statusTable, " | ")
+	local statusLineStart, getTextPixel
 	if esp32 then
 		-- Not enough RAM for this on esp8266 (try lcross?)
-		font = require("font")
-		statusLineStart = h - font.charh
-		charw, charh = font.charw, font.charh
+		statusLineStart = h - require("font").charh
+		local statusText = table.concat(statusTable, " | ")
+		getTextPixel = getTextPixelFn(statusText)
 	end
 
 	local function getPixel(x, y)
 		if statusLineStart and y >= statusLineStart then
-			y = y - statusLineStart
-			if x >= #statusText * charw or y >= charh then
-				return WHITE
-			end
-			local textPos = 1 + math.floor(x / charw)
-			local char = statusText:sub(textPos, textPos)
-			local chx = x % charw
-			return font.getPixel(char, chx, y) and BLACK or WHITE
+			return getTextPixel(x, y - statusLineStart)
 		else
 			-- getPixel is always called in sequence, so don't need to seek
 			return rle.getByte(ctx)
@@ -273,13 +267,12 @@ function displayImg()
 	end)
 end
 
-function displayText()
-	local text = "Hello, World!"
+function getTextPixelFn(text)
 	local font = require("font")
-	local oldh = h
 	local charw, charh = font.charw, font.charh
-	local function getPixel(x, y)
-		if x >= #text * charw or y >= charh then
+	local BLACK, WHITE = BLACK, WHITE
+	return function(x, y)
+		if x < 0 or x >= #text * charw or y < 0 or y >= charh then
 			return WHITE
 		end
 		local textPos = 1 + math.floor(x / charw)
@@ -287,6 +280,12 @@ function displayText()
 		local chx = x % charw
 		return font.getPixel(char, chx, y) and BLACK or WHITE
 	end
+end
+
+function displayText()
+	local text = "Hello, World!"
+	local oldh = h
+	local getPixel = getTextPixelFn(text)
 	h = charh
 	display(getPixel, function() h = oldh end)
 end
