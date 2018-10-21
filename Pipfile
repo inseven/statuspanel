@@ -13,6 +13,7 @@ Flask = "*"
 postgres = "*"
 pytest = "*"
 psycopg2 = "*"
+requests = "*"
 
 
 [requires]
