@@ -2,6 +2,13 @@
 
 ## Service
 
+### Heroku
+
+There are two apps in the Heroku pipeline:
+
+- statuspanel-staging
+- statuspanel-production
+
 ### Running Locally
 
 Install the dependencies:
