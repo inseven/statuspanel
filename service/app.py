@@ -43,6 +43,7 @@ def upload():
 
 @app.route('/api/v1', methods=['GET'])
 def download():
+    abort(400)
     return send_from_directory(app.config['UPLOADS_DIRECTORY'], UPLOAD_FILENAME)
 
 
