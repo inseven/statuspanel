@@ -2,6 +2,18 @@
 
 ## Service
 
+### Running Locally
+
+Install the dependencies:
+
+    pipenv install
+
+Run the service:
+
+    pipenv run heroku local
+
+This is configured to use the staging Postgres instance. Ultimately, this should use a local Postgres instance, but in the short-term, it allows development.
+
 ### Tests
 
 Install the test dependencies:
