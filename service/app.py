@@ -3,7 +3,7 @@ import logging
 import os
 import re
 
-from flask import Flask, send_from_directory, request, redirect, abort
+from flask import Flask, send_from_directory, request, redirect, abort, jsonify
 
 import database
 
@@ -38,7 +38,7 @@ def upload():
         file.save(os.path.join(app.config['UPLOADS_DIRECTORY'], UPLOAD_FILENAME))
     except Exception as e:
         abort(e)
-    return redirect('/')
+    return jsonify({})
 
 
 @app.route('/api/v1', methods=['GET'])
@@ -61,7 +61,7 @@ def v2_upload(identifier):
         file.save(os.path.join(app.config['UPLOADS_DIRECTORY'], identifier))
     except Exception as e:
         abort(e)
-    return redirect('/')
+    return jsonify({})
 
 
 @app.route('/api/v2/<identifier>', methods=['GET'])
