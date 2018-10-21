@@ -44,6 +44,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 	}
 
+	func application(_ application: UIApplication,
+					 open url: URL,
+					 options: [UIApplicationOpenURLOptionsKey : Any] = [:] ) -> Bool {
+		// Process the URL.
+		guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
+			let operation = components.path,
+			let params = components.queryItems else {
+				print("Invalid URL or operation missing")
+				return false
+			}
+		var map: [String : String] = [:]
+		for kv in params {
+			if let val = kv.value {
+				map[kv.name] = val
+			}
+		}
+		// print("op:\(operation) params:\(params)")
+		if operation != "r" || map["id"] == nil || map["pk"] == nil {
+			print("Unrecognised operation \(operation)")
+			return false
+		}
 
+		let ud = UserDefaults.standard
+		ud.set(map["id"], forKey: "deviceid")
+		ud.set(map["pk"], forKey: "publickey")
+
+		return true
+	}
 }
 
