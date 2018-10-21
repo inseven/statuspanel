@@ -75,3 +75,28 @@ class Database(object):
             cursor.execute("UPDATE metadata SET value=%s WHERE key=%s",
                            (self.SCHEMA_VERSION, Metadata.SCHEMA_VERSION))
             logging.error(f"Updated schema to version {self.SCHEMA_VERSION}")
+
+    def set_data(self, key, value):
+        with Transaction(self.connection) as cursor:
+            cursor.execute("SELECT COUNT(*) FROM data WHERE id = %s",
+                           (key, ))
+            result = cursor.fetchone()
+            count = result[0]
+            if count:
+                cursor.execute("UPDATE data SET data = %s WHERE id = %s",
+                               (psycopg2.Binary(value), key))
+            else:
+                cursor.execute("INSERT INTO data (id, data) VALUES (%s, %s)",
+                               (key, psycopg2.Binary(value)))
+
+    def get_data(self, key):
+        with Transaction(self.connection) as cursor:
+            cursor.execute("SELECT data FROM data WHERE id = %s",
+                           (key, ))
+            result = cursor.fetchone()
+            if result is None:
+                raise KeyError(f"No data for key '{key}'")
+            return result[0].tobytes()
+
+    def close(self):
+        self.connection.close()
