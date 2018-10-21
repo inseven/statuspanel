@@ -8,6 +8,7 @@
 
 import UIKit
 import EventKit
+import Sodium
 
 class ViewController: UIViewController {
 
