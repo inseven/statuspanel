@@ -2,7 +2,7 @@
   "environments": {
     "test": {
       "scripts": {
-        "test": "python3 -m pytest -v service/tests"
+        "test": "python3 -m pytest -v service/tests/smoke"
       }
     }
   }
