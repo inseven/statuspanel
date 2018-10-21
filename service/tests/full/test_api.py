@@ -38,7 +38,7 @@ def upload(client, url, path):
     return client.post(url,
                        content_type="multipart/form-data",
                        buffered=True,
-                       follow_redirects=True,
+                       follow_redirects=False,
                        data={
                            'file': (open(path, 'rb'), os.path.basename(path))
                        })
@@ -71,13 +71,7 @@ def test_api_v2_get_invalid_identifier(client):
 
 def test_api_v2_put_invalid_identifier_fails(client):
     image_path = os.path.join(IMAGES_DIR, "paisley.png")
-    response = client.post('/api/v2/bad..',
-                           content_type="multipart/form-data",
-                           buffered=True,
-                           follow_redirects=True,
-                           data={
-                               'file': (open(image_path, 'rb'), 'paisley.png')
-                           })
+    response = upload(client, '/api/v2/bad', image_path)
     assert response.status_code == 400, "Upload fails"
 
 
