@@ -23,3 +23,7 @@ Install the test dependencies:
 Run the tests:
 
     python3 -m pytest -v service/tests/full
+
+Run the integration tests:
+
+	pipenv run python3 -m pytest -v service/tests/smoke
