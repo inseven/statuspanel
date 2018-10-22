@@ -13,12 +13,12 @@ There are two apps in the Heroku pipeline:
 
     brew install pipenv
     pipenv install
+    
+N.B. Local instances are configured to use the staging Postgres instance. Ultimately, this should use a local Postgres instance, but in the short-term, it allows development.
 
 ### Running Locally
 
     pipenv run heroku local
-
-This is configured to use the staging Postgres instance. Ultimately, this should use a local Postgres instance, but in the short-term, it allows development.
 
 ### Tests
 
