@@ -9,14 +9,12 @@ There are two apps in the Heroku pipeline:
 - statuspanel-staging -- auto-deploys master
 - statuspanel-production -- manual deploy from staging
 
-### Running Locally
-
-Install the dependencies:
+### Installing Dependencies
 
     brew install pipenv
     pipenv install
 
-Run the service:
+### Running Locally
 
     pipenv run heroku local
 
@@ -24,15 +22,10 @@ This is configured to use the staging Postgres instance. Ultimately, this should
 
 ### Tests
 
-Install the test dependencies:
-
-    brew install pipenv
-    pipenv install
-
-Run the tests:
+Unit tests:
 
     pipenv run python3 -m pytest -v service/tests/full
 
-Run the integration tests:
+Integration tests:
 
 	pipenv run python3 -m pytest -v service/tests/smoke
