@@ -10,9 +10,8 @@ django = "*"
 gunicorn = "*"
 django-heroku = "*"
 Flask = "*"
-postgres = "*"
 pytest = "*"
-psycopg2 = "*"
+psycopg2-binary = "*"
 requests = "*"
 
 
