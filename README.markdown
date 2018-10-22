@@ -13,6 +13,7 @@ There are two apps in the Heroku pipeline:
 
 Install the dependencies:
 
+    brew install pipenv
     pipenv install
 
 Run the service:
@@ -25,11 +26,12 @@ This is configured to use the staging Postgres instance. Ultimately, this should
 
 Install the test dependencies:
 
-    pip3 install -r service/tests/requirements.txt
+    brew install pipenv
+    pipenv install
 
 Run the tests:
 
-    python3 -m pytest -v service/tests/full
+    pipenv run python3 -m pytest -v service/tests/full
 
 Run the integration tests:
 
