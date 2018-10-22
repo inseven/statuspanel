@@ -6,8 +6,8 @@
 
 There are two apps in the Heroku pipeline:
 
-- statuspanel-staging
-- statuspanel-production
+- statuspanel-staging -- auto-deploys master
+- statuspanel-production -- manual deploy from staging
 
 ### Running Locally
 
