@@ -9,6 +9,9 @@ from flask import Flask, send_from_directory, request, redirect, abort, jsonify,
 
 import database
 
+logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(process)d] [%(levelname)s] %(message)s", datefmt='%Y-%m-%d %H:%M:%S %z')
+
+
 LEGACY_IDENTIFIER = "A0198E25-8436-4439-8BE1-75C445655255"
 
 
