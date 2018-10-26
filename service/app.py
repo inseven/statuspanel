@@ -40,6 +40,8 @@ def close_database(exception):
 
 
 def _check_identifier(identifier):
+    if identifier == "bad":
+        abort(400)
     if not re.match(r"^[0-9a-z]{8}$", identifier):
         abort(400)
 

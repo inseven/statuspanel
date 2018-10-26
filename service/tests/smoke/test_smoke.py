@@ -7,11 +7,6 @@ import sys
 import tempfile
 import urllib
 
-TESTS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SERVICE_DIR = os.path.dirname(TESTS_DIR)
-ROOT_DIR = os.path.dirname(SERVICE_DIR)
-IMAGES_DIR = os.path.join(ROOT_DIR, "images")
-
 
 class Client(object):
 
@@ -39,7 +34,6 @@ def test_index(client):
 
 
 def upload(client, url, data):
-    image_path = os.path.join(IMAGES_DIR, "paisley.png")
     return client.post(url, files={'file': io.BytesIO(data)})
 
 
@@ -69,7 +63,7 @@ def test_api_v2_get_invalid_identifier(client):
 
 def test_api_v2_put_invalid_identifier_fails(client):
     data = os.urandom(307200)
-    response = upload(client, '/api/v2/bad', data)
+    response = upload(client, "/api/v2/bad", data)
     assert response.status_code == 400, "Upload fails"
 
 
