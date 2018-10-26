@@ -33,14 +33,19 @@ def create_image_table(cursor):
     cursor.execute("CREATE TABLE data (id text NOT NULL, data bytea NOT NULL, UNIQUE(id))")
 
 
+def add_modified_date(cursor):
+    cursor.execute("ALTER TABLE data ADD COLUMN modified_date date NOT NULL DEFAULT CURRENT_DATE")
+
+
 class Database(object):
 
-    SCHEMA_VERSION = 2
+    SCHEMA_VERSION = 3
 
     # TODO: Ensure the migration structure is correct.
     MIGRATIONS = {
         1: empty_migration,
-        2: create_image_table
+        2: create_image_table,
+        3: add_modified_date
     }
 
     def __init__(self):
