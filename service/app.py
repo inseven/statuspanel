@@ -56,6 +56,7 @@ def _download(identifier):
 def check_identifier(fn):
     @functools.wraps(fn)
     def inner(*args, **kwargs):
+        logging.info(f"Checking identifier '{kwargs['identifier']}'...")
         if not re.match(r"^[0-9a-z]{8}$", kwargs['identifier']):
             abort(400)
         return fn(*args, **kwargs)
