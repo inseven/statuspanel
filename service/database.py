@@ -26,7 +26,7 @@ class Transaction(object):
 
 
 def empty_migration(cursor):
-    logging.error("Running empty migration...")
+    logging.info("Running empty migration...")
 
 
 def create_image_table(cursor):
@@ -56,7 +56,7 @@ class Database(object):
                 cursor.execute("INSERT INTO metadata VALUES (%s, %s)",
                                (Metadata.SCHEMA_VERSION, 0))
         except psycopg2.IntegrityError:
-            logging.error("schema_version key already exists")
+            logging.info("schema_version key already exists")
 
         self.migrate()
 
@@ -66,15 +66,15 @@ class Database(object):
                            (Metadata.SCHEMA_VERSION, ))
             result = cursor.fetchone()
             schema_version = result[0]
-            logging.error(f"Current schema at version {schema_version}")
+            logging.info(f"Current schema at version {schema_version}")
             if schema_version >= self.SCHEMA_VERSION:
                 return
             for i in range(schema_version + 1, self.SCHEMA_VERSION + 1):
-                logging.error(f"Performing migration to version {i}...")
+                logging.info(f"Performing migration to version {i}...")
                 self.MIGRATIONS[i](cursor)
             cursor.execute("UPDATE metadata SET value=%s WHERE key=%s",
                            (self.SCHEMA_VERSION, Metadata.SCHEMA_VERSION))
-            logging.error(f"Updated schema to version {self.SCHEMA_VERSION}")
+            logging.info(f"Updated schema to version {self.SCHEMA_VERSION}")
 
     def set_data(self, key, value):
         with Transaction(self.connection) as cursor:
