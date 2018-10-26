@@ -35,6 +35,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 def close_database(exception):
     db = g.pop('database', None)
     if db is not None:
+        logging.info("Closing database connection...")
         db.close()
 
 
