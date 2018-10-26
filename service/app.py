@@ -1,9 +1,11 @@
 import functools
 import logging
 import os
-import psycopg2
 import re
 import time
+
+import psycopg2
+import werkzeug
 
 from flask import Flask, send_from_directory, request, redirect, abort, jsonify, g, make_response
 
@@ -58,7 +60,8 @@ def check_identifier(fn):
     def inner(*args, **kwargs):
         logging.info(f"Checking identifier '{kwargs['identifier']}'...")
         if not re.match(r"^[0-9a-z]{8}$", kwargs['identifier']):
-            abort(400)
+            # raise werkzeug.exceptions.BadRequest(f"Invalid identifier '{kwargs['identifier']}'")
+            return 'bad request!', 400
         return fn(*args, **kwargs)
     return inner
 
