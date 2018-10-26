@@ -39,13 +39,6 @@ def close_database(exception):
         db.close()
 
 
-def _check_identifier(identifier):
-    if identifier == "bad":
-        abort(400)
-    if not re.match(r"^[0-9a-z]{8}$", identifier):
-        abort(400)
-
-
 def _upload(identifier):
     get_database().set_data(identifier, request.files['file'].read())
     return jsonify({})
@@ -58,6 +51,15 @@ def _download(identifier):
         return response
     except KeyError:
         abort(404)
+
+
+def check_identifier(fn):
+    @functools.wraps(fn)
+    def inner(*args, **kwargs):
+        if not re.match(r"^[0-9a-z]{8}$", kwargs['identifier']):
+            abort(400)
+        return fn(*args, **kwargs)
+    return inner
 
 
 @app.route('/')
@@ -76,14 +78,14 @@ def v1_download():
 
 
 @app.route('/api/v2/<identifier>', methods=['POST'])
+@check_identifier
 def v2_upload(identifier):
-    _check_identifier(identifier)
     return _upload(identifier)
 
 
 @app.route('/api/v2/<identifier>', methods=['GET'])
+@check_identifier
 def v2_download(identifier):
-    _check_identifier(identifier)
     return _download(identifier)
 
 
