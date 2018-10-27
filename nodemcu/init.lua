@@ -64,6 +64,8 @@ function init()
 			print("Got IP "..event.ip)
 			ip = event.ip
 			gw = event.gw
+			-- Why is the default allocation limit set to 4KB? Why even is there one?
+			node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
 		end)
 		wifi.start()
 		wifi.sta.connect()
@@ -90,13 +92,6 @@ function addStatus(...)
 	print(status)
 	table.insert(statusTable, status)
 end
-
--- function main()
--- 	init(function()
--- 		-- display()
--- 		displayImg()
--- 	end)
--- end
 
 local ok, err = pcall(init)
 if not ok then
