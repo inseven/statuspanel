@@ -141,9 +141,25 @@ class ViewController: UIViewController {
 
     // TODO: Completion block
     func uploadData(_ data: Data) {
+		let ud = UserDefaults.standard
+		guard let deviceid = ud.value(forKey: "deviceid"),
+			  let publickey : String = ud.value(forKey: "publickey") as? String else {
+			print("Keys not configured yet, not uploading")
+			return
+		}
+		let sodium = Sodium()
+		guard let key = sodium.utils.base642bin(publickey, variant: .ORIGINAL) else {
+			print("Failed to decode key from publickey userdefault!")
+			return
+		}
+		let encryptedDataBytes = sodium.box.seal(message: Array(data), recipientPublicKey: key)
+		if encryptedDataBytes == nil {
+			print("Failed to seal box")
+			return
+		}
+		let encryptedData = Data(encryptedDataBytes!)
 
-        let path = "https://calendar-image-server.herokuapp.com/api/v1"
-
+		let path = "https://statuspanel.io/api/v2/\(deviceid)"
         guard let url = URL(string: path) else {
             print("Unable to create URL")
             return
@@ -167,7 +183,7 @@ class ViewController: UIViewController {
         body.append("--\(boundary)\r\n".data(using: String.Encoding.utf8)!)
         body.append("Content-Disposition:form-data; name=\"file\"; filename=\"\(fname)\"\r\n".data(using: String.Encoding.utf8)!)
         body.append("Content-Type: \(mimetype)\r\n\r\n".data(using: String.Encoding.utf8)!)
-        body.append(data)
+        body.append(encryptedData)
         body.append("\r\n".data(using: String.Encoding.utf8)!)
         body.append("--\(boundary)--\r\n".data(using: String.Encoding.utf8)!)
 
