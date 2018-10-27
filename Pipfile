@@ -13,6 +13,8 @@ Flask = "*"
 pytest = "*"
 psycopg2-binary = "*"
 requests = "*"
+pytz = "*"
+py-dateutil = "*"
 
 
 [requires]

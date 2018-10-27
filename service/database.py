@@ -36,15 +36,20 @@ def add_modified_date(cursor):
     cursor.execute("ALTER TABLE data ADD COLUMN modified_date date NOT NULL DEFAULT CURRENT_DATE")
 
 
+def change_modified_date_to_timestamp(cursor):
+    cursor.execute("ALTER TABLE data DROP COLUMN modified_date")
+    cursor.execute("ALTER TABLE data ADD COLUMN modified_date timestamp NOT NULL DEFAULT CURRENT_DATE")
+
+
 class Database(object):
 
-    SCHEMA_VERSION = 3
+    SCHEMA_VERSION = 4
 
-    # TODO: Ensure the migration structure is correct.
     MIGRATIONS = {
         1: empty_migration,
         2: create_image_table,
-        3: add_modified_date
+        3: add_modified_date,
+        4: change_modified_date_to_timestamp,
     }
 
     def __init__(self):
@@ -90,17 +95,17 @@ class Database(object):
                 cursor.execute("UPDATE data SET data = %s WHERE id = %s",
                                (psycopg2.Binary(value), key))
             else:
-                cursor.execute("INSERT INTO data (id, data) VALUES (%s, %s)",
+                cursor.execute("INSERT INTO data (id, data, modified_date) VALUES (%s, %s, current_timestamp)",
                                (key, psycopg2.Binary(value)))
 
     def get_data(self, key):
         with Transaction(self.connection) as cursor:
-            cursor.execute("SELECT data FROM data WHERE id = %s",
+            cursor.execute("SELECT data, modified_date FROM data WHERE id = %s",
                            (key, ))
             result = cursor.fetchone()
             if result is None:
                 raise KeyError(f"No data for key '{key}'")
-            return result[0].tobytes()
+            return result[0].tobytes(), result[1]
 
     def close(self):
         self.connection.close()
