@@ -1,6 +1,5 @@
 import logging
 import os
-import postgres
 import psycopg2
 
 
