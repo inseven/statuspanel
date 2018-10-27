@@ -185,7 +185,8 @@ function display(getPixelFn, completion)
 			return
 		end
 
-		print("Line " ..tostring(y))
+		-- print("Line " ..tostring(y))
+		setStatusLed(y % 2)
 		if esp32 then
 			local line = {}
 			for i = 0, (w / 2) - 1 do
