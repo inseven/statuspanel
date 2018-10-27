@@ -36,4 +36,8 @@ Unit tests:
 
 Live smoke tests; these are run against https://staging.statuspanel.io, and should be run before promoting to production:
 
-	pipenv run python3 -m pytest -v service/tests/smoke
+    pipenv run python3 -m pytest -v service/tests/smoke
+
+You can run the smoke tests on different environments by selecting the correct `.env` file. For example,
+
+    PIPENV_DOTENV_LOCATION=.env.production pipenv run python3 -m pytest -v service/tests/smoke
