@@ -26,11 +26,6 @@ def test_index(client):
     assert response.status_code == 200, "Fetching index succeeds"
 
 
-def test_api_v1_get_empty(client):
-    response = client.get('/api/v1')
-    assert response.status_code == 404, "Fetching missing upload fails"
-
-
 def upload(client, url, data):
     return client.post(url,
                        content_type="multipart/form-data",
@@ -39,15 +34,6 @@ def upload(client, url, data):
                        data={
                            'file': (io.BytesIO(data), "example.bin")
                        })
-
-
-def test_api_v1_put_get_success(client):
-    data = os.urandom(307200)
-    response = upload(client, '/api/v1', data)
-    assert response.status_code == 200, "Upload succeeds"
-    response = client.get('/api/v1')
-    assert response.status_code == 200, "Getting the uploaded file succeeds"
-    assert response.data == data, "Downloaded file matches uploaded file"
 
 
 def test_api_v2_get_no_identifier(client):
