@@ -72,6 +72,7 @@ def v2_download(identifier):
         response = make_response(data)
         response.headers.set('Content-Type', 'application/octet-stream')
         response.last_modified = last_modified
+        response.cache_control.max_age = 0
         return response
     except KeyError:
         abort(404)
