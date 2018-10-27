@@ -34,6 +34,6 @@ Unit tests:
 
     pipenv run python3 -m pytest -v service/tests/full
 
-Integration tests:
+Live smoke tests; these are run against https://staging.statuspanel.io, and should be run before promoting to production:
 
 	pipenv run python3 -m pytest -v service/tests/smoke
