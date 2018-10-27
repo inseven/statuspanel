@@ -14,8 +14,15 @@ minicom -D /dev/tty.SLAB_USBtoUART -b 115200
 
 ESP32
 
-RIGHT!
-esptool.py --chip esp32 --port /dev/cu.SLAB_USBtoUART --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 ~/Documents/Dev/nodemcu/esp32/build/bootloader/bootloader.bin 0x10000 ~/Documents/Dev/nodemcu/esp32/build/NodeMCU.bin 0x8000 ~/Documents/Dev/nodemcu/esp32/build/partitions_singleapp.bin
+Last Known Good:
+esptool.py --chip esp32 --port /dev/cu.SLAB_USBtoUART --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 esp32/bootloader.bin 0x10000 esp32/NodeMCU.bin 0x8000 esp32/partitions_tomsci.bin
+
+
+Latest:
+esptool.py --chip esp32 --port /dev/cu.SLAB_USBtoUART --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 ~/Documents/Dev/nodemcu/esp32/build/bootloader/bootloader.bin 0x10000 ~/Documents/Dev/nodemcu/esp32/build/NodeMCU.bin 0x8000 ~/Documents/Dev/nodemcu/esp32/build/partitions_tomsci.bin
+
+
+
 
 python ~/Documents/Dev/esp8266/nodemcu-uploader/nodemcu-uploader.py --port /dev/tty.SLAB_USBtoUART --baud 9600 --start_baud 115200 upload panel.lua:init.lua
 
@@ -33,3 +40,10 @@ TODO:
 Error in tmr_register /Users/tomsci/Documents/Dev/nodemcu/esp32/components/modules/tmr.c if interval < configured configTICK_RATE_HZ (from CONFIG_FREERTOS_HZ) rather than asserting
 
 Last known good dev-esp32: bf58084
+
+
+lcross fix issue:
+https://github.com/nodemcu/nodemcu-firmware/issues/1977
+tomsci_fix_crosscompiler
+
+
