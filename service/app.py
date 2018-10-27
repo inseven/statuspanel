@@ -41,20 +41,6 @@ def close_database(exception):
         db.close()
 
 
-def _upload(identifier):
-    get_database().set_data(identifier, request.files['file'].read())
-    return jsonify({})
-
-
-def _download(identifier):
-    try:
-        response = make_response(get_database().get_data(identifier))
-        response.headers.set('Content-Type', 'application/octet-stream')
-        return response
-    except KeyError:
-        abort(404)
-
-
 def check_identifier(fn):
     @functools.wraps(fn)
     def inner(*args, **kwargs):
@@ -71,26 +57,22 @@ def homepage():
     return send_from_directory('static', 'index.html')
 
 
-@app.route('/api/v1', methods=['POST'])
-def v1_upload():
-    return _upload(LEGACY_IDENTIFIER)
-
-
-@app.route('/api/v1', methods=['GET'])
-def v1_download():
-    return _download(LEGACY_IDENTIFIER)
-
-
 @app.route('/api/v2/<identifier>', methods=['POST'])
 @check_identifier
 def v2_upload(identifier):
-    return _upload(identifier)
+    get_database().set_data(identifier, request.files['file'].read())
+    return jsonify({})
 
 
 @app.route('/api/v2/<identifier>', methods=['GET'])
 @check_identifier
 def v2_download(identifier):
-    return _download(identifier)
+    try:
+        response = make_response(get_database().get_data(identifier))
+        response.headers.set('Content-Type', 'application/octet-stream')
+        return response
+    except KeyError:
+        abort(404)
 
 
 if __name__ == '__main__':
