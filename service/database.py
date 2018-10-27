@@ -41,15 +41,21 @@ def change_modified_date_to_timestamp(cursor):
     cursor.execute("ALTER TABLE data ADD COLUMN modified_date timestamp NOT NULL DEFAULT CURRENT_DATE")
 
 
+def change_modified_date_to_timestamptz(cursor):
+    cursor.execute("ALTER TABLE data DROP COLUMN modified_date")
+    cursor.execute("ALTER TABLE data ADD COLUMN modified_date timestamptz NOT NULL DEFAULT CURRENT_DATE")
+
+
 class Database(object):
 
-    SCHEMA_VERSION = 4
+    SCHEMA_VERSION = 5
 
     MIGRATIONS = {
         1: empty_migration,
         2: create_image_table,
         3: add_modified_date,
         4: change_modified_date_to_timestamp,
+        5: change_modified_date_to_timestamptz,
     }
 
     def __init__(self):
