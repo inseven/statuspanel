@@ -1,3 +1,4 @@
+import datetime
 import io
 import os
 import pytest
@@ -6,8 +7,10 @@ import subprocess
 import sys
 import tempfile
 
+import dateutil.parser
 import docker
 import path
+import pytz
 
 sys.path.append(path.SERVICE_DIR)
 
@@ -112,3 +115,17 @@ def test_api_v2_put_get_multiple_same_identifier_success(client):
     response = client.get(url)
     assert response.status_code == 200, "Getting the uploaded file succeeds"
     assert response.data == data_2, "Downloaded file matches uploaded file"
+
+
+def test_api_v2_put_get_last_modified(client):
+    url = '/api/v2/abcdefgh'
+    data = os.urandom(307200)
+    response = upload(client, url, data)
+    assert response.status_code == 200, "Upload succeeds"
+    response = client.get(url)
+    assert response.status_code == 200, "Getting the uploaded file succeeds"
+    assert response.data == data, "Downloaded file matches uploaded file"
+    assert 'Last-Modified' in response.headers, "Last-Modified headers returned"
+    last_modified_timestamp = dateutil.parser.parse(response.headers['Last-Modified']).timestamp()
+    current_timestamp = datetime.datetime.utcnow().replace(tzinfo=pytz.utc).timestamp()
+    assert abs(current_timestamp - last_modified_timestamp) < 60, "Last-Modified headers within 60s of now"

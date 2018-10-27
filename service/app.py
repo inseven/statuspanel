@@ -68,8 +68,10 @@ def v2_upload(identifier):
 @check_identifier
 def v2_download(identifier):
     try:
-        response = make_response(get_database().get_data(identifier))
+        data, last_modified = get_database().get_data(identifier)
+        response = make_response(data)
         response.headers.set('Content-Type', 'application/octet-stream')
+        response.last_modified = last_modified
         return response
     except KeyError:
         abort(404)
