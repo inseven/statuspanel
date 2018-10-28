@@ -32,7 +32,7 @@ function getImg(completion)
 
 	http.get("https://statuspanel.io/api/v2/"..deviceId, headers, function(status, response, headers)
 		if status == 304 then
-			addStatus("Last updated: %s", currentLastModified)
+			addStatus("Not modified since: %s", currentLastModified)
 		elseif status == 404 then
 			print("No image on server yet")
 		elseif status ~= 200 then
