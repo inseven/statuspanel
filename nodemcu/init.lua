@@ -14,6 +14,7 @@ if esp32 then
 	Mosi = 18 -- Ditto
 	SpiId = 1 -- HSPI (doesn't place any restriction on pins)
 	StatusLed = 21
+	AutoPin = 14
 else
 	-- See https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/pinouts
 	Busy = 4 -- GPIO 2
@@ -32,6 +33,10 @@ function configurePins()
 		}, {
 			gpio = Busy,
 			dir = gpio.IN
+		}, {
+			gpio = AutoPin,
+			dir = gpio.IN,
+			pull = gpio.PULL_DOWN
 		})
 		-- See https://github.com/nodemcu/nodemcu-firmware/issues/1617 for best documentation of new API
 		local spimaster = spi.master(SpiId, {
@@ -66,6 +71,11 @@ function init()
 			gw = event.gw
 			-- Why is the default allocation limit set to 4KB? Why even is there one?
 			node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
+
+			if gpio.read(AutoPin) == 1 then
+				print("Doing stuff")
+				main()
+			end
 		end)
 		wifi.start()
 		wifi.sta.connect()
