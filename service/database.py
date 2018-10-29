@@ -97,10 +97,10 @@ class Database(object):
             result = cursor.fetchone()
             count = result[0]
             if count:
-                cursor.execute("UPDATE data SET data = %s WHERE id = %s",
+                cursor.execute("UPDATE data SET data = %s, last_modified = current_timestamp WHERE id = %s",
                                (psycopg2.Binary(value), key))
             else:
-                cursor.execute("INSERT INTO data (id, data) VALUES (%s, %s)",
+                cursor.execute("INSERT INTO data (id, data, last_modified) VALUES (%s, %s, current_timestamp)",
                                (key, psycopg2.Binary(value)))
 
     def get_data(self, key):
