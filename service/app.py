@@ -64,12 +64,6 @@ def v2_upload(identifier):
     return jsonify({})
 
 
-@app.after_request
-def add_header(response):
-    response.cache_control.max_age = 0
-    return response
-
-
 @app.route('/api/v2/<identifier>', methods=['GET'])
 @check_identifier
 def v2_download(identifier):
