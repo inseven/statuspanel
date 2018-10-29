@@ -25,7 +25,7 @@ class Transaction(object):
 
 
 def empty_migration(cursor):
-    logging.info("Running empty migration...")
+    pass
 
 
 def create_image_table(cursor):
@@ -36,26 +36,25 @@ def add_modified_date(cursor):
     cursor.execute("ALTER TABLE data ADD COLUMN modified_date date NOT NULL DEFAULT CURRENT_DATE")
 
 
-def change_modified_date_to_timestamp(cursor):
+def rename_modified_date_and_correct_default_value(cursor):
     cursor.execute("ALTER TABLE data DROP COLUMN modified_date")
-    cursor.execute("ALTER TABLE data ADD COLUMN modified_date timestamp NOT NULL DEFAULT CURRENT_DATE")
-
-
-def change_modified_date_to_timestamptz(cursor):
-    cursor.execute("ALTER TABLE data DROP COLUMN modified_date")
-    cursor.execute("ALTER TABLE data ADD COLUMN modified_date timestamptz NOT NULL DEFAULT CURRENT_DATE")
+    cursor.execute("ALTER TABLE data ADD COLUMN last_modified timestamptz NOT NULL DEFAULT current_timestamp")
 
 
 class Database(object):
 
-    SCHEMA_VERSION = 5
+    SCHEMA_VERSION = 9
 
     MIGRATIONS = {
         1: empty_migration,
         2: create_image_table,
         3: add_modified_date,
-        4: change_modified_date_to_timestamp,
-        5: change_modified_date_to_timestamptz,
+        4: empty_migration,
+        5: empty_migration,
+        6: empty_migration,
+        7: empty_migration,
+        8: empty_migration,
+        9: rename_modified_date_and_correct_default_value,
     }
 
     def __init__(self):
@@ -101,12 +100,12 @@ class Database(object):
                 cursor.execute("UPDATE data SET data = %s WHERE id = %s",
                                (psycopg2.Binary(value), key))
             else:
-                cursor.execute("INSERT INTO data (id, data, modified_date) VALUES (%s, %s, current_timestamp)",
+                cursor.execute("INSERT INTO data (id, data) VALUES (%s, %s)",
                                (key, psycopg2.Binary(value)))
 
     def get_data(self, key):
         with Transaction(self.connection) as cursor:
-            cursor.execute("SELECT data, modified_date FROM data WHERE id = %s",
+            cursor.execute("SELECT data, last_modified FROM data WHERE id = %s",
                            (key, ))
             result = cursor.fetchone()
             if result is None:
