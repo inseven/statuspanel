@@ -180,6 +180,11 @@ class TestAPI(unittest.TestCase):
         current_timestamp = datetime.datetime.utcnow().replace(tzinfo=pytz.utc).timestamp()
         self.assertTrue(abs(current_timestamp - last_modified_timestamp) < 60, "Last-Modified headers within 60s of now")
 
+    def test_upload_large_file_fails(self):
+        data = os.urandom((1024 * 1024) + 1)  # A little over 1MB
+        response = self._upload("/api/v2/bigfile1", data)
+        self.assertEqual(response.status_code, 413, "Uploading large files fails")
+
 
 if __name__ == "__main__":
     unittest.main()

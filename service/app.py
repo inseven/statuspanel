@@ -31,6 +31,7 @@ def get_database():
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
 
 
 @app.teardown_appcontext
