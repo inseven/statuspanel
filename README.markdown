@@ -30,20 +30,22 @@ Once your docker container is running, you can run the local service as follows:
 
 ### Tests
 
-Unit tests:
+Local API tests make use of a named docker container (creating and deleting the container where appropriate), and the Flask test client:
 
-    pipenv run python3 -m pytest -v service/tests/full
+    pipenv run python -m unittest discover --verbose --start-directory service/tests
 
-Live smoke tests; these are run against https://staging.statuspanel.io, and should be run before promoting to production:
+Sometimes, it can be quite useful to run individual unit tests. This can be done as follows:
 
-    pipenv run python3 -m pytest -v service/tests/smoke
+    pipenv run python service/tests/test_api.py --verbose TestAPI.test_index
 
-You can run the smoke tests on different environments by selecting the correct `.env` file. For example,
+Tests can also be run on the live environments by selecting the correct `.env` file. In this scenario, the Python `requests` client is used and tests are performed against the live databases.
+
+It is encouraged to run the tests on staging prior to promoting to production.
 
 Staging:
 
-    PIPENV_DOTENV_LOCATION=.env.staging pipenv run python3 -m pytest -v service/tests/smoke
+    PIPENV_DOTENV_LOCATION=.env.staging pipenv run python -m unittest discover --verbose --start-directory service/tests
 
 Production:
 
-    PIPENV_DOTENV_LOCATION=.env.production pipenv run python3 -m pytest -v service/tests/smoke
+    PIPENV_DOTENV_LOCATION=.env.production pipenv run python -m unittest discover --verbose --start-directory service/tests
