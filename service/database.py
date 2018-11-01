@@ -2,6 +2,8 @@ import logging
 import os
 import psycopg2
 
+SECONDS_PER_WEEK = 60 * 60 * 24 * 7
+
 
 class Metadata(object):
     SCHEMA_VERSION = "schema_version"
@@ -111,6 +113,10 @@ class Database(object):
             if result is None:
                 raise KeyError(f"No data for key '{key}'")
             return result[0].tobytes(), result[1]
+
+    def purge_stale_data(self, max_age):
+        with Transaction(self.connection) as cursor:
+            cursor.execute("DELETE FROM data WHERE last_modified < current_timestamp - %s", (max_age, ))
 
     def close(self):
         self.connection.close()
