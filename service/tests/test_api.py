@@ -185,6 +185,21 @@ class TestAPI(unittest.TestCase):
         response = self._upload("/api/v2/bigfile1", data)
         self.assertEqual(response.status_code, 413, "Uploading large files fails")
 
+    def test_if_modified_since_header(self):
+        url = '/api/v2/poiuytre'
+        data = os.urandom(307200)
+        response = self._upload(url, data)
+        self.assertEqual(response.status_code, 200, "Upload succeeds")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, "Download succeeds")
+        last_modified = response.headers['Last-Modified']
+
+        response = self.client.get(url, headers={"If-Modified-Since": "Mon, 01 Jan 2001 00:00:00 GMT"})
+        self.assertEqual(response.status_code, 200, "Downloads data modified after the date provided")
+
+        response = self.client.get(url, headers={'If-Modified-Since': last_modified})
+        self.assertEqual(response.status_code, 304, "Does not download data that has not changed")
+
 
 if __name__ == "__main__":
     unittest.main()
