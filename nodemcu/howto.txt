@@ -32,8 +32,10 @@ vs Arduino:
 Wifi setup:
 > wifi.sta.config({auto = false, ssid = "<yourssid>", pwd = "<password>"}, true)
 
-
 ------
+
+openssl x509 -inform der -outform pem -in "Baltimore CyberTrust Root.cer" -out root.pem
+
 
 TODO:
 
