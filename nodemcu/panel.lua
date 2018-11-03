@@ -48,7 +48,7 @@ local spidevice = spidevice
 local spidevice_transfer = spidevice.transfer
 local ch = string.char
 local print, select = print, select
-local tmr_now = tmr.now or function() return 0 end
+local uptime = node.uptime or tmr.now
 local Busy, Reset, DC, CS, Sck, Mso, SpiId = Busy, Reset, DC, CS, Sck, Mso, SpiId
 
 local sendByte
@@ -161,7 +161,7 @@ function display(getPixelFn, completion)
 	if not getPixelFn then
 		getPixelFn = whiteColourBlack
 	end
-	local t = tmr_now()
+	local t = uptime()
 	cmd(DATA_START_TRANSMISSION_1)
 	local y = 0
 	bytesSent = 0
@@ -173,7 +173,7 @@ function display(getPixelFn, completion)
 			local pixels = bytesSent * 2
 			cmd(DISPLAY_REFRESH)
 			waitUntilIdle(function()
-				local elapsed = (tmr_now() - t) / 1000000
+				local elapsed = (uptime() - t) / 1000000
 				sleep(function()
 					print(string.format("Wrote %d pixels, took %ds", pixels, elapsed))
 					setStatusLed(0)
