@@ -2,11 +2,15 @@
 
 function getImg(completion)
 	local currentLastModified
-	lastModifiedFile = file.open("last_modified", "r")
+	local lastModifiedFile = file.open("last_modified", "r")
 	if lastModifiedFile then
 		currentLastModified = lastModifiedFile:read(32)
 		lastModifiedFile:close()
 	end
+
+	local f = assert(file.open("root.pem", "r"))
+	local cert = f:read(2048)
+	f:close()
 
 	local deviceId = getDeviceId()
 	statusTable = {}
@@ -26,11 +30,14 @@ function getImg(completion)
 		return
 	end
 
-	local headers = {
-		["If-Modified-Since"] = currentLastModified,
+	local options = {
+		cert = cert,
+		headers = {
+			["If-Modified-Since"] = currentLastModified,
+		},
 	}
 
-	http.get("https://statuspanel.io/api/v2/"..deviceId, headers, function(status, response, headers)
+	http.get("https://statuspanel.io/api/v2/"..deviceId, options, function(status, response, headers)
 		if status == 304 then
 			addStatus("Not modified since: %s", currentLastModified)
 		elseif status == 404 then
