@@ -12,73 +12,73 @@ import Foundation
 // TODO Y U NO WORK?
 /*
 class HashWrapper<T:AnyObject> : Hashable {
-	let value: T
-	init(_ obj: T) {
-		value = obj
-	}
-	static func ==(lhs: HashWrapper<T>, rhs: HashWrapper<T>) -> Bool {
-		return lhs.value === rhs.value
-	}
-	var hashValue: Int {
+    let value: T
+    init(_ obj: T) {
+        value = obj
+    }
+    static func ==(lhs: HashWrapper<T>, rhs: HashWrapper<T>) -> Bool {
+        return lhs.value === rhs.value
+    }
+    var hashValue: Int {
         return ObjectIdentifier(value).hashValue
     }
 }
 */
 
 class DataSourceWrapper : Hashable {
-	let value: DataSource
-	init(_ obj: DataSource) {
-		value = obj
-	}
-	static func ==(lhs: DataSourceWrapper, rhs: DataSourceWrapper) -> Bool {
-		return lhs.value === rhs.value
-	}
-	var hashValue: Int {
+    let value: DataSource
+    init(_ obj: DataSource) {
+        value = obj
+    }
+    static func ==(lhs: DataSourceWrapper, rhs: DataSourceWrapper) -> Bool {
+        return lhs.value === rhs.value
+    }
+    var hashValue: Int {
         return ObjectIdentifier(value).hashValue
     }
 }
 
 class DataSourceController {
-	var sources: [DataSource] = []
-	var completionFn: (([DataItem], Bool) -> Void)?
-	// var completed: [HashWrapper<DataSource> : [DataItem]] = [:]
-	var completed: [DataSourceWrapper: [DataItem]] = [:]
+    var sources: [DataSource] = []
+    var completionFn: (([DataItem], Bool) -> Void)?
+    // var completed: [HashWrapper<DataSource> : [DataItem]] = [:]
+    var completed: [DataSourceWrapper: [DataItem]] = [:]
 
-	func add(dataSource: DataSource) {
-		sources.append(dataSource)
-		if fetching() {
-			dataSource.fetchData(onCompletion: gotData)
-		}
-	}
+    func add(dataSource: DataSource) {
+        sources.append(dataSource)
+        if fetching() {
+            dataSource.fetchData(onCompletion: gotData)
+        }
+    }
 
-	func fetching() -> Bool {
-		return completionFn != nil
-	}
+    func fetching() -> Bool {
+        return completionFn != nil
+    }
 
-	func fetchAllData(onCompletion:@escaping ([DataItem], Bool) -> Void) {
-		completionFn = onCompletion
-		for source in sources {
-			source.fetchData(onCompletion: gotData)
-		}
-	}
+    func fetchAllData(onCompletion:@escaping ([DataItem], Bool) -> Void) {
+        completionFn = onCompletion
+        for source in sources {
+            source.fetchData(onCompletion: gotData)
+        }
+    }
 
-	func gotData(source: DataSource, data:[DataItem], error: Error?) {
-		// print(data)
-		// let obj = HashWrapper<DataSource>(source)
-		let obj = DataSourceWrapper(source)
-		completed[obj] = data
-		// TODO something with error
+    func gotData(source: DataSource, data:[DataItem], error: Error?) {
+        // print(data)
+        // let obj = HashWrapper<DataSource>(source)
+        let obj = DataSourceWrapper(source)
+        completed[obj] = data
+        // TODO something with error
 
-		let allCompleted = (completed.count == sources.count)
-		var items = [DataItem]()
-		// We always want the calendar data source header as the first item
-		items.append(CalendarSource.getHeader())
+        let allCompleted = (completed.count == sources.count)
+        var items = [DataItem]()
+        // We always want the calendar data source header as the first item
+        items.append(CalendarSource.getHeader())
 
-		// Use the ordering of sources, not completedItems
-		for source in sources {
-			let completedItems = completed[DataSourceWrapper(source)]
-			items += completedItems ?? []
-		}
-		completionFn?(items, allCompleted)
-	}
+        // Use the ordering of sources, not completedItems
+        for source in sources {
+            let completedItems = completed[DataSourceWrapper(source)]
+            items += completedItems ?? []
+        }
+        completionFn?(items, allCompleted)
+    }
 }
