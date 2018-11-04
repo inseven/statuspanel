@@ -20,15 +20,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         sourceController = appDelegate.sourceController
+        sourceController.delegate = self
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        sourceController.fetchAllData { (data, done) in
-            DispatchQueue.main.async {
-                self.drawTheThings(data: data)
-            }
-        }
+        sourceController.fetch()
     }
 
     func drawTheThings(data: [DataItem]) {
@@ -288,3 +285,10 @@ class ViewController: UIViewController {
     }
 }
 
+extension ViewController: DataSourceControllerDelegate {
+    func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItem]) {
+        DispatchQueue.main.async {
+            self.drawTheThings(data: data)
+        }
+    }
+}
