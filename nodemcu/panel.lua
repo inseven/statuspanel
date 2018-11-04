@@ -251,7 +251,14 @@ function displayImg(completion)
 		-- Not enough RAM for this on esp8266 (try lcross?)
 		statusLineStart = h - require("font").charh
 		local statusText = table.concat(statusTable, " | ")
-		getTextPixel = getTextPixelFn(statusText)
+		local fg = BLACK
+		local bg
+		if statusText:match("^!") then
+			bg = COLOURED
+		else
+			bg = WHITE
+		end
+		getTextPixel = getTextPixelFn(statusText, fg, bg)
 	end
 
 	local function getPixel(x, y)
@@ -269,18 +276,20 @@ function displayImg(completion)
 	end)
 end
 
-function getTextPixelFn(text)
+function getTextPixelFn(text, fg, bg)
 	local font = require("font")
 	local charw, charh = font.charw, font.charh
 	local BLACK, WHITE = BLACK, WHITE
+	if not fg then fg = BLACK end
+	if not bg then bg = WHITE end
 	return function(x, y)
 		if x < 0 or x >= #text * charw or y < 0 or y >= charh then
-			return WHITE
+			return bg
 		end
 		local textPos = 1 + math.floor(x / charw)
 		local char = text:sub(textPos, textPos)
 		local chx = x % charw
-		return font.getPixel(char, chx, y) and BLACK or WHITE
+		return font.getPixel(char, chx, y) and fg or bg
 	end
 end
 

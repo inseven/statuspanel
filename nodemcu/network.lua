@@ -14,6 +14,7 @@ function getImg(completion)
 
 	local deviceId = getDeviceId()
 	statusTable = {}
+	addStatus(getBatteryVoltageStatus())
 	addStatus("Device ID: %s", deviceId)
 	
 	if not gw and wifi.sta.getip then
@@ -23,7 +24,7 @@ function getImg(completion)
 	end
 	if gw then
 		setStatusLed(1)
-		addStatus("IP address = %s", ip)
+		addStatus("IP: %s", ip)
 	else
 		addStatus("No internet connection!")
 		node.task.post(function() completion(nil) end)
