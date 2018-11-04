@@ -39,6 +39,7 @@ class DummyDataSource : DataSource {
             DataItem("Stuff 2"),
             DataItem("Stuff 3"),
             DataItem("Stuff 4"),
+            DataItem("Tomorrow:", flags: [.header]),
             DataItem("Stuff 5"),
             DataItem("Stuff 6"),
             DataItem("Stuff 7"),
