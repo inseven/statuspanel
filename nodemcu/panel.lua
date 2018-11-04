@@ -234,7 +234,7 @@ function dither()
 	end)
 end	 
 
-function displayImg()
+function displayImg(completion)
 	local rle = require("rle")
 	local f = assert(file.open("img_panel_rle", "rb"))
 	local function reader()
@@ -265,6 +265,7 @@ function displayImg()
 
 	display(getPixel, function()
 		f:close()
+		if completion then completion() end
 	end)
 end
 
