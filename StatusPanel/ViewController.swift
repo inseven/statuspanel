@@ -54,9 +54,11 @@ class ViewController: UIViewController {
         let colWidth = rect.width / 2 - x * 2
         let itemGap : CGFloat = 10
         var colStart = y
-        for item in data {
+        var col = 1
+        for (i, item) in data.enumerated() {
             print(item)
-            let w = item.flags.contains(.header) ? rect.width : colWidth
+            let firstItemHeader = i == 0 && item.flags.contains(.header)
+            let w = firstItemHeader ? rect.width : colWidth
             let view = UILabel(frame: CGRect(x: x, y: y, width: w, height: 0))
             view.numberOfLines = 0
             view.lineBreakMode = .byWordWrapping
@@ -64,8 +66,9 @@ class ViewController: UIViewController {
                 // Icons don't render well on the panel, use a coloured background instead
                 view.backgroundColor = UIColor.yellow
             }
+
             let fname = "Amiga Forever"
-            if item.flags.contains(.header) {
+            if firstItemHeader {
                 view.font = UIFont(name: fname, size: 24)
             } else {
                 view.font = UIFont(name: fname, size: 16)
@@ -75,8 +78,9 @@ class ViewController: UIViewController {
             view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: w, height: view.frame.height)
             let sz = view.frame
             // Enough space for this item?
-            if (sz.height > maxy - y) {
+            if (col == 1 && (sz.height > maxy - y || (i != 0 && item.flags.contains(.header)))) {
                 // overflow to 2nd column
+                col += 1
                 x += midx
                 y = colStart
                 view.frame = CGRect(x: x, y: y, width: sz.width, height: sz.height)

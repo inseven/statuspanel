@@ -11,9 +11,17 @@ import EventKit
 
 class CalendarSource : DataSource {
     let eventStore: EKEventStore
+    let dayStart : Date
+    let header : String?
 
-    init() {
+    init(forDayOffset dayOffset: Int = 0, header: String? = nil) {
         eventStore = EKEventStore()
+        let now = Date()
+        let cal = Calendar.current
+        let dayComponents = cal.dateComponents([.year, .month, .day], from: now)
+        let todayStart = cal.date(from: dayComponents)!
+        dayStart = cal.date(byAdding: DateComponents(day: dayOffset), to: todayStart)!
+        self.header = header
     }
     func fetchData(onCompletion: @escaping Callback) {
         eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
@@ -34,13 +42,13 @@ class CalendarSource : DataSource {
         let calendars: [EKCalendar]? = nil // TODO allow controlling of which calendars to check?
         let cal = Calendar.current
         let tz = cal.timeZone
-        let now = Date()
-        let dayComponents = cal.dateComponents([.year, .month, .day], from: now)
-        let dayStart = cal.date(from: dayComponents)!
         let dayEnd = cal.date(byAdding: DateComponents(day: 1, second: -1), to: dayStart)!
         let pred = eventStore.predicateForEvents(withStart: dayStart, end: dayEnd, calendars: calendars)
         let events = eventStore.events(matching: pred)
         var results = [DataItem]()
+        if (header != nil) {
+            results.append(DataItem(self.header!, flags: [.header]))
+        }
         for event in events {
             var timeStr = df.string(from: event.startDate)
             if event.isAllDay {
