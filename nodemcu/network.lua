@@ -70,7 +70,11 @@ function getImg(completion)
 		print("Done!")
 		setStatusLed(0)
 		if completion then
-			node.task.post(function() completion(status) end)
+			-- Super hacky, use the date header as an approximation of the
+			-- current time. Will be off by maybe a minute by the time we come
+			-- to use it, but oh well. Hope there's some proper RTC and tz
+			-- support before DST comes along...
+			node.task.post(function() completion(status, headers.date) end)
 		end
 	end)
 end
@@ -174,11 +178,29 @@ function displayRegisterScreen()
 end
 
 function main()
-	getImg(function(status)
+	getImg(function(status, date)
 		if status == 404 then
 			initp(displayRegisterScreen)
 		else
-			initp(displayImg)
+			initp(function()
+				displayImg(function() sleepFromDate(date) end)
+			end)
 		end
 	end)
+end
+
+function sleepFromDate(date)
+	-- hugely hacky date calculations, just the absolute worst
+	-- Epoch is midnight this morning
+	local h, m, s = date:match("(%d%d):(%d%d):(%d%d)")
+	h, m, s = tonumber(h), tonumber(m), tonumber(s)
+	local secs = (((h * 60) + m) * 60) + s
+
+	local targeth, targetm = 24 + 6, 20 -- ie 6:20am tomorrow
+	-- local targeth, targetm = h, m+3 -- DEBUG
+	local target = ((targeth * 60) + targetm) * 60
+
+	local delta = target - secs
+	print(string.format("Sleeping for %d secs (~%d hours)", delta, delta/(60*60)))
+	node.dsleeps(delta)
 end
