@@ -67,28 +67,28 @@ local charh = 10
 local stride = 48 -- also the width
 
 local function getBit(bitidx)
-	local byte = bits[bit.rshift(bitidx, 3) + 1] -- bits[(bitidx >> 3) + 1]
-	return bit.band(byte, bit.lshift(1, bit.band(bitidx, 7))) ~= 0 -- byte & (1<<(bitidx & 0x7))
+    local byte = bits[bit.rshift(bitidx, 3) + 1] -- bits[(bitidx >> 3) + 1]
+    return bit.band(byte, bit.lshift(1, bit.band(bitidx, 7))) ~= 0 -- byte & (1<<(bitidx & 0x7))
 end
 
 local function getPixel(ch, x, y)
-	ch = string_byte(ch)
-	if ch < 32 or ch >= 0x80 then
-		ch = 0x7F
-	end
-	-- chidx is the index into the image's chars, starting with zero being the
-	-- space character. chx and chy are the starting positions of that char in
-	-- the image.
-	local chidx = ch - 32
-	-- Ugh, if only NodeMCU/eLua would update to Lua 5.3...
-	local chx = bit.band(chidx, 7) * charw
-	local chy = bit.rshift(chidx, 3) * charh
-	local bitidx = (chy + y) * stride + chx + x
-	return getBit(bitidx)
+    ch = string_byte(ch)
+    if ch < 32 or ch >= 0x80 then
+        ch = 0x7F
+    end
+    -- chidx is the index into the image's chars, starting with zero being the
+    -- space character. chx and chy are the starting positions of that char in
+    -- the image.
+    local chidx = ch - 32
+    -- Ugh, if only NodeMCU/eLua would update to Lua 5.3...
+    local chx = bit.band(chidx, 7) * charw
+    local chy = bit.rshift(chidx, 3) * charh
+    local bitidx = (chy + y) * stride + chx + x
+    return getBit(bitidx)
 end
 
 return {
-	getPixel = getPixel,
-	charw = charw,
-	charh = charh,
+   getPixel = getPixel,
+   charw = charw,
+   charh = charh,
 }
