@@ -103,11 +103,15 @@ function getDeviceId()
         return id
     end
     -- Otherwise generate one and save it
-    id = makeDeviceId()
+    setDeviceId(makeDeviceId())
+    return id
+end
+
+function setDeviceId(aId)
+    id = aId
     f = assert(file.open("deviceid", "w"))
     f:write(id)
     f:close()
-    return id
 end
 
 function generateKeyPair()
