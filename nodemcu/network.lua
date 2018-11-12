@@ -38,6 +38,7 @@ function getImg(completion)
         },
     }
 
+    collectgarbage() -- Maximise change of TLS code not crapping itself
     http.get("https://statuspanel.io/api/v2/"..deviceId, options, function(status, response, headers)
         if status == 304 then
             addStatus("Not modified since: %s", currentLastModified)
@@ -46,14 +47,18 @@ function getImg(completion)
         elseif status ~= 200 then
             addStatus("Error %d returned from server", status)
         else
+            local clen = tonumber(headers["content-length"])
+            if clen and clen ~= #response then
+                print("Bad response!")
+            end
             local lastModifiedHeader = headers["last-modified"]
-            addStatus("Last updated: %s", lastModifiedHeader or "?")
+            addStatus("Update fetched: %s", headers.date)
             local pk = getPublicKey()
             local sk = getSecretKey()
             local decrypted = sodium.crypto_box_seal_open(response, pk, sk)
             if decrypted == nil then
                 addStatus("Failed to decrypt image data")
-                print(response)
+                -- print(response)
                 status = nil
             else
                 local f = assert(file.open("img_panel_rle", "w"))
@@ -75,7 +80,7 @@ function getImg(completion)
             -- current time. Will be off by maybe a minute by the time we come
             -- to use it, but oh well. Hope there's some proper RTC and tz
             -- support before DST comes along...
-            node.task.post(function() completion(status, headers.date) end)
+            node.task.post(function() completion(status, headers and headers.date) end)
         end
     end)
 end
@@ -184,9 +189,12 @@ end
 
 function main()
     getImg(function(status, date)
+        if not initp then
+            require "panel"
+        end
         if status == 404 then
             initp(displayRegisterScreen)
-        else
+        elseif status == 200 then
             initp(function()
                 displayImg(function() sleepFromDate(date) end)
             end)
@@ -206,6 +214,6 @@ function sleepFromDate(date)
     local target = ((targeth * 60) + targetm) * 60
 
     local delta = target - secs
-    print(string.format("Sleeping for %d secs (~%d hours)", delta, delta/(60*60)))
+    print(string.format("Sleeping for %d secs (~%d hours)", delta, math.floor(delta / (60*60))))
     node.dsleeps(delta)
 end
