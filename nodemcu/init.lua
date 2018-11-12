@@ -65,6 +65,7 @@ end
 
 function init()
     -- First things first, start bringing up WiFi since getting an IP address takes time
+    local autoMode
     if esp32 then
         wifi.mode(wifi.STATION)
         wifi.sta.on("got_ip", function(name, event)
@@ -74,7 +75,7 @@ function init()
             -- Why is the default allocation limit set to 4KB? Why even is there one?
             node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
 
-            if gpio.read(AutoPin) == 1 then
+            if autoMode then
                 print("Doing stuff")
                 main()
             end
@@ -84,9 +85,14 @@ function init()
     end
 
     configurePins()
+	autoMode = gpio.read(AutoPin) == 1
 
     -- Finally, pull in other modules
-    require "panel"
+    if not autoMode then
+    	-- Require panel now, so as to catch syntax errors early. But in auto mode, don't load it
+    	-- until after we've done the network ops, to save RAM.
+	    require "panel"
+	end
     require "network"
 end
 
