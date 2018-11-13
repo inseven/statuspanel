@@ -242,13 +242,15 @@ function displayImg(completion)
     local headerLen = 0
     local packed = nil
     local header = f:read(2)
+    local wakeTime
     if header == "\255\0" then
         -- FF 00 is not a valid sequence in our RLE scheme
         headerLen = f:read(1):byte()
         -- Having a header always implies packed
         packed = {}
         if headerLen >= 5 then
-            -- TODO read the wake time
+            local wh, wl = f:read(2):byte(1, 2)
+            wakeTime = wh * 256 + wl
         end
     end
     f:seek("set", headerLen)
@@ -299,7 +301,7 @@ function displayImg(completion)
 
     display(getPixel, function()
         f:close()
-        if completion then completion() end
+        if completion then completion(wakeTime) end
     end)
 end
 
