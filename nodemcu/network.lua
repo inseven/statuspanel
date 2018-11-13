@@ -55,7 +55,7 @@ function getImg(completion)
             addStatus("Update fetched: %s", headers.date)
             local pk = getPublicKey()
             local sk = getSecretKey()
-            local decrypted = sodium.crypto_box_seal_open(response, pk, sk)
+            local decrypted = sodium.crypto_box.seal_open(response, pk, sk)
             if decrypted == nil then
                 addStatus("Failed to decrypt image data")
                 -- print(response)
@@ -90,7 +90,7 @@ local idchars = "abcdefghjklmnpqrstuvwxyz23456789"
 function makeDeviceId()
     local t = {}
     for i = 1, 8 do
-        local idx = sodium.randombytes_uniform(#idchars) + 1
+        local idx = sodium.random.uniform(#idchars) + 1
         t[i] = idchars:sub(idx, idx)
     end
     return table.concat(t)
@@ -120,7 +120,7 @@ function setDeviceId(aId)
 end
 
 function generateKeyPair()
-    local pk, sk = sodium.crypto_box_keypair()
+    local pk, sk = sodium.crypto_box.keypair()
     local f = assert(file.open("pk", "w"))
     f:write(pk)
     f:close()
