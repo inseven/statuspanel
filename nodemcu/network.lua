@@ -198,6 +198,8 @@ function main()
             initp(function()
                 displayImg(function() sleepFromDate(date) end)
             end)
+        elseif status == 304 then
+            sleepFromDate(date)
         end
     end)
 end
