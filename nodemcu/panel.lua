@@ -173,7 +173,7 @@ function display(getPixelFn, completion)
             local pixels = bytesSent * 2
             cmd(DISPLAY_REFRESH)
             waitUntilIdle(function()
-                local elapsed = (uptime() - t) / 1000000
+                local elapsed = math.floor((uptime() - t) / 1000000)
                 sleep(function()
                     print(string.format("Wrote %d pixels, took %ds", pixels, elapsed))
                     setStatusLed(0)
@@ -189,7 +189,7 @@ function display(getPixelFn, completion)
         setStatusLed(y % 2)
         if esp32 then
             local line = {}
-            for i = 0, (w / 2) - 1 do
+            for i = 0, math.floor(w / 2) - 1 do
                 local x = i * 2
                 local b = getPixelFn(x, y) * 16 + getPixelFn(x + 1, y)
                 line[i+1] = ch(b)
