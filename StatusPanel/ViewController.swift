@@ -120,7 +120,13 @@ class ViewController: UIViewController {
 
         let rawdata = imgToARGBData(image)
         let panelData = ARGBtoPanel(rawdata)
-        let header = Data([0xFF, 0x00, 0x03])
+        // Header format is as below. Any fields beyond length can be omitted
+        // providing the length is set appropriately.
+        // FF 00 - indicating header present
+        // NN    - Length of header
+        // TT TT - wakeup time
+        let wakeTime = (6 * 60) + 20 // ie 0620 GMT
+        let header = Data([0xFF, 0x00, 0x05, UInt8(wakeTime >> 8), UInt8(wakeTime & 0xFF)])
         let rleData = header + rleEncode(panelData)
 
         // Finally, do something with that image

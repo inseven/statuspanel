@@ -197,7 +197,7 @@ function main()
             initp(displayRegisterScreen)
         elseif status == 200 then
             initp(function()
-                displayImg(function() sleepFromDate(date) end)
+                displayImg(function(wakeTime) sleepFromDate(date, wakeTime) end)
             end)
         elseif status == 304 then
             sleepFromDate(date)
@@ -205,18 +205,20 @@ function main()
     end)
 end
 
-function sleepFromDate(date)
+function sleepFromDate(date, wakeTime)
     -- hugely hacky date calculations, just the absolute worst
     -- Epoch is midnight this morning
     local h, m, s = date:match("(%d%d):(%d%d):(%d%d)")
     h, m, s = tonumber(h), tonumber(m), tonumber(s)
-    local secs = (((h * 60) + m) * 60) + s
+    local now = (((h * 60) + m) * 60) + s
 
-    local targeth, targetm = 24 + 6, 20 -- ie 6:20am tomorrow
-    -- local targeth, targetm = h, m+3 -- DEBUG
-    local target = ((targeth * 60) + targetm) * 60
+    -- wakeTime is in minutes, target is in seconds
+    local target = wakeTime and wakeTime * 60 or (6 * 60 + 20) * 60
+    if target < now then
+        target = target + 24 * 60 * 60
+    end
 
-    local delta = target - secs
+    local delta = target - now
     print(string.format("Sleeping for %d secs (~%d hours)", delta, math.floor(delta / (60*60))))
     node.dsleeps(delta)
 end
