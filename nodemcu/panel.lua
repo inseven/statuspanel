@@ -234,9 +234,24 @@ function dither()
     end)
 end  
 
+local packedToColour = { [0] = BLACK, [1] = COLOURED, [2] = WHITE }
+
 function displayImg(completion)
     local rle = require("rle")
     local f = assert(file.open("img_panel_rle", "rb"))
+    local headerLen = 0
+    local packed = nil
+    local header = f:read(2)
+    if header == "\255\0" then
+        -- FF 00 is not a valid sequence in our RLE scheme
+        headerLen = f:read(1):byte()
+        -- Having a header always implies packed
+        packed = {}
+        if headerLen >= 5 then
+            -- TODO read the wake time
+        end
+    end
+    f:seek("set", headerLen)
     local function reader()
         local ch = f:read(1)
         if ch then
@@ -266,7 +281,19 @@ function displayImg(completion)
             return getTextPixel(x, y - statusLineStart)
         else
             -- getPixel is always called in sequence, so don't need to seek
-            return rle.getByte(ctx)
+            if packed then
+                local b = table.remove(packed, 1)
+                if b == nil then
+                    local packedb = rle.getByte(ctx)
+                    for i = 0, 3 do
+                        packed[i+1] = packedToColour[bit.band(3, bit.rshift(packedb, i * 2))]
+                    end
+                    b = table.remove(packed, 1)
+                end
+                return b
+            else
+                return rle.getByte(ctx)
+            end
         end
     end
 

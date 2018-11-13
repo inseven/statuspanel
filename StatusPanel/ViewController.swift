@@ -120,7 +120,8 @@ class ViewController: UIViewController {
 
         let rawdata = imgToARGBData(image)
         let panelData = ARGBtoPanel(rawdata)
-        let rleData = rleEncode(panelData)
+        let header = Data([0xFF, 0x00, 0x03])
+        let rleData = header + rleEncode(panelData)
 
         // Finally, do something with that image
         do {
@@ -240,16 +241,28 @@ class ViewController: UIViewController {
     }
 
     func ARGBtoPanel(_ data: Data) -> Data {
+        let Black: UInt8 = 0, Colored: UInt8 = 1, White: UInt8 = 2
         var result = Data()
         var i = 0
+        var byte: UInt8 = 0
         while i < data.count {
             let hex = (UInt32(data[i+1]) << 16) + (UInt32(data[i+2]) << 8) + UInt32(data[i+3])
+            var val : UInt8 = 0
             if hex == 0 {
-                result.append(0) // Black
+                val = Black
             } else if hex == 0xFFFF00 || hex == 0xFF0000 {
-                result.append(4) // Colour
+                val = Colored
             } else {
-                result.append(3)
+                val = White
+            }
+            // For pixels A, B, C, D the packed 2bpp layout is:
+            // 76543210
+            // DDCCBBAA
+            let bitshift = ((i >> 2) & 3) * 2
+            byte |= val << bitshift
+            if bitshift == 6 {
+                result.append(byte)
+                byte = 0
             }
             i += 4
         }
@@ -266,7 +279,14 @@ class ViewController: UIViewController {
             } else if len == 1 && current != 255 {
                 result.append(current)
             } else {
-                result.append(contentsOf: [255, len, current])
+                // For a length below 3, the encoding is longer so don't bother
+                if len > 3 || current == 255 {
+                    result.append(contentsOf: [255, len, current])
+                } else {
+                    for _ in 1...len {
+                        result.append(current)
+                    }
+                }
             }
             len = 0
             current = 0
