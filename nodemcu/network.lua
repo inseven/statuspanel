@@ -51,6 +51,7 @@ function getImg(completion)
             if clen and clen ~= #response then
                 print("Bad response!")
             end
+            print(string.format("Got data %d bytes", #response))
             local lastModifiedHeader = headers["last-modified"]
             addStatus("Update fetched: %s", headers.date)
             local pk = getPublicKey()
