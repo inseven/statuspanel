@@ -236,24 +236,32 @@ end
 
 local packedToColour = { [0] = BLACK, [1] = COLOURED, [2] = WHITE }
 
-function displayImg(completion)
-    local rle = require("rle")
-    local f = assert(file.open("img_panel_rle", "rb"))
+function openImg(filename)
+    local f = assert(file.open(filename, "rb"))
     local headerLen = 0
-    local packed = nil
+    local packed = false
     local header = f:read(2)
     local wakeTime
     if header == "\255\0" then
         -- FF 00 is not a valid sequence in our RLE scheme
         headerLen = f:read(1):byte()
         -- Having a header always implies packed
-        packed = {}
+        packed = true
         if headerLen >= 5 then
             local wh, wl = f:read(2):byte(1, 2)
             wakeTime = wh * 256 + wl
         end
     end
     f:seek("set", headerLen)
+    return f, packed, wakeTime
+end
+
+function displayImg(filename, completion)
+    local rle = require("rle")
+    local f, packed, wakeTime = openImg(filename)
+    if packed then
+        packed = {}
+    end
     local function reader()
         local ch = f:read(1)
         if ch then
