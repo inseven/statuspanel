@@ -1,0 +1,32 @@
+//
+//  Config.swift
+//  StatusPanel
+//
+//  Created by Tom Sutcliffe on 20/11/2018.
+//  Copyright © 2018 Tom Sutcliffe. All rights reserved.
+//
+
+import Foundation
+
+class Config {
+
+    // The desired panel wake time, as a number of seconds since midnight (floating time)
+    static func getWakeTime() -> TimeInterval {
+        let result = UserDefaults.standard.value(forKey: "wakeTime")
+        if result == nil {
+            return (6 * 60 + 20) * 60
+        } else {
+            return result as! TimeInterval
+        }
+    }
+
+    // The wake time relative to start of day GMT. If waketime is 6*60*60 then this returns the offset from midnight GMT to 0600 local time. It is always positive.
+    static func getLocalWakeTime() -> TimeInterval {
+        var result = getWakeTime() - TimeInterval(TimeZone.current.secondsFromGMT())
+        if result < 0 {
+            result += 24 * 60 * 60
+        }
+        // print("Local wake time = \(result)")
+        return result
+    }
+}
