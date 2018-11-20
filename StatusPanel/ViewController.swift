@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet var scrollView: UIScrollView?
     var contentView: UIView?
     var sourceController: DataSourceController!
+    var prevItems: [DataItem] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,6 +109,15 @@ class ViewController: UIViewController {
         context.drawPath(using: .stroke)
         context.setStrokeColor(UIColor.lightGray.cgColor)
         context.stroke(rect, width: 1)
+
+        //DEBUG
+        //for i in stride(from: 0, to: rect.size.width, by: 30) {
+        //    context.setStrokeColor(UIColor.yellow.cgColor)
+        //    context.beginPath()
+        //    context.move(to: CGPoint(x:i, y:0))
+        //    context.addLine(to: CGPoint(x:i, y:rect.size.height - 1))
+        //    context.drawPath(using: .stroke)
+        //}
 
         let img = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -316,10 +326,17 @@ class ViewController: UIViewController {
 
 extension ViewController: DataSourceControllerDelegate {
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItem]) {
+
+        let changes = (prevItems != data)
+        print("Update: changes = \(changes)")
+        prevItems = data
+
         DispatchQueue.main.async {
-            self.drawTheThings(data: data)
+            if changes {
+                self.drawTheThings(data: data)
+            }
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            appDelegate.fetchCompleted()
+            appDelegate.fetchCompleted(hasChanged: changes)
         }
     }
 }
