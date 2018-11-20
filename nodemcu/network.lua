@@ -197,10 +197,13 @@ function main()
             initp(displayRegisterScreen)
         elseif status == 200 then
             initp(function()
-                displayImg(function(wakeTime) sleepFromDate(date, wakeTime) end)
+                displayImg("img_panel_rle", function(wakeTime) sleepFromDate(date, wakeTime) end)
             end)
         elseif status == 304 then
-            sleepFromDate(date)
+            -- Need to grab waketime from existing img
+            local f, packed, wakeTime = openImg("img_panel_rle")
+            f:close()
+            sleepFromDate(date, wakeTime)
         end
     end)
 end
@@ -208,6 +211,7 @@ end
 function sleepFromDate(date, wakeTime)
     -- hugely hacky date calculations, just the absolute worst
     -- Epoch is midnight this morning
+    -- print(date, wakeTime)
     local h, m, s = date:match("(%d%d):(%d%d):(%d%d)")
     h, m, s = tonumber(h), tonumber(m), tonumber(s)
     local now = (((h * 60) + m) * 60) + s
