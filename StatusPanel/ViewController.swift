@@ -25,7 +25,6 @@ class ViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        sourceController.fetch()
     }
 
     func drawTheThings(data: [DataItem]) {
@@ -56,7 +55,7 @@ class ViewController: UIViewController {
         var colStart = y
         var col = 1
         for (i, item) in data.enumerated() {
-            print(item)
+            // print(item)
             let firstItemHeader = i == 0 && item.flags.contains(.header)
             let w = firstItemHeader ? rect.width : colWidth
             let view = UILabel(frame: CGRect(x: x, y: y, width: w, height: 0))
@@ -197,7 +196,7 @@ class ViewController: UIViewController {
 
         request.httpBody = body
         let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-            print(response ?? "")
+            // print(response ?? "")
             print(error ?? "")
         })
         task.resume()
@@ -319,6 +318,8 @@ extension ViewController: DataSourceControllerDelegate {
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItem]) {
         DispatchQueue.main.async {
             self.drawTheThings(data: data)
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            appDelegate.fetchCompleted()
         }
     }
 }
