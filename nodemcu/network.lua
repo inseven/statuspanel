@@ -165,7 +165,7 @@ function displayRegisterScreen()
     local font = require("font")
     local url = getQRCodeURL()
     local urlWidth = #url * font.charw
-    local data = qrcodegen.encodeText(url, 1, 5)
+    local data = qrcodegen.encodeText(url, {minver = 1, maxver = 5})
     local sz = qrcodegen.getSize(data)
     local scale = 8
     local startx = math.floor((w - sz * scale) / 2)
