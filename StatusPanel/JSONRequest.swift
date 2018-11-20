@@ -10,7 +10,7 @@ import Foundation
 
 class JSONRequest {
 
-    static func makeRequest<T>(url: URL, session: URLSession? = nil, onCompletion: @escaping (T?, Error?) -> Void) where T : Decodable {
+    static func makeRequest<T>(url: URL, session: URLSession? = nil, onCompletion: @escaping (T?, Error?) -> Void) -> URLSessionDataTask where T : Decodable {
         let session = session ?? URLSession.shared
         let task = session.dataTask(with: url) { (data: Data?, response: URLResponse?, err: Error?) in
             if let err = err {
@@ -36,6 +36,7 @@ class JSONRequest {
             }
         }
         task.resume()
+        return task
     }
 }
 

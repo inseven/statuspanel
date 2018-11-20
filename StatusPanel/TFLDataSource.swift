@@ -16,18 +16,19 @@ class TFLDataSource : DataSource {
     var linesOfInterest = ["northern" /*, "central"*/]
     var dataItems = [DataItem]()
     var completion: DataSource.Callback?
+    var task: URLSessionTask?
 
-
-    func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) where T : Decodable {
+    func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) -> URLSessionTask where T : Decodable {
         let sep = what.contains("?") ? "&" : "?"
         let url = URL(string: "https://api.tfl.gov.uk/" + what + sep + "app_id=\(app_id)&app_key=\(app_key)")!
-        JSONRequest.makeRequest(url: url, onCompletion: onCompletion)
+        return JSONRequest.makeRequest(url: url, onCompletion: onCompletion)
     }
 
     func fetchData(onCompletion: @escaping Callback) {
+        task?.cancel()
         completion = onCompletion
         let lines = linesOfInterest.joined(separator: ",")
-        get("Line/\(lines)/Status?detail=false", onCompletion: gotLineData)
+        task = get("Line/\(lines)/Status?detail=false", onCompletion: gotLineData)
     }
 
     struct LineStatus: Decodable {
@@ -41,6 +42,7 @@ class TFLDataSource : DataSource {
     }
 
     func gotLineData(data: [LineStatus]?, err: Error?) {
+        task = nil
         dataItems = []
         for line in data ?? [] {
             if line.lineStatuses.count < 1 {
