@@ -18,16 +18,18 @@ class NationalRailDataSource : DataSource {
 
     var dataItems = [DataItem]()
     var completion: DataSource.Callback?
+    var task: URLSessionTask?
 
-    func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) where T : Decodable {
+    func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) -> URLSessionTask where T : Decodable {
         let sep = what.contains("?") ? "&" : "?"
         let url = URL(string: "https://huxley.apphb.com/" + what + sep + "accessToken=\(token)")!
-        JSONRequest.makeRequest(url: url, onCompletion: onCompletion)
+        return JSONRequest.makeRequest(url: url, onCompletion: onCompletion)
     }
 
     func fetchData(onCompletion: @escaping Callback) {
+        task?.cancel()
         completion = onCompletion
-        get("delays/KGX/to/\(targetCrs)/10", onCompletion: gotDelays)
+        task = get("delays/KGX/to/\(targetCrs)/10", onCompletion: gotDelays)
     }
 
     struct Delays: Decodable {
