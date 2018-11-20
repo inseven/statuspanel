@@ -12,6 +12,8 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
+
     var sourceController = DataSourceController()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -20,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sourceController.add(dataSource:CalendarSource())
         sourceController.add(dataSource:CalendarSource(forDayOffset: 1, header: "Tomorrow:"))
 //        sourceController.add(dataSource: DummyDataSource())
+        updateFetchInterval()
         return true
     }
 
@@ -66,5 +69,49 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ud.set(map["pk"], forKey: "publickey")
 
         return true
+    }
+
+    func getTimeUntilPanelWakeup() -> TimeInterval {
+        let now = Date()
+        let cal = Calendar.current
+        let dayComponents = cal.dateComponents([.year, .month, .day], from: now)
+        let todayStart = cal.date(from: dayComponents)!
+        let nowSinceMidnight = now.timeIntervalSince(todayStart) // always positive
+        let wakeTime = Config.getWakeTime()
+        let nextWake = wakeTime < nowSinceMidnight ? wakeTime + 86400 : wakeTime
+        return nextWake - nowSinceMidnight
+    }
+
+    func updateFetchInterval() {
+        let timeLeft = getTimeUntilPanelWakeup()
+        let app = UIApplication.shared
+        if timeLeft < 60 * 60 {
+            // Less than an hour to go, ask for wakeup every 15 mins
+            app.setMinimumBackgroundFetchInterval(15 * 60)
+        } else {
+            // Otherwise every hour
+            app.setMinimumBackgroundFetchInterval(60 * 60)
+        }
+    }
+
+    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("Background fetch requested")
+        let timeLeft = getTimeUntilPanelWakeup()
+        if timeLeft < 60 * 60 {
+            backgroundFetchCompletionFn = completionHandler
+            sourceController.fetch()
+        } else {
+            completionHandler(.noData)
+            updateFetchInterval()
+        }
+    }
+
+    func fetchCompleted() {
+        if let fn = backgroundFetchCompletionFn {
+            print("Background fetch completed")
+            fn(.newData)
+            backgroundFetchCompletionFn = nil
+            updateFetchInterval()
+        }
     }
 }
