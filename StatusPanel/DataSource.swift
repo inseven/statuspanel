@@ -18,10 +18,10 @@ enum DataItemFlag {
     case header
 }
 
-struct DataItem {
+struct DataItem : Equatable {
     init(_ text: String, flags: Set<DataItemFlag> = Set()) {
-    self.text = text
-    self.flags = flags
+        self.text = text
+        self.flags = flags
     }
     let text: String
     let flags: Set<DataItemFlag>
