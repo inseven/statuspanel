@@ -278,23 +278,24 @@ function displayImg(completion)
         getTextPixel = getTextPixelFn(statusText, fg, bg)
     end
 
+    local table_remove, rle_getByte, band, rshift = table.remove, rle.getByte, bit.band, bit.rshift
     local function getPixel(x, y)
         if statusLineStart and y >= statusLineStart then
             return getTextPixel(x, y - statusLineStart)
         else
             -- getPixel is always called in sequence, so don't need to seek
             if packed then
-                local b = table.remove(packed, 1)
+                local b = table_remove(packed, 1)
                 if b == nil then
-                    local packedb = rle.getByte(ctx)
+                    local packedb = rle_getByte(ctx)
                     for i = 0, 3 do
-                        packed[i+1] = packedToColour[bit.band(3, bit.rshift(packedb, i * 2))]
+                        packed[i+1] = packedToColour[band(3, rshift(packedb, i * 2))]
                     end
-                    b = table.remove(packed, 1)
+                    b = table_remove(packed, 1)
                 end
                 return b
             else
-                return rle.getByte(ctx)
+                return rle_getByte(ctx)
             end
         end
     end
