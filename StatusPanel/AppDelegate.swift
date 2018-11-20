@@ -83,8 +83,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func updateFetchInterval() {
-        let timeLeft = getTimeUntilPanelWakeup()
         let app = UIApplication.shared
+        let timeLeft = getTimeUntilPanelWakeup()
         if timeLeft < 60 * 60 {
             // Less than an hour to go, ask for wakeup every 15 mins
             app.setMinimumBackgroundFetchInterval(15 * 60)
@@ -96,20 +96,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("Background fetch requested")
-        let timeLeft = getTimeUntilPanelWakeup()
-        if timeLeft < 60 * 60 {
-            backgroundFetchCompletionFn = completionHandler
-            sourceController.fetch()
-        } else {
-            completionHandler(.noData)
-            updateFetchInterval()
-        }
+        backgroundFetchCompletionFn = completionHandler
+        sourceController.fetch()
     }
 
-    func fetchCompleted() {
+    func fetchCompleted(hasChanged: Bool) {
         if let fn = backgroundFetchCompletionFn {
             print("Background fetch completed")
-            fn(.newData)
+            fn(hasChanged ? .newData : .noData)
             backgroundFetchCompletionFn = nil
             updateFetchInterval()
         }
