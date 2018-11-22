@@ -28,7 +28,7 @@ class ViewController: UIViewController {
         super.viewDidAppear(animated)
     }
 
-    func drawTheThings(data: [DataItem]) {
+    func renderAndUpload(data: [DataItem], completion: @escaping () -> Void) {
         // Set up contentView and scrollView
         if (self.contentView == nil) {
             self.contentView = UIView(frame: CGRect(x: 0, y: 0, width: 640, height: 384))
@@ -147,7 +147,7 @@ class ViewController: UIViewController {
             try rawdata.write(to: dir.appendingPathComponent("img.raw"))
             try panelData.write(to: dir.appendingPathComponent("img_panel"))
             try rleData.write(to: dir.appendingPathComponent("img_panel_rle"))
-            uploadData(rleData)
+            uploadData(rleData, completion: completion)
         } catch {
             print("meh")
         }
@@ -156,22 +156,22 @@ class ViewController: UIViewController {
         scrollView?.addSubview(imgview)
     }
 
-    // TODO: Completion block
-    func uploadData(_ data: Data) {
-        let ud = UserDefaults.standard
-        guard let deviceid = ud.value(forKey: "deviceid"),
-              let publickey : String = ud.value(forKey: "publickey") as? String else {
+    func uploadData(_ data: Data, completion: @escaping () -> Void) {
+        guard let (deviceid, publickey) = Config.getDeviceAndKey() else {
             print("Keys not configured yet, not uploading")
+            completion()
             return
         }
         let sodium = Sodium()
         guard let key = sodium.utils.base642bin(publickey, variant: .ORIGINAL) else {
             print("Failed to decode key from publickey userdefault!")
+            completion()
             return
         }
         let encryptedDataBytes = sodium.box.seal(message: Array(data), recipientPublicKey: key)
         if encryptedDataBytes == nil {
             print("Failed to seal box")
+            completion()
             return
         }
         let encryptedData = Data(encryptedDataBytes!)
@@ -179,6 +179,7 @@ class ViewController: UIViewController {
         let path = "https://statuspanel.io/api/v2/\(deviceid)"
         guard let url = URL(string: path) else {
             print("Unable to create URL")
+            completion()
             return
         }
 
@@ -208,9 +209,9 @@ class ViewController: UIViewController {
         let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
             // print(response ?? "")
             print(error ?? "")
+            completion()
         })
         task.resume()
-
     }
 
     func imgToARGBData(_ image:UIImage) -> Data {
@@ -331,12 +332,13 @@ extension ViewController: DataSourceControllerDelegate {
         print("Update: changes = \(changes)")
         prevItems = data
 
-        DispatchQueue.main.async {
-            if changes {
-                self.drawTheThings(data: data)
-            }
-            let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            appDelegate.fetchCompleted(hasChanged: changes)
+        if changes {
+            self.renderAndUpload(data: data, completion: {
+                DispatchQueue.main.async {
+                    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                    appDelegate.fetchCompleted(hasChanged: changes)
+                }
+            })
         }
     }
 }
