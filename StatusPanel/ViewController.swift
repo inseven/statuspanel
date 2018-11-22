@@ -99,7 +99,8 @@ class ViewController: UIViewController {
         context.setShouldSubpixelQuantizeFonts(false)
         context.interpolationQuality = .none
 
-        contentView.drawHierarchy(in: rect, afterScreenUpdates: true)
+        // layer.render() works when the device is locked, whereas drawHierarchy() doesn't
+        contentView.layer.render(in: context)
 
         // Draw some other UI furniture
         context.setStrokeColor(UIColor.black.cgColor)
