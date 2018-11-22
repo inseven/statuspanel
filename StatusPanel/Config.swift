@@ -29,4 +29,15 @@ class Config {
         // print("Local wake time = \(result)")
         return result
     }
+
+    static func getDeviceAndKey() -> (String, String)? {
+        let ud = UserDefaults.standard
+        let deviceid = ud.string(forKey: "deviceid")
+        let publickey = ud.string(forKey: "publickey")
+        if deviceid == nil || publickey == nil {
+            return nil
+        } else {
+            return (deviceid!, publickey!)
+        }
+    }
 }
