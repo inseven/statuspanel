@@ -46,6 +46,7 @@ class NationalRailDataSource : DataSource {
     }
 
     func gotDelays(data: Delays?, err: Error?) {
+        task = nil
         dataItems = []
         guard let data = data else {
             completion?(self, dataItems, err)

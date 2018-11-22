@@ -36,7 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        sourceController.fetch()
+        if sourceController.delegate != nil {
+            sourceController.fetch()
+        }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

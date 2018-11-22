@@ -26,6 +26,7 @@ class HashWrapper<T:AnyObject> : Hashable {
 */
 
 protocol DataSourceControllerDelegate: class {
+    // Always called in context of main thread
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItem])
 }
 
@@ -48,12 +49,14 @@ class DataSourceController {
     var completionFn: (([DataItem], Bool) -> Void)?
     // var completed: [HashWrapper<DataSource> : [DataItem]] = [:]
     var completed: [DataSourceWrapper: [DataItem]] = [:]
+    var lock = NSLock()
 
     func add(dataSource: DataSource) {
         sources.append(dataSource)
     }
 
     func fetch() {
+        print("Fetching")
         completed.removeAll()
         for source in sources {
             source.fetchData(onCompletion: gotData)
@@ -61,9 +64,9 @@ class DataSourceController {
     }
 
     func gotData(source: DataSource, data:[DataItem], error: Error?) {
-        // print(data)
         // let obj = HashWrapper<DataSource>(source)
         let obj = DataSourceWrapper(source)
+        lock.lock()
         completed[obj] = data
         // TODO something with error
 
@@ -77,8 +80,12 @@ class DataSourceController {
             let completedItems = completed[DataSourceWrapper(source)]
             items += completedItems ?? []
         }
+        lock.unlock()
+
         if (allCompleted) {
-            delegate?.dataSourceController(self, didUpdateData: items)
+            DispatchQueue.main.async {
+                self.delegate?.dataSourceController(self, didUpdateData: items)
+            }
         }
     }
 }
