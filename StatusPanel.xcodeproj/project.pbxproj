@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB51C2E221749A2A00F016DB /* JSONRequest.swift */; };
 		DBB2D35D217CA677009F7549 /* Sodium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2D35C217CA677009F7549 /* Sodium.framework */; };
 		DBB2D35E217CA677009F7549 /* Sodium.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2D35C217CA677009F7549 /* Sodium.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -23,6 +24,44 @@
 		DBF15EFF215C1134006B0A58 /* amiga4ever.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D85E118D2196BAC300E535D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 09A943C71A4EB5F500C8A04F;
+			remoteInfo = Sodium_iOS;
+		};
+		D85E118F2196BAC300E535D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 09A943D21A4EB5F500C8A04F;
+			remoteInfo = SodiumTests;
+		};
+		D85E11912196BAC300E535D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 90C75E941AE3571900F1E749;
+			remoteInfo = Sodium_OSX;
+		};
+		D85E11932196BAC300E535D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 901644B61AE36EA700163E3E;
+			remoteInfo = "Example iOS";
+		};
+		D85E11952196BAC300E535D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 901644DC1AE36F2D00163E3E;
+			remoteInfo = "Example OSX";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		DBB2D35B217CA122009F7549 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -38,6 +77,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D85E11852196BAC300E535D3 /* Sodium.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sodium.xcodeproj; path = "swift-sodium/Sodium.xcodeproj"; sourceTree = "<group>"; };
+		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		DB51C2E221749A2A00F016DB /* JSONRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRequest.swift; sourceTree = "<group>"; };
 		DBB2D35C217CA677009F7549 /* Sodium.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Sodium.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,6 +108,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D85E11862196BAC300E535D3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D85E118E2196BAC300E535D3 /* Sodium.framework */,
+				D85E11902196BAC300E535D3 /* SodiumTests.xctest */,
+				D85E11922196BAC300E535D3 /* Sodium.framework */,
+				D85E11942196BAC300E535D3 /* Example iOS.app */,
+				D85E11962196BAC300E535D3 /* Example OSX.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		DBB2D354217C9AC3009F7549 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -77,6 +130,7 @@
 		DBCA98702143E2920084B710 = {
 			isa = PBXGroup;
 			children = (
+				D85E11852196BAC300E535D3 /* Sodium.xcodeproj */,
 				DBCA987B2143E2920084B710 /* StatusPanel */,
 				DBCA987A2143E2920084B710 /* Products */,
 				DBB2D354217C9AC3009F7549 /* Frameworks */,
@@ -95,6 +149,7 @@
 		DBCA987B2143E2920084B710 /* StatusPanel */ = {
 			isa = PBXGroup;
 			children = (
+				D89CAF1021ABDDA200B4B314 /* Config.swift */,
 				DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */,
 				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
 				DBCA987E2143E2920084B710 /* ViewController.swift */,
@@ -160,12 +215,56 @@
 			mainGroup = DBCA98702143E2920084B710;
 			productRefGroup = DBCA987A2143E2920084B710 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = D85E11862196BAC300E535D3 /* Products */;
+					ProjectRef = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				DBCA98782143E2920084B710 /* StatusPanel */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		D85E118E2196BAC300E535D3 /* Sodium.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Sodium.framework;
+			remoteRef = D85E118D2196BAC300E535D3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D85E11902196BAC300E535D3 /* SodiumTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SodiumTests.xctest;
+			remoteRef = D85E118F2196BAC300E535D3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D85E11922196BAC300E535D3 /* Sodium.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Sodium.framework;
+			remoteRef = D85E11912196BAC300E535D3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D85E11942196BAC300E535D3 /* Example iOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Example iOS.app";
+			remoteRef = D85E11932196BAC300E535D3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D85E11962196BAC300E535D3 /* Example OSX.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Example OSX.app";
+			remoteRef = D85E11952196BAC300E535D3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DBCA98772143E2920084B710 /* Resources */ = {
@@ -188,6 +287,7 @@
 			files = (
 				DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
+				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
 				DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
