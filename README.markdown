@@ -48,8 +48,6 @@ brew install pipenv
 pipenv install
 ```
 
-N.B. Local instances are configured to use the staging Postgres instance. Ultimately, this should use a local Postgres instance, but in the short-term, it allows development.
-
 ### Running Locally
 
 When running the service locally using the `heroku local` command, it uses the environment variables configured in `.env`. These are currently configured to use a local Postgres instance.
