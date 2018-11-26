@@ -91,11 +91,17 @@ It is encouraged to run the tests on staging prior to promoting to production.
 Staging:
 
 ```bash
-PIPENV_DOTENV_LOCATION=.env.staging pipenv run python -m unittest discover --verbose --start-directory service/tests
+PIPENV_DOTENV_LOCATION=.env.staging pipenv run \
+    python -m unittest discover \
+    --verbose \
+    --start-directory service/tests
 ```
 
 Production:
 
 ```bash
-PIPENV_DOTENV_LOCATION=.env.production pipenv run python -m unittest discover --verbose --start-directory service/tests
+PIPENV_DOTENV_LOCATION=.env.production pipenv run \
+    python -m unittest discover \
+    --verbose \
+    --start-directory service/tests
 ```
