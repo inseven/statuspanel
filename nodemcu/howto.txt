@@ -25,7 +25,7 @@ python3 nodemcu-uploader/nodemcu-uploader.py \
     --port /dev/tty.SLAB_USBtoUART \
     --baud 9600 \
     --start_baud 115200 \
-    upload init.lua
+    upload init.lua panel.lua network.lua rle.lua font.lua root.pem
 
 make menuconfig
 make MORE_CFLAGS="-DLUA_NUMBER_INTEGRAL"
