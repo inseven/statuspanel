@@ -1,5 +1,17 @@
 # StatusPanel
 
+## Getting Started
+
+StatusPanel uses [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so before doing anything else, you'll need to do:
+
+```bash
+git submodule update --init
+```
+
+You'll also need to run this command if the submodules change.
+
+## Components
+
 StatusPanel comprises a number of different components:
 
 - Device
