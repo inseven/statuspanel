@@ -57,7 +57,11 @@ When running the service locally using the `heroku local` command, it uses the e
 You can use the following command to create a suitably configured docker container for testing:
 
 ```bash
-docker run --name some-postgres -p 5432:5432 -e POSTGRES_PASSWORD=0EFDA2E7-9700-4F06-ADCB-55D8E38A37DF -d postgres
+docker run \
+    --name some-postgres \
+    -p 5432:5432 \
+    -e POSTGRES_PASSWORD=0EFDA2E7-9700-4F06-ADCB-55D8E38A37DF \
+    -d postgres
 ```
 
 Once your docker container is running, you can run the local service as follows:
