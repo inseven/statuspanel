@@ -20,6 +20,17 @@ StatusPanel comprises a number of different components:
 
 ## Device
 
+Once you've flashed the latest firmware, you'll need to configure Wi-Fi from the serial console as follows, substituting your network name and password:
+
+```lua
+wifi.sta.config({auto = false, ssid = "network name", pwd = "password"}, true)
+```
+
+The firmware will automatically start if GPIO 14 is held high. This can be done by shorting it to the 3.3V pin. For debugging purposes, you may wish to leave it low and execute the code directly from the serial console:
+
+```lua
+main()
+```
 
 ## Service
 
