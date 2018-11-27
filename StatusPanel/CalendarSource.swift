@@ -75,9 +75,9 @@ class CalendarSource : DataSource {
                 df.timeZone = tz
                 let tzStr = timeZoneFormatter.string(from: event.startDate)
                 timeStr = "\(timeStr) (\(eventLocalTime) \(tzStr))"
-                results.append(DataItem("\(timeStr): \(event.title!)"))
+                results.append(DataItem("\(timeStr) \(event.title!)"))
             } else {
-                results.append(DataItem("\(timeStr): \(event.title!)"))
+                results.append(DataItem("\(timeStr) \(event.title!)"))
             }
         }
         callback(self, results, nil)
