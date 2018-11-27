@@ -50,6 +50,20 @@ class CalendarSource : DataSource {
             results.append(DataItem(self.header!, flags: [.header]))
         }
         for event in events {
+
+            // We want to make sure that we only include calendar types that we support.
+            // Unfortunately, it seems like we get calendar types back that we don't yet have
+            // symbols for (e.g., suggestions), so we guard against ensuring we receive types
+            // we DO understand instead.
+            let type = event.calendar.type
+            if (type != .birthday &&
+                type != .calDAV &&
+                type != .exchange &&
+                type != .local &&
+                type != .subscription) {
+                continue
+            }
+
             var timeStr = df.string(from: event.startDate)
             if event.isAllDay {
                 results.append(DataItem("\(event.title!)"))
