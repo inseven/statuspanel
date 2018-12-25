@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="25" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="5" altunitdist="mil" altunit="mil"/>
+<grid distance="50" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="5" altunitdist="mil" altunit="mil"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="16" fill="1" visible="no" active="no"/>
@@ -157,6 +157,9 @@
 <text x="24.765" y="44.45" size="1.27" layer="25" rot="R90">HUZZAH32</text>
 <hole x="20.32" y="5.715" drill="2.54"/>
 <hole x="2.54" y="5.715" drill="2.54"/>
+<text x="55.88" y="40.64" size="1.778" layer="25" rot="R90">StatusPanel v0.1</text>
+<hole x="53.975" y="62.23" drill="2.54"/>
+<hole x="53.34" y="3.81" drill="2.54"/>
 </plain>
 <libraries>
 <library name="con-lstb" urn="urn:adsk.eagle:library:162">
