@@ -32,6 +32,10 @@ The firmware will automatically start if GPIO 14 is held high. This can be done 
 main()
 ```
 
+### PCB
+
+![](images/pinout.jpg)
+
 ## Service
 
 ### Heroku
