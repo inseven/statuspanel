@@ -34,6 +34,44 @@ class CalendarSource : DataSource {
         }
     }
 
+    // Interim solution to clean up the layout of time + title.
+    // Ultimately, we would want to replace this with a UIView-based model where we can rely on
+    // constraints-based layout to do everything correctly for us.
+    // This is clearly a hack, but as long as we're using English, we'll probably get away with it.
+    static func formatEvent(time: String?, title: String) -> DataItem {
+        guard let time = time else {
+            return DataItem(title)
+        }
+
+        // We know that we have a full-width of 18 characters to play with.
+        // We should therefore remove the width of the time string with padding (presumably 6 characters)
+        // and then wrap the remaining text with this.
+        let maximumWidth = 18
+        let timeWidth = time.count + 1
+        var components = title.split(separator: " ")
+
+        var inset = "\(time) "
+        var result = ""
+        var line = ""
+        while components.count > 0 {
+            line.append(inset)
+            repeat {
+                line.append(contentsOf: components.remove(at: 0))
+                if (components.count > 0) {
+                    line.append(" ")
+                }
+            } while (components.count > 0 && (line.count + components[0].count + 1) <= maximumWidth)
+            if (components.count > 0) {
+                line.append("\n")
+            }
+            result.append(line)
+            line = ""
+            inset = String(repeating: " ", count: timeWidth)
+        }
+
+        return DataItem(result)
+    }
+
     func getData(callback: Callback) {
         let df = DateFormatter()
         df.timeStyle = DateFormatter.Style.short
@@ -66,7 +104,7 @@ class CalendarSource : DataSource {
 
             var timeStr = df.string(from: event.startDate)
             if event.isAllDay {
-                results.append(DataItem("\(event.title!)"))
+                results.append(CalendarSource.formatEvent(time: nil, title: event.title!))
             } else if event.timeZone != nil && event.timeZone != tz {
                 // a nil timezone means floating time
                 df.timeZone = event.timeZone
@@ -75,9 +113,9 @@ class CalendarSource : DataSource {
                 df.timeZone = tz
                 let tzStr = timeZoneFormatter.string(from: event.startDate)
                 timeStr = "\(timeStr) (\(eventLocalTime) \(tzStr))"
-                results.append(DataItem("\(timeStr) \(event.title!)"))
+                results.append(CalendarSource.formatEvent(time: timeStr, title: event.title!))
             } else {
-                results.append(DataItem("\(timeStr) \(event.title!)"))
+                results.append(CalendarSource.formatEvent(time: timeStr, title: event.title!))
             }
         }
         callback(self, results, nil)
