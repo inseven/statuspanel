@@ -40,6 +40,7 @@ class CalendarViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let calendar = calendars[indexPath.row]
         cell.textLabel?.text = calendar.title
+        cell.textLabel?.textColor = UIColor(cgColor: calendar.cgColor)
         if activeCalendars.contains(calendar.calendarIdentifier) {
             cell.accessoryType = .checkmark
         } else {
