@@ -62,7 +62,7 @@
             </objects>
             <point key="canvasLocation" x="2132" y="-359"/>
         </scene>
-        <!--Settings View Controller-->
+        <!--Settings-->
         <scene sceneID="tZH-Ox-btD">
             <objects>
                 <viewController id="4AV-Mn-wPE" customClass="SettingsViewController" customModule="StatusPanel" customModuleProvider="target" sceneMemberID="viewController">
@@ -86,7 +86,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="WcX-Bk-NtV"/>
                     </view>
-                    <navigationItem key="navigationItem" id="3W3-zs-Yxb">
+                    <navigationItem key="navigationItem" title="Settings" id="3W3-zs-Yxb">
                         <barButtonItem key="rightBarButtonItem" title="Done" id="599-Xu-Zdy">
                             <connections>
                                 <action selector="cancelTapped:" destination="4AV-Mn-wPE" id="8vv-jW-YEX"/>
@@ -101,7 +101,7 @@
             </objects>
             <point key="canvasLocation" x="3001" y="-359"/>
         </scene>
-        <!--Calendar View Controller-->
+        <!--Calendars-->
         <scene sceneID="3G6-lz-4ro">
             <objects>
                 <tableViewController id="nUA-Ft-2N7" customClass="CalendarViewController" customModule="StatusPanel" customModuleProvider="target" sceneMemberID="viewController">
@@ -124,7 +124,7 @@
                             <outlet property="delegate" destination="nUA-Ft-2N7" id="vj9-wa-aCO"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="qFE-UL-UDf"/>
+                    <navigationItem key="navigationItem" title="Calendars" id="qFE-UL-UDf"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="p5u-k4-Mql" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
