@@ -10,6 +10,23 @@ import Foundation
 
 class Config {
 
+    let departuresKey = "departures";
+
+    var isDeparturesEnabled: Bool {
+        get {
+            let userDefaults = UserDefaults.standard;
+            if userDefaults.object(forKey: departuresKey) != nil {
+                return userDefaults.bool(forKey: departuresKey)
+            } else {
+                return true
+            }
+        }
+        set {
+            let userDefaults = UserDefaults.standard
+            userDefaults.set(newValue, forKey: departuresKey)
+        }
+    }
+
     // The desired panel wake time, as a number of seconds since midnight (floating time)
     static func getWakeTime() -> TimeInterval {
         let result = UserDefaults.standard.value(forKey: "wakeTime")
@@ -26,7 +43,6 @@ class Config {
         if result < 0 {
             result += 24 * 60 * 60
         }
-        // print("Local wake time = \(result)")
         return result
     }
 
