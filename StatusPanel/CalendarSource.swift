@@ -107,7 +107,7 @@ class CalendarSource : DataSource {
                 continue
             }
 
-            var timeStr = df.string(from: event.startDate)
+            let timeStr = df.string(from: event.startDate)
             if event.isAllDay {
                 results.append(CalendarSource.formatEvent(time: nil, title: event.title!))
             } else if event.timeZone != nil && event.timeZone != tz {
@@ -117,8 +117,7 @@ class CalendarSource : DataSource {
                 let eventLocalTime = df.string(from: event.startDate)
                 df.timeZone = tz
                 let tzStr = timeZoneFormatter.string(from: event.startDate)
-                timeStr = "\(timeStr) (\(eventLocalTime) \(tzStr))"
-                results.append(CalendarSource.formatEvent(time: timeStr, title: event.title!))
+                results.append(CalendarSource.formatEvent(time: timeStr, title: "\(event.title!) (\(eventLocalTime) \(tzStr))"))
             } else {
                 results.append(CalendarSource.formatEvent(time: timeStr, title: event.title!))
             }
