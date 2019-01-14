@@ -77,7 +77,11 @@ class CalendarSource : DataSource {
         df.timeStyle = DateFormatter.Style.short
         let timeZoneFormatter = DateFormatter()
         timeZoneFormatter.dateFormat = "z"
-        let calendars: [EKCalendar]? = nil // TODO allow controlling of which calendars to check?
+
+        // TODO: Inject the configuration into the calendar data source.
+        let activeCalendars = Config().activeCalendars
+        let calendars = eventStore.calendars(for: .event).filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
+
         let cal = Calendar.current
         let tz = cal.timeZone
         let dayEnd = cal.date(byAdding: DateComponents(day: 1, second: -1), to: dayStart)!
@@ -87,6 +91,7 @@ class CalendarSource : DataSource {
         if (header != nil) {
             results.append(DataItem(self.header!, flags: [.header]))
         }
+
         for event in events {
 
             // We want to make sure that we only include calendar types that we support.
