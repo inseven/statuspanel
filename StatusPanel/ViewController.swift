@@ -12,8 +12,11 @@ import Sodium
 
 class ViewController: UIViewController {
 
-    @IBOutlet var scrollView: UIScrollView?
-    var contentView: UIView?
+    @IBOutlet var scrollView: UIScrollView!
+    @IBOutlet weak var imageView: UIImageView!
+
+    var contentView: UIView!
+
     var sourceController: DataSourceController!
     var prevItems: [DataItem] = []
 
@@ -144,6 +147,7 @@ class ViewController: UIViewController {
             let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             print("GOT DIR! " + dir.absoluteString)
             let imgdata = UIImagePNGRepresentation(image)
+            self.imageView.image = image
             try imgdata?.write(to: dir.appendingPathComponent("img.png"))
             try rawdata.write(to: dir.appendingPathComponent("img.raw"))
             try panelData.write(to: dir.appendingPathComponent("img_panel"))
@@ -152,9 +156,9 @@ class ViewController: UIViewController {
         } catch {
             print("meh")
         }
-        let imgview = UIImageView(image: image)
-        scrollView?.contentSize = rect.size
-        scrollView?.addSubview(imgview)
+//        let imgview = UIImageView(image: image)
+//        scrollView?.contentSize = rect.size
+//        scrollView?.addSubview(imgview)
     }
 
     func uploadData(_ data: Data, completion: @escaping () -> Void) {
