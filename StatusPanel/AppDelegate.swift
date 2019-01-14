@@ -17,12 +17,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var sourceController = DataSourceController()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        sourceController.add(dataSource:TFLDataSource())
-        sourceController.add(dataSource:NationalRailDataSource())
+
+        // TODO: This should be more functional; the source controller should be configured dynamically each update.
+        if (Config().isDeparturesEnabled) {
+            sourceController.add(dataSource:TFLDataSource())
+            sourceController.add(dataSource:NationalRailDataSource())
+        }
         sourceController.add(dataSource:CalendarSource())
         sourceController.add(dataSource:CalendarSource(forDayOffset: 1, header: "Tomorrow:"))
-//        sourceController.add(dataSource: DummyDataSource())
+
         updateFetchInterval()
+
         return true
     }
 
