@@ -10,7 +10,8 @@ import Foundation
 
 class Config {
 
-    let departuresKey = "departures";
+    private let departuresKey = "departures";
+    private let activeCalendarsKey = "activeCalendars"
 
     var isDeparturesEnabled: Bool {
         get {
@@ -24,6 +25,22 @@ class Config {
         set {
             let userDefaults = UserDefaults.standard
             userDefaults.set(newValue, forKey: departuresKey)
+            userDefaults.synchronize()
+        }
+    }
+
+    var activeCalendars: [String] {
+        get {
+            let userDefaults = UserDefaults.standard
+            guard let identifiers = userDefaults.object(forKey: activeCalendarsKey) as? [String] else {
+                return []
+            }
+            return identifiers
+        }
+        set {
+            let userDefaults = UserDefaults.standard
+            userDefaults.set(newValue, forKey: activeCalendarsKey)
+            userDefaults.synchronize()
         }
     }
 
