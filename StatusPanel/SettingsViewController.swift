@@ -14,6 +14,7 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var calendarsCell: UITableViewCell!
     @IBOutlet weak var deviceIdCell: UITableViewCell!
     @IBOutlet weak var tflCell: UITableViewCell!
+    @IBOutlet weak var updateTimeCell: UITableViewCell!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,8 +30,10 @@ class SettingsViewController: UITableViewController {
     }
 
     func update() {
+        let config = Config()
+
         // Calendars
-        let calendarIds = Config().activeCalendars
+        let calendarIds = config.activeCalendars
         let eventStore = EKEventStore()
         var calendarNames: [String] = []
         for calendarId in calendarIds {
@@ -47,7 +50,7 @@ class SettingsViewController: UITableViewController {
         }
 
         // TFL
-        let lines = Config().activeTFLLines
+        let lines = config.activeTFLLines
         var lineNames: [String] = []
         for lineId in lines {
             lineNames.append(TFLDataSource.lines[lineId]!)
@@ -57,6 +60,13 @@ class SettingsViewController: UITableViewController {
         } else {
             self.tflCell.detailTextLabel?.text = "None"
         }
+
+        // Update time
+        let updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
+        let df = DateFormatter()
+        df.timeStyle = .short
+        let timeStr = df.string(from: updateTime)
+        self.updateTimeCell.textLabel?.text = timeStr
 
         // Device ID
         if let (deviceId, _) = Config.getDeviceAndKey() {
