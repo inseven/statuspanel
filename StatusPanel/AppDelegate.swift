@@ -18,11 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
-        // TODO: This should be more functional; the source controller should be configured dynamically each update.
-        if (Config().isDeparturesEnabled) {
-            sourceController.add(dataSource:TFLDataSource())
-            sourceController.add(dataSource:NationalRailDataSource())
-        }
+        sourceController.add(dataSource:TFLDataSource())
+        sourceController.add(dataSource:NationalRailDataSource())
         sourceController.add(dataSource:CalendarSource())
         sourceController.add(dataSource:CalendarSource(forDayOffset: 1, header: "Tomorrow:"))
 
