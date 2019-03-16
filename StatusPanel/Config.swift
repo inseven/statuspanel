@@ -10,24 +10,8 @@ import Foundation
 
 class Config {
 
-    private let departuresKey = "departures";
     private let activeCalendarsKey = "activeCalendars"
-
-    var isDeparturesEnabled: Bool {
-        get {
-            let userDefaults = UserDefaults.standard;
-            if userDefaults.object(forKey: departuresKey) != nil {
-                return userDefaults.bool(forKey: departuresKey)
-            } else {
-                return true
-            }
-        }
-        set {
-            let userDefaults = UserDefaults.standard
-            userDefaults.set(newValue, forKey: departuresKey)
-            userDefaults.synchronize()
-        }
-    }
+    private let activeTFLLinesKey = "activeTFLLines"
 
     var activeCalendars: [String] {
         get {
@@ -40,6 +24,21 @@ class Config {
         set {
             let userDefaults = UserDefaults.standard
             userDefaults.set(newValue, forKey: activeCalendarsKey)
+            userDefaults.synchronize()
+        }
+    }
+
+    var activeTFLLines: [String] {
+        get {
+            let userDefaults = UserDefaults.standard
+            guard let lines = userDefaults.object(forKey: activeTFLLinesKey) as? [String] else {
+                return []
+            }
+            return lines
+        }
+        set {
+            let userDefaults = UserDefaults.standard
+            userDefaults.set(newValue, forKey: activeTFLLinesKey)
             userDefaults.synchronize()
         }
     }
