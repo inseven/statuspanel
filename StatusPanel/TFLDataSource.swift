@@ -13,7 +13,21 @@ class TFLDataSource : DataSource {
     let app_id = "1f85b5bb"
     let app_key = "49b995489314995e79c9b4faa0d1d43c"
 
-    var linesOfInterest = ["northern" /*, "central"*/]
+    // Key is the line id in the API, value is the human-readable name
+    static let lines = [
+        "bakerloo": "Bakerloo",
+        "cirle": "Circle",
+        "central": "Central",
+        "district": "District",
+        // TODO what is Hammersmith & City's id?
+        "jubilee": "Jubilee",
+        "metropolitan": "Metropolitan",
+        "northern": "Northern",
+        "piccadilly": "Piccadilly",
+        "victoria": "Victoria",
+        // TODO what is Waterloo & City's id?
+    ]
+
     var dataItems = [DataItem]()
     var completion: DataSource.Callback?
     var task: URLSessionTask?
@@ -27,8 +41,13 @@ class TFLDataSource : DataSource {
     func fetchData(onCompletion: @escaping Callback) {
         task?.cancel()
         completion = onCompletion
-        let lines = linesOfInterest.joined(separator: ",")
-        task = get("Line/\(lines)/Status?detail=false", onCompletion: gotLineData)
+        let lines = Config().activeTFLLines.joined(separator: ",")
+        if lines == "" {
+            // Nothing to do
+            onCompletion(self, [], nil)
+        } else {
+            task = get("Line/\(lines)/Status?detail=false", onCompletion: gotLineData)
+        }
     }
 
     struct LineStatus: Decodable {
