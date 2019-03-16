@@ -12,6 +12,7 @@ class Config {
 
     private let activeCalendarsKey = "activeCalendars"
     private let activeTFLLinesKey = "activeTFLLines"
+    private let updateTimeKey = "updateTime"
 
     var activeCalendars: [String] {
         get {
@@ -24,7 +25,6 @@ class Config {
         set {
             let userDefaults = UserDefaults.standard
             userDefaults.set(newValue, forKey: activeCalendarsKey)
-            userDefaults.synchronize()
         }
     }
 
@@ -39,19 +39,28 @@ class Config {
         set {
             let userDefaults = UserDefaults.standard
             userDefaults.set(newValue, forKey: activeTFLLinesKey)
-            userDefaults.synchronize()
         }
     }
 
     // The desired panel wake time, as a number of seconds since midnight (floating time)
-    static func getWakeTime() -> TimeInterval {
-        let result = UserDefaults.standard.value(forKey: "wakeTime")
-        if result == nil {
-            return (6 * 60 + 20) * 60
-        } else {
-            return result as! TimeInterval
+    var updateTime: TimeInterval {
+        get {
+            let result = UserDefaults.standard.value(forKey: updateTimeKey)
+            if result == nil {
+                return (6 * 60 + 20) * 60
+            } else {
+                return result as! TimeInterval
+            }
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: updateTimeKey)
         }
     }
+
+    static func getWakeTime() -> TimeInterval {
+        return Config().updateTime
+    }
+
 
     // The wake time relative to start of day GMT. If waketime is 6*60*60 then this returns the offset from midnight GMT to 0600 local time. It is always positive.
     static func getLocalWakeTime() -> TimeInterval {
