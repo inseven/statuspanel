@@ -11,6 +11,7 @@
 		D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB51C2E221749A2A00F016DB /* JSONRequest.swift */; };
+		DB87810C223D67B2005AEBD8 /* UpdateTimeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */; };
 		DBB2D35D217CA677009F7549 /* Sodium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2D35C217CA677009F7549 /* Sodium.framework */; };
 		DBB2D35E217CA677009F7549 /* Sodium.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2D35C217CA677009F7549 /* Sodium.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987C2143E2920084B710 /* AppDelegate.swift */; };
@@ -85,6 +86,7 @@
 		D85E11852196BAC300E535D3 /* Sodium.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sodium.xcodeproj; path = "swift-sodium/Sodium.xcodeproj"; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		DB51C2E221749A2A00F016DB /* JSONRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRequest.swift; sourceTree = "<group>"; };
+		DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateTimeController.swift; sourceTree = "<group>"; };
 		DBB2D35C217CA677009F7549 /* Sodium.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Sodium.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA987C2143E2920084B710 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
 				D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */,
 				DBF1C553223D519C0080CADE /* TFLSettingsController.swift */,
+				DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
@@ -297,6 +300,7 @@
 				DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */,
 				DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
+				DB87810C223D67B2005AEBD8 /* UpdateTimeController.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
 				D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */,
 				D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */,
