@@ -11,6 +11,10 @@
 		D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB51C2E221749A2A00F016DB /* JSONRequest.swift */; };
+		DB62F333224F89C200CA5E64 /* StationPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB62F332224F89C200CA5E64 /* StationPickerController.swift */; };
+		DB62F335224FB47A00CA5E64 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB62F334224FB47A00CA5E64 /* Station.swift */; };
+		DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB62F33B224FCEBA00CA5E64 /* NationalRailSettingsController.swift */; };
+		DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB62F33D224FEA4400CA5E64 /* StationsList.swift */; };
 		DB87810C223D67B2005AEBD8 /* UpdateTimeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */; };
 		DBB2D35D217CA677009F7549 /* Sodium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2D35C217CA677009F7549 /* Sodium.framework */; };
 		DBB2D35E217CA677009F7549 /* Sodium.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2D35C217CA677009F7549 /* Sodium.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -86,6 +90,11 @@
 		D85E11852196BAC300E535D3 /* Sodium.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sodium.xcodeproj; path = "swift-sodium/Sodium.xcodeproj"; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		DB51C2E221749A2A00F016DB /* JSONRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRequest.swift; sourceTree = "<group>"; };
+		DB62F332224F89C200CA5E64 /* StationPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPickerController.swift; sourceTree = "<group>"; };
+		DB62F334224FB47A00CA5E64 /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
+		DB62F33A224FC66E00CA5E64 /* stations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = stations.json; path = Assets.xcassets/NationalRailStations.dataset/stations.json; sourceTree = "<group>"; };
+		DB62F33B224FCEBA00CA5E64 /* NationalRailSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalRailSettingsController.swift; sourceTree = "<group>"; };
+		DB62F33D224FEA4400CA5E64 /* StationsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationsList.swift; sourceTree = "<group>"; };
 		DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateTimeController.swift; sourceTree = "<group>"; };
 		DBB2D35C217CA677009F7549 /* Sodium.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Sodium.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -128,6 +137,37 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		DB62F32F224F88F300CA5E64 /* TFL */ = {
+			isa = PBXGroup;
+			children = (
+				DBCA98B02143F2B30084B710 /* TFLDataSource.swift */,
+				DBF1C553223D519C0080CADE /* TFLSettingsController.swift */,
+			);
+			name = TFL;
+			sourceTree = "<group>";
+		};
+		DB62F330224F892A00CA5E64 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				DBCA98B221440CD90084B710 /* CalendarSource.swift */,
+				D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */,
+			);
+			name = Calendar;
+			sourceTree = "<group>";
+		};
+		DB62F331224F895F00CA5E64 /* National Rail */ = {
+			isa = PBXGroup;
+			children = (
+				DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */,
+				DB62F33B224FCEBA00CA5E64 /* NationalRailSettingsController.swift */,
+				DB62F332224F89C200CA5E64 /* StationPickerController.swift */,
+				DB62F334224FB47A00CA5E64 /* Station.swift */,
+				DB62F33A224FC66E00CA5E64 /* stations.json */,
+				DB62F33D224FEA4400CA5E64 /* StationsList.swift */,
+			);
+			name = "National Rail";
+			sourceTree = "<group>";
+		};
 		DBB2D354217C9AC3009F7549 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -166,15 +206,13 @@
 				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
 				DBCA98882143E2920084B710 /* Info.plist */,
 				DBCA98B42144421F0084B710 /* DataSource.swift */,
-				DBCA98B02143F2B30084B710 /* TFLDataSource.swift */,
-				DBCA98B221440CD90084B710 /* CalendarSource.swift */,
 				DBCA98B6214518EF0084B710 /* DataSourceController.swift */,
-				DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */,
 				DB51C2E221749A2A00F016DB /* JSONRequest.swift */,
 				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
-				D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */,
-				DBF1C553223D519C0080CADE /* TFLSettingsController.swift */,
 				DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */,
+				DB62F330224F892A00CA5E64 /* Calendar */,
+				DB62F331224F895F00CA5E64 /* National Rail */,
+				DB62F32F224F88F300CA5E64 /* TFL */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
@@ -298,9 +336,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */,
+				DB62F335224FB47A00CA5E64 /* Station.swift in Sources */,
+				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
 				DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
 				DB87810C223D67B2005AEBD8 /* UpdateTimeController.swift in Sources */,
+				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
 				D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */,
 				D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */,
@@ -309,6 +350,7 @@
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */,
 				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,
+				DB62F333224F89C200CA5E64 /* StationPickerController.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

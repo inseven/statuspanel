@@ -10,9 +10,19 @@ import Foundation
 
 class Config {
 
+    struct TrainRoute {
+        var from: String?
+        var to: String?
+        init(from: String?, to: String?) {
+            self.from = from
+            self.to = to
+        }
+    }
+
     private let activeCalendarsKey = "activeCalendars"
     private let activeTFLLinesKey = "activeTFLLines"
     private let updateTimeKey = "updateTime"
+    private let trainRoutesKey = "trainRoutes"
 
     var activeCalendars: [String] {
         get {
@@ -45,15 +55,54 @@ class Config {
     // The desired panel wake time, as a number of seconds since midnight (floating time)
     var updateTime: TimeInterval {
         get {
-            let result = UserDefaults.standard.value(forKey: updateTimeKey)
-            if result == nil {
+            guard let result = UserDefaults.standard.value(forKey: updateTimeKey) as? TimeInterval else {
                 return (6 * 60 + 20) * 60
-            } else {
-                return result as! TimeInterval
             }
+            return result
         }
         set {
             UserDefaults.standard.set(newValue, forKey: updateTimeKey)
+        }
+    }
+
+    var trainRoutes: [TrainRoute] {
+        get {
+            guard let val = UserDefaults.standard.array(forKey: trainRoutesKey) as? [Dictionary<String,String>] else {
+                return []
+            }
+            var result: [TrainRoute] = []
+            for dict in val {
+                result.append(TrainRoute(from: dict["from"], to: dict["to"]))
+            }
+            return result
+        }
+        set {
+            var val: [Dictionary<String,String>] = []
+            for route in newValue {
+                var dict = Dictionary<String,String>()
+                if (route.from != nil) {
+                    dict["from"] = route.from!
+                }
+                if (route.to != nil) {
+                    dict["to"] = route.to!
+                }
+                val.append(dict)
+            }
+            UserDefaults.standard.set(val, forKey: trainRoutesKey)
+        }
+    }
+
+    var trainRoute: TrainRoute {
+        get {
+            let routes = trainRoutes
+            if routes.count > 0 {
+                return routes[0]
+            } else {
+                return TrainRoute(from: nil, to: nil)
+            }
+        }
+        set {
+            trainRoutes = [newValue]
         }
     }
 
