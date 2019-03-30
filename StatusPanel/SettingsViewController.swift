@@ -14,6 +14,7 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var calendarsCell: UITableViewCell!
     @IBOutlet weak var deviceIdCell: UITableViewCell!
     @IBOutlet weak var tflCell: UITableViewCell!
+    @IBOutlet weak var nationalRailCell: UITableViewCell!
     @IBOutlet weak var updateTimeCell: UITableViewCell!
 
     override func viewDidLoad() {
@@ -44,9 +45,9 @@ class SettingsViewController: UITableViewController {
             calendarNames.append(cal.title)
         }
         if calendarNames.count > 0 {
-            self.calendarsCell.detailTextLabel?.text = calendarNames.joined(separator: ", ")
+            calendarsCell.detailTextLabel?.text = calendarNames.joined(separator: ", ")
         } else {
-            self.calendarsCell.detailTextLabel?.text = "None"
+            calendarsCell.detailTextLabel?.text = "None"
         }
 
         // TFL
@@ -56,9 +57,17 @@ class SettingsViewController: UITableViewController {
             lineNames.append(TFLDataSource.lines[lineId]!)
         }
         if lineNames.count > 0 {
-            self.tflCell.detailTextLabel?.text = lineNames.joined(separator: ", ")
+            tflCell.detailTextLabel?.text = lineNames.joined(separator: ", ")
         } else {
-            self.tflCell.detailTextLabel?.text = "None"
+            tflCell.detailTextLabel?.text = "None"
+        }
+
+        // National rail
+        let route = config.trainRoute
+        if let from = route.from, let to = route.to {
+            nationalRailCell.detailTextLabel?.text = "\(from) to \(to)"
+        } else {
+            nationalRailCell.detailTextLabel?.text = "Not configured"
         }
 
         // Update time
