@@ -12,35 +12,47 @@ import UIKit
 class CalendarViewController: UITableViewController {
 
     var eventStore: EKEventStore!
-    var calendars: [EKCalendar]!
-    var activeCalendars: [String]!  // TODO: This should be a set.
+    var calendars: [[EKCalendar]]!
+    var sources: [EKSource]!
+    var activeCalendars: Set<String>!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         eventStore = EKEventStore()
-        calendars = []
-        activeCalendars = []
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        let allSources = eventStore.sources.sorted(by: { $0.title.compare($1.title) == .orderedAscending})
+        sources = []
+        calendars = []
+        for source in allSources {
+            let sourceCalendars = source.calendars(for: .event)
+            if sourceCalendars.count > 0 {
+                sources.append(source)
+                calendars.append(sourceCalendars.sorted(by: { $0.title.compare($1.title) == .orderedAscending }))
+            }
+
+        }
+        activeCalendars = Set(Config().activeCalendars)
         super.viewWillAppear(animated)
-        calendars = eventStore.calendars(for: .event).sorted(by: { $0.title.compare($1.title) == .orderedAscending })
-        activeCalendars = Config().activeCalendars
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return sources.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return calendars.count
+        return calendars[section].count
+    }
+
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return sources[section].title
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        let calendar = calendars[indexPath.row]
+        let calendar = calendars[indexPath.section][indexPath.row]
         cell.textLabel?.text = calendar.title
-        cell.textLabel?.textColor = UIColor(cgColor: calendar.cgColor)
         if activeCalendars.contains(calendar.calendarIdentifier) {
             cell.accessoryType = .checkmark
         } else {
@@ -50,15 +62,15 @@ class CalendarViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let calendar = calendars[indexPath.row]
+        let calendar = calendars[indexPath.section][indexPath.row]
         if activeCalendars.contains(calendar.calendarIdentifier) {
-            activeCalendars.remove(at: activeCalendars.firstIndex(of: calendar.calendarIdentifier)!)
+            activeCalendars.remove(calendar.calendarIdentifier)
         } else {
-            activeCalendars.append(calendar.calendarIdentifier)
+            activeCalendars.insert(calendar.calendarIdentifier)
         }
         tableView.deselectRow(at: indexPath, animated: true)
         tableView.reloadRows(at: [indexPath], with: .fade)
-        Config().activeCalendars = activeCalendars
+        Config().activeCalendars = activeCalendars.sorted()
     }
 
 }
