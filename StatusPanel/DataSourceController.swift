@@ -8,47 +8,15 @@
 
 import Foundation
 
-// Isn't there something that can do this in the standard library?
-// TODO Y U NO WORK?
-/*
-class HashWrapper<T:AnyObject> : Hashable {
-    let value: T
-    init(_ obj: T) {
-        value = obj
-    }
-    static func ==(lhs: HashWrapper<T>, rhs: HashWrapper<T>) -> Bool {
-        return lhs.value === rhs.value
-    }
-    var hashValue: Int {
-        return ObjectIdentifier(value).hashValue
-    }
-}
-*/
-
 protocol DataSourceControllerDelegate: class {
     // Always called in context of main thread
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItem])
 }
 
-class DataSourceWrapper : Hashable {
-    let value: DataSource
-    init(_ obj: DataSource) {
-        value = obj
-    }
-    static func ==(lhs: DataSourceWrapper, rhs: DataSourceWrapper) -> Bool {
-        return lhs.value === rhs.value
-    }
-    var hashValue: Int {
-        return ObjectIdentifier(value).hashValue
-    }
-}
-
 class DataSourceController {
     weak var delegate: DataSourceControllerDelegate?
     var sources: [DataSource] = []
-    var completionFn: (([DataItem], Bool) -> Void)?
-    // var completed: [HashWrapper<DataSource> : [DataItem]] = [:]
-    var completed: [DataSourceWrapper: [DataItem]] = [:]
+    var completed: [ObjectIdentifier: [DataItem]] = [:]
     var lock = NSLock()
 
     func add(dataSource: DataSource) {
@@ -64,8 +32,7 @@ class DataSourceController {
     }
 
     func gotData(source: DataSource, data:[DataItem], error: Error?) {
-        // let obj = HashWrapper<DataSource>(source)
-        let obj = DataSourceWrapper(source)
+        let obj = ObjectIdentifier(source)
         lock.lock()
         completed[obj] = data
         // TODO something with error
@@ -77,7 +44,7 @@ class DataSourceController {
 
         // Use the ordering of sources, not completedItems
         for source in sources {
-            let completedItems = completed[DataSourceWrapper(source)]
+            let completedItems = completed[ObjectIdentifier(source)]
             items += completedItems ?? []
         }
         lock.unlock()
