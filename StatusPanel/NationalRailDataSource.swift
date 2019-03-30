@@ -14,7 +14,8 @@ class NationalRailDataSource : DataSource {
     // As implemented by https://huxley.unop.uk/ because the raw national rail API is so bad
     let token = "KEY"
 
-    let targetCrs = "CBG"
+    var targetCrs: String?
+    var sourceCrs: String?
 
     var dataItems = [DataItem]()
     var completion: DataSource.Callback?
@@ -28,8 +29,16 @@ class NationalRailDataSource : DataSource {
 
     func fetchData(onCompletion: @escaping Callback) {
         task?.cancel()
-        completion = onCompletion
-        task = get("delays/KGX/to/\(targetCrs)/10", onCompletion: gotDelays)
+        let route = Config().trainRoute
+        sourceCrs = route.from
+        targetCrs = route.to
+
+        if let sourceCrs = sourceCrs, let targetCrs = targetCrs {
+            completion = onCompletion
+            task = get("delays/\(sourceCrs)/to/\(targetCrs)/10", onCompletion: gotDelays)
+        } else {
+            onCompletion(self, [], nil)
+        }
     }
 
     struct Delays: Decodable {
@@ -54,14 +63,14 @@ class NationalRailDataSource : DataSource {
         }
 
         if data.delayedTrains.count == 0 {
-            dataItems.append(DataItem("\(targetCrs) trains: Good Service"))
+            dataItems.append(DataItem("\(sourceCrs!) to \(targetCrs!) trains: Good Service"))
         }
 
         for delay in data.delayedTrains {
             // If we don't force a line break here, UILabel breaks the line after the "to"
             // which makes the resulting text look a bit unbalanced. But it only does this
             // when using the Amiga Forever font in non-editing mode (!?)
-            var text = "\(delay.std) to \(targetCrs):\u{2028}"
+            var text = "\(delay.std) \(sourceCrs!) to \(targetCrs!):\u{2028}"
             if delay.isCancelled {
                 text += "Cancelled"
             } else {
