@@ -29,6 +29,9 @@ class ViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if (!sourceController.isFetching) {
+            sourceController.fetch()
+        }
     }
 
     func renderAndUpload(data: [DataItem], completion: @escaping () -> Void) {
