@@ -14,11 +14,13 @@ class ViewController: UIViewController {
 
     @IBOutlet var scrollView: UIScrollView!
     @IBOutlet weak var imageView: UIImageView!
+    let SettingsButtonTag = 1
 
     var contentView: UIView!
 
     var sourceController: DataSourceController!
     var prevItems: [DataItem] = []
+    var showingSettings = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +31,8 @@ class ViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if (!sourceController.isFetching) {
+        if (showingSettings) {
+            showingSettings = false
             sourceController.fetch()
         }
     }
@@ -330,6 +333,12 @@ class ViewController: UIViewController {
         }
         flush()
         return result
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let sender = sender as? UIBarButtonItem, sender.tag == SettingsButtonTag {
+            showingSettings = true
+        }
     }
 }
 

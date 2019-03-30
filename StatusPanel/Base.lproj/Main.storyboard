@@ -32,7 +32,7 @@
                         <viewLayoutGuide key="safeArea" id="pJd-Og-7Yn"/>
                     </view>
                     <navigationItem key="navigationItem" title="StatusPanel" id="KXp-yM-jbC">
-                        <barButtonItem key="leftBarButtonItem" title="Settings" id="RBu-R8-TYb">
+                        <barButtonItem key="leftBarButtonItem" tag="1" title="Settings" id="RBu-R8-TYb">
                             <connections>
                                 <segue destination="h6m-t0-RnA" kind="modal" id="BDV-kQ-Aip"/>
                             </connections>
