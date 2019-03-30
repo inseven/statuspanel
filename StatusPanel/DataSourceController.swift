@@ -18,7 +18,6 @@ class DataSourceController {
     var sources: [DataSource] = []
     var completed: [ObjectIdentifier: [DataItem]] = [:]
     var lock = NSLock()
-    var fetching = false
 
     func add(dataSource: DataSource) {
         sources.append(dataSource)
@@ -26,7 +25,6 @@ class DataSourceController {
 
     func fetch() {
         print("Fetching")
-        fetching = true
         completed.removeAll()
         for source in sources {
             source.fetchData(onCompletion: gotData)
@@ -52,17 +50,9 @@ class DataSourceController {
         lock.unlock()
 
         if (allCompleted) {
-            fetching = false
-
             DispatchQueue.main.async {
                 self.delegate?.dataSourceController(self, didUpdateData: items)
             }
-        }
-    }
-
-    var isFetching: Bool {
-        get {
-            return fetching
         }
     }
 }
