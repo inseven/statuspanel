@@ -95,6 +95,7 @@
 		DB62F33A224FC66E00CA5E64 /* stations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = stations.json; path = Assets.xcassets/NationalRailStations.dataset/stations.json; sourceTree = "<group>"; };
 		DB62F33B224FCEBA00CA5E64 /* NationalRailSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalRailSettingsController.swift; sourceTree = "<group>"; };
 		DB62F33D224FEA4400CA5E64 /* StationsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationsList.swift; sourceTree = "<group>"; };
+		DB62F33F2258FD6100CA5E64 /* StatusPanel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatusPanel.entitlements; sourceTree = "<group>"; };
 		DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateTimeController.swift; sourceTree = "<group>"; };
 		DBB2D35C217CA677009F7549 /* Sodium.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Sodium.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -197,6 +198,7 @@
 		DBCA987B2143E2920084B710 /* StatusPanel */ = {
 			isa = PBXGroup;
 			children = (
+				DB62F33F2258FD6100CA5E64 /* StatusPanel.entitlements */,
 				D89CAF1021ABDDA200B4B314 /* Config.swift */,
 				DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */,
 				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
@@ -251,6 +253,14 @@
 					DBCA98782143E2920084B710 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -488,11 +498,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = StatusPanel/StatusPanel.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZZZ2575N68;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.me.tomsci.StatusPanel;
+				PRODUCT_BUNDLE_IDENTIFIER = io.statuspanel.statuspanel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -503,11 +514,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = StatusPanel/StatusPanel.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZZZ2575N68;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.me.tomsci.StatusPanel;
+				PRODUCT_BUNDLE_IDENTIFIER = io.statuspanel.statuspanel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
