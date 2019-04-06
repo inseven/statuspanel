@@ -13,8 +13,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
-
     var sourceController = DataSourceController()
+    var apnsToken: Data?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
@@ -23,8 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sourceController.add(dataSource:CalendarSource())
         sourceController.add(dataSource:CalendarSource(forDayOffset: 1, header: "Tomorrow:"))
 
-        updateFetchInterval()
-
+        application.registerForRemoteNotifications()
         return true
     }
 
@@ -86,6 +85,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return nextWake - nowSinceMidnight
     }
 
+    /*
     func updateFetchInterval() {
         let app = UIApplication.shared
         let timeLeft = getTimeUntilPanelWakeup()
@@ -103,13 +103,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         backgroundFetchCompletionFn = completionHandler
         sourceController.fetch()
     }
+    */
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("Got APNS token")
+        apnsToken = deviceToken
+        // TODO: send this to the server
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Aww, no APNS for us. Error: " + error.localizedDescription)
+    }
+
+
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("didReceiveRemoteNotification")
+        backgroundFetchCompletionFn = completionHandler
+        sourceController.fetch()
+    }
 
     func fetchCompleted(hasChanged: Bool) {
         if let fn = backgroundFetchCompletionFn {
             print("Background fetch completed")
             fn(hasChanged ? .newData : .noData)
             backgroundFetchCompletionFn = nil
-            updateFetchInterval()
+            // updateFetchInterval()
         }
     }
 }
