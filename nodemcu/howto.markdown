@@ -10,11 +10,18 @@ Once you've installed the scripts, you can connect to the board using `minicom` 
 
 ## Firmware
 
-    esptool.py --port /dev/tty.SLAB_USBtoUART write_flash -fm qio 0 nodemcu-master-12-modules-2018-09-29-16-30-32-integer.bin
+```bash
+esptool.py --port /dev/tty.SLAB_USBtoUART write_flash -fm qio 0 nodemcu-master-12-modules-2018-09-29-16-30-32-integer.bin
+```
 
 ## Scripts
 
-    python ~/Documents/Dev/esp8266/nodemcu-uploader/nodemcu-uploader.py --port /dev/tty.SLAB_USBtoUART upload panel.lua:init.lua
+```bash
+    python ~/Documents/Dev/esp8266/nodemcu-uploader/nodemcu-uploader.py \
+        --port /dev/tty.SLAB_USBtoUART \
+        upload \
+        panel.lua:init.lua
+```
 
 # ESP32
 
