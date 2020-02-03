@@ -6,16 +6,16 @@ verify_ssl = true
 
 [packages]
 
-django = "*"
-gunicorn = "*"
-django-heroku = "*"
 Flask = "*"
-pytest = "*"
+django = "*"
+django-heroku = "*"
+gunicorn = "*"
+jwt = "*"
 psycopg2-binary = "*"
-requests = "*"
-pytz = "*"
 py-dateutil = "*"
-
+pytest = "*"
+pytz = "*"
+requests = "*"
 
 [requires]
 
