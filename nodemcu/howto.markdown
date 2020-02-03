@@ -17,10 +17,10 @@ esptool.py --port /dev/tty.SLAB_USBtoUART write_flash -fm qio 0 nodemcu-master-1
 ## Scripts
 
 ```bash
-    python ~/Documents/Dev/esp8266/nodemcu-uploader/nodemcu-uploader.py \
-        --port /dev/tty.SLAB_USBtoUART \
-        upload \
-        panel.lua:init.lua
+python ~/Documents/Dev/esp8266/nodemcu-uploader/nodemcu-uploader.py \
+    --port /dev/tty.SLAB_USBtoUART \
+    upload \
+    panel.lua:init.lua
 ```
 
 # ESP32
