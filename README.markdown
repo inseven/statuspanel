@@ -20,6 +20,8 @@ StatusPanel comprises a number of different components:
 
 ## Device
 
+For details on how to update the device, refer to the [device-specific readme](nodemcu/README.markdown).
+
 The Arduino IDE can be a convenient way to communicate with the device. You can find out more about setting this up on the [Adafruit website](https://learn.adafruit.com/adafruit-huzzah32-esp32-feather/using-with-arduino-ide).
 
 Once you've flashed the latest firmware, you'll need to configure Wi-Fi from the serial console as follows, substituting your network name and password:
