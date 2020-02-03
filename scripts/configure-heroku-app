@@ -1,5 +1,16 @@
 #!/bin/bash
 
+SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
+
+JWT_PRIVATE_KEY_PATH="${ROOT_DIRECTORY}/key.p8"
+
+
+echo $JWT_PRIVATE_KEY
+
 heroku buildpacks:clear --app $1
 heroku buildpacks:set heroku/python --app $1
 heroku buildpacks:add --index 2 heroku/nodejs --app $1
+
+JWT_PRIVATE_KEY=`cat "${JWT_PRIVATE_KEY_PATH}"`
+heroku config:set "JWT_PRIVATE_KEY=$JWT_PRIVATE_KEY" --app $1
