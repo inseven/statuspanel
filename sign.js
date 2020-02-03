@@ -1,2 +1,2 @@
-console.log("FOO");
+console.log("Token");
 
