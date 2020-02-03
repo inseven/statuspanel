@@ -5,6 +5,26 @@ Run the following commands from the `nodecmu` directory:
 Once you've installed the scripts, you can connect to the board using `minicom` as follows:
 
     minicom -D /dev/tty.SLAB_USBtoUART -b 115200
+    
+---
+
+The Arduino IDE can be a convenient way to communicate with the device. You can find out more about setting this up on the [Adafruit website](https://learn.adafruit.com/adafruit-huzzah32-esp32-feather/using-with-arduino-ide).
+
+Once you've flashed the latest firmware, you'll need to configure Wi-Fi from the serial console as follows, substituting your network name and password:
+
+```lua
+wifi.sta.config({auto = false, ssid = "<yourssid>", pwd = "<password>"}, true)
+```
+
+The firmware will automatically start if GPIO 14 is held high. This can be done by shorting it to the 3.3V pin. For debugging purposes, you may wish to leave it low and execute the code directly from the serial console:
+
+```lua
+main()
+```
+
+### Un-Pairing
+
+---
 
 # ESP8266
 
