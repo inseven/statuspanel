@@ -1,3 +1,7 @@
 #!/usr/bin/env python3
 
-print("HELLO")
+import subprocess
+
+print("Signining token...")
+subprocess.run(["node", "sign.js"])
+
