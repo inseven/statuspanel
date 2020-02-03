@@ -18,15 +18,15 @@ LEGACY_IDENTIFIER = "A0198E25-8436-4439-8BE1-75C445655255"
 
 
 def get_database():
-        if 'database' not in g:
-            logging.info("Connecting to the database...")
-            while True:
-                try:
-                    g.database = database.Database()
-                    break
-                except psycopg2.OperationalError:
-                    time.sleep(0.1)
-        return g.database
+    if 'database' not in g:
+        logging.info("Connecting to the database...")
+        while True:
+            try:
+                g.database = database.Database()
+                break
+            except psycopg2.OperationalError:
+                time.sleep(0.1)
+    return g.database
 
 
 app = Flask(__name__)
