@@ -20,6 +20,10 @@ StatusPanel comprises a number of different components:
 
 ## Device
 
+The Arduino IDE can be a convenient way to communicate with the device:
+
+    https://learn.adafruit.com/adafruit-huzzah32-esp32-feather/using-with-arduino-ide
+
 Once you've flashed the latest firmware, you'll need to configure Wi-Fi from the serial console as follows, substituting your network name and password:
 
 ```lua
