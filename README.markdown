@@ -14,9 +14,9 @@ You'll also need to run this command if the submodules change.
 
 StatusPanel comprises a number of different components:
 
-- Device
-- Service
-- App
+- [Firmware](#firmware)
+- [PCB](#pcb)
+- [Service](#service)
 
 ## Firmware
 
