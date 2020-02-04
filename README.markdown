@@ -93,3 +93,14 @@ PIPENV_DOTENV_LOCATION=.env.production pipenv run \
     --verbose \
     --start-directory service/tests
 ```
+
+# Command-line
+
+It can sometimes be useful to make requests directly from the command-line during development. `curl` can be useful for this. For example,
+
+```bash
+curl --header "Content-Type: application/json" \
+     --request POST \
+     --data '{"token":"123456789"}' \
+     http://127.0.0.1:5000/api/v3/device/
+```
