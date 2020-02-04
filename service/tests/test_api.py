@@ -167,8 +167,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200, "Getting the uploaded file succeeds")
         self.assertEqual(response.content, data_2, "Downloaded file matches uploaded file")
 
-    def test_api_v2_put_get_last_modified(self):
-        url = '/api/v2/abcdefgh'
+    def _test_put_get_last_modified(self, url):
         data = os.urandom(307200)
         response = self._upload(url, data)
         self.assertEqual(response.status_code, 200, "Upload succeeds")
@@ -180,10 +179,22 @@ class TestAPI(unittest.TestCase):
         current_timestamp = datetime.datetime.utcnow().replace(tzinfo=pytz.utc).timestamp()
         self.assertTrue(abs(current_timestamp - last_modified_timestamp) < 60, "Last-Modified headers within 60s of now")
 
-    def test_api_v2_upload_large_file_fails(self):
+    def test_api_v2_put_get_last_modified(self):
+        self._test_put_get_last_modified('/api/v2/abcdefgh')
+
+    def test_api_v3_put_get_last_modified(self):
+        self._test_put_get_last_modified('/api/v3/status/abcdefgh')
+
+    def _test_upload_large_file_fails(self, url):
         data = os.urandom((1024 * 1024) + 1)  # A little over 1MB
-        response = self._upload("/api/v2/bigfile1", data)
+        response = self._upload(url, data)
         self.assertEqual(response.status_code, 413, "Uploading large files fails")
+
+    def test_api_v2_upload_large_file_fails(self):
+        self._test_upload_large_file_fails("/api/v2/bigfile1")
+
+    def test_api_v3_upload_large_file_fails(self):
+        self._test_upload_large_file_fails("/api/v3/status/bigfile1")
 
     def _test_if_modified_since_header(self, url):
         data = os.urandom(307200)
