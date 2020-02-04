@@ -24,6 +24,7 @@ class Client {
             var request = URLRequest(url: self.baseUrl.appendingPathComponent("device/"))
             request.httpMethod = "POST"
             request.httpBody = try JSONSerialization.data(withJSONObject: json)
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 guard let data = data, error == nil else {
                     completionHandler(false, error)
