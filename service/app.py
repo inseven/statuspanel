@@ -84,6 +84,7 @@ def download(identifier):
 
 @app.route('/api/v3/device/', methods=['POST'])
 def device():
+    logging.info(request)
     logging.info(request.get_json())
     return jsonify(request.get_json())
 
