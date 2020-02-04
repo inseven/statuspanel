@@ -33,6 +33,8 @@ file.remove("deviceid")
 file.remove("sk")
 ```
 
+(If you remove just `"deviceid"`, you'll initiate new device registration but with the same keys as before, which probably isn't desirable.)
+
 ---
 
 # ESP8266
