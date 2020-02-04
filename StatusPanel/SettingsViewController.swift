@@ -9,6 +9,12 @@
 import EventKit
 import UIKit
 
+protocol SettingsViewControllerDelegate: AnyObject {
+
+    func didDismiss(settingsViewController: SettingsViewController) -> Void
+
+}
+
 class SettingsViewController: UITableViewController {
 
     @IBOutlet weak var calendarsCell: UITableViewCell!
@@ -16,6 +22,7 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var tflCell: UITableViewCell!
     @IBOutlet weak var nationalRailCell: UITableViewCell!
     @IBOutlet weak var updateTimeCell: UITableViewCell!
+    weak var delegate: SettingsViewControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +35,14 @@ class SettingsViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         update()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        guard let delegate = delegate else {
+            return
+        }
+        delegate.didDismiss(settingsViewController: self)
     }
 
     func update() {

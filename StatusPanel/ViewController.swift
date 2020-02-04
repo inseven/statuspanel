@@ -10,7 +10,7 @@ import UIKit
 import EventKit
 import Sodium
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     @IBOutlet var scrollView: UIScrollView!
     @IBOutlet weak var imageView: UIImageView!
@@ -20,7 +20,6 @@ class ViewController: UIViewController {
 
     var sourceController: DataSourceController!
     var prevItems: [DataItem] = []
-    var showingSettings = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,12 +28,19 @@ class ViewController: UIViewController {
         sourceController.delegate = self
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if (showingSettings) {
-            showingSettings = false
-            sourceController.fetch()
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "settings" {
+            guard
+                let navigationController = segue.destination as? UINavigationController,
+                let settingsViewController = navigationController.viewControllers[0] as? SettingsViewController else {
+                    return
+            }
+            settingsViewController.delegate = self
         }
+    }
+
+    func didDismiss(settingsViewController: SettingsViewController) {
+        sourceController.fetch()
     }
 
     func renderAndUpload(data: [DataItem], completion: @escaping () -> Void) {
@@ -336,11 +342,6 @@ class ViewController: UIViewController {
         return result
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let sender = sender as? UIBarButtonItem, sender.tag == SettingsButtonTag {
-            showingSettings = true
-        }
-    }
 }
 
 extension ViewController: DataSourceControllerDelegate {
