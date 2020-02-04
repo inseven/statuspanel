@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D80380AB23E9B6D2002606C7 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Client.swift */; };
 		D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */; };
 		D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
@@ -106,6 +107,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D80380AA23E9B6D2002606C7 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		D85E11852196BAC300E535D3 /* Sodium.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sodium.xcodeproj; path = "swift-sodium/Sodium.xcodeproj"; sourceTree = "<group>"; };
@@ -205,7 +207,6 @@
 			children = (
 				D85E11852196BAC300E535D3 /* Sodium.xcodeproj */,
 				DBCA987B2143E2920084B710 /* StatusPanel */,
-				DBCA987A2143E2920084B710 /* Products */,
 				DBB2D354217C9AC3009F7549 /* Frameworks */,
 				DBB2D35C217CA677009F7549 /* Sodium.framework */,
 			);
@@ -217,6 +218,7 @@
 				DBCA98792143E2920084B710 /* StatusPanel.app */,
 			);
 			name = Products;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		DBCA987B2143E2920084B710 /* StatusPanel */ = {
@@ -236,6 +238,8 @@
 				DB51C2E221749A2A00F016DB /* JSONRequest.swift */,
 				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
 				DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */,
+				D80380AA23E9B6D2002606C7 /* Client.swift */,
+				DBCA987A2143E2920084B710 /* Products */,
 				DB62F330224F892A00CA5E64 /* Calendar */,
 				DB62F331224F895F00CA5E64 /* National Rail */,
 				DB62F32F224F88F300CA5E64 /* TFL */,
@@ -398,6 +402,7 @@
 				DB87810C223D67B2005AEBD8 /* UpdateTimeController.swift in Sources */,
 				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
+				D80380AB23E9B6D2002606C7 /* Client.swift in Sources */,
 				D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */,
 				D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */,
 				DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */,
