@@ -41,9 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        if sourceController.delegate != nil {
-            sourceController.fetch()
-        }
+        update()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -130,6 +128,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("didReceiveRemoteNotification")
         backgroundFetchCompletionFn = completionHandler
         sourceController.fetch()
+    }
+
+    func update() {
+        if sourceController.delegate != nil {
+            sourceController.fetch()
+        }
     }
 
     func fetchCompleted(hasChanged: Bool) {
