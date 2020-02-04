@@ -59,15 +59,17 @@ def homepage():
 
 
 @app.route('/api/v2/<identifier>', methods=['POST'])
+@app.route('/api/v3/status/<identifier>', methods=['POST'])
 @check_identifier
-def v2_upload(identifier):
+def upload(identifier):
     get_database().set_data(identifier, request.files['file'].read())
     return jsonify({})
 
 
 @app.route('/api/v2/<identifier>', methods=['GET'])
+@app.route('/api/v3/status/<identifier>', methods=['GET'])
 @check_identifier
-def v2_download(identifier):
+def download(identifier):
     try:
         data, last_modified = get_database().get_data(identifier)
         response = make_response(data)
@@ -78,6 +80,12 @@ def v2_download(identifier):
         return response
     except KeyError:
         abort(404)
+
+
+@app.route('/api/v3/device/', methods=['POST'])
+def device():
+    logging.info(request.get_json())
+    return jsonify(request.get_json())
 
 
 if __name__ == '__main__':
