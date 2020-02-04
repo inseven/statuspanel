@@ -15,8 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
     var sourceController = DataSourceController()
     var apnsToken: Data?
+    var client: Client!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+
+        client = Client(baseUrl: "https://statuspanel.io/")
 
         sourceController.add(dataSource:TFLDataSource())
         sourceController.add(dataSource:NationalRailDataSource())
@@ -24,6 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sourceController.add(dataSource:CalendarSource(forDayOffset: 1, header: "Tomorrow:"))
 
         application.registerForRemoteNotifications()
+
         return true
     }
 
@@ -108,7 +112,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("Got APNS token")
         apnsToken = deviceToken
-        // TODO: send this to the server
+        self.client.registerDevice(token: deviceToken) { success, error in
+            guard success else {
+                print("Failed to register device with error \(String(describing: error)).")
+                return
+            }
+            print("Successfully registered device.")
+        }
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
