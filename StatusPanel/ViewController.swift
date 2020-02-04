@@ -83,6 +83,7 @@ class ViewController: UIViewController {
                 view.font = UIFont(name: fname, size: 16)
             }
             view.text = item.text
+            view.textColor = UIColor.black
             view.sizeToFit()
             view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: w, height: view.frame.height)
             let sz = view.frame
