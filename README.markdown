@@ -14,13 +14,9 @@ You'll also need to run this command if the submodules change.
 
 StatusPanel comprises a number of different components:
 
-- [Firmware](#firmware)
+- [Firmware](nodemcu/README.markdown)
 - [PCB](#pcb)
 - [Service](#service)
-
-## Firmware
-
-For details on how to update and configure the firmware, refer to the [device-specific readme](nodemcu/README.markdown).
 
 ## PCB
 
