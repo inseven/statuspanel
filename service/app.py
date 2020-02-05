@@ -9,6 +9,7 @@ import werkzeug
 
 from flask import Flask, send_from_directory, request, redirect, abort, jsonify, g, make_response
 
+import apns
 import database
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(process)d] [%(levelname)s] %(message)s", datefmt='%Y-%m-%d %H:%M:%S %z')
@@ -86,6 +87,13 @@ def download(identifier):
 def device():
     logging.info(request)
     logging.info(request.get_json())
+
+    # Send a notification to the device.
+    data = request.get_json()
+    token = data["token"]
+    client = apns.APNS(use_sandbox=True)
+    client.send_keepalive(device_tokens=[token])
+
     return jsonify(request.get_json())
 
 
