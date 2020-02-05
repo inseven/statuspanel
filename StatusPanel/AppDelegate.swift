@@ -110,13 +110,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("Got APNS token")
         apnsToken = deviceToken
-        self.client.registerDevice(token: deviceToken) { success, error in
-            guard success else {
-                print("Failed to register device with error \(String(describing: error)).")
-                return
-            }
-            print("Successfully registered device.")
-        }
+        registerDevice(token: deviceToken)
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
@@ -128,6 +122,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("didReceiveRemoteNotification")
         backgroundFetchCompletionFn = completionHandler
         sourceController.fetch()
+
+        // Re-register the device to ensure it doesn't time out on the server.
+        if let deviceToken = apnsToken {
+            registerDevice(token: deviceToken)
+        }
+
+    }
+
+    func registerDevice(token: Data) {
+        print("Registering device...")
+        self.client.registerDevice(token: token) { success, error in
+            guard success else {
+                print("Failed to register device with error \(String(describing: error)).")
+                return
+            }
+            print("Successfully registered device.")
+        }
     }
 
     func update() {
