@@ -218,7 +218,7 @@ class TestAPI(unittest.TestCase):
 
     def test_api_v3_post_device(self):
         url = '/api/v3/device/'
-        response = self.client.post(url, data={'token': '12345678'})
+        response = self.client.post(url, json={'token': '2EDvBde5PThia/q/zS0aSWe4kbnhjEiE9C+q3ykf7cU='})
         self.assertEqual(response.status_code, 200, "Registering device succeeds")
 
 
