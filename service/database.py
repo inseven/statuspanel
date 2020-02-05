@@ -1,6 +1,7 @@
 import logging
 import os
 import psycopg2
+import psycopg2.extras
 
 SECONDS_PER_WEEK = 60 * 60 * 24 * 7
 
@@ -11,11 +12,12 @@ class Metadata(object):
 
 class Transaction(object):
 
-    def __init__(self, connection):
+    def __init__(self, connection, **kwargs):
         self.connection = connection
+        self.kwargs = kwargs
 
     def __enter__(self):
-        self.cursor = self.connection.cursor()
+        self.cursor = self.connection.cursor(**self.kwargs)
         return self.cursor
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -43,20 +45,25 @@ def rename_modified_date_and_correct_default_value(cursor):
     cursor.execute("ALTER TABLE data ADD COLUMN last_modified timestamptz NOT NULL DEFAULT current_timestamp")
 
 
+def create_devices_table(cursor):
+    cursor.execute("CREATE TABLE devices (id SERIAL NOT NULL, token text NOT NULL, last_modified timestamptz NOT NULL DEFAULT current_timestamp, UNIQUE(id), UNIQUE(token))")
+
+
 class Database(object):
 
-    SCHEMA_VERSION = 9
+    SCHEMA_VERSION = 10
 
     MIGRATIONS = {
-        1: empty_migration,
-        2: create_image_table,
-        3: add_modified_date,
-        4: empty_migration,
-        5: empty_migration,
-        6: empty_migration,
-        7: empty_migration,
-        8: empty_migration,
-        9: rename_modified_date_and_correct_default_value,
+        1:  empty_migration,
+        2:  create_image_table,
+        3:  add_modified_date,
+        4:  empty_migration,
+        5:  empty_migration,
+        6:  empty_migration,
+        7:  empty_migration,
+        8:  empty_migration,
+        9:  rename_modified_date_and_correct_default_value,
+        10: create_devices_table,
     }
 
     def __init__(self):
@@ -117,6 +124,30 @@ class Database(object):
     def purge_stale_data(self, max_age):
         with Transaction(self.connection) as cursor:
             cursor.execute("DELETE FROM data WHERE last_modified < current_timestamp - %s", (max_age, ))
+
+    def register_device(self, token):
+        with Transaction(self.connection) as cursor:
+            cursor.execute("SELECT COUNT(*) FROM devices WHERE token = %s",
+                           (token, ))
+            result = cursor.fetchone()
+            count = result[0]
+            if count:
+                cursor.execute("UPDATE devices SET last_modified = current_timestamp WHERE token = %s",
+                               (token, ))
+            else:
+                cursor.execute("INSERT INTO devices (token, last_modified) VALUES (%s, current_timestamp)",
+                               (token, ))
+
+    def get_devices(self):
+        with Transaction(self.connection, cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT token
+                                FROM devices""")
+            results = cursor.fetchall()
+            return [result['token'] for result in results]
+
+    def purge_stale_devices(self, max_age):
+        with Transaction(self.connection) as cursor:
+            cursor.execute("DELETE FROM devices WHERE last_modified < current_timestamp - (%s||' seconds')::interval", (max_age, ))
 
     def close(self):
         self.connection.close()

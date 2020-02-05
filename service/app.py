@@ -88,11 +88,11 @@ def device():
     logging.info(request)
     logging.info(request.get_json())
 
-    # Send a notification to the device.
+    # Store the token
     data = request.get_json()
-    token = data["token"]
-    client = apns.APNS(use_sandbox=True)
-    client.send_keepalive(device_tokens=[token])
+    token = apns.encode_token(data["token"])
+    get_database().register_device(token)
+    logging.info(get_database().get_devices())
 
     return jsonify(request.get_json())
 
