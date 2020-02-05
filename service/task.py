@@ -17,5 +17,5 @@ print("Sending keepalive...")
 tokens = db.get_devices()
 if tokens:
     print(f"Devices: {tokens}")
-    client = apns.APNS(use_sandbox=True)
+    client = apns.APNS()
     client.send_keepalive(device_tokens=tokens)
