@@ -31,6 +31,12 @@ There are two apps in the Heroku pipeline:
 - statuspanel-staging - auto-deploys master
 - statuspanel-production - manual deploy from staging
 
+These Heroku apps have a couple of slightly non-standard requirements (they require both Python and Node.js buildpacks, and some additional environment variables), so they can be configured locally using the `configure-heroku-app` script. For example,
+
+```bash
+./scripts/configure-heroku-app statuspanel-staging
+```
+
 ### Dependencies
 
 ```bash

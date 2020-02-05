@@ -3,14 +3,20 @@
 SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 
-JWT_PRIVATE_KEY_PATH="${ROOT_DIRECTORY}/key.p8"
+JWT_PRIVATE_KEY_PATH="${ROOT_DIRECTORY}/apns.p8"
+JWT_PRIVATE_KEY=`cat "${JWT_PRIVATE_KEY_PATH}"`
 
-
-echo $JWT_PRIVATE_KEY
+APNS_TEAM_ID=S4WXAUZQEV
+APNS_BUNDLE_ID=uk.co.inseven.status-panel
+ANPS_KEY_ID=V5XKL2D8B9
+APNS_KEY=$JWT_PRIVATE_KEY
 
 heroku buildpacks:clear --app $1
 heroku buildpacks:set heroku/python --app $1
 heroku buildpacks:add --index 2 heroku/nodejs --app $1
 
-JWT_PRIVATE_KEY=`cat "${JWT_PRIVATE_KEY_PATH}"`
 heroku config:set "JWT_PRIVATE_KEY=$JWT_PRIVATE_KEY" --app $1
+heroku config:set "APNS_TEAM_ID=$APNS_TEAM_ID" --app $1
+heroku config:set "APNS_BUNDLE_ID=$APNS_BUNDLE_ID" --app $1
+heroku config:set "ANPS_KEY_ID=$ANPS_KEY_ID" --app $1
+heroku config:set "APNS_KEY=$APNS_KEY" --app $1

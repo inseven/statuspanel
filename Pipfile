@@ -6,9 +6,10 @@ verify_ssl = true
 
 [packages]
 
-Flask = "*"
 django = "*"
 django-heroku = "*"
+Flask = "*"
+"gobiko.apns" = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
 py-dateutil = "*"
