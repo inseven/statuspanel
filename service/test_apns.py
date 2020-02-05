@@ -8,9 +8,12 @@ import apns
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("token")
+    parser.add_argument("--use-sandbox", action='store_true', default=False)
     options = parser.parse_args()
 
-    client = apns.APNS(use_sandbox=True)
+    print(options.token)
+
+    client = apns.APNS(use_sandbox=options.use_sandbox)
     client.send_keepalive(device_tokens=[options.token])
 
 
