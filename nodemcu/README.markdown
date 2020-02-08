@@ -13,7 +13,9 @@ The Arduino IDE can be a convenient way to communicate with the device. You can 
 The firmware will automatically start if GPIO 14 is held high. This can be done by shorting it to the 3.3V pin. For debugging purposes, you may wish to leave it low and execute the code directly from the serial console:
 
 ```lua
-main()
+initp(displayRegisterScreen) -- To show enrollment QR code
+getImg()                     -- To fetch latest image
+initp(displayStatusImg)      -- To display last-fetched image
 ```
 
 ### Wi-Fi
@@ -51,7 +53,7 @@ esptool.py --port /dev/tty.SLAB_USBtoUART write_flash -fm qio 0 nodemcu-master-1
 python ~/Documents/Dev/esp8266/nodemcu-uploader/nodemcu-uploader.py \
     --port /dev/tty.SLAB_USBtoUART \
     upload \
-    panel.lua:init.lua
+    panel.lua
 ```
 
 # ESP32

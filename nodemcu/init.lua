@@ -64,8 +64,11 @@ function configurePins()
 end
 
 function init()
-    -- First things first, start bringing up WiFi since getting an IP address takes time
-    local autoMode
+    -- Configuring pins only takes ~45ms so we can reasonably do it first
+    configurePins()
+    local autoMode = gpio.read(AutoPin) == 1
+
+    -- Now start bringing up WiFi since getting an IP address takes time
     if esp32 then
         wifi.mode(wifi.STATION)
         wifi.sta.on("got_ip", function(name, event)
@@ -75,17 +78,11 @@ function init()
             -- Why is the default allocation limit set to 4KB? Why even is there one?
             node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
 
-            if autoMode then
-                print("Doing stuff")
-                main()
-            end
+            main(autoMode)
         end)
         wifi.start()
         wifi.sta.connect()
     end
-
-    configurePins()
-	autoMode = gpio.read(AutoPin) == 1
 
     -- Finally, pull in other modules
     if not autoMode then
