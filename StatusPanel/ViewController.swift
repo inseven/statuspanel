@@ -280,15 +280,25 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         var i = 0
         var byte: UInt8 = 0
         while i < data.count {
-            let hex = (UInt32(data[i+1]) << 16) + (UInt32(data[i+2]) << 8) + UInt32(data[i+3])
+            let red = data[i+1]
+            let green = data[i+2]
+            let blue = data[i+3]
+            let col = UIColor.init(red: CGFloat(red) / 256, green: CGFloat(green) / 256, blue: CGFloat(blue) / 256, alpha: 0)
+            var hue : CGFloat = 0
+            var sat : CGFloat = 0
+            var brightness : CGFloat = 0
+            var alpha : CGFloat = 0
+            col.getHue(&hue, saturation: &sat, brightness: &brightness, alpha: &alpha)
+
             var val : UInt8 = 0
-            if hex == 0 {
+            if brightness < 0.2 {
                 val = Black
-            } else if hex == 0xFFFF00 || hex == 0xFF0000 {
-                val = Colored
-            } else {
+            } else if brightness > 0.9 {
                 val = White
+            } else {
+                val = Colored
             }
+
             // For pixels A, B, C, D the packed 2bpp layout is:
             // 76543210
             // DDCCBBAA
