@@ -27,7 +27,9 @@ function getImg(completion)
         addStatus("IP: %s", ip)
     else
         addStatus("No internet connection!")
-        node.task.post(function() completion(nil) end)
+        if completion then
+            node.task.post(function() completion(nil) end)
+        end
         return
     end
 
@@ -188,7 +190,18 @@ function displayRegisterScreen()
     display(getPixel)
 end
 
-function main()
+function displayStatusImg(completion)
+    displayImg("img_panel_rle", completion)
+end
+
+function main(autoMode)
+    if not autoMode then
+        print("To show enrollment QR code: initp(displayRegisterScreen)")
+        print("To fetch latest image: getImg()")
+        print("To display last-fetched image: initp(displayStatusImg)")
+        return
+    end
+    print("Fetching image...")
     getImg(function(status, date)
         if not initp then
             require "panel"
@@ -197,7 +210,7 @@ function main()
             initp(displayRegisterScreen)
         elseif status == 200 then
             initp(function()
-                displayImg("img_panel_rle", function(wakeTime) sleepFromDate(date, wakeTime) end)
+                displayStatusImg(function(wakeTime) sleepFromDate(date, wakeTime) end)
             end)
         elseif status == 304 then
             -- Need to grab waketime from existing img
