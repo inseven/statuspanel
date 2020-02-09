@@ -64,13 +64,34 @@ function getImg(completion)
                 -- print(response)
                 status = nil
             else
-                local f = assert(file.open("img_panel_rle", "w"))
-                f:write(decrypted)
-                f:close()
+                local needToUpdate = true
+                local hash = sodium.generichash(decrypted)
+                local f = file.open("img_hash", "r")
+                if f then
+                    local existingHash = f:read()
+                    f:close()
+                    if hash == existingHash then
+                        print("Image has not changed")
+                        needToUpdate = false
+                        status = 304 -- Prevent main() from updating the panel
+                    end
+                end
+
+                if needToUpdate then
+                    local f = assert(file.open("img_panel_rle", "w"))
+                    f:write(decrypted)
+                    f:close()
+                end
 
                 if lastModifiedHeader then
                     local f = assert(file.open("last_modified", "w"))
                     f:write(lastModifiedHeader)
+                    f:close()
+                end
+
+                if needToUpdate then
+                    local f = assert(file.open("img_hash", "w"))
+                    f:write(hash)
                     f:close()
                 end
             end
