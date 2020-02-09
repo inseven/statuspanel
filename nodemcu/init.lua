@@ -16,6 +16,7 @@ if esp32 then
     StatusLed = 21
     AutoPin = 14
     VBat = 7 -- That is, ADC1_CH7 aka GPIO 35 (internally connected to BAT)
+    UnpairPin = 23 -- aka SDA
 else
     -- See https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/pinouts
     Busy = 4 -- GPIO 2
@@ -35,7 +36,7 @@ function configurePins()
             gpio = Busy,
             dir = gpio.IN
         }, {
-            gpio = AutoPin,
+            gpio = { AutoPin, UnpairPin },
             dir = gpio.IN,
             pull = gpio.PULL_DOWN
         })
