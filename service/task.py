@@ -7,6 +7,18 @@ import apns
 import database
 
 
+def send_keepalive(use_sandbox, tokens):
+    if tokens:
+        print(f"Devices: {tokens}")
+        client = apns.APNS(use_sandbox=use_sandbox)
+        try:
+            client.send_keepalive(device_tokens=tokens)
+        except apns.BadTokens as e:
+            for device_token in e.tokens:
+                print(f"Cleaning up device '{device_token}'...")
+                db.delete_device(token=device_token)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Periodic task for StatusPanel.")
     parser.add_argument('--database-url', default=None, help="use alternative database URL; the DATABASE_URL environment variable will be used otherwise")
@@ -21,16 +33,13 @@ def main():
 
     # Send the tokens.
     print("Sending keepalive...")
-    tokens = db.get_devices()
-    if tokens:
-        print(f"Devices: {tokens}")
-        client = apns.APNS()
-        try:
-            client.send_keepalive(device_tokens=tokens)
-        except apns.BadTokens as e:
-            for device_token in e.tokens:
-                print(f"Cleaning up device '{device_token}'...")
-                db.delete_device(token=device_token)
+    devices = db.get_devices()
+
+    print("Sending sandbox tokens...")
+    send_keepalive(use_sandbox=True, tokens=[device["token"] for device in devices if device["use_sandbox"]])
+
+    print("Sending tokens...")
+    send_keepalive(use_sandbox=False, tokens=[device["token"] for device in devices if not device["use_sandbox"]])
 
 
 if __name__=="__main__":

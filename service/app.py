@@ -91,7 +91,7 @@ def device():
     # Store the token
     data = request.get_json()
     token = apns.encode_token(data["token"])
-    get_database().register_device(token)
+    get_database().register_device(token, use_sandbox=data["use_sandbox"] if "use_sandbox" in data else False)
     logging.info(get_database().get_devices())
 
     return jsonify(request.get_json())
