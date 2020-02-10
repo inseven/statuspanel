@@ -18,7 +18,9 @@ import path
 
 sys.path.append(path.SERVICE_DIR)
 
+import apns
 import app
+import database
 
 
 class DevelopmentClient(object):
@@ -216,10 +218,29 @@ class TestAPI(unittest.TestCase):
     def test_api_v3_if_modified_since_header(self):
         self._test_if_modified_since_header('/api/v3/status/poiuytre')
 
-    def test_api_v3_post_device(self):
+    def test_api_v3_post_device_no_sandbox_implicit(self):
         url = '/api/v3/device/'
-        response = self.client.post(url, json={'token': '2EDvBde5PThia/q/zS0aSWe4kbnhjEiE9C+q3ykf7cU='})
+        token = '2EDvBde5PThia/q/zS0aSWe4kbnhjEiE9C+q3ykf7cU='
+        response = self.client.post(url, json={'token': token})
         self.assertEqual(response.status_code, 200, "Registering device succeeds")
+        db = database.Database()
+        self.assertEqual(db.get_devices(), [{"token": apns.encode_token(token), "use_sandbox": False}])
+
+    def test_api_v3_post_device_no_sandbox_explicit(self):
+        url = '/api/v3/device/'
+        token = '2EDvBde5PThia/q/zS0aSWe4kbnhjEiE9C+q3ykf7cU='
+        response = self.client.post(url, json={'token': token, 'use_sandbox': False})
+        self.assertEqual(response.status_code, 200, "Registering device succeeds")
+        db = database.Database()
+        self.assertEqual(db.get_devices(), [{"token": apns.encode_token(token), "use_sandbox": False}])
+
+    def test_api_v3_post_device_use_sandbox(self):
+        url = '/api/v3/device/'
+        token = '2EDvBde5PThia/q/zS0aSWe4kbnhjEiE9C+q3ykf7cU='
+        response = self.client.post(url, json={'token': token, 'use_sandbox': True})
+        self.assertEqual(response.status_code, 200, "Registering device succeeds")
+        db = database.Database()
+        self.assertEqual(db.get_devices(), [{"token": apns.encode_token(token), "use_sandbox": True}])
 
 
 if __name__ == "__main__":
