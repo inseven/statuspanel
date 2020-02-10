@@ -107,6 +107,23 @@ class CalendarSource : DataSource {
                 continue
             }
 
+            // Don't show cancelled events.
+            if (event.status == .canceled) {
+                continue
+            }
+
+            // Don't show decliend events.
+            var declined = false
+            for attendee in event.attendees ?? [] {
+                if attendee.isCurrentUser && attendee.participantStatus == .declined {
+                    declined = true
+                    break
+                }
+            }
+            if declined {
+                continue
+            }
+
             let timeStr = df.string(from: event.startDate)
             if event.isAllDay {
                 results.append(CalendarSource.formatEvent(time: nil, title: event.title!))
