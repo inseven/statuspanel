@@ -11,18 +11,15 @@ import EventKit
 
 class CalendarSource : DataSource {
     let eventStore: EKEventStore
-    let dayStart : Date
     let header : String?
+    let dayOffset: Int
 
     init(forDayOffset dayOffset: Int = 0, header: String? = nil) {
         eventStore = EKEventStore()
-        let now = Date()
-        let cal = Calendar.current
-        let dayComponents = cal.dateComponents([.year, .month, .day], from: now)
-        let todayStart = cal.date(from: dayComponents)!
-        dayStart = cal.date(byAdding: DateComponents(day: dayOffset), to: todayStart)!
         self.header = header
+        self.dayOffset = dayOffset
     }
+
     func fetchData(onCompletion: @escaping Callback) {
         eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
             if (granted) {
@@ -82,7 +79,11 @@ class CalendarSource : DataSource {
         let activeCalendars = Config().activeCalendars
         let calendars = eventStore.calendars(for: .event).filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
 
+        let now = Date()
         let cal = Calendar.current
+        let dayComponents = cal.dateComponents([.year, .month, .day], from: now)
+        let todayStart = cal.date(from: dayComponents)!
+        let dayStart = cal.date(byAdding: DateComponents(day: dayOffset), to: todayStart)!
         let tz = cal.timeZone
         let dayEnd = cal.date(byAdding: DateComponents(day: 1, second: -1), to: dayStart)!
         let pred = eventStore.predicateForEvents(withStart: dayStart, end: dayEnd, calendars: calendars)
@@ -144,7 +145,6 @@ class CalendarSource : DataSource {
 
     static func getHeader() -> DataItem {
         let df = DateFormatter()
-        //df.dateStyle = .long
         df.setLocalizedDateFormatFromTemplate("yMMMMdEEEE")
         let val = df.string(from: Date())
         return DataItem(val, flags: [.header])
