@@ -66,8 +66,10 @@ class Database(object):
         10: create_devices_table,
     }
 
-    def __init__(self):
-        self.connection = psycopg2.connect(os.environ['DATABASE_URL'])
+    def __init__(self, database_url=None):
+        if database_url is None:
+            database_url = os.environ['DATABASE_URL']
+        self.connection = psycopg2.connect(database_url)
 
         # Create the metadata table (used for versioning).
         with Transaction(self.connection) as cursor:
@@ -148,6 +150,10 @@ class Database(object):
     def purge_stale_devices(self, max_age):
         with Transaction(self.connection) as cursor:
             cursor.execute("DELETE FROM devices WHERE last_modified < current_timestamp - (%s||' seconds')::interval", (max_age, ))
+
+    def delete_device(self, token):
+        with Transaction(self.connection) as cursor:
+            cursor.execute("DELETE FROM devices WHERE token = %s", (token, ))
 
     def close(self):
         self.connection.close()
