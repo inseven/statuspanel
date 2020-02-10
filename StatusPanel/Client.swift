@@ -26,7 +26,7 @@ class Client {
         #if DEBUG
         let useSandbox = true
         #else
-        let useSandbox = fals
+        let useSandbox = false
         #endif
 
         let json: [String: Any] = [
