@@ -19,7 +19,16 @@ class Client {
     }
 
     func registerDevice(token: Data, completionHandler: @escaping (Bool, Error?) -> Void) {
-        let useSandbox = Bundle.main.appStoreReceiptURL == nil
+
+        // Rudimentary mechanism for determining whether to use the APNS sandbox or not.
+        // It's actually a lot more complex than this, but debug build (or not) is a pretty good proxy for the behaviour
+        // we're after, and doesn't involve parsing mobile provision files, or bringing in additional dependencies.
+        #if DEBUG
+        let useSandbox = true
+        #else
+        let useSandbox = fals
+        #endif
+
         let json: [String: Any] = [
             "token": token.base64EncodedString(),
             "use_sandbox": useSandbox,
