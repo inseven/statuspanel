@@ -49,9 +49,13 @@ def create_devices_table(cursor):
     cursor.execute("CREATE TABLE devices (id SERIAL NOT NULL, token text NOT NULL, last_modified timestamptz NOT NULL DEFAULT current_timestamp, UNIQUE(id), UNIQUE(token))")
 
 
+def add_devices_use_sandbox(cursor):
+    cursor.execute("ALTER TABLE devices ADD COLUMN use_sandbox boolean NOT NULL DEFAULT FALSE")
+
+
 class Database(object):
 
-    SCHEMA_VERSION = 10
+    SCHEMA_VERSION = 11
 
     MIGRATIONS = {
         1:  empty_migration,
@@ -64,6 +68,7 @@ class Database(object):
         8:  empty_migration,
         9:  rename_modified_date_and_correct_default_value,
         10: create_devices_table,
+        11: add_devices_use_sandbox,
     }
 
     def __init__(self, database_url=None):
@@ -127,25 +132,25 @@ class Database(object):
         with Transaction(self.connection) as cursor:
             cursor.execute("DELETE FROM data WHERE last_modified < current_timestamp - %s", (max_age, ))
 
-    def register_device(self, token):
+    def register_device(self, token, use_sandbox=False):
         with Transaction(self.connection) as cursor:
             cursor.execute("SELECT COUNT(*) FROM devices WHERE token = %s",
                            (token, ))
             result = cursor.fetchone()
             count = result[0]
             if count:
-                cursor.execute("UPDATE devices SET last_modified = current_timestamp WHERE token = %s",
-                               (token, ))
+                cursor.execute("UPDATE devices SET use_sandbox = %s, last_modified = current_timestamp WHERE token = %s",
+                               (use_sandbox, token))
             else:
-                cursor.execute("INSERT INTO devices (token, last_modified) VALUES (%s, current_timestamp)",
-                               (token, ))
+                cursor.execute("INSERT INTO devices (token, use_sandbox, last_modified) VALUES (%s, %s, current_timestamp)",
+                               (token, use_sandbox))
 
     def get_devices(self):
         with Transaction(self.connection, cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT token
+            cursor.execute("""SELECT token, use_sandbox
                                 FROM devices""")
             results = cursor.fetchall()
-            return [result['token'] for result in results]
+            return results
 
     def purge_stale_devices(self, max_age):
         with Transaction(self.connection) as cursor:
