@@ -19,7 +19,11 @@ class Client {
     }
 
     func registerDevice(token: Data, completionHandler: @escaping (Bool, Error?) -> Void) {
-        let json: [String: String] = ["token": token.base64EncodedString()]
+        let useSandbox = Bundle.main.appStoreReceiptURL == nil
+        let json: [String: Any] = [
+            "token": token.base64EncodedString(),
+            "use_sandbox": useSandbox,
+        ]
         do {
             var request = URLRequest(url: self.baseUrl.appendingPathComponent("device/"))
             request.httpMethod = "POST"
