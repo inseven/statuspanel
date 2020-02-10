@@ -64,6 +64,25 @@ Once your docker container is running, you can run the local service as follows:
 pipenv run heroku local
 ```
 
+### Testing APNS
+
+When testing APNS, it can be useful to configure the environment variables required to communicate with the production instance of APNS. This can be done by running the following commands:
+
+```bash
+export APNS_TEAM_ID=S4WXAUZQEV
+export APNS_BUNDLE_ID=uk.co.inseven.status-panel
+export ANPS_KEY_ID=V5XKL2D8B9
+export APNS_KEY=`cat apns.p8`
+```
+
+N.B. This assumes the APNS private key is in `apns.p8` and these commands are executed from the root directory.
+
+If you wish to test notification deployment, you will also need to pass the database URL when running the APNS periodic command:
+
+```bash
+pipenv run python3 service/task.py --database-url <database_url>
+```
+
 ### Tests
 
 Local API tests make use of a named docker container (creating and deleting the container where appropriate), and the Flask test client:
