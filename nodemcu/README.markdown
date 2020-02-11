@@ -89,7 +89,7 @@ vs Arduino:
 
     esptool.py --chip esp32 --port /dev/cu.SLAB_USBtoUART --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 ~/Documents/Dev/nodemcu/esp32/build/bootloader/bootloader.bin 0x10000 ~/Documents/Dev/nodemcu/esp32/build/NodeMCU.bin 0x8000 ~/Documents/Dev/nodemcu/esp32/build/partitions_tomsci.bin
 
-## LUA Script
+## Updating LUA Script
 
 Before getting started, you'll have to install the Python dependencies:
 
@@ -98,7 +98,7 @@ cd nodemcu
 pipenv install
 ```
 
-Use `nodemcu-uploader.py` to copy the script files:
+Ensure the device is **not** set to auto, and use `nodemcu-uploader.py` to copy the script files:
 
 
 ```bash
