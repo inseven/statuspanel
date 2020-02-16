@@ -26,7 +26,9 @@ StatusPanel comprises a number of different components:
 
 ## PCB
 
-![](images/pinout.jpg)
+![Schematics](pcb/statuspanel.png)
+
+![Tom's notes](images/pinout.jpg)
 
 ## Service
 
