@@ -23,6 +23,8 @@ Possible future display:
 
 - [Waveshare 1304×984, 12.48inch E-Ink display module, red/black/white three-color](https://www.waveshare.com/product/raspberry-pi/12.48inch-e-paper-module-b.htm)
 
+It looks like Waveshare are phasing out the display we're currently using and replacing it with one of the same physical size, but a higher resolution.
+
 ## Components
 
 StatusPanel comprises a number of different components:
