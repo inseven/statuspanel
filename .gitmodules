@@ -4,3 +4,6 @@
 [submodule "nodemcu-uploader"]
 	path = nodemcu-uploader
 	url = git@github.com:jbmorley/nodemcu-uploader.git
+[submodule "pcb/libraries/Eagle-Libraries"]
+	path = pcb/libraries/Eagle-Libraries
+	url = git@github.com:chiengineer/Eagle-Libraries.git
