@@ -18,6 +18,7 @@ You'll also need to run this command if the submodules change.
 | Breadboard-friendly SPDT Slide Switch                                               | Adafruit   | https://www.adafruit.com/product/805                | $0.95  | 1          |
 | Adafruit HUZZAH32 – ESP32 Feather Board                                             | Adafruit   | https://www.adafruit.com/product/3405               | $19.95 | 1          |
 | 640x384, 7.5inch E-Ink display HAT for Raspberry Pi, yellow/black/white three-color | Waveshare  | https://www.waveshare.com/7.5inch-e-paper-hat-c.htm | $53.99 | 1          |
+| Diffused 3mm LED                                                                    | Adafruit   | https://www.adafruit.com/product/4202               | $0.118 | 1          |
 
 Possible future display:
 
