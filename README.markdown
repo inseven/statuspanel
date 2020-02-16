@@ -10,6 +10,14 @@ git submodule update --init
 
 You'll also need to run this command if the submodules change.
 
+## Bill of Materials
+
+- [Tactile Button Switch (6 mm)](https://www.adafruit.com/product/367)
+
+| *Part*                       | *Supplier* | *Link*                               | 
+| ---------------------------- | ---------- | ------------------------------------ |
+| Tactile Button Switch (6 mm) | Adafruit   | https://www.adafruit.com/product/367 |
+
 ## Components
 
 StatusPanel comprises a number of different components:
