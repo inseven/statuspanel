@@ -257,6 +257,7 @@ function sleepFromDate(date, wakeTime)
     end
 
     local delta = target - now
+    delta = 10
     print(string.format("Sleeping for %d secs (~%d hours)", delta, math.floor(delta / (60*60))))
     node.dsleeps(delta)
 end
