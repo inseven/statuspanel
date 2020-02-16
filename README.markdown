@@ -12,11 +12,16 @@ You'll also need to run this command if the submodules change.
 
 ## Bill of Materials
 
-| *Part*                                  | *Supplier* | *Link*                                | *Cost* | *Quantity* |
-| --------------------------------------- | ---------- | ------------------------------------- | ------ | ---------- |
-| Tactile Button Switch (6 mm)            | Adafruit   | https://www.adafruit.com/product/367  | $0.125 | 1          |
-| Breadboard-friendly SPDT Slide Switch   | Adafruit   | https://www.adafruit.com/product/805  | $0.95  | 1          |
-| Adafruit HUZZAH32 – ESP32 Feather Board | Adafruit   | https://www.adafruit.com/product/3405 | $19.95 | 1          |
+| *Part*                                                                              | *Supplier* | *Link*                                              | *Cost* | *Quantity* |
+| ----------------------------------------------------------------------------------- | ---------- | --------------------------------------------------- | ------ | ---------- |
+| Tactile Button Switch (6 mm)                                                        | Adafruit   | https://www.adafruit.com/product/367                | $0.125 | 1          |
+| Breadboard-friendly SPDT Slide Switch                                               | Adafruit   | https://www.adafruit.com/product/805                | $0.95  | 1          |
+| Adafruit HUZZAH32 – ESP32 Feather Board                                             | Adafruit   | https://www.adafruit.com/product/3405               | $19.95 | 1          |
+| 640x384, 7.5inch E-Ink display HAT for Raspberry Pi, yellow/black/white three-color | Waveshare  | https://www.waveshare.com/7.5inch-e-paper-hat-c.htm | $53.99 | 1          |
+
+Possible future display:
+
+- [Waveshare 1304×984, 12.48inch E-Ink display module, red/black/white three-color](https://www.waveshare.com/product/raspberry-pi/12.48inch-e-paper-module-b.htm)
 
 ## Components
 
