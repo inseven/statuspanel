@@ -12,9 +12,11 @@ You'll also need to run this command if the submodules change.
 
 ## Bill of Materials
 
-| *Part*                       | *Supplier* | *Link*                               | 
-| ---------------------------- | ---------- | ------------------------------------ |
-| Tactile Button Switch (6 mm) | Adafruit   | https://www.adafruit.com/product/367 |
+| *Part*                                  | *Supplier* | *Link*                                | *Cost* | *Quantity* |
+| --------------------------------------- | ---------- | ------------------------------------- | ------ | ---------- |
+| Tactile Button Switch (6 mm)            | Adafruit   | https://www.adafruit.com/product/367  | $0.125 | 1          |
+| Breadboard-friendly SPDT Slide Switch   | Adafruit   | https://www.adafruit.com/product/805  | $0.95  | 1          |
+| Adafruit HUZZAH32 – ESP32 Feather Board | Adafruit   | https://www.adafruit.com/product/3405 | $19.95 | 1          |
 
 ## Components
 
