@@ -774,7 +774,7 @@ design rules under a new name.</description>
 </element>
 </elements>
 <signals>
-<signal name="RST">
+<signal name="PANELRESET">
 <contactref element="DISPLAY" pad="11"/>
 <contactref element="HUZZAH32" pad="23"/>
 <wire x1="30.6324" y1="21.6408" x2="31.6992" y2="21.6408" width="0.1524" layer="16"/>
