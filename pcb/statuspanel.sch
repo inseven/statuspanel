@@ -2685,6 +2685,24 @@ W = angled&lt;p&gt;
 <label x="139.7" y="63.5" size="0.8128" layer="95" xref="yes"/>
 </segment>
 </net>
+<net name="STATUS" class="0">
+<segment>
+<pinref part="STAT." gate="G$1" pin="A"/>
+<wire x1="111.76" y1="22.86" x2="114.3" y2="22.86" width="0.1524" layer="91"/>
+<label x="114.3" y="22.86" size="0.8128" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="HUZZAH32" gate="G$1" pin="NC"/>
+<wire x1="134.62" y1="86.36" x2="139.7" y2="86.36" width="0.1524" layer="91"/>
+<label x="139.7" y="86.36" size="0.8128" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="N$3" class="0">
+<segment>
+<pinref part="STAT." gate="G$1" pin="C"/>
+<wire x1="104.14" y1="22.86" x2="101.6" y2="22.86" width="0.1524" layer="91"/>
+</segment>
+</net>
 </nets>
 </sheet>
 </sheets>
