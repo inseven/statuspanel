@@ -1133,14 +1133,14 @@ W = angled&lt;p&gt;
 </net>
 <net name="UNPAIR" class="0">
 <segment>
-<pinref part="HUZZAH32" gate="G$1" pin="GPIOSDA"/>
-<wire x1="91.44" y1="86.36" x2="86.36" y2="86.36" width="0.1524" layer="91"/>
-<label x="86.36" y="86.36" size="0.8128" layer="95" rot="R180" xref="yes"/>
-</segment>
-<segment>
 <pinref part="UNPAIR" gate="1" pin="P"/>
 <wire x1="83.82" y1="22.86" x2="86.36" y2="22.86" width="0.1524" layer="91"/>
 <label x="86.36" y="22.86" size="0.8128" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="HUZZAH32" gate="G$1" pin="GPIOA2"/>
+<wire x1="134.62" y1="63.5" x2="139.7" y2="63.5" width="0.1524" layer="91"/>
+<label x="139.7" y="63.5" size="0.8128" layer="95" xref="yes"/>
 </segment>
 </net>
 </nets>
