@@ -16,7 +16,7 @@ function getImg(completion)
     statusTable = {}
     addStatus(getBatteryVoltageStatus())
     addStatus("Device ID: %s", deviceId)
-    
+
     if not gw and wifi.sta.getip then
         -- TODO remove this after retesting esp8266 code
         local _
@@ -223,7 +223,7 @@ function main(autoMode)
         return
     end
     print("Fetching image...")
-    getImg(function(status, date)
+    if !pcall(getImg, function(status, date)
         if not initp then
             require "panel"
         end
@@ -239,7 +239,9 @@ function main(autoMode)
             f:close()
             sleepFromDate(date, wakeTime)
         end
-    end)
+    end)) then
+        print("Failed to update with error.")
+    end
 end
 
 function sleepFromDate(date, wakeTime)
