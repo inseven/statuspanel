@@ -1004,11 +1004,11 @@ W = angled&lt;p&gt;
 <busses>
 </busses>
 <nets>
-<net name="RST" class="0">
+<net name="PANELRESET" class="0">
 <segment>
 <pinref part="DISPLAY" gate="G$1" pin="11"/>
-<wire x1="53.34" y1="50.8" x2="58.42" y2="50.8" width="0.1524" layer="91"/>
-<label x="58.42" y="50.8" size="0.8128" layer="95" xref="yes"/>
+<wire x1="53.34" y1="50.8" x2="55.88" y2="50.8" width="0.1524" layer="91"/>
+<label x="55.88" y="50.8" size="0.8128" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="HUZZAH32" gate="G$1" pin="GPIO11"/>
