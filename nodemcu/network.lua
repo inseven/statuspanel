@@ -223,7 +223,7 @@ function main(autoMode)
         return
     end
     print("Fetching image...")
-    if !pcall(getImg, function(status, date)
+    if not pcall(getImg, function(status, date)
         if not initp then
             require "panel"
         end
