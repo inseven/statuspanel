@@ -2680,9 +2680,9 @@ W = angled&lt;p&gt;
 <label x="86.36" y="22.86" size="0.8128" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="HUZZAH32" gate="G$1" pin="GPIOA2"/>
-<wire x1="134.62" y1="63.5" x2="139.7" y2="63.5" width="0.1524" layer="91"/>
-<label x="139.7" y="63.5" size="0.8128" layer="95" xref="yes"/>
+<pinref part="HUZZAH32" gate="G$1" pin="GPIO6"/>
+<wire x1="91.44" y1="78.74" x2="86.36" y2="78.74" width="0.1524" layer="91"/>
+<label x="86.36" y="78.74" size="0.8128" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="STATUS" class="0">
