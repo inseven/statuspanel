@@ -44,7 +44,7 @@ def main():
                         "--baud", "9600",
                         "--start_baud", "115200",
                         "upload",
-                        "init.lua", "panel.lua", "network.lua", "rle.lua", "font.lua", "root.pem"])
+                        "init.lua", "panel.lua", "network.lua", "rle.lua", "font.lua", "root.pem", "main.lua"])
 
 
 if __name__ == "__main__":
