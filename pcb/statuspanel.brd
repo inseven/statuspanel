@@ -821,9 +821,8 @@ design rules under a new name.</description>
 <wire x1="29.2608" y1="23.0124" x2="30.6324" y2="21.6408" width="0.1524" layer="16"/>
 <wire x1="27.5844" y1="23.0124" x2="29.2608" y2="23.0124" width="0.1524" layer="16"/>
 <wire x1="23.1648" y1="27.432" x2="27.5844" y2="23.0124" width="0.1524" layer="16"/>
-<wire x1="13.4112" y1="27.432" x2="23.1648" y2="27.432" width="0.1524" layer="16"/>
-<wire x1="9.7536" y1="31.0896" x2="13.4112" y2="27.432" width="0.1524" layer="16"/>
-<wire x1="2.5908" y1="31.0896" x2="9.7536" y2="31.0896" width="0.1524" layer="16"/>
+<wire x1="6.2484" y1="27.432" x2="23.1648" y2="27.432" width="0.1524" layer="16"/>
+<wire x1="2.5908" y1="31.0896" x2="6.2484" y2="27.432" width="0.1524" layer="16"/>
 <wire x1="31.6992" y1="21.6408" x2="31.75" y2="21.59" width="0.1524" layer="16"/>
 <wire x1="2.5908" y1="31.0896" x2="2.54" y2="31.115" width="0.1524" layer="16"/>
 </signal>
@@ -943,16 +942,11 @@ design rules under a new name.</description>
 </signal>
 <signal name="UNPAIR">
 <contactref element="UNPAIR" pad="3"/>
-<contactref element="HUZZAH32" pad="7"/>
-<wire x1="6.5532" y1="56.388" x2="7.3152" y2="56.388" width="0.1524" layer="16"/>
-<wire x1="1.3716" y1="51.2064" x2="6.5532" y2="56.388" width="0.1524" layer="16"/>
-<wire x1="1.3716" y1="30.6324" x2="1.3716" y2="51.2064" width="0.1524" layer="16"/>
-<wire x1="2.286" y1="29.718" x2="1.3716" y2="30.6324" width="0.1524" layer="16"/>
-<wire x1="10.668" y1="29.718" x2="2.286" y2="29.718" width="0.1524" layer="16"/>
-<wire x1="16.764" y1="23.622" x2="10.668" y2="29.718" width="0.1524" layer="16"/>
-<wire x1="22.86" y1="23.622" x2="16.764" y2="23.622" width="0.1524" layer="16"/>
-<wire x1="7.3152" y1="56.388" x2="7.3406" y2="56.4388" width="0.1524" layer="16"/>
-<wire x1="22.86" y1="23.622" x2="22.86" y2="23.495" width="0.1524" layer="16"/>
+<contactref element="HUZZAH32" pad="20"/>
+<wire x1="7.3152" y1="43.5864" x2="7.3152" y2="56.388" width="0.1524" layer="1"/>
+<wire x1="2.5908" y1="38.862" x2="7.3152" y2="43.5864" width="0.1524" layer="1"/>
+<wire x1="7.3152" y1="56.388" x2="7.3406" y2="56.4388" width="0.1524" layer="1"/>
+<wire x1="2.5908" y1="38.862" x2="2.54" y2="38.735" width="0.1524" layer="1"/>
 </signal>
 <signal name="STATUS">
 <contactref element="STAT." pad="A"/>
