@@ -215,13 +215,7 @@ function displayStatusImg(completion)
     displayImg("img_panel_rle", completion)
 end
 
-function main(autoMode)
-    if not autoMode then
-        print("To show enrollment QR code: initp(displayRegisterScreen)")
-        print("To fetch latest image: getImg()")
-        print("To display last-fetched image: initp(displayStatusImg)")
-        return
-    end
+function fetch()
     print("Fetching image...")
     getImg(function(status, date)
         if not initp then
@@ -240,24 +234,4 @@ function main(autoMode)
             sleepFromDate(date, wakeTime)
         end
     end)
-end
-
-function sleepFromDate(date, wakeTime)
-    -- hugely hacky date calculations, just the absolute worst
-    -- Epoch is midnight this morning
-    -- print(date, wakeTime)
-    local h, m, s = date:match("(%d%d):(%d%d):(%d%d)")
-    h, m, s = tonumber(h), tonumber(m), tonumber(s)
-    local now = (((h * 60) + m) * 60) + s
-
-    -- wakeTime is in minutes, target is in seconds
-    local target = wakeTime and wakeTime * 60 or (6 * 60 + 20) * 60
-    if target < now then
-        target = target + 24 * 60 * 60
-    end
-
-    local delta = target - now
-    delta = 10
-    print(string.format("Sleeping for %d secs (~%d hours)", delta, math.floor(delta / (60*60))))
-    node.dsleeps(delta)
 end

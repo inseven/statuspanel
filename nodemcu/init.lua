@@ -16,7 +16,7 @@ if esp32 then
     StatusLed = 21
     AutoPin = 14
     VBat = 7 -- That is, ADC1_CH7 aka GPIO 35 (internally connected to BAT)
-    UnpairPin = 34 -- aka A2
+    UnpairPin = 32
     UsbDetect = 39 -- aka A3
 else
     -- See https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/pinouts
@@ -66,33 +66,19 @@ function configurePins()
 end
 
 function init()
-    -- Configuring pins only takes ~45ms so we can reasonably do it first
+    -- Why is the default allocation limit set to 4KB? Why even is there one?
+    node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
+
     configurePins()
     local autoMode = gpio.read(AutoPin) == 1
 
-    -- Now start bringing up WiFi since getting an IP address takes time
-    if esp32 then
-        wifi.mode(wifi.STATION)
-        wifi.sta.on("got_ip", function(name, event)
-            print("Got IP "..event.ip)
-            ip = event.ip
-            gw = event.gw
-            -- Why is the default allocation limit set to 4KB? Why even is there one?
-            node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
-
-            main(autoMode)
-        end)
-        wifi.start()
-        wifi.sta.connect()
-    end
-
-    -- Finally, pull in other modules
     if not autoMode then
-    	-- Require panel now, so as to catch syntax errors early. But in auto mode, don't load it
-    	-- until after we've done the network ops, to save RAM.
-	    require "panel"
-	end
-    require "network"
+        -- Require panel now, so as to catch syntax errors early. But in auto mode, don't load it
+        -- until after we've done the network ops, to save RAM.
+        require "panel"
+    end
+    require "main"
+    main(autoMode)
 end
 
 
