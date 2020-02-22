@@ -10,13 +10,14 @@ if esp32 then
     Reset = 27
     DC = 33
     CS = 15
-    Sck = 5 -- I can't find this documented anywhere other than pins_arduino.h...
-    Mosi = 18 -- Ditto
+    Sck = 5
+    Mosi = 18
     SpiId = 1 -- HSPI (doesn't place any restriction on pins)
     StatusLed = 21
     AutoPin = 14
     VBat = 7 -- That is, ADC1_CH7 aka GPIO 35 (internally connected to BAT)
-    UnpairPin = 23 -- aka SDA
+    UnpairPin = 34 -- aka A2
+    UsbDetect = 39 -- aka A3
 else
     -- See https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/pinouts
     Busy = 4 -- GPIO 2
@@ -33,7 +34,7 @@ function configurePins()
             gpio = { Reset, DC, StatusLed },
             dir = gpio.OUT,
         }, {
-            gpio = Busy,
+            gpio = { Busy, UsbDetect },
             dir = gpio.IN
         }, {
             gpio = { AutoPin, UnpairPin },
