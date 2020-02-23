@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sourceController.add(dataSource:NationalRailDataSource())
         sourceController.add(dataSource:CalendarSource())
         sourceController.add(dataSource:CalendarSource(forDayOffset: 1, header: "Tomorrow:"))
+        // sourceController.add(dataSource:DummyDataSource())
 
         application.registerForRemoteNotifications()
 
@@ -69,9 +70,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
-        let ud = UserDefaults.standard
-        ud.set(map["id"], forKey: "deviceid")
-        ud.set(map["pk"], forKey: "publickey")
+        let config = Config()
+        var devices = config.devices
+        devices.append((map["id"]!, map["pk"]!))
+        config.devices = devices
 
         return true
     }
