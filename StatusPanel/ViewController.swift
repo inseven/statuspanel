@@ -310,7 +310,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             col.getHue(&hue, saturation: &sat, brightness: &brightness, alpha: &alpha)
 
             var val : UInt8 = 0
-            if brightness < 0.2 {
+            if red == 0xFF && green == 0xFF && blue == 0 {
+                val = Colored
+            } else if brightness < 0.2 {
                 val = Black
             } else if brightness > 0.9 {
                 val = White
