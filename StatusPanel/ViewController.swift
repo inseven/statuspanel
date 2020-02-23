@@ -175,11 +175,30 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     func uploadData(_ data: Data, completion: @escaping () -> Void) {
-        guard let (deviceid, publickey) = Config.getDeviceAndKey() else {
-            print("Keys not configured yet, not uploading")
+        var devices = Config().devices
+        if devices.count == 0 {
+            print("No keys configured, not uploading")
             completion()
             return
         }
+        var nextUpload : () -> Void = {}
+        nextUpload = {
+            if devices.count == 0 {
+                completion()
+            } else {
+                let (firstDevice, firstKey) = devices.remove(at: 0)
+                if firstKey.isEmpty {
+                    // Empty keys are used for debugging the UI, and shouldn't cause an upload
+                    nextUpload()
+                    return
+                }
+                self.uploadData(data, deviceid: firstDevice, publickey: firstKey, completion: nextUpload)
+            }
+        }
+        nextUpload()
+    }
+
+    func uploadData(_ data: Data, deviceid: String, publickey: String, completion: @escaping () -> Void) {
         let sodium = Sodium()
         guard let key = sodium.utils.base642bin(publickey, variant: .ORIGINAL) else {
             print("Failed to decode key from publickey userdefault!")
