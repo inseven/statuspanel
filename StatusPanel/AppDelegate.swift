@@ -72,9 +72,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let config = Config()
         var devices = config.devices
-        devices.append((map["id"]!, map["pk"]!))
+        let deviceid = map["id"]!
+        devices.append((deviceid, map["pk"]!))
         config.devices = devices
-
+        let alert = UIAlertController(title: "Device added", message: "Device \(deviceid) has been added.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default, handler: nil))
+        let root = window?.rootViewController
+        if root?.presentedViewController != nil {
+            root?.dismiss(animated: false, completion: {
+                root?.present(alert, animated: true, completion: nil)
+            })
+        } else {
+            root?.present(alert, animated: true, completion: nil)
+        }
         return true
     }
 
