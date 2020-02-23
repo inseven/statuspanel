@@ -16,13 +16,20 @@ protocol SettingsViewControllerDelegate: AnyObject {
 }
 
 class SettingsViewController: UITableViewController {
+    let DataSourcesSection = 0
+    let UpdateTimeSection = 1
+    let DeviceIdSection = 2
 
-    @IBOutlet weak var calendarsCell: UITableViewCell!
-    @IBOutlet weak var deviceIdCell: UITableViewCell!
-    @IBOutlet weak var tflCell: UITableViewCell!
-    @IBOutlet weak var nationalRailCell: UITableViewCell!
-    @IBOutlet weak var updateTimeCell: UITableViewCell!
+    // These are the view controller storyboard IDs, in IndexPath order
+    let DataSourceEditors = [
+        "CalendarsEditor",
+        "TflEditor",
+        "NationalRailEditor"
+    ]
+
     weak var delegate: SettingsViewControllerDelegate?
+
+    var devices: [(String, String)] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +41,10 @@ class SettingsViewController: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        update()
+        devices = Config().devices
+        if self.viewIfLoaded != nil {
+            self.tableView.reloadData()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -45,69 +55,173 @@ class SettingsViewController: UITableViewController {
         delegate.didDismiss(settingsViewController: self)
     }
 
-    func update() {
-        let config = Config()
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 3
+    }
 
-        // Calendars
-        let calendarIds = config.activeCalendars
-        let eventStore = EKEventStore()
-        var calendarNames: [String] = []
-        for calendarId in calendarIds {
-            guard let cal = eventStore.calendar(withIdentifier: calendarId) else {
-                // Calendar has been deleted?
-                continue
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch section {
+        case DataSourcesSection: return 3
+        case UpdateTimeSection: return 1
+        case DeviceIdSection:
+            var n = devices.count
+            if n == 0 {
+                n += 1 // For "No devices configured"
             }
-            calendarNames.append(cal.title)
-        }
-        if calendarNames.count > 0 {
-            calendarsCell.detailTextLabel?.text = calendarNames.joined(separator: ", ")
-        } else {
-            calendarsCell.detailTextLabel?.text = "None"
-        }
-
-        // TFL
-        let lines = config.activeTFLLines
-        var lineNames: [String] = []
-        for lineId in lines {
-            lineNames.append(TFLDataSource.lines[lineId]!)
-        }
-        if lineNames.count > 0 {
-            tflCell.detailTextLabel?.text = lineNames.joined(separator: ", ")
-        } else {
-            tflCell.detailTextLabel?.text = "None"
-        }
-
-        // National rail
-        let route = config.trainRoute
-        if let from = route.from, let to = route.to {
-            nationalRailCell.detailTextLabel?.text = "\(from) to \(to)"
-        } else {
-            nationalRailCell.detailTextLabel?.text = "Not configured"
-        }
-
-        // Update time
-        let updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
-        let df = DateFormatter()
-        df.timeStyle = .short
-        let timeStr = df.string(from: updateTime)
-        self.updateTimeCell.textLabel?.text = timeStr
-
-        // Device ID
-        if let (deviceId, _) = Config.getDeviceAndKey() {
-            self.deviceIdCell.detailTextLabel?.text = deviceId
-        } else {
-            self.deviceIdCell.detailTextLabel?.text = "Not configured"
+            #if DEBUG
+                n += 1 // For "Add dummy device"
+            #endif
+            return n
+        default:
+            return 0
         }
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0: return "Data Sources"
+        case 1: return "Update Time"
+        case 2: return "Paired Devices"
+        default: return nil
+        }
     }
-    */
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let config = Config()
+        switch indexPath.section {
+        case DataSourcesSection:
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DataSourceCell")
+            switch indexPath.row {
+            case 0:
+                cell.textLabel?.text = "Calendars"
+                let calendarIds = config.activeCalendars
+                let eventStore = EKEventStore()
+                var calendarNames: [String] = []
+                for calendarId in calendarIds {
+                   guard let cal = eventStore.calendar(withIdentifier: calendarId) else {
+                       // Calendar has been deleted?
+                       continue
+                   }
+                   calendarNames.append(cal.title)
+                }
+                if calendarNames.count > 0 {
+                    cell.detailTextLabel?.text = calendarNames.joined(separator: ", ")
+                } else {
+                    cell.detailTextLabel?.text = "None"
+                }
+            case 1:
+                cell.textLabel?.text = "London Underground"
+                let lines = config.activeTFLLines
+                var lineNames: [String] = []
+                for lineId in lines {
+                    lineNames.append(TFLDataSource.lines[lineId]!)
+                }
+                if lineNames.count > 0 {
+                    cell.detailTextLabel?.text = lineNames.joined(separator: ", ")
+                } else {
+                    cell.detailTextLabel?.text = "None"
+                }
+            case 2:
+                cell.textLabel?.text = "National Rail"
+                let route = config.trainRoute
+                if let from = route.from, let to = route.to {
+                    cell.detailTextLabel?.text = "\(from) to \(to)"
+                } else {
+                    cell.detailTextLabel?.text = "Not configured"
+                }
+            default:
+                cell.textLabel?.text = "TODO"
+            }
+            cell.accessoryType = .disclosureIndicator
+            return cell
+        case UpdateTimeSection:
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            let updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
+            let df = DateFormatter()
+            df.timeStyle = .short
+            let timeStr = df.string(from: updateTime)
+            cell.textLabel?.text = timeStr
+            cell.accessoryType = .disclosureIndicator
+            return cell
+        case DeviceIdSection:
+            let cell = UITableViewCell(style: .default, reuseIdentifier: "DeviceCell")
+            if devices.count == 0 && indexPath.row == 0 {
+                cell.textLabel?.text = "No devices configured"
+            } else if indexPath.row >= devices.count {
+                cell.textLabel?.text = "<Add dummy device>"
+            } else {
+                let device = devices[indexPath.row]
+                cell.textLabel?.text = device.0
+            }
+            return cell
+        default:
+            return UITableViewCell(style: .default, reuseIdentifier: nil)
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        if indexPath.section == DeviceIdSection {
+            if indexPath.row == (devices.count == 0 ? 1 : devices.count) {
+                return true // The debug add button
+            }
+            return false
+        } else {
+            // All others are highlightable
+            return true
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        var vcid: String?
+        switch indexPath.section {
+        case DataSourcesSection:
+            vcid = DataSourceEditors[indexPath.row]
+        case UpdateTimeSection:
+            vcid = "UpdateTimeEditor"
+        case DeviceIdSection:
+            let prevCount = devices.count
+            if indexPath.row == (prevCount == 0 ? 1 : prevCount) {
+                devices.append(("DummyDevice\(indexPath.row)", ""))
+                Config().devices = devices
+                tableView.performBatchUpdates({
+                    tableView.deselectRow(at: indexPath, animated: true)
+                    if (prevCount == 0) {
+                        tableView.deleteRows(at: [IndexPath(row: prevCount, section: DeviceIdSection)], with: .fade)
+                    }
+                    tableView.insertRows(at: [IndexPath(row: prevCount, section: DeviceIdSection)], with: .fade)
+                }, completion: nil)
+            }
+        default:
+            break
+        }
+        if let vcid = vcid {
+            guard let vc = storyboard?.instantiateViewController(withIdentifier: vcid) else {
+                print("Couldn't find view controller for \(vcid)!")
+                return
+            }
+            navigationController?.pushViewController(vc, animated: true)
+        } else {
+            print("No view controller for \(indexPath)!")
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if indexPath.section != DeviceIdSection || indexPath.row >= devices.count {
+            return nil
+        }
+        let action = UIContextualAction(style: .destructive, title: "Delete") { (_, _, completion) in
+            self.devices.remove(at: indexPath.row)
+            tableView.performBatchUpdates({
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+                if self.devices.count == 0 {
+                    tableView.insertRows(at: [IndexPath(row: 0, section: self.DeviceIdSection)], with: .automatic)
+                }
+            }, completion: nil)
+            Config().devices = self.devices
+            completion(true)
+        }
+        let actions = UISwipeActionsConfiguration(actions: [action])
+        return actions
+    }
 
 }
