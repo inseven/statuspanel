@@ -68,7 +68,7 @@ class SettingsViewController: UITableViewController {
             if n == 0 {
                 n += 1 // For "No devices configured"
             }
-            #if DEBUG
+            #if targetEnvironment(simulator)
                 n += 1 // For "Add dummy device"
             #endif
             return n
@@ -191,6 +191,7 @@ class SettingsViewController: UITableViewController {
                     tableView.insertRows(at: [IndexPath(row: prevCount, section: DeviceIdSection)], with: .fade)
                 }, completion: nil)
             }
+            return
         default:
             break
         }
