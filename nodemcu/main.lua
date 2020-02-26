@@ -94,6 +94,7 @@ function main(autoMode)
     local wokeByUsb, wokeByUnpair
     local reason, ext, pins = node.bootreason()
     if ext == 5 then -- Deep sleep wake
+        if not pins then pins = 0 end
         if isset64(pins, UnpairPin) then
             wokeByUnpair = true
         elseif isset64(pins, UsbDetect) then
