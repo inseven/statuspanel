@@ -162,4 +162,13 @@ class Config {
             UserDefaults.standard.setValue(objs, forKey: "devices")
         }
     }
+
+    var displayTwoColumns: Bool {
+        get {
+            return !UserDefaults.standard.bool(forKey:"displaySingleColumn")
+        }
+        set {
+            UserDefaults.standard.set(!newValue, forKey: "displaySingleColumn")
+        }
+    }
 }
