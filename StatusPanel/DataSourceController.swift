@@ -10,13 +10,13 @@ import Foundation
 
 protocol DataSourceControllerDelegate: class {
     // Always called in context of main thread
-    func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItem])
+    func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase])
 }
 
 class DataSourceController {
     weak var delegate: DataSourceControllerDelegate?
     var sources: [DataSource] = []
-    var completed: [ObjectIdentifier: [DataItem]] = [:]
+    var completed: [ObjectIdentifier: [DataItemBase]] = [:]
     var lock = NSLock()
 
     func add(dataSource: DataSource) {
@@ -31,14 +31,14 @@ class DataSourceController {
         }
     }
 
-    func gotData(source: DataSource, data:[DataItem], error: Error?) {
+    func gotData(source: DataSource, data:[DataItemBase], error: Error?) {
         let obj = ObjectIdentifier(source)
         lock.lock()
         completed[obj] = data
         // TODO something with error
 
         let allCompleted = (completed.count == sources.count)
-        var items = [DataItem]()
+        var items = [DataItemBase]()
         // We always want the calendar data source header as the first item
         items.append(CalendarSource.getHeader())
 

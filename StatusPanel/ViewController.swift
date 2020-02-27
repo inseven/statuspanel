@@ -16,6 +16,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     @IBOutlet weak var imageView: UIImageView!
     let SettingsButtonTag = 1
 
+    let MaxLineLength = 19
+    let MaxHeaderLength = 26
+
     var contentView: UIView!
 
     var sourceController: DataSourceController!
@@ -64,7 +67,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let rect = contentView.frame
         let maxy = rect.height - 10 // Leave space for status line
         let midx = rect.width / 2
-        var x : CGFloat = 10
+        var x : CGFloat = 5
         var y : CGFloat = 0
         let colWidth = rect.width / 2 - x * 2
         let itemGap : CGFloat = 10
@@ -88,7 +91,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             } else {
                 view.font = UIFont(name: fname, size: 16)
             }
-            view.text = item.text
+            view.text = enmunge(item.text)
             view.textColor = UIColor.black
             view.sizeToFit()
             view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: w, height: view.frame.height)
@@ -97,7 +100,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             if (col == 1 && (sz.height > maxy - y || (i != 0 && item.flags.contains(.header)))) {
                 // overflow to 2nd column
                 col += 1
-                x += midx
+                x += midx + 5
                 y = colStart
                 view.frame = CGRect(x: x, y: y, width: sz.width, height: sz.height)
             }
@@ -144,7 +147,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             return
         }
 
-        let rawdata = imgToARGBData(image)
+        let (rawdata, panelImage) = imgToARGBData(image)
         let panelData = ARGBtoPanel(rawdata)
         // Header format is as below. Any fields beyond length can be omitted
         // providing the length is set appropriately.
@@ -159,8 +162,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         do {
             let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             print("GOT DIR! " + dir.absoluteString)
-            let imgdata = UIImagePNGRepresentation(image)
-            self.imageView.image = image
+            let imgdata = UIImagePNGRepresentation(panelImage)
+            self.imageView.image = panelImage
             try imgdata?.write(to: dir.appendingPathComponent("img.png"))
             try rawdata.write(to: dir.appendingPathComponent("img.raw"))
             try panelData.write(to: dir.appendingPathComponent("img_panel"))
@@ -169,9 +172,15 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         } catch {
             print("meh")
         }
-//        let imgview = UIImageView(image: image)
-//        scrollView?.contentSize = rect.size
-//        scrollView?.addSubview(imgview)
+    }
+
+    func enmunge(_ value: String) -> String {
+        // Actually, ☺︎ renders way worse than 😀, so we won't do that. Oh well.
+        var result = ""
+        for char in value {
+            result.append(char)
+        }
+        return result
     }
 
     func uploadData(_ data: Data, completion: @escaping () -> Void) {
@@ -251,21 +260,41 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         task.resume()
     }
 
-    func imgToARGBData(_ image:UIImage) -> Data {
+    func flattenColours(_ red: UInt8, _ green: UInt8, _ blue: UInt8) -> (UInt8, UInt8, UInt8) {
+        let col = UIColor.init(red: CGFloat(red) / 256, green: CGFloat(green) / 256, blue: CGFloat(blue) / 256, alpha: 0)
+        var hue: CGFloat = 0
+        var sat: CGFloat = 0
+        var brightness: CGFloat = 0
+        var alpha: CGFloat = 0
+        col.getHue(&hue, saturation: &sat, brightness: &brightness, alpha: &alpha)
+
+        // Numbers are from 30 seconds fiddling with a HSB colour wheel
+        let isYellow = hue >= 0.11 && hue <= 0.21 && sat >= 0.2 && brightness > 0.8
+
+        if isYellow {
+            return (0xFF, 0xFF, 0x00) // Yellow
+        } else if brightness < 0.75 {
+            return (0, 0, 0) // Black
+        } else {
+            return (0xFF, 0xFF, 0xFF) // White
+        }
+    }
+
+    func imgToARGBData(_ image:UIImage) -> (Data, UIImage) {
         // From https://stackoverflow.com/questions/448125/how-to-get-pixel-data-from-a-uiimage-cocoa-touch-or-cgimage-core-graphics
 
         var result = Data()
 
         // First get the image into your data buffer
         guard let cgImage = image.cgImage else {
-            print("CGContext creation failed")
-            return result
+            print("CGImage creation failed")
+            return (result, image)
         }
 
         let width = cgImage.width
         let height = cgImage.height
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let rawdata = calloc(height*width*4, MemoryLayout<CUnsignedChar>.size)
+        let rawdata = calloc(height*width*4, MemoryLayout<CUnsignedChar>.size)!
         let bytesPerPixel = 4
         let bytesPerRow = bytesPerPixel * width
         let bitsPerComponent = 8
@@ -273,7 +302,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
         guard let context = CGContext(data: rawdata, width: width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo) else {
             print("CGContext creation failed")
-            return result
+            return (result, image)
         }
 
         context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
@@ -282,15 +311,20 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         var byteIndex = 0 //bytesPerRow * y + bytesPerPixel * x
 
         for _ in 0..<width*height {
-            //let alpha = CGFloat(rawdata!.load(fromByteOffset: byteIndex + 3, as: UInt8.self)) / 255.0
-            let red = rawdata!.load(fromByteOffset: byteIndex, as: UInt8.self)
-            let green = rawdata!.load(fromByteOffset: byteIndex + 1, as: UInt8.self)
-            let blue = rawdata!.load(fromByteOffset: byteIndex + 2, as: UInt8.self)
+            let red = rawdata.load(fromByteOffset: byteIndex, as: UInt8.self)
+            let green = rawdata.load(fromByteOffset: byteIndex + 1, as: UInt8.self)
+            let blue = rawdata.load(fromByteOffset: byteIndex + 2, as: UInt8.self)
+
+            let (newr, newg, newb) = flattenColours(red, green, blue)
+            rawdata.storeBytes(of: newr, toByteOffset: byteIndex, as: UInt8.self)
+            rawdata.storeBytes(of: newg, toByteOffset: byteIndex + 1, as: UInt8.self)
+            rawdata.storeBytes(of: newb, toByteOffset: byteIndex + 2, as: UInt8.self)
             byteIndex += bytesPerPixel
-            result.append(contentsOf: [0xFF, red, green, blue])
+            result.append(contentsOf: [0xFF, newr, newg, newb])
         }
+        let resultImage = UIImage(cgImage: context.makeImage()!)
         free(rawdata)
-        return result
+        return (result, resultImage)
     }
 
     func ARGBtoPanel(_ data: Data) -> Data {
@@ -302,22 +336,16 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             let red = data[i+1]
             let green = data[i+2]
             let blue = data[i+3]
-            let col = UIColor.init(red: CGFloat(red) / 256, green: CGFloat(green) / 256, blue: CGFloat(blue) / 256, alpha: 0)
-            var hue : CGFloat = 0
-            var sat : CGFloat = 0
-            var brightness : CGFloat = 0
-            var alpha : CGFloat = 0
-            col.getHue(&hue, saturation: &sat, brightness: &brightness, alpha: &alpha)
 
             var val : UInt8 = 0
             if red == 0xFF && green == 0xFF && blue == 0 {
                 val = Colored
-            } else if brightness < 0.2 {
+            } else if red == 0 && green == 0 && blue == 0 {
                 val = Black
-            } else if brightness > 0.9 {
+            } else if red == 0xFF && green == 0xFF && blue == 0xFF {
                 val = White
             } else {
-                val = Colored
+                print(String(format: "Unexpected colour value! 0x%02X%02X%02X", red, green, blue))
             }
 
             // For pixels A, B, C, D the packed 2bpp layout is:
@@ -376,14 +404,19 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 }
 
 extension ViewController: DataSourceControllerDelegate {
-    func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItem]) {
+    func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase]) {
 
-        let changes = (prevItems != data)
+        var newData: [DataItem] = []
+        for (i, item) in data.enumerated() {
+            let maxLen = (i == 0 && item.getFlags().contains(.header)) ? MaxHeaderLength : MaxLineLength
+            newData.append(DataItem(from: item, width: maxLen))
+        }
+        let changes = (prevItems != newData)
         print("Update: changes = \(changes)")
-        prevItems = data
+        prevItems = newData
 
         if changes {
-            self.renderAndUpload(data: data, completion: {
+            self.renderAndUpload(data: newData, completion: {
                 DispatchQueue.main.async {
                     let appDelegate = UIApplication.shared.delegate as! AppDelegate
                     appDelegate.fetchCompleted(hasChanged: changes)
