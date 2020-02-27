@@ -18,7 +18,8 @@ protocol SettingsViewControllerDelegate: AnyObject {
 class SettingsViewController: UITableViewController {
     let DataSourcesSection = 0
     let UpdateTimeSection = 1
-    let DeviceIdSection = 2
+    let DisplaySection = 2
+    let DeviceIdSection = 3
 
     // These are the view controller storyboard IDs, in IndexPath order
     let DataSourceEditors = [
@@ -56,13 +57,14 @@ class SettingsViewController: UITableViewController {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case DataSourcesSection: return 3
         case UpdateTimeSection: return 1
+        case DisplaySection: return 1
         case DeviceIdSection:
             var n = devices.count
             if n == 0 {
@@ -79,9 +81,10 @@ class SettingsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case 0: return "Data Sources"
-        case 1: return "Update Time"
-        case 2: return "Paired Devices"
+        case DataSourcesSection: return "Data Sources"
+        case UpdateTimeSection: return "Update Time"
+        case DisplaySection: return "Display Settings"
+        case DeviceIdSection: return "Paired Devices"
         default: return nil
         }
     }
@@ -154,9 +157,21 @@ class SettingsViewController: UITableViewController {
                 cell.textLabel?.text = device.0
             }
             return cell
+        case DisplaySection:
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            cell.textLabel?.text = "Use two columns"
+            let control = UISwitch()
+            control.isOn = config.displayTwoColumns
+            control.addTarget(self, action:#selector(columSwitchChanged(sender:)), for: .valueChanged)
+            cell.accessoryView = control
+            return cell
         default:
             return UITableViewCell(style: .default, reuseIdentifier: nil)
         }
+    }
+
+    @objc func columSwitchChanged(sender: UISwitch) {
+        Config().displayTwoColumns = sender.isOn
     }
 
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
@@ -164,6 +179,8 @@ class SettingsViewController: UITableViewController {
             if indexPath.row == (devices.count == 0 ? 1 : devices.count) {
                 return true // The debug add button
             }
+            return false
+        } else if indexPath.section == DisplaySection {
             return false
         } else {
             // All others are highlightable

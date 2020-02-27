@@ -16,13 +16,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     @IBOutlet weak var imageView: UIImageView!
     let SettingsButtonTag = 1
 
-    let MaxLineLength = 19
+    let MaxOneColumnLineLength = 39
+    let MaxTwoColumnLineLength = 19
     let MaxHeaderLength = 26
 
     var contentView: UIView!
 
     var sourceController: DataSourceController!
-    var prevItems: [DataItem] = []
+    var prevImage: UIImage?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,7 +47,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         sourceController.fetch()
     }
 
-    func renderAndUpload(data: [DataItem], completion: @escaping () -> Void) {
+    func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
         // Set up contentView and scrollView
         if (self.contentView == nil) {
             self.contentView = UIView(frame: CGRect(x: 0, y: 0, width: 640, height: 384))
@@ -64,23 +65,27 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
         // TODO move this to UICollectionView?
         contentView.backgroundColor = UIColor.white
+        let twoCols = Config().displayTwoColumns
         let rect = contentView.frame
         let maxy = rect.height - 10 // Leave space for status line
         let midx = rect.width / 2
         var x : CGFloat = 5
         var y : CGFloat = 0
-        let colWidth = rect.width / 2 - x * 2
+        let colWidth = twoCols ? (rect.width / 2 - x * 2) : rect.width - x
         let itemGap : CGFloat = 10
         var colStart = y
         var col = 1
+        let maxLineLength = twoCols ? MaxTwoColumnLineLength : MaxOneColumnLineLength
+        var verticalBreak: CGFloat = 0
         for (i, item) in data.enumerated() {
             // print(item)
-            let firstItemHeader = i == 0 && item.flags.contains(.header)
+            let flags = item.getFlags()
+            let firstItemHeader = i == 0 && flags.contains(.header)
             let w = firstItemHeader ? rect.width : colWidth
             let view = UILabel(frame: CGRect(x: x, y: y, width: w, height: 0))
             view.numberOfLines = 0
             view.lineBreakMode = .byWordWrapping
-            if item.flags.contains(.warning) {
+            if flags.contains(.warning) {
                 // Icons don't render well on the panel, use a coloured background instead
                 view.backgroundColor = UIColor.yellow
             }
@@ -91,22 +96,29 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             } else {
                 view.font = UIFont(name: fname, size: 16)
             }
-            view.text = enmunge(item.text)
+            view.text = enmunge(item.format(width: firstItemHeader ? MaxHeaderLength : maxLineLength))
             view.textColor = UIColor.black
             view.sizeToFit()
             view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: w, height: view.frame.height)
             let sz = view.frame
             // Enough space for this item?
-            if (col == 1 && (sz.height > maxy - y || (i != 0 && item.flags.contains(.header)))) {
+            let itemIsColBreak = i != 0 && flags.contains(.header)
+            if (col == 1 && twoCols && (sz.height > maxy - y || itemIsColBreak)) {
                 // overflow to 2nd column
                 col += 1
                 x += midx + 5
                 y = colStart
                 view.frame = CGRect(x: x, y: y, width: sz.width, height: sz.height)
+            } else if (!twoCols && itemIsColBreak) {
+                // Leave some extra space and mark where to draw a line
+                verticalBreak = y
+                let c = view.center
+                view.center = CGPoint(x: c.x, y: c.y + itemGap)
+                y += itemGap
             }
             contentView.addSubview(view)
             y = y + sz.height + itemGap
-            if item.flags.contains(.header) {
+            if i == 0 && flags.contains(.header) {
                 colStart = y
             }
         }
@@ -121,23 +133,19 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         // layer.render() works when the device is locked, whereas drawHierarchy() doesn't
         contentView.layer.render(in: context)
 
-        // Draw some other UI furniture
+        // Draw the dividing line
         context.setStrokeColor(UIColor.black.cgColor)
-        context.beginPath()
-        context.move(to: CGPoint(x: midx, y: 40))
-        context.addLine(to: CGPoint(x: midx, y: rect.height - 20))
-        context.drawPath(using: .stroke)
-        context.setStrokeColor(UIColor.lightGray.cgColor)
-        context.stroke(rect, width: 1)
-
-        //DEBUG
-        //for i in stride(from: 0, to: rect.size.width, by: 30) {
-        //    context.setStrokeColor(UIColor.yellow.cgColor)
-        //    context.beginPath()
-        //    context.move(to: CGPoint(x:i, y:0))
-        //    context.addLine(to: CGPoint(x:i, y:rect.size.height - 1))
-        //    context.drawPath(using: .stroke)
-        //}
+        if twoCols {
+            context.beginPath()
+            context.move(to: CGPoint(x: midx, y: 40))
+            context.addLine(to: CGPoint(x: midx, y: rect.height - 20))
+            context.drawPath(using: .stroke)
+        } else if verticalBreak != 0 {
+            context.beginPath()
+            context.move(to: CGPoint(x: x, y: verticalBreak))
+            context.addLine(to: CGPoint(x: rect.width - x, y: verticalBreak))
+            context.drawPath(using: .stroke)
+        }
 
         let img = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -148,6 +156,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
 
         let (rawdata, panelImage) = imgToARGBData(image)
+        let changes = !panelImage.isEqual(prevImage)
         let panelData = ARGBtoPanel(rawdata)
         // Header format is as below. Any fields beyond length can be omitted
         // providing the length is set appropriately.
@@ -168,7 +177,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             try rawdata.write(to: dir.appendingPathComponent("img.raw"))
             try panelData.write(to: dir.appendingPathComponent("img_panel"))
             try rleData.write(to: dir.appendingPathComponent("img_panel_rle"))
-            uploadData(rleData, completion: completion)
+            uploadData(rleData, completion: {
+                print("Update: changes = \(changes)")
+                self.prevImage = panelImage
+                completion(changes)
+            })
         } catch {
             print("meh")
         }
@@ -405,23 +418,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
 extension ViewController: DataSourceControllerDelegate {
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase]) {
-
-        var newData: [DataItem] = []
-        for (i, item) in data.enumerated() {
-            let maxLen = (i == 0 && item.getFlags().contains(.header)) ? MaxHeaderLength : MaxLineLength
-            newData.append(DataItem(from: item, width: maxLen))
-        }
-        let changes = (prevItems != newData)
-        print("Update: changes = \(changes)")
-        prevItems = newData
-
-        if changes {
-            self.renderAndUpload(data: newData, completion: {
+        self.renderAndUpload(data: data, completion: { (changes: Bool) -> Void in
                 DispatchQueue.main.async {
                     let appDelegate = UIApplication.shared.delegate as! AppDelegate
                     appDelegate.fetchCompleted(hasChanged: changes)
                 }
             })
-        }
     }
 }
