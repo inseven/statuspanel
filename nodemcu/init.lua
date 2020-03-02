@@ -96,6 +96,15 @@ function addStatus(...)
     table.insert(statusTable, status)
 end
 
+function addErrorStatus(...)
+    setStatusErrored()
+    addStatus(...)
+end
+
+function setStatusErrored()
+    statusTable.err = true
+end
+
 function getBatteryVoltage()
     -- At 11db attenuation and 12 bits width, 4095 = VDD_A
     local val = adc.read(adc.ADC1, VBat)
@@ -108,10 +117,9 @@ end
 function getBatteryVoltageStatus()
     local val = math.floor(getBatteryVoltage() / 100) -- ie 42 for 4.2V
     -- Warn below 3.4V?
-    local warn = (val < 34) and "!" or ""
     local v = math.floor(val / 10)
     local dv = val - v*10
-    return string.format("%s%d.%dV", warn, v, dv)
+    return string.format("%d.%dV", v, dv), val < 34
 end
 
 local ok, err = pcall(init)

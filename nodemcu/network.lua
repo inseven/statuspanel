@@ -14,7 +14,11 @@ function getImg(completion)
 
     local deviceId = getDeviceId()
     statusTable = {}
-    addStatus(getBatteryVoltageStatus())
+    local batstat, batteryLow = getBatteryVoltageStatus()
+    addStatus(batstat)
+    if batteryLow then
+        setStatusErrored()
+    end
     addStatus("Device ID: %s", deviceId)
     
     if not gw and wifi.sta.getip then
@@ -24,9 +28,8 @@ function getImg(completion)
     end
     if gw then
         setStatusLed(1)
-        addStatus("IP: %s", ip)
     else
-        addStatus("No internet connection!")
+        addErrorStatus("No internet connection!")
         if completion then
             node.task.post(function() completion(nil) end)
         end
@@ -47,7 +50,7 @@ function getImg(completion)
         elseif status == 404 then
             print("No image on server yet")
         elseif status ~= 200 then
-            addStatus("Error %d returned from server", status)
+            addErrorStatus("Error %d returned from http.get()", status)
         else
             local clen = tonumber(headers["content-length"])
             if clen and clen ~= #response then
@@ -60,7 +63,7 @@ function getImg(completion)
             local sk = getSecretKey()
             local decrypted = sodium.crypto_box.seal_open(response, pk, sk)
             if decrypted == nil then
-                addStatus("Failed to decrypt image data")
+                addErrorStatus("Failed to decrypt image data")
                 -- print(response)
                 status = nil
             else
@@ -232,6 +235,13 @@ function fetch()
             local f, packed, wakeTime = openImg("img_panel_rle")
             f:close()
             sleepFromDate(date, wakeTime)
+        else
+            -- Some sort of error we weren't expecting (network?)
+            local function completion()
+                -- Try again in 5 minutes?
+                sleepFor(60 * 5)
+            end
+            initp(function() displayStatusLineOnly(completion) end)
         end
     end)
 end
