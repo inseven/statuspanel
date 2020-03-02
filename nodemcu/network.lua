@@ -112,6 +112,11 @@ function getImg(completion)
     end)
 end
 
+function clearCache()
+    file.remove("last_modified")
+    file.remove("img_hash")
+end
+
 -- Avoid o, i, 0, 1
 local idchars = "abcdefghjklmnpqrstuvwxyz23456789"
 function makeDeviceId()
@@ -225,6 +230,7 @@ function fetch()
             require "panel"
         end
         if status == 404 then
+            clearCache()
             initp(displayRegisterScreen)
         elseif status == 200 then
             initp(function()
@@ -237,6 +243,7 @@ function fetch()
             sleepFromDate(date, wakeTime)
         else
             -- Some sort of error we weren't expecting (network?)
+            clearCache()
             local function completion()
                 -- Try again in 5 minutes?
                 sleepFor(60 * 5)
