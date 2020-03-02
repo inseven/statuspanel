@@ -256,6 +256,13 @@ function openImg(filename)
     return f, packed, wakeTime
 end
 
+function getDisplayStatusLineFn()
+    local statusText = table.concat(statusTable, " | ")
+    local fg = BLACK
+    local bg = statusTable.err and COLOURED or WHITE
+    return getTextPixelFn(statusText, fg, bg)
+end
+
 function displayImg(filename, completion)
     local rle = require("rle")
     local f, packed, wakeTime = openImg(filename)
@@ -275,15 +282,7 @@ function displayImg(filename, completion)
     if esp32 then
         -- Not enough RAM for this on esp8266 (try lcross?)
         statusLineStart = h - require("font").charh
-        local statusText = table.concat(statusTable, " | ")
-        local fg = BLACK
-        local bg
-        if statusText:match("^!") then
-            bg = COLOURED
-        else
-            bg = WHITE
-        end
-        getTextPixel = getTextPixelFn(statusText, fg, bg)
+        getTextPixel = getDisplayStatusLineFn()
     end
 
     local table_remove, rle_getByte, band, rshift = table.remove, rle.getByte, bit.band, bit.rshift
@@ -337,4 +336,18 @@ function displayText()
     local getPixel = getTextPixelFn(text)
     h = charh
     display(getPixel, function() h = oldh end)
+end
+
+function displayStatusLineOnly(completion)
+    local getTextPixel = getDisplayStatusLineFn()
+    local charh = require("font").charh
+    local starth = (h - charh) / 2
+    local endh = starth + charh
+    display(function(x, y)
+        if y >= starth and y < endh then
+            return getTextPixel(x, y - starth)
+        else
+            return WHITE
+        end
+    end, completion)
 end
