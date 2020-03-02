@@ -71,6 +71,10 @@ function sleepFromDate(date, wakeTime)
     if gpio.read(UsbDetect) == 1 then
         delta = 10
     end
+    sleepFor(delta)
+end
+
+function sleepFor(delta)
     print(string.format("Sleeping for %d secs (~%d hours)", delta, math.floor(delta / (60*60))))
     wifi.stop()
     node.dsleeps(delta, { UnpairPin, UsbDetect, pull=true })
@@ -78,7 +82,7 @@ end
 
 -- For testing
 function slp()
-    node.dsleeps(60, { UsbDetect, UnpairPin, pull=true })
+    sleepFor(60)
 end
 
 -- Sigh, bit library is 32-bit only
