@@ -69,20 +69,30 @@ function sleepFromDate(date, wakeTime)
 
     local delta = target - now
     if gpio.read(UsbDetect) == 1 then
-        delta = 10
+        delta = 60
     end
     sleepFor(delta)
 end
 
 function sleepFor(delta)
-    print(string.format("Sleeping for %d secs (~%d hours)", delta, math.floor(delta / (60*60))))
     wifi.stop()
-    node.dsleeps(delta, { UnpairPin, UsbDetect, pull=true })
+    print(string.format("Sleeping for %d secs (~%d hours)", delta, math.floor(delta / (60*60))))
+    local shouldUsbDetect = true
+    if gpio.read(UsbDetect) == 1 then
+        -- Don't wake for USB if USB is actually attached when we sleep, because
+        -- that would mean we'd wake immediately.
+        shouldUsbDetect = false
+    end
+    node.dsleeps(delta, {
+        UnpairPin, (shouldUsbDetect and UsbDetect or nil),
+        pull = true,
+        isolate = { 12, OldBusy, AutoPin, CS, Reset, DC },
+    })
 end
 
 -- For testing
 function slp()
-    sleepFor(60)
+    sleepFor(-1)
 end
 
 -- Sigh, bit library is 32-bit only
