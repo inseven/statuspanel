@@ -6,7 +6,8 @@ esp32 = (gpio.mode == nil)
 
 if esp32 then
     -- No more horrible mappings from SDK pin numbers to GPIO numbers!
-    Busy = 13
+    OriginalBusy = 13
+    NewBusy = 22 -- aka SCL
     Reset = 27
     DC = 33
     CS = 15
@@ -34,7 +35,7 @@ function configurePins()
             gpio = { Reset, DC, StatusLed },
             dir = gpio.OUT,
         }, {
-            gpio = { Busy, UsbDetect },
+            gpio = { OriginalBusy, NewBusy, UsbDetect },
             dir = gpio.IN
         }, {
             gpio = { AutoPin, UnpairPin },
@@ -63,7 +64,25 @@ function configurePins()
         gpio.write(CS, 1)
     end
     gpio.write(Reset, 0)
+    if inputIsConnected(OriginalBusy) then
+        Busy = OriginalBusy
+    else
+        Busy = NewBusy
+    end
 end
+
+-- Assumes pin is configured without pullups/downs
+function inputIsConnected(pin)
+    gpio.config { gpio = pin, dir = gpio.IN, pull = gpio.PULL_DOWN }
+    local pulledDown = gpio.read(pin) == 0
+
+    gpio.config { gpio = pin, dir = gpio.IN, pull = gpio.PULL_UP }
+    local pulledUp = gpio.read(pin) == 1
+
+    gpio.config { gpio = pin, dir = gpio.IN }
+    return not(pulledUp and pulledDown)
+end
+
 
 function init()
     -- Why is the default allocation limit set to 4KB? Why even is there one?
