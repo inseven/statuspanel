@@ -49,7 +49,7 @@ local spidevice_transfer = spidevice.transfer
 local ch = string.char
 local print, select = print, select
 local uptime = node.uptime or tmr.now
-local Busy, Reset, DC, CS, Sck, Mso, SpiId = Busy, Reset, DC, CS, Sck, Mso, SpiId
+local Reset, DC, CS, Sck, Mso, SpiId = Reset, DC, CS, Sck, Mso, SpiId
 
 local sendByte
 if esp32 then
