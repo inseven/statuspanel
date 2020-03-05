@@ -142,6 +142,7 @@ class SettingsViewController: UITableViewController {
             let updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
             let df = DateFormatter()
             df.timeStyle = .short
+            df.timeZone = TimeZone(secondsFromGMT: 0)
             let timeStr = df.string(from: updateTime)
             cell.textLabel?.text = timeStr
             cell.accessoryType = .disclosureIndicator

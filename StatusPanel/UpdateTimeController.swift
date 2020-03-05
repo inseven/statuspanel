@@ -18,6 +18,7 @@ class UpdateTimeController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        datePicker.timeZone = TimeZone(secondsFromGMT: 0)
         datePicker.date = Date.init(timeIntervalSinceReferenceDate: Config().updateTime)
     }
 

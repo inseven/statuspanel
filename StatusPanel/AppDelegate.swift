@@ -89,6 +89,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    /*
     func getTimeUntilPanelWakeup() -> TimeInterval {
         let now = Date()
         let cal = Calendar.current
@@ -99,6 +100,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let nextWake = wakeTime < nowSinceMidnight ? wakeTime + 86400 : wakeTime
         return nextWake - nowSinceMidnight
     }
+    */
 
     /*
     func updateFetchInterval() {
