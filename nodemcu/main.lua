@@ -53,13 +53,18 @@ function longPressUnpair()
     setStatusLed(1)
 end
 
+-- Returns the time since midnight, in seconds
+function dateStringToTime(dateString)
+    local h, m, s = dateString:match("(%d%d):(%d%d):(%d%d)")
+    local result = (((tonumber(h) * 60) + tonumber(m)) * 60) + tonumber(s)
+    return result
+end
+
 function sleepFromDate(date, wakeTime)
     -- hugely hacky date calculations, just the absolute worst
     -- Epoch is midnight this morning
     -- print(date, wakeTime)
-    local h, m, s = date:match("(%d%d):(%d%d):(%d%d)")
-    h, m, s = tonumber(h), tonumber(m), tonumber(s)
-    local now = (((h * 60) + m) * 60) + s
+    local now = dateStringToTime(date)
 
     -- wakeTime is in minutes, target is in seconds
     local target = wakeTime and wakeTime * 60 or (6 * 60 + 20) * 60
@@ -93,6 +98,26 @@ end
 -- For testing
 function slp()
     sleepFor(-1)
+end
+
+function slpdbg()
+    local function completion(status, headerDate)
+        local function fmtMins(mins)
+            local h = math.floor(mins / 60)
+            local m = mins - (h * 60)
+            return string.format("%dh%dm", h, m)
+        end
+        local f, packed, wakeTime = openImg("img_panel_rle")
+        f:close()
+        print(string.format("wakeTime is %s headerDate is %s", fmtMins(wakeTime), headerDate))
+        local now = math.floor(dateStringToTime(headerDate) / 60) -- in mins
+
+        if wakeTime < now then
+            wakeTime = wakeTime + 24 * 60
+        end
+        print(string.format("sleepTime is %s", fmtMins(wakeTime - now)))
+    end
+    getImg(completion)
 end
 
 -- Sigh, bit library is 32-bit only
