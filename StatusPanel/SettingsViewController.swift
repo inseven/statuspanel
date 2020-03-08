@@ -64,7 +64,7 @@ class SettingsViewController: UITableViewController {
         switch section {
         case DataSourcesSection: return 3
         case UpdateTimeSection: return 1
-        case DisplaySection: return 1
+        case DisplaySection: return 1 + Config().availableFonts.count
         case DeviceIdSection:
             var n = devices.count
             if n == 0 {
@@ -160,11 +160,22 @@ class SettingsViewController: UITableViewController {
             return cell
         case DisplaySection:
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = "Use two columns"
-            let control = UISwitch()
-            control.isOn = config.displayTwoColumns
-            control.addTarget(self, action:#selector(columSwitchChanged(sender:)), for: .valueChanged)
-            cell.accessoryView = control
+            switch indexPath.row {
+            case 0:
+                cell.textLabel?.text = "Use two columns"
+                let control = UISwitch()
+                control.isOn = config.displayTwoColumns
+                control.addTarget(self, action:#selector(columSwitchChanged(sender:)), for: .valueChanged)
+                cell.accessoryView = control
+            default:
+                let (font, text) = Config().availableFonts[indexPath.row - 1]
+                let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
+                let view = ViewController.getLabel(frame:frame, font: font, text: text)
+                view.sizeToFit()
+                view.frame = view.frame.offsetBy(dx: 0, dy: (frame.height - view.bounds.height) / 2)
+                cell.accessoryType = (font == Config().font) ? .checkmark : .none
+                cell.contentView.addSubview(view)
+            }
             return cell
         default:
             return UITableViewCell(style: .default, reuseIdentifier: nil)
@@ -182,7 +193,7 @@ class SettingsViewController: UITableViewController {
             }
             return false
         } else if indexPath.section == DisplaySection {
-            return false
+            return indexPath.row > 0
         } else {
             // All others are highlightable
             return true
@@ -209,6 +220,18 @@ class SettingsViewController: UITableViewController {
                     tableView.insertRows(at: [IndexPath(row: prevCount, section: DeviceIdSection)], with: .fade)
                 }, completion: nil)
             }
+            return
+        case DisplaySection:
+            let config = Config()
+            config.font = config.availableFonts[indexPath.row - 1].0
+            tableView.performBatchUpdates({
+                var paths: [IndexPath] = []
+                for i in 0 ..< config.availableFonts.count {
+                    paths.append(IndexPath(row: i+1, section: DisplaySection))
+                }
+                tableView.deselectRow(at: indexPath, animated: true)
+                tableView.reloadRows(at: paths, with: .automatic)
+            }, completion: nil)
             return
         default:
             break

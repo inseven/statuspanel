@@ -52,27 +52,8 @@ class CalendarItem : DataItemBase {
             return title
         }
 
-        var components = title.split(separator: " ")
-        var inset = "\(time) "
-        let insetWidth = inset.count
-        var result = ""
-        var line = ""
-        while components.count > 0 {
-            line.append(inset)
-            repeat {
-                line.append(contentsOf: components.remove(at: 0))
-                if (components.count > 0) {
-                    line.append(" ")
-                }
-            } while (components.count > 0 && (line.count + components[0].count) <= width)
-            if (components.count > 0) {
-                line.append("\n")
-            }
-            result.append(line)
-            line = ""
-            inset = String(repeating: " ", count: insetWidth)
-        }
-        return result
+        let inset = String(repeating: " ", count: time.count + 1)
+        return StringUtils.splitLine("\(time) \(title)", maxChars: width, inset: inset).joined(separator: "\n")
     }
 
     let time: String?
