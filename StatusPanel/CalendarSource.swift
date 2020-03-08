@@ -107,9 +107,15 @@ class CalendarSource : DataSource {
         let timeZoneFormatter = DateFormatter()
         timeZoneFormatter.dateFormat = "z"
 
-        // TODO: Inject the configuration into the calendar data source.
         let activeCalendars = Config().activeCalendars
         let calendars = eventStore.calendars(for: .event).filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
+        if calendars.count == 0 {
+            // predicateForEvents treats calendars:[] the same as calendars:nil
+            // which matches against _all_ calendars, which we definitely don't
+            // want, so we have to return early here.
+            callback(self, [], nil)
+            return
+        }
 
         let now = Date()
         let cal = Calendar.current
