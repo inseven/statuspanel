@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import subprocess
+import tempfile
 
 
 def main():
     parser = argparse.ArgumentParser(description="Convenience utility for managing the device firmware.")
-    parser.add_argument("command", choices=["erase", "flash-firmware", "upload-scripts"], help="command to run")
+    parser.add_argument("command", choices=["erase",
+                                            "flash-firmware",
+                                            "upload-scripts",
+                                            "console",
+                                            "configure-wifi"], help="command to run")
     options = parser.parse_args()
 
     if options.command == "erase":
@@ -45,6 +51,26 @@ def main():
                         "--start_baud", "115200",
                         "upload",
                         "init.lua", "panel.lua", "network.lua", "rle.lua", "font.lua", "root.pem", "main.lua"])
+    elif options.command == "console":
+        print("Connecting to device...")
+        subprocess.run(["minicom",
+                        "-D", "/dev/tty.SLAB_USBtoUART",
+                        "-b", "115200",
+                        "--capturefile", os.path.expanduser("~/Desktop/output.txt")])
+    elif options.command == "configure-wifi":
+        print("Configuring Wi-Fi...")
+        ssid = input('Network Name: ')
+        pwd = input('Network Password: ')
+        with tempfile.TemporaryDirectory() as directory:
+            path = os.path.join(directory, "script.txt")
+            with open(path, "w") as fh:
+                fh.write('sleep 1\n')
+                fh.write('send \"wifi.sta.config({auto = false, ssid = \\\"%s\\\", pwd = \\\"%s\\\"}, true)\\n\"\n' % (ssid, pwd))
+                fh.write('exit\n')
+            subprocess.run(["minicom",
+                            "-D", "/dev/tty.SLAB_USBtoUART",
+                            "-b", "115200",
+                            "--script", path])
 
 
 if __name__ == "__main__":
