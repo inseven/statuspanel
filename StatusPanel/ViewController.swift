@@ -16,10 +16,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     @IBOutlet weak var imageView: UIImageView!
     let SettingsButtonTag = 1
 
-    let MaxOneColumnLineLength = 39
-    let MaxTwoColumnLineLength = 19
-    let MaxHeaderLength = 26
-
     var contentView: UIView!
 
     var sourceController: DataSourceController!
@@ -47,12 +43,43 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         sourceController.fetch()
     }
 
+    static func getLabel(frame: CGRect, font: String, text: String, header: Bool = false) -> UIView {
+        if font == "font6x10_2" && !header {
+            let scale = header ? 4 : 2
+            let view = BitmapFontLabel(frame: frame, fontNamed: "font6x10", scale: scale)
+            view.text = text
+            return view
+        } else {
+            // amiga4ever
+            let view = UILabel(frame: frame)
+            view.numberOfLines = 0
+            view.lineBreakMode = .byWordWrapping
+            view.font = UIFont(name: "Amiga Forever", size: header ? 24 : 16)
+            view.text = text
+            return view
+        }
+    }
+
+    // Should really be a better abstraction here, oh well.
+    func getMaxLabelChars(width: CGFloat, header: Bool) -> Int {
+        let font = Config().font
+        var charw: Int
+        if font == "font6x10_2" && !header {
+            charw = header ? 24 : 12
+        } else {
+            // amiga4ever
+            charw = header ? 24 : 16
+        }
+        return Int(width) / charw
+    }
+
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
         // Set up contentView and scrollView
         if (self.contentView == nil) {
             self.contentView = UIView(frame: CGRect(x: 0, y: 0, width: 640, height: 384))
         }
         let contentView = self.contentView!
+        contentView.contentScaleFactor = 1.0
         for subview in contentView.subviews {
             subview.removeFromSuperview()
         }
@@ -65,7 +92,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
         // TODO move this to UICollectionView?
         contentView.backgroundColor = UIColor.white
-        let twoCols = Config().displayTwoColumns
+        let config = Config()
+        let twoCols = config.displayTwoColumns
         let rect = contentView.frame
         let maxy = rect.height - 10 // Leave space for status line
         let midx = rect.width / 2
@@ -75,29 +103,21 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let itemGap : CGFloat = 10
         var colStart = y
         var col = 1
-        let maxLineLength = twoCols ? MaxTwoColumnLineLength : MaxOneColumnLineLength
         var verticalBreak: CGFloat = 0
         for (i, item) in data.enumerated() {
             // print(item)
             let flags = item.getFlags()
             let firstItemHeader = i == 0 && flags.contains(.header)
             let w = firstItemHeader ? rect.width : colWidth
-            let view = UILabel(frame: CGRect(x: x, y: y, width: w, height: 0))
-            view.numberOfLines = 0
-            view.lineBreakMode = .byWordWrapping
+            let frame = CGRect(x: x, y: y, width: w, height: 0)
+            let maxLineLength = getMaxLabelChars(width: w, header: firstItemHeader)
+            let text = enmunge(item.format(width: maxLineLength))
+            let view = ViewController.getLabel(frame: frame, font: config.font,
+                                               text: text, header: firstItemHeader)
             if flags.contains(.warning) {
                 // Icons don't render well on the panel, use a coloured background instead
                 view.backgroundColor = UIColor.yellow
             }
-
-            let fname = "Amiga Forever"
-            if firstItemHeader {
-                view.font = UIFont(name: fname, size: 24)
-            } else {
-                view.font = UIFont(name: fname, size: 16)
-            }
-            view.text = enmunge(item.format(width: firstItemHeader ? MaxHeaderLength : maxLineLength))
-            view.textColor = UIColor.black
             view.sizeToFit()
             view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: w, height: view.frame.height)
             let sz = view.frame
@@ -128,6 +148,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let context = UIGraphicsGetCurrentContext()!
         context.setShouldAntialias(false)
         context.setShouldSubpixelQuantizeFonts(false)
+        context.setShouldSubpixelPositionFonts(false)
+        context.setShouldSmoothFonts(false)
         context.interpolationQuality = .none
 
         // layer.render() works when the device is locked, whereas drawHierarchy() doesn't
