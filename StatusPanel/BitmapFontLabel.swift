@@ -7,12 +7,14 @@
 //
 
 import UIKit
+import CoreImage
 
 class BitmapFontLabel: UILabel {
     let image: UIImage
     let charw: Int
     let charh: Int
     let scale: Int
+    var invertedForDarkMode: UIImage?
 
     convenience init(frame: CGRect, fontNamed: String, scale: Int = 1) {
         self.init(frame: frame, font: UIImage(named: fontNamed)!, scale: scale)
@@ -60,6 +62,15 @@ class BitmapFontLabel: UILabel {
     }
 
     private func getImageForChar(ch: Character) -> CGImage {
+        let darkMode = (self.textColor == UIColor.label && traitCollection.userInterfaceStyle == .dark)
+            || self.textColor == UIColor.lightText || self.textColor == UIColor.white
+        if darkMode && invertedForDarkMode == nil {
+            let filter = CIFilter(name: "CIColorInvert")!
+            filter.setValue(CIImage(image: self.image), forKey: kCIInputImageKey)
+            let invertedCgImage = CIContext().createCGImage(filter.outputImage!, from: filter.outputImage!.extent)!
+            invertedForDarkMode = UIImage(cgImage: invertedCgImage)
+        }
+
         var char: Int = 0x7F
         if ch.isASCII && ch.asciiValue! >= 0x20 && ch.asciiValue! <= 0x7F {
             char = Int(ch.asciiValue!)
@@ -67,7 +78,8 @@ class BitmapFontLabel: UILabel {
         char = char - 0x20
         let x = char & 0x7
         let y = char >> 3
-        return (image.cgImage?.cropping(to: CGRect(x: x * charw, y: y * charh, width: charw, height: charh)))!
+        let imageToUse = darkMode ? invertedForDarkMode! : image
+        return (imageToUse.cgImage?.cropping(to: CGRect(x: x * charw, y: y * charh, width: charw, height: charh)))!
     }
 
     override func draw(_ rect: CGRect) {
