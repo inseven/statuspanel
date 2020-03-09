@@ -185,4 +185,17 @@ class Config {
         ("amiga4ever", "Amiga Forever"),
         ("font6x10_2", "Guicons Font"), // Genuinely have no idea what this is actually called
     ]
+
+    enum DarkModeConfig: Int {
+        case off = 0, on = 1, system = 2
+    }
+
+    var darkMode: DarkModeConfig {
+        get {
+            return DarkModeConfig.init(rawValue: UserDefaults.standard.integer(forKey: "darkMode"))!
+        }
+        set {
+            UserDefaults.standard.setValue(newValue.rawValue, forKey: "darkMode")
+        }
+    }
 }
