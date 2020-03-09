@@ -43,11 +43,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         sourceController.fetch()
     }
 
-    static func getLabel(frame: CGRect, font: String, text: String, header: Bool = false) -> UIView {
+    static func getLabel(frame: CGRect, font: String, header: Bool = false) -> UILabel {
         if font == "font6x10_2" && !header {
             let scale = header ? 4 : 2
             let view = BitmapFontLabel(frame: frame, fontNamed: "font6x10", scale: scale)
-            view.text = text
             return view
         } else {
             // amiga4ever
@@ -55,7 +54,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             view.numberOfLines = 0
             view.lineBreakMode = .byWordWrapping
             view.font = UIFont(name: "Amiga Forever", size: header ? 24 : 16)
-            view.text = text
             return view
         }
     }
@@ -113,11 +111,13 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             let maxLineLength = getMaxLabelChars(width: w, header: firstItemHeader)
             let text = enmunge(item.format(width: maxLineLength))
             let view = ViewController.getLabel(frame: frame, font: config.font,
-                                               text: text, header: firstItemHeader)
+                                               header: firstItemHeader)
             if flags.contains(.warning) {
                 // Icons don't render well on the panel, use a coloured background instead
                 view.backgroundColor = UIColor.yellow
             }
+            view.text = text
+            view.textColor = UIColor.black
             view.sizeToFit()
             view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: w, height: view.frame.height)
             let sz = view.frame
