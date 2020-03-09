@@ -8,16 +8,8 @@
 
 import UIKit
 
-class BitmapFontLabel: UIView {
+class BitmapFontLabel: UILabel {
     let image: UIImage
-    private var _text: String?
-    var text: String? {
-        get { _text }
-        set {
-            _text = newValue
-            accessibilityLabel = newValue
-        }
-    }
     let charw: Int
     let charh: Int
     let scale: Int
