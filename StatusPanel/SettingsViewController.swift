@@ -170,7 +170,8 @@ class SettingsViewController: UITableViewController {
             default:
                 let (font, text) = Config().availableFonts[indexPath.row - 1]
                 let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
-                let view = ViewController.getLabel(frame:frame, font: font, text: text)
+                let view = ViewController.getLabel(frame:frame, font: font)
+                view.text = text
                 view.sizeToFit()
                 view.frame = view.frame.offsetBy(dx: 0, dy: (frame.height - view.bounds.height) / 2)
                 cell.accessoryType = (font == Config().font) ? .checkmark : .none
