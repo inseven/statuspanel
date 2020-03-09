@@ -91,6 +91,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         // TODO move this to UICollectionView?
         let darkMode = shouldBeDark()
         contentView.backgroundColor = darkMode ? UIColor.black : UIColor.white
+        let foregroundColor = darkMode ? UIColor.white : UIColor.black
         let config = Config()
         let twoCols = config.displayTwoColumns
         let rect = contentView.frame
@@ -113,7 +114,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             let text = enmunge(item.format(width: maxLineLength))
             let view = ViewController.getLabel(frame: frame, font: config.font,
                                                header: firstItemHeader)
-            view.textColor = darkMode ? UIColor.white : UIColor.black
+            view.textColor = foregroundColor
             if flags.contains(.warning) {
                 // Icons don't render well on the panel, use a coloured background instead
                 view.backgroundColor = UIColor.yellow
@@ -158,7 +159,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         contentView.layer.render(in: context)
 
         // Draw the dividing line
-        context.setStrokeColor(UIColor.black.cgColor)
+        context.setStrokeColor(foregroundColor.cgColor)
         if twoCols {
             context.beginPath()
             context.move(to: CGPoint(x: midx, y: 40))
