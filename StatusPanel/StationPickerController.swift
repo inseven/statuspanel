@@ -32,7 +32,7 @@ class StationPickerController: UITableViewController, UISearchResultsUpdating {
         searchController.searchResultsUpdater = self
         searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.placeholder = "Select a station"
-        searchController.dimsBackgroundDuringPresentation = false // The default is true.
+        searchController.obscuresBackgroundDuringPresentation = false // The default is true.
 
         if #available(iOS 11.0, *) {
             // For iOS 11 and later, place the search bar in the navigation bar.
@@ -45,7 +45,7 @@ class StationPickerController: UITableViewController, UISearchResultsUpdating {
             tableView.tableHeaderView = searchController.searchBar
         }
 
-        searchController.dimsBackgroundDuringPresentation = false // The default is true.
+        searchController.obscuresBackgroundDuringPresentation = false // The default is true.
         definesPresentationContext = true
         searchController.isActive = true
 
@@ -111,7 +111,7 @@ class StationPickerController: UITableViewController, UISearchResultsUpdating {
             let label = UILabel()
             label.text = name
             label.font = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize)
-            label.backgroundColor = UIColor.groupTableViewBackground
+            label.backgroundColor = UIColor.systemGroupedBackground
             return label
         } else {
             // No section headers in filtered list

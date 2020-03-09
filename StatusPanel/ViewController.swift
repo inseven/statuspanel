@@ -89,7 +89,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
         // TODO move this to UICollectionView?
-        contentView.backgroundColor = UIColor.white
+        let darkMode = shouldBeDark()
+        contentView.backgroundColor = darkMode ? UIColor.black : UIColor.white
         let config = Config()
         let twoCols = config.displayTwoColumns
         let rect = contentView.frame
@@ -112,12 +113,13 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             let text = enmunge(item.format(width: maxLineLength))
             let view = ViewController.getLabel(frame: frame, font: config.font,
                                                header: firstItemHeader)
+            view.textColor = darkMode ? UIColor.white : UIColor.black
             if flags.contains(.warning) {
                 // Icons don't render well on the panel, use a coloured background instead
                 view.backgroundColor = UIColor.yellow
+                view.textColor = UIColor.black
             }
             view.text = text
-            view.textColor = UIColor.black
             view.sizeToFit()
             view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: w, height: view.frame.height)
             let sz = view.frame
@@ -434,6 +436,17 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
         flush()
         return result
+    }
+
+    private func shouldBeDark() -> Bool {
+        switch Config().darkMode {
+        case .off:
+            return false
+        case .on:
+            return true
+        case .system:
+            return traitCollection.userInterfaceStyle == UIUserInterfaceStyle.dark
+        }
     }
 
 }
