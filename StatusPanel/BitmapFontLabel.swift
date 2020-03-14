@@ -45,7 +45,7 @@ class BitmapFontLabel: UILabel {
         }
         let maxChars = Int(width) / (charw * scale)
         var lines: [String] = []
-        for line in text.split(separator: "\n") {
+        for line in text.split(whereSeparator: { $0.isNewline }) {
             let splits = StringUtils.splitLine(String(line), maxChars: maxChars)
             lines.append(contentsOf: splits)
         }
@@ -71,9 +71,11 @@ class BitmapFontLabel: UILabel {
             invertedForDarkMode = UIImage(cgImage: invertedCgImage)
         }
 
-        var char: Int = 0x7F
+        var char: Int
         if ch.isASCII && ch.asciiValue! >= 0x20 && ch.asciiValue! <= 0x7F {
             char = Int(ch.asciiValue!)
+        } else {
+            char = 0x7F
         }
         char = char - 0x20
         let x = char & 0x7
