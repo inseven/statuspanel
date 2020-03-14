@@ -31,6 +31,8 @@
 		DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B221440CD90084B710 /* CalendarSource.swift */; };
 		DBCA98B52144421F0084B710 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B42144421F0084B710 /* DataSource.swift */; };
 		DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B6214518EF0084B710 /* DataSourceController.swift */; };
+		DBD94C4D241CF20A001CD37D /* AdvoCut.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DBD94C44241CF189001CD37D /* AdvoCut.ttf */; };
+		DBD94C54241D07DB001CD37D /* Silkscreen.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DBD94C53241D07B0001CD37D /* Silkscreen.ttf */; };
 		DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */; };
 		DBF15EFF215C1134006B0A58 /* amiga4ever.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */; };
 		DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF1C553223D519C0080CADE /* TFLSettingsController.swift */; };
@@ -138,6 +140,8 @@
 		DBCA98B221440CD90084B710 /* CalendarSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSource.swift; sourceTree = "<group>"; };
 		DBCA98B42144421F0084B710 /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		DBCA98B6214518EF0084B710 /* DataSourceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceController.swift; sourceTree = "<group>"; };
+		DBD94C44241CF189001CD37D /* AdvoCut.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AdvoCut.ttf; sourceTree = "<group>"; };
+		DBD94C53241D07B0001CD37D /* Silkscreen.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Silkscreen.ttf; sourceTree = "<group>"; };
 		DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalRailDataSource.swift; sourceTree = "<group>"; };
 		DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = amiga4ever.ttf; sourceTree = "<group>"; };
 		DBF1C553223D519C0080CADE /* TFLSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLSettingsController.swift; sourceTree = "<group>"; };
@@ -233,7 +237,6 @@
 				DB62F33F2258FD6100CA5E64 /* StatusPanel.entitlements */,
 				DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */,
 				D89CAF1021ABDDA200B4B314 /* Config.swift */,
-				DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */,
 				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
 				DBCA987E2143E2920084B710 /* ViewController.swift */,
 				DBCA98802143E2920084B710 /* Main.storyboard */,
@@ -248,12 +251,23 @@
 				DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */,
 				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
 				D80380AA23E9B6D2002606C7 /* Client.swift */,
+				DBD94C50241D06D9001CD37D /* Fonts */,
 				DBCA987A2143E2920084B710 /* Products */,
 				DB62F330224F892A00CA5E64 /* Calendar */,
 				DB62F331224F895F00CA5E64 /* National Rail */,
 				DB62F32F224F88F300CA5E64 /* TFL */,
 			);
 			path = StatusPanel;
+			sourceTree = "<group>";
+		};
+		DBD94C50241D06D9001CD37D /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */,
+				DBD94C44241CF189001CD37D /* AdvoCut.ttf */,
+				DBD94C53241D07B0001CD37D /* Silkscreen.ttf */,
+			);
+			name = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -393,6 +407,8 @@
 				DBCA98842143E2920084B710 /* Assets.xcassets in Resources */,
 				DBCA98822143E2920084B710 /* Main.storyboard in Resources */,
 				DBF15EFF215C1134006B0A58 /* amiga4ever.ttf in Resources */,
+				DBD94C4D241CF20A001CD37D /* AdvoCut.ttf in Resources */,
+				DBD94C54241D07DB001CD37D /* Silkscreen.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
