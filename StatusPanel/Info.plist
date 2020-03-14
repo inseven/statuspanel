@@ -44,6 +44,8 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>amiga4ever.ttf</string>
+		<string>AdvoCut.ttf</string>
+		<string>Silkscreen.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

@@ -174,7 +174,13 @@ class Config {
 
     var font: String {
         get {
-            return UserDefaults.standard.string(forKey: "font") ?? "amiga4ever"
+            let result = UserDefaults.standard.string(forKey: "font")
+            if result == nil || !availableFonts.contains(where: { $0.0 == result }) {
+                // Unset, or a font we've since removed?
+                return availableFonts[0].0
+            } else {
+                return result!
+            }
         }
         set {
             UserDefaults.standard.set(newValue, forKey: "font")
@@ -184,6 +190,8 @@ class Config {
     let availableFonts = [
         ("amiga4ever", "Amiga Forever"),
         ("font6x10_2", "Guicons Font"), // Genuinely have no idea what this is actually called
+        ("advocut", "AdvoCut"),
+        ("silkscreen", "Silkscreen"),
     ]
 
     enum DarkModeConfig: Int {
