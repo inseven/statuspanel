@@ -40,17 +40,26 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         sourceController.fetch()
     }
 
-    static func getLabel(frame: CGRect, font: String, header: Bool = false) -> UILabel {
-        if font == "font6x10_2" && !header {
-            let scale = header ? 4 : 2
-            return BitmapFontLabel(frame: frame, fontNamed: "font6x10", scale: scale)
+    static func getLabel(frame: CGRect, font fontName: String, header: Bool = false) -> UILabel {
+        if fontName == "font6x10_2" && !header {
+            return BitmapFontLabel(frame: frame, fontNamed: "font6x10", scale: header ? 4 : 2)
+        }
+
+        // Otherwise it's a UIFont-based label
+        var font: UIFont?
+        if fontName == "advocut" {
+            font = UIFont(name: "AdvoCut", size: header ? 37 : 27)
+        } else if fontName == "silkscreen" {
+            font = UIFont(name: "Silkscreen", size: header ? 32 : 17)
         } else {
             // amiga4ever
-            let label = UILabel(frame: frame)
-            label.lineBreakMode = .byWordWrapping
-            label.font = UIFont(name: "Amiga Forever", size: header ? 24 : 16)
-            return label
+            font = UIFont(name: "Amiga Forever", size: header ? 24 : 16)
         }
+
+        let label = UILabel(frame: frame)
+        label.lineBreakMode = .byWordWrapping
+        label.font = font
+        return label
     }
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
