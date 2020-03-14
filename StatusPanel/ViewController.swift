@@ -12,11 +12,8 @@ import Sodium
 
 class ViewController: UIViewController, SettingsViewControllerDelegate {
 
-    @IBOutlet var scrollView: UIScrollView!
     @IBOutlet weak var imageView: UIImageView!
     let SettingsButtonTag = 1
-
-    var contentView: UIView!
 
     var sourceController: DataSourceController!
     var prevImage: UIImage?
@@ -58,19 +55,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
         // Set up contentView and scrollView
-        if (self.contentView == nil) {
-            self.contentView = UIView(frame: CGRect(x: 0, y: 0, width: 640, height: 384))
-        }
-        let contentView = self.contentView!
+        let contentView = UIView(frame: CGRect(x: 0, y: 0, width: 640, height: 384))
         contentView.contentScaleFactor = 1.0
-        for subview in contentView.subviews {
-            subview.removeFromSuperview()
-        }
-        if (scrollView != nil) {
-            for subview in scrollView!.subviews {
-                subview.removeFromSuperview()
-            }
-        }
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
         // TODO move this to UICollectionView?
