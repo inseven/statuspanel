@@ -53,6 +53,11 @@ class BitmapFontLabel: UILabel {
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {
+        if numberOfLines == 1 {
+            // Then grow width instead. I think this is pretty much how UILabel
+            // does it normally.
+            return CGSize(width: (text?.count ?? 0) * charw * scale , height: (charh + 1) * scale)
+        }
         let lines = flow(width: size.width)
         var longest = 0
         for line in lines {

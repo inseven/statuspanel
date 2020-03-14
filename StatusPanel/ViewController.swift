@@ -46,29 +46,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     static func getLabel(frame: CGRect, font: String, header: Bool = false) -> UILabel {
         if font == "font6x10_2" && !header {
             let scale = header ? 4 : 2
-            let view = BitmapFontLabel(frame: frame, fontNamed: "font6x10", scale: scale)
-            return view
+            return BitmapFontLabel(frame: frame, fontNamed: "font6x10", scale: scale)
         } else {
             // amiga4ever
-            let view = UILabel(frame: frame)
-            view.numberOfLines = 0
-            view.lineBreakMode = .byWordWrapping
-            view.font = UIFont(name: "Amiga Forever", size: header ? 24 : 16)
-            return view
+            let label = UILabel(frame: frame)
+            label.lineBreakMode = .byWordWrapping
+            label.font = UIFont(name: "Amiga Forever", size: header ? 24 : 16)
+            return label
         }
-    }
-
-    // Should really be a better abstraction here, oh well.
-    func getMaxLabelChars(width: CGFloat, header: Bool) -> Int {
-        let font = Config().font
-        var charw: Int
-        if font == "font6x10_2" && !header {
-            charw = header ? 24 : 12
-        } else {
-            // amiga4ever
-            charw = header ? 24 : 16
-        }
-        return Int(width) / charw
     }
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
@@ -110,19 +95,42 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             let firstItemHeader = i == 0 && flags.contains(.header)
             let w = firstItemHeader ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
-            let maxLineLength = getMaxLabelChars(width: w, header: firstItemHeader)
-            let text = enmunge(item.format(width: maxLineLength))
-            let view = ViewController.getLabel(frame: frame, font: config.font,
+            var prefix = item.getPrefix()
+            var textFrame = frame
+            if prefix != "" {
+                let prefixLabel = ViewController.getLabel(frame: frame, font: config.font)
+                prefixLabel.textColor = foregroundColor
+                prefixLabel.numberOfLines = 1
+                prefixLabel.text = prefix + " "
+                prefixLabel.sizeToFit()
+                if prefixLabel.frame.width < frame.width / 2 {
+                    prefix = ""
+                    contentView.addSubview(prefixLabel)
+                    textFrame = frame.divided(atDistance: prefixLabel.frame.maxX, from: .minXEdge).remainder
+                } else {
+                    // Label too long, treat as single text entity (leave 'prefix' set)
+                    prefix = prefix + " "
+                }
+            }
+            let view = ViewController.getLabel(frame: textFrame, font: config.font,
                                                header: firstItemHeader)
+            view.numberOfLines = 1 // Temporarily while we're using it in checkFit
+
+            let text = prefix + item.getText(checkFit: { (string: String) -> Bool in
+                view.text = prefix + string
+                let size = view.sizeThatFits(textFrame.size)
+                return size.width <= textFrame.width
+            })
             view.textColor = foregroundColor
             if flags.contains(.warning) {
                 // Icons don't render well on the panel, use a coloured background instead
                 view.backgroundColor = UIColor.yellow
                 view.textColor = UIColor.black
             }
+            view.numberOfLines = 0
             view.text = text
             view.sizeToFit()
-            view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: w, height: view.frame.height)
+            view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: textFrame.width, height: view.frame.height)
             let sz = view.frame
             // Enough space for this item?
             let itemIsColBreak = i != 0 && flags.contains(.header)
@@ -210,15 +218,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         } catch {
             print("meh")
         }
-    }
-
-    func enmunge(_ value: String) -> String {
-        // Actually, ☺︎ renders way worse than 😀, so we won't do that. Oh well.
-        var result = ""
-        for char in value {
-            result.append(char)
-        }
-        return result
     }
 
     func uploadData(_ data: Data, completion: @escaping () -> Void) {
