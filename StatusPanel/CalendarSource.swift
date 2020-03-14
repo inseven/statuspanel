@@ -13,11 +13,16 @@ class CalendarHeader : DataItemBase {
     init(for date: Date) {
         self.date = date
     }
-    func format(width: Int) -> String {
+
+    func getPrefix() -> String {
+        return ""
+    }
+
+    func getText(checkFit: (String) -> Bool) -> String {
         let df = DateFormatter()
         df.setLocalizedDateFormatFromTemplate("yMMMMdEEEE")
         let val = df.string(from: date)
-        if val.count > width {
+        if !checkFit(val) {
             // Too long, shorten the day name
             df.setLocalizedDateFormatFromTemplate("yMMMMdEEE")
             return df.string(from: date)
@@ -34,30 +39,32 @@ class CalendarHeader : DataItemBase {
 }
 
 class CalendarItem : DataItemBase {
-    init(time: String?, title: String) {
+    init(time: String?, title: String, flags: Set<DataItemFlag> = []) {
         self.time = time
         self.title = title
+        self.flags = flags
     }
     init(title: String) {
         self.time = nil
         self.title = title
+        self.flags = []
     }
 
     func getFlags() -> Set<DataItemFlag> {
-        return []
+        return flags
     }
 
-    func format(width: Int) -> String {
-        guard let time = time else {
-            return title
-        }
+    func getPrefix() -> String {
+        return time ?? ""
+    }
 
-        let inset = String(repeating: " ", count: time.count + 1)
-        return StringUtils.splitLine("\(time) \(title)", maxChars: width, inset: inset).joined(separator: "\n")
+    func getText(checkFit: (String) -> Bool) -> String {
+        return title
     }
 
     let time: String?
     let title: String
+    let flags: Set<DataItemFlag>
 }
 
 class CalendarSource : DataSource {
@@ -163,7 +170,10 @@ class CalendarSource : DataSource {
     }
 
     static func getHeader() -> DataItemBase {
-        return CalendarHeader(for: Date())
+        // "Wednesday, 26 February 2020" is a nice long date
+        // let date = Calendar(identifier: .gregorian).date(from: DateComponents(year: 2020, month: 2, day: 26))!
+        let date = Date()
+        return CalendarHeader(for: date)
     }
 }
 
