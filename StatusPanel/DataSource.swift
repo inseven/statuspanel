@@ -51,10 +51,10 @@ class DataItem : Equatable, DataItemBase {
 class DummyDataSource : DataSource {
     func fetchData(onCompletion:@escaping Callback) {
         let data: [DataItemBase] = [
-//            DataItem("All day: Some event"),
-//            DataItem("6:00 PM: Something else that has really long text that needs to wrap"),
-//            DataItem("Northern line: part suspended", flags: [.warning]),
-//            DataItem("07:44 to CBG: Cancelled", flags: [.warning]),
+            DataItem("All day: Some event"),
+            DataItem("6:00 PM: Something else that has really long text that needs to wrap"),
+            DataItem("Northern line: part suspended", flags: [.warning]),
+            DataItem("07:44 to CBG:\u{2028}Cancelled", flags: [.warning]),
 //            DataItem("123456789 1234567"),
 //            DataItem("123456789 12345678"),
 //            DataItem("123456789 123456789"),
