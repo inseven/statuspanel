@@ -54,7 +54,7 @@ class DummyDataSource : DataSource {
     func fetchData(onCompletion:@escaping Callback) {
         let data: [DataItemBase] = [
             CalendarItem(title: "Some event"),
-            CalendarItem(time: "06:00", title: "Something else that has really long text that needs to wrap", flags: [.warning]),
+            CalendarItem(time: "06:00", title: "Something else that has really long text that needs to wrap. Like, really really long.", flags: []),
             DataItem("Northern line: part suspended", flags: [.warning]),
             DataItem("07:44 to CBG:\u{2028}Cancelled", flags: [.warning]),
             CalendarItem(time: "09:40", title: "Some text wot is multiline"),
