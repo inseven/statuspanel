@@ -16,11 +16,11 @@ struct StringUtils {
         var currentLine = ""
         while components.count > 0 {
             repeat {
-                currentLine.append(contentsOf: components.remove(at: 0))
-                if (components.count > 0) {
+                if (currentLine.count > 0) {
                     currentLine.append(" ")
                 }
-            } while (components.count > 0 && (currentLine.count + components[0].count) <= maxChars)
+                currentLine.append(contentsOf: components.remove(at: 0))
+            } while (components.count > 0 && (currentLine.count + components[0].count) < maxChars)
             result.append(currentLine)
             currentLine = inset
         }
