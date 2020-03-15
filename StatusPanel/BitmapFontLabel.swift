@@ -33,9 +33,7 @@ class BitmapFontLabel: UILabel {
     init(frame: CGRect, fontNamed: String, scale: Int = 1) {
         self.fontName = fontNamed
         let font = UIImage(named: self.fontName)!
-        // Flip the image here because of annoying coordinate space rubbish
-        let flip = CGAffineTransform(scaleX: 1.0, y: -1.0).translatedBy(x: 0, y: -font.size.height)
-        image = CIImage(image: font)!.transformed(by: flip)
+        image = CIImage(image: font)!
         let w = image.extent.width
         let h = image.extent.height
         charw = (Int)(w / 8)
@@ -69,8 +67,9 @@ class BitmapFontLabel: UILabel {
         guard let text = text else {
             return []
         }
-        let scale = scale ?? self.scale
-        let maxWidth = Int(width) / scale
+        // TODO passing in a scale not equal to self.scale won't work atm
+        // Due to widthFn not accounting for widths now being in scaled coordinates
+        let maxWidth = Int(width)
         var lines: [String] = []
         for line in text.split(whereSeparator: { $0.isNewline }) {
             let splits = StringUtils.splitLine(String(line), maxWidth: maxWidth, widthFn: { getTextWidth($0) })
@@ -89,7 +88,7 @@ class BitmapFontLabel: UILabel {
 
     private func getCharWidth(_ char: Character) -> Int {
         if char.isASCII {
-            return charw
+            return charw * scale
         } else if let w = charWidths[char] {
             return w
         } else {
@@ -101,7 +100,7 @@ class BitmapFontLabel: UILabel {
         if numberOfLines == 1 {
             // Then grow width instead. I think this is pretty much how UILabel
             // does it normally.
-            return CGSize(width: getTextWidth(text ?? "") * scale, height: lineHeight * scale)
+            return CGSize(width: getTextWidth(text ?? ""), height: lineHeight * scale)
         }
         let lines = flow(text: self.text, width: size.width)
         var longest = 0
@@ -114,7 +113,7 @@ class BitmapFontLabel: UILabel {
             let nshrunk = flow(text: overflowText, width: size.width, scale: shrunkLineScale).count
             h = (maxFullSizeLines * lineHeight * scale) + (nshrunk * lineHeight * shrunkLineScale)
         }
-        return CGSize(width: longest * scale, height: h)
+        return CGSize(width: longest, height: h)
     }
 
     private func shouldUseDarkMode() -> Bool {
@@ -122,9 +121,9 @@ class BitmapFontLabel: UILabel {
         || textColor == UIColor.lightText || textColor == UIColor.white
     }
 
-    private static func getImageCache(fontName: String, darkMode: Bool) -> ImagesDict {
+    private static func getImageCache(fontName: String, scale: Int, darkMode: Bool) -> ImagesDict {
         let theme = (darkMode ? "dark" : "light")
-        let key = "\(fontName)_\(theme)"
+        let key = "\(fontName)_\(scale)_\(theme)"
         if let result = BitmapFontLabel.globalCache[key] {
             return result
         }
@@ -133,9 +132,27 @@ class BitmapFontLabel: UILabel {
         return result
     }
 
+    // Must be an easier way than this...
+    // Note this effectively also does a flip, thanks to rendering a CGImage in a context
+    private func scaleUp(image ciImage: CIImage, factor: Int) -> CGImage {
+        let unscaledCGImage = CIContext().createCGImage(ciImage, from: ciImage.extent)!
+        let fmt = UIGraphicsImageRendererFormat()
+        fmt.scale = 1.0
+        let scaleFactor = CGFloat(factor)
+        let unscaledWidth = ciImage.extent.width
+        let unscaledHeight = ciImage.extent.height
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: unscaledWidth * scaleFactor, height: unscaledHeight * scaleFactor), format: fmt)
+        let uiImage = renderer.image { (uictx: UIGraphicsImageRendererContext) in
+            let ctx = uictx.cgContext
+            ctx.scaleBy(x: scaleFactor, y: scaleFactor)
+            ctx.draw(unscaledCGImage, in: CGRect(x: 0, y: 0, width: unscaledWidth, height: unscaledHeight))
+        }
+        return uiImage.cgImage!
+    }
+
     private func getImageForChar(ch: Character) -> CGImage {
         let darkMode = shouldUseDarkMode()
-        let imgCache = BitmapFontLabel.getImageCache(fontName: fontName, darkMode: darkMode)
+        let imgCache = BitmapFontLabel.getImageCache(fontName: fontName, scale: scale, darkMode: darkMode)
         var img = imgCache.get(ch)
         if let img = img {
             if charWidths[ch] == nil {
@@ -155,20 +172,28 @@ class BitmapFontLabel: UILabel {
             }
             let char = Int(ch.asciiValue!) - 0x20
             let x = char & 0x7
-            let y = char >> 3
+            // y is counting from the bottom because of stupid coordinate space rubbish, and there's 12 rows
+            let y = 12 - (char >> 3) - 1
             let imageToUse = darkMode ? invertedForDarkMode! : self.image
-            img = CIContext().createCGImage(imageToUse, from: CGRect(x: x * charw, y: y * charh, width: charw, height: charh))!
+            let cropped = imageToUse.cropped(to: CGRect(x: x * charw, y: y * charh, width: charw, height: charh))
+            img = scaleUp(image: cropped, factor: scale)
         } else {
             // See if we have an individual image for it
             let charName = ch.unicodeScalars.compactMap({ String(format:"U+%X", $0.value) }).joined(separator: "_")
-            let charImgName = "\(fontName)_\(charName)"
-            if let uiImage = UIImage(named: charImgName) {
-                let flip = CGAffineTransform(scaleX: 1.0, y: -1.0).translatedBy(x: 0, y: -uiImage.size.height)
-                var ciImage = CIImage(image: uiImage)!.transformed(by: flip)
+            var scaleForImage = 1
+            var uiImage = UIImage(named: "\(fontName)_\(scale)_\(charName)")
+            if uiImage == nil {
+                // Try an unscaled one we can scale up
+                uiImage = UIImage(named: "\(fontName)_\(charName)")
+                scaleForImage = scale
+            }
+
+            if let uiImage = uiImage {
+                var ciImage = CIImage(image: uiImage)!
                 if darkMode {
                     ciImage = ciImage.applyingFilter("CIColorInvert")
                 }
-                img = CIContext().createCGImage(ciImage, from: ciImage.extent)!
+                img = scaleUp(image: ciImage, factor: scaleForImage)
             } else {
                 print("No font data for character \(charName)")
                 img = getImageForChar(ch: "\u{7F}")
@@ -193,8 +218,6 @@ class BitmapFontLabel: UILabel {
         }
 
         let lines = flow(text: self.text, width: self.bounds.width)
-        ctx.scaleBy(x: CGFloat(scale), y: CGFloat(scale))
-
         let numFullsizeLines = min(lines.count, maxFullSizeLines)
         drawLines(Array(lines.prefix(numFullsizeLines)), at: 0, in: ctx)
         if numFullsizeLines < lines.count {
@@ -212,7 +235,7 @@ class BitmapFontLabel: UILabel {
             var x = 0
             for ch in text {
                 let chImg = getImageForChar(ch: ch)
-                ctx.draw(chImg, in: CGRect(x: x, y: y + line * lineHeight, width: chImg.width, height: charh))
+                ctx.draw(chImg, in: CGRect(x: x, y: y + line * lineHeight * scale, width: chImg.width, height: charh * scale))
                 x = x + chImg.width
             }
         }
