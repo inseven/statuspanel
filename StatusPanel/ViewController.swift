@@ -445,6 +445,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        BitmapFontLabel.clearImageCache()
+    }
+
 }
 
 extension ViewController: DataSourceControllerDelegate {
