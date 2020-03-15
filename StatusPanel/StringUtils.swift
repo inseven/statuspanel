@@ -10,21 +10,31 @@
 
 struct StringUtils {
 
-    static func splitLine(_ line: String, maxChars: Int, inset: String = "") -> [String] {
+    static func splitLine(_ line: String, maxWidth: Int, widthFn: (String) -> Int) -> [String] {
         var result: [String] = []
         var components = line.split(separator: " ", maxSplits: Int.max, omittingEmptySubsequences: false)
         var currentLine = ""
+        var lineWidth = 0
+        let spaceWidth = widthFn(" ")
         while components.count > 0 {
-            repeat {
-                if (currentLine.count > 0) {
+            let word = components.removeFirst()
+            let wordWidth = widthFn(String(word))
+            let lineAndWordWidth = lineWidth + wordWidth + (lineWidth == 0 ? 0 : spaceWidth)
+            if lineAndWordWidth <= maxWidth {
+                // Add to current line
+                if (currentLine != "") {
                     currentLine.append(" ")
                 }
-                currentLine.append(contentsOf: components.remove(at: 0))
-            } while (components.count > 0 && (currentLine.count + components[0].count) < maxChars)
-            result.append(currentLine)
-            currentLine = inset
+                currentLine.append(String(word))
+                lineWidth = lineAndWordWidth
+            } else {
+                // Start a new line
+                result.append(currentLine)
+                currentLine = String(word)
+                lineWidth = wordWidth
+            }
         }
+        result.append(currentLine)
         return result
     }
-
 }
