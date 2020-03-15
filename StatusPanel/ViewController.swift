@@ -63,7 +63,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
-        // Set up contentView and scrollView
         let contentView = UIView(frame: CGRect(x: 0, y: 0, width: 640, height: 384))
         contentView.contentScaleFactor = 1.0
 
