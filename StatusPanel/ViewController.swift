@@ -98,10 +98,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 prefixLabel.numberOfLines = 1
                 prefixLabel.text = prefix + " "
                 prefixLabel.sizeToFit()
-                if prefixLabel.frame.width < frame.width / 2 {
+                let prefixWidth = prefixLabel.frame.width
+                if prefixWidth < frame.width / 2 {
                     prefix = ""
                     contentView.addSubview(prefixLabel)
-                    textFrame = frame.divided(atDistance: prefixLabel.frame.maxX, from: .minXEdge).remainder
+                    textFrame = frame.divided(atDistance: prefixWidth, from: .minXEdge).remainder
                 } else {
                     // Label too long, treat as single text entity (leave 'prefix' set)
                     prefix = prefix + " "
