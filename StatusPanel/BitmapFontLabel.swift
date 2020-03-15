@@ -144,6 +144,8 @@ class BitmapFontLabel: UILabel {
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: unscaledWidth * scaleFactor, height: unscaledHeight * scaleFactor), format: fmt)
         let uiImage = renderer.image { (uictx: UIGraphicsImageRendererContext) in
             let ctx = uictx.cgContext
+            ctx.setAllowsAntialiasing(false)
+            ctx.interpolationQuality = .none
             ctx.scaleBy(x: scaleFactor, y: scaleFactor)
             ctx.draw(unscaledCGImage, in: CGRect(x: 0, y: 0, width: unscaledWidth, height: unscaledHeight))
         }
