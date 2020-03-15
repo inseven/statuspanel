@@ -206,4 +206,15 @@ class Config {
             UserDefaults.standard.setValue(newValue.rawValue, forKey: "darkMode")
         }
     }
+
+    #if targetEnvironment(simulator)
+        var showDummyData: Bool {
+            get {
+                return UserDefaults.standard.bool(forKey: "dummyData")
+            }
+            set {
+                UserDefaults.standard.set(newValue, forKey: "dummyData")
+            }
+        }
+    #endif
 }

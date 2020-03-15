@@ -64,7 +64,12 @@ class SettingsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case DataSourcesSection: return 3
+        case DataSourcesSection:
+            #if targetEnvironment(simulator)
+                return 4
+            #else
+                return 3
+            #endif
         case UpdateTimeSection: return 1
         case DisplaySection: return FontIndexStart + Config().availableFonts.count
         case DeviceIdSection:
@@ -134,6 +139,15 @@ class SettingsViewController: UITableViewController {
                 } else {
                     cell.detailTextLabel?.text = "Not configured"
                 }
+            #if targetEnvironment(simulator)
+            case 3:
+                cell.textLabel?.text = "Show dummy data"
+                let control = UISwitch()
+                control.isOn = config.showDummyData
+                control.addTarget(self, action:#selector(dummyDataSwitchChanged(sender:)), for: .valueChanged)
+                cell.accessoryView = control
+                return cell
+            #endif
             default:
                 cell.textLabel?.text = "TODO"
             }
@@ -200,6 +214,12 @@ class SettingsViewController: UITableViewController {
         Config().displayTwoColumns = sender.isOn
     }
 
+#if targetEnvironment(simulator)
+    @objc func dummyDataSwitchChanged(sender: UISwitch) {
+        Config().showDummyData = sender.isOn
+    }
+#endif
+
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == DeviceIdSection {
             if indexPath.row == (devices.count == 0 ? 1 : devices.count) {
@@ -208,6 +228,8 @@ class SettingsViewController: UITableViewController {
             return false
         } else if indexPath.section == DisplaySection {
             return indexPath.row > 0
+        } else if indexPath.section == DataSourcesSection && indexPath.row >= DataSourceEditors.count {
+            return false
         } else {
             // All others are highlightable
             return true
