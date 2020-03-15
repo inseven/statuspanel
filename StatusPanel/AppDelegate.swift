@@ -24,9 +24,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sourceController.add(dataSource:TFLDataSource())
         sourceController.add(dataSource:NationalRailDataSource())
         sourceController.add(dataSource:CalendarSource())
-        // sourceController.add(dataSource:DummyDataSource())
+        #if targetEnvironment(simulator)
+            sourceController.add(dataSource:DummyDataSource())
+        #endif
         sourceController.add(dataSource:CalendarSource(forDayOffset: 1, header: "Tomorrow:"))
-        // sourceController.add(dataSource:DummyDataSource())
+        #if targetEnvironment(simulator)
+            sourceController.add(dataSource:DummyDataSource())
+        #endif
 
         application.registerForRemoteNotifications()
 
