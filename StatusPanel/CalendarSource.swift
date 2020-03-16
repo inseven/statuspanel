@@ -31,6 +31,10 @@ class CalendarHeader : DataItemBase {
         }
     }
 
+    func getSubText() -> String? {
+        return nil
+    }
+
     func getFlags() -> Set<DataItemFlag> {
         return [.header]
     }
@@ -39,14 +43,16 @@ class CalendarHeader : DataItemBase {
 }
 
 class CalendarItem : DataItemBase {
-    init(time: String?, title: String, flags: Set<DataItemFlag> = []) {
+    init(time: String?, title: String, location: String?, flags: Set<DataItemFlag> = []) {
         self.time = time
         self.title = title
+        self.location = location
         self.flags = flags
     }
-    init(title: String) {
+    init(title: String, location: String?) {
         self.time = nil
         self.title = title
+        self.location = location
         self.flags = []
     }
 
@@ -62,8 +68,17 @@ class CalendarItem : DataItemBase {
         return title
     }
 
+    func getSubText() -> String? {
+        if Config().showCalendarLocations {
+            return location
+        } else {
+            return nil
+        }
+    }
+
     let time: String?
     let title: String
+    let location: String?
     let flags: Set<DataItemFlag>
 }
 
@@ -153,7 +168,7 @@ class CalendarSource : DataSource {
 
             let timeStr = df.string(from: event.startDate)
             if event.isAllDay {
-                results.append(CalendarItem(title: event.title!))
+                results.append(CalendarItem(title: event.title!, location: event.location))
             } else if event.timeZone != nil && event.timeZone != tz {
                 // a nil timezone means floating time
                 df.timeZone = event.timeZone
@@ -161,9 +176,9 @@ class CalendarSource : DataSource {
                 let eventLocalTime = df.string(from: event.startDate)
                 df.timeZone = tz
                 let tzStr = timeZoneFormatter.string(from: event.startDate)
-                results.append(CalendarItem(time: timeStr, title: "\(event.title!) (\(eventLocalTime) \(tzStr))"))
+                results.append(CalendarItem(time: timeStr, title: "\(event.title!) (\(eventLocalTime) \(tzStr))", location: event.location))
             } else {
-                results.append(CalendarItem(time: timeStr, title: event.title!))
+                results.append(CalendarItem(time: timeStr, title: event.title!, location: event.location))
             }
         }
         callback(self, results, nil)
