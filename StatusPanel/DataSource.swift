@@ -61,8 +61,8 @@ class DummyDataSource : DataSource {
                 DataItem("Northern line: part suspended", flags: [.warning]),
                 DataItem("07:44 to CBG:\u{2028}Cancelled", flags: [.warning]),
                 CalendarItem(time: "09:40", title: "Some text wot is multiline"),
-                DataItem("Em dash: a-b a–b ––"),
-                DataItem("\u{2328} I'm a keyboard"),
+                DataItem("“Hello–” ‘Hi…’"),
+                DataItem("Look \u{2328} I'm a keyboard"),
             ]
             data.append(contentsOf: dummyData)
         }
