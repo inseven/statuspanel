@@ -28,7 +28,6 @@ class BitmapFontLabel: UILabel {
     let scale: Int
     private var invertedForDarkMode: CIImage?
     let maxFullSizeLines = Int.max
-    private var charWidths: [Character: Int] = [:]
 
     init(frame: CGRect, fontNamed: String, scale: Int = 1) {
         self.fontName = fontNamed
@@ -72,27 +71,25 @@ class BitmapFontLabel: UILabel {
         let maxWidth = Int(width)
         var lines: [String] = []
         for line in text.split(whereSeparator: { $0.isNewline }) {
-            let splits = StringUtils.splitLine(String(line), maxWidth: maxWidth, widthFn: { getTextWidth($0) })
+            let splits = StringUtils.splitLine(String(line), maxWidth: maxWidth, widthFn: { getTextWidth($0, forScale: scale) })
             lines.append(contentsOf: splits)
         }
         return lines
     }
 
-    private func getTextWidth<T>(_ text: T) -> Int where T : StringProtocol {
+    private func getTextWidth<T>(_ text: T, forScale scale: Int? = nil) -> Int where T : StringProtocol {
         var result = 0
         for ch in text {
-            result = result + getCharWidth(ch)
+            result = result + getCharWidth(ch, forScale: scale)
         }
         return result
     }
 
-    private func getCharWidth(_ char: Character) -> Int {
+    private func getCharWidth(_ char: Character, forScale scale: Int? = nil) -> Int {
         if char.isASCII {
-            return charw * scale
-        } else if let w = charWidths[char] {
-            return w
+            return charw * (scale ?? self.scale)
         } else {
-            return getImageForChar(ch: char).width // This will populate charWidths for next time
+            return getImageForChar(ch: char, forScale: scale).width
         }
     }
 
@@ -152,14 +149,12 @@ class BitmapFontLabel: UILabel {
         return uiImage.cgImage!
     }
 
-    private func getImageForChar(ch: Character) -> CGImage {
+    private func getImageForChar(ch: Character, forScale: Int? = nil) -> CGImage {
         let darkMode = shouldUseDarkMode()
+        let scale = forScale ?? self.scale
         let imgCache = BitmapFontLabel.getImageCache(fontName: fontName, scale: scale, darkMode: darkMode)
         var img = imgCache.get(ch)
         if let img = img {
-            if charWidths[ch] == nil {
-                charWidths[ch] = img.width
-            }
             return img
         }
 
@@ -204,7 +199,6 @@ class BitmapFontLabel: UILabel {
 
         // Update image cache
         imgCache.set(ch, img!)
-        charWidths[ch] = img!.width
         return img!
     }
 
@@ -221,22 +215,20 @@ class BitmapFontLabel: UILabel {
 
         let lines = flow(text: self.text, width: self.bounds.width)
         let numFullsizeLines = min(lines.count, maxFullSizeLines)
-        drawLines(Array(lines.prefix(numFullsizeLines)), at: 0, in: ctx)
+        drawLines(Array(lines.prefix(numFullsizeLines)), at: 0, forScale: scale, in: ctx)
         if numFullsizeLines < lines.count {
-            let ratio = CGFloat(shrunkLineScale) / CGFloat(scale) // eg 1/2
-            ctx.scaleBy(x: ratio, y: ratio)
-            let pos = (numFullsizeLines * lineHeight * scale) / shrunkLineScale
+            let pos = numFullsizeLines * lineHeight * scale
             let overflowText = lines[maxFullSizeLines...].joined(separator: " ")
             let shrunkLines = flow(text: overflowText, width: self.bounds.width, scale: shrunkLineScale)
-            drawLines(shrunkLines, at:pos, in: ctx)
+            drawLines(shrunkLines, at:pos, forScale: shrunkLineScale, in: ctx)
         }
     }
 
-    private func drawLines(_ lines: [String], at y: Int, in ctx: CGContext) {
+    private func drawLines(_ lines: [String], at y: Int, forScale scale: Int, in ctx: CGContext) {
         for (line, text) in lines.enumerated() {
             var x = 0
             for ch in text {
-                let chImg = getImageForChar(ch: ch)
+                let chImg = getImageForChar(ch: ch, forScale: scale)
                 ctx.draw(chImg, in: CGRect(x: x, y: y + line * lineHeight * scale, width: chImg.width, height: charh * scale))
                 x = x + chImg.width
             }
