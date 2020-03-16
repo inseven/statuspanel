@@ -38,18 +38,33 @@ class CalendarViewController: UITableViewController {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return sources.count
+        return sources.count + 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == calendars.count {
+            return 1
+        }
         return calendars[section].count
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == calendars.count {
+            return "Options"
+        }
         return sources[section].title
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section == calendars.count {
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            cell.textLabel?.text = "Show locations"
+            let control = UISwitch()
+            control.isOn = Config().showCalendarLocations
+            control.addTarget(self, action:#selector(showCalendarLocationsSwitchChanged(sender:)), for: .valueChanged)
+            cell.accessoryView = control
+            return cell
+        }
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let calendar = calendars[indexPath.section][indexPath.row]
         cell.textLabel?.text = calendar.title
@@ -59,6 +74,10 @@ class CalendarViewController: UITableViewController {
             cell.accessoryType = .none
         }
         return cell
+    }
+
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section < calendars.count
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -73,4 +92,7 @@ class CalendarViewController: UITableViewController {
         Config().activeCalendars = activeCalendars.sorted()
     }
 
+    @objc func showCalendarLocationsSwitchChanged(sender: UISwitch) {
+        Config().showCalendarLocations = sender.isOn
+    }
 }
