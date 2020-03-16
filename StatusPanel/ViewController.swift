@@ -89,10 +89,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             let firstItemHeader = i == 0 && flags.contains(.header)
             let w = firstItemHeader ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
+            let view = UIView(frame: frame)
             var prefix = item.getPrefix()
-            var textFrame = frame
+            var textFrame = CGRect(origin: CGPoint.zero, size: frame.size)
             if prefix != "" {
-                let prefixLabel = ViewController.getLabel(frame: frame, font: config.font)
+                let prefixLabel = ViewController.getLabel(frame: textFrame, font: config.font)
                 prefixLabel.textColor = foregroundColor
                 prefixLabel.numberOfLines = 1
                 prefixLabel.text = prefix + " "
@@ -100,32 +101,34 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 let prefixWidth = prefixLabel.frame.width
                 if prefixWidth < frame.width / 2 {
                     prefix = ""
-                    contentView.addSubview(prefixLabel)
-                    textFrame = frame.divided(atDistance: prefixWidth, from: .minXEdge).remainder
+                    view.addSubview(prefixLabel)
+                    textFrame = textFrame.divided(atDistance: prefixWidth, from: .minXEdge).remainder
                 } else {
                     // Label too long, treat as single text entity (leave 'prefix' set)
                     prefix = prefix + " "
                 }
             }
-            let view = ViewController.getLabel(frame: textFrame, font: config.font,
+            let label = ViewController.getLabel(frame: textFrame, font: config.font,
                                                header: firstItemHeader)
-            view.numberOfLines = 1 // Temporarily while we're using it in checkFit
+            label.numberOfLines = 1 // Temporarily while we're using it in checkFit
 
             let text = prefix + item.getText(checkFit: { (string: String) -> Bool in
-                view.text = prefix + string
-                let size = view.sizeThatFits(textFrame.size)
+                label.text = prefix + string
+                let size = label.sizeThatFits(textFrame.size)
                 return size.width <= textFrame.width
             })
-            view.textColor = foregroundColor
+            label.textColor = foregroundColor
             if flags.contains(.warning) {
                 // Icons don't render well on the panel, use a coloured background instead
-                view.backgroundColor = UIColor.yellow
-                view.textColor = UIColor.black
+                label.backgroundColor = UIColor.yellow
+                label.textColor = UIColor.black
             }
-            view.numberOfLines = 0
-            view.text = text
-            view.sizeToFit()
-            view.frame = CGRect(x: view.frame.minX, y: view.frame.minY, width: textFrame.width, height: view.frame.height)
+            label.numberOfLines = 0
+            label.text = text
+            label.sizeToFit()
+            label.frame = CGRect(x: label.frame.minX, y: label.frame.minY, width: textFrame.width, height: label.frame.height)
+            view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: label.bounds.height))
+            view.addSubview(label)
             let sz = view.frame
             // Enough space for this item?
             let itemIsColBreak = i != 0 && flags.contains(.header)
