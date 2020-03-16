@@ -217,4 +217,13 @@ class Config {
             }
         }
     #endif
+
+    var showCalendarLocations: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: "showCalendarLocations")
+        }
+        set {
+            return UserDefaults.standard.set(newValue, forKey: "showCalendarLocations")
+        }
+    }
 }
