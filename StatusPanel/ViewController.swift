@@ -40,20 +40,27 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         sourceController.fetch()
     }
 
-    static func getLabel(frame: CGRect, font fontName: String, header: Bool = false) -> UILabel {
-        if fontName == "font6x10_2" && !header {
-            return BitmapFontLabel(frame: frame, fontNamed: "font6x10", scale: header ? 4 : 2)
+    enum LabelType {
+        case text, header, subText
+    }
+
+    static func getLabel(frame: CGRect, font fontName: String, type: LabelType = .text) -> UILabel {
+        if fontName == "font6x10_2" && type != .header {
+            return BitmapFontLabel(frame: frame, fontNamed: "font6x10", scale: type == .text ? 2 : 1)
         }
 
         // Otherwise it's a UIFont-based label
         var font: UIFont?
         if fontName == "advocut" {
-            font = UIFont(name: "AdvoCut", size: header ? 37 : 27)
+            font = UIFont(name: "AdvoCut", size:
+                type == .header ? 37 : type == .text ? 27 : 13)
         } else if fontName == "silkscreen" {
-            font = UIFont(name: "Silkscreen", size: header ? 32 : 17)
+            font = UIFont(name: "Silkscreen", size:
+                type == .header ? 32 : type == .text ? 17 : 11)
         } else {
             // amiga4ever
-            font = UIFont(name: "Amiga Forever", size: header ? 24 : 16)
+            font = UIFont(name: "Amiga Forever", size:
+                type == .header ? 24 : type == .text ? 16 : 8)
         }
 
         let label = UILabel(frame: frame)
@@ -129,6 +136,16 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             label.frame = CGRect(x: label.frame.minX, y: label.frame.minY, width: textFrame.width, height: label.frame.height)
             view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: label.bounds.height))
             view.addSubview(label)
+            if let subText = item.getSubText() {
+                let subLabel = ViewController.getLabel(frame: textFrame, font: config.font, type: .subText)
+                subLabel.textColor = foregroundColor
+                subLabel.numberOfLines = 0
+                subLabel.text = subText
+                subLabel.sizeToFit()
+                subLabel.frame = CGRect(x: textFrame.minX, y: label.frame.maxY + 1, width: textFrame.width, height: subLabel.frame.height)
+                view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: subLabel.frame.maxY))
+                view.addSubview(subLabel)
+            }
             let sz = view.frame
             // Enough space for this item?
             let itemIsColBreak = i != 0 && flags.contains(.header)
