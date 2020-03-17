@@ -116,7 +116,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 }
             }
             let label = ViewController.getLabel(frame: textFrame, font: config.font,
-                                               header: firstItemHeader)
+                                                type: firstItemHeader ? .header : .text)
             label.numberOfLines = 1 // Temporarily while we're using it in checkFit
 
             let text = prefix + item.getText(checkFit: { (string: String) -> Bool in
