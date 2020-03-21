@@ -44,6 +44,60 @@ The EagleCAD files make use of the following component libraries which are added
 
 ![Tom's notes](images/pinout.jpg)
 
+## Client
+
+### Custom Emoji
+
+The iOS client has support for custom Emoji. Simply place a file following the appropriate naming convention in the bundle.
+
+Files are named as follows:
+
+```
+<font name>_<unicode code>.imageset
+```
+
+For example, 'left double quotation mark', `“`, unicode code U+201C, for font named 'font6x10', would have a filename of `font6x10_U+201C.imageset`.
+
+```
+      ◀─1px─▶ ◀─────────────5px──────────────▶               
+     ┌───────┬────────────────────────────────┐              
+   ▲ │     ▲ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │   8px │                                │              
+   │ │     │ │                                │              
+10px │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     │ │                                │              
+   │ │     ▼ │                                │              
+   │ │       └────────────────────────────────┼ ─ ─ Baseline
+   │ │        ◀─────────────5px──────────────▶│              
+   │ │                                        │              
+   ▼ │                                        │              
+     └────────────────────────────────────────┘              
+     ◀──────────────────6px─────────────────▶               
+```
+
+Specifically:
+
+- 1 pixel padding to the left
+- 2 pixels below the baseline
+
+An additional one pixel is added between lines so it is safe to use the whole vertical space if you want. Further, Emoji are variable width, so you can made wide Emoji.
+
+N.B. Typically Emoji are square, and will hang just below the baseline (c.f., g and 🙃). It is therefore perfectly acceptable to have a 9x9 character, in a 10 x 10 image, or an 18 x 18 character in a 20 x 20 image (at 2x).
+
 ## Service
 
 ### Heroku
