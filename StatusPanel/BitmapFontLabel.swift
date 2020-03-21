@@ -184,6 +184,16 @@ class BitmapFontLabel: UILabel {
                 uiImage = UIImage(named: "\(fontName)_\(charName)")
                 scaleForImage = scale
             }
+            // If there's still no joy, try just the first code point, scaled then unscaled
+            let firstCodepointName = String(format:"U+%X", ch.unicodeScalars.first!.value)
+            if uiImage == nil {
+                uiImage = UIImage(named: "\(fontName)_\(scale)_\(firstCodepointName)")
+                scaleForImage = 1
+            }
+            if uiImage == nil {
+                uiImage = UIImage(named: "\(fontName)_\(firstCodepointName)")
+                scaleForImage = scale
+            }
 
             if let uiImage = uiImage {
                 var ciImage = CIImage(image: uiImage)!
