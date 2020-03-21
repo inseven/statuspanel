@@ -98,6 +98,8 @@ An additional one pixel is added between lines so it is safe to use the whole ve
 
 N.B. Typically Emoji are square, and will hang just below the baseline (c.f., g and 🙃). It is therefore perfectly acceptable to have a 9x9 character, in a 10 x 10 image, or an 18 x 18 character in a 20 x 20 image (at 2x).
 
+Unicode Character Table seems to be a good resource for getting unicode code points: https://unicode-table.com/en/sets/top-emoji/.
+
 ## Service
 
 ### Heroku
