@@ -371,6 +371,7 @@
                             <outlet property="delegate" destination="oWr-Mh-xhb" id="IEh-iV-IA1"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" title="Dark Mode" id="4wh-gQ-zAT"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q6D-gI-c0t" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
