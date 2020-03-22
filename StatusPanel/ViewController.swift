@@ -130,7 +130,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 label.backgroundColor = UIColor.yellow
                 label.textColor = UIColor.black
             }
-            label.numberOfLines = 0
+            label.numberOfLines = config.maxLines
+            label.lineBreakMode = .byTruncatingTail
             label.text = text
             label.sizeToFit()
             label.frame = CGRect(x: label.frame.minX, y: label.frame.minY, width: textFrame.width, height: label.frame.height)
@@ -139,7 +140,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             if let subText = item.getSubText() {
                 let subLabel = ViewController.getLabel(frame: textFrame, font: config.font, type: .subText)
                 subLabel.textColor = foregroundColor
-                subLabel.numberOfLines = 0
+                subLabel.numberOfLines = config.maxLines
                 subLabel.text = subText
                 subLabel.sizeToFit()
                 subLabel.frame = CGRect(x: textFrame.minX, y: label.frame.maxY + 1, width: textFrame.width, height: subLabel.frame.height)
