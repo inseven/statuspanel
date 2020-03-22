@@ -66,13 +66,19 @@ class BitmapFontLabel: UILabel {
         guard let text = text else {
             return []
         }
-        // TODO passing in a scale not equal to self.scale won't work atm
-        // Due to widthFn not accounting for widths now being in scaled coordinates
         let maxWidth = Int(width)
         var lines: [String] = []
         for line in text.split(whereSeparator: { $0.isNewline }) {
             let splits = StringUtils.splitLine(String(line), maxWidth: maxWidth, widthFn: { getTextWidth($0, forScale: scale) })
             lines.append(contentsOf: splits)
+        }
+        if numberOfLines > 0 && lines.count > numberOfLines {
+            lines = Array(lines[0..<numberOfLines])
+            var lastLine = lines.last!
+            while (lastLine.count > 0 && getTextWidth(lastLine + "…", forScale: scale) > maxWidth) {
+                lastLine = String(lastLine.prefix(lastLine.count - 1))
+            }
+            lines[lines.count - 1] = lastLine + "…"
         }
         return lines
     }
