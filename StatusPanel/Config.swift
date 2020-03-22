@@ -223,7 +223,17 @@ class Config {
             return UserDefaults.standard.bool(forKey: "showCalendarLocations")
         }
         set {
-            return UserDefaults.standard.set(newValue, forKey: "showCalendarLocations")
+            UserDefaults.standard.set(newValue, forKey: "showCalendarLocations")
+        }
+    }
+
+    // 0 means unlimited
+    var maxLines: Int {
+        get {
+            return UserDefaults.standard.integer(forKey: "maxLines")
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "maxLines")
         }
     }
 }

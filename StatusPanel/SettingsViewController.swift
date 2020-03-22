@@ -19,7 +19,7 @@ class SettingsViewController: UITableViewController {
     let DataSourcesSection = 0
     let UpdateTimeSection = 1
     let DisplaySection = 2
-    let FontIndexStart = 2
+    let NumDisplaySettings = 3
 
     let DeviceIdSection = 3
 
@@ -71,7 +71,7 @@ class SettingsViewController: UITableViewController {
                 return 3
             #endif
         case UpdateTimeSection: return 1
-        case DisplaySection: return FontIndexStart + Config().availableFonts.count
+        case DisplaySection: return NumDisplaySettings + Config().availableFonts.count
         case DeviceIdSection:
             var n = devices.count
             if n == 0 {
@@ -175,8 +175,9 @@ class SettingsViewController: UITableViewController {
             }
             return cell
         case DisplaySection:
-            let cell = UITableViewCell(style: indexPath.row == 1 ? .value1 : .default, reuseIdentifier: nil)
-            switch indexPath.row {
+            let row = indexPath.row
+            let cell = UITableViewCell(style: row == 1 || row == 2 ? .value1 : .default, reuseIdentifier: nil)
+            switch row {
             case 0:
                 cell.textLabel?.text = "Use two columns"
                 let control = UISwitch()
@@ -194,8 +195,13 @@ class SettingsViewController: UITableViewController {
                     cell.detailTextLabel?.text = "Use system"
                 }
                 cell.accessoryType = .disclosureIndicator
+            case 2:
+                cell.textLabel?.text = "Maximum lines per item"
+                let val = config.maxLines
+                cell.detailTextLabel?.text = val == 0 ? "Unlimited" : String(format: "%d", val)
+                cell.accessoryType = .disclosureIndicator
             default:
-                let (font, text) = Config().availableFonts[indexPath.row - FontIndexStart]
+                let (font, text) = Config().availableFonts[indexPath.row - NumDisplaySettings]
                 let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
                 let view = ViewController.getLabel(frame:frame, font: font)
                 view.text = text
@@ -262,12 +268,15 @@ class SettingsViewController: UITableViewController {
             if indexPath.row == 1 {
                 vcid = "DarkModeEditor"
                 break
+            } else if indexPath.row == 2 {
+                vcid = "MaxLinesEditor"
+                break
             }
-            config.font = config.availableFonts[indexPath.row - FontIndexStart].0
+            config.font = config.availableFonts[indexPath.row - NumDisplaySettings].0
             tableView.performBatchUpdates({
                 var paths: [IndexPath] = []
                 for i in 0 ..< config.availableFonts.count {
-                    paths.append(IndexPath(row: i+FontIndexStart, section: DisplaySection))
+                    paths.append(IndexPath(row: i+NumDisplaySettings, section: DisplaySection))
                 }
                 tableView.deselectRow(at: indexPath, animated: true)
                 tableView.reloadRows(at: paths, with: .automatic)
