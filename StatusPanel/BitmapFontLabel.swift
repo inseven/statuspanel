@@ -31,7 +31,7 @@ class BitmapFontLabel: UILabel {
 
     init(frame: CGRect, fontNamed: String, scale: Int = 1) {
         self.fontName = fontNamed
-        let font = UIImage(named: self.fontName)!
+        let font = UIImage(named: "fonts/" + self.fontName)!
         image = CIImage(image: font)!
         let w = image.extent.width
         let h = image.extent.height
@@ -184,20 +184,20 @@ class BitmapFontLabel: UILabel {
             // See if we have an individual image for it
             let charName = ch.unicodeScalars.compactMap({ String(format:"U+%X", $0.value) }).joined(separator: "_")
             var scaleForImage = 1
-            var uiImage = UIImage(named: "\(fontName)_\(scale)_\(charName)")
+            var uiImage = UIImage(named: "fonts/\(fontName)/\(charName)@\(scale)")
             if uiImage == nil {
                 // Try an unscaled one we can scale up
-                uiImage = UIImage(named: "\(fontName)_\(charName)")
+                uiImage = UIImage(named: "fonts/\(fontName)/\(charName)")
                 scaleForImage = scale
             }
             // If there's still no joy, try just the first code point, scaled then unscaled
             let firstCodepointName = String(format:"U+%X", ch.unicodeScalars.first!.value)
             if uiImage == nil {
-                uiImage = UIImage(named: "\(fontName)_\(scale)_\(firstCodepointName)")
+                uiImage = UIImage(named: "fonts/\(fontName)/\(firstCodepointName)@\(scale)")
                 scaleForImage = 1
             }
             if uiImage == nil {
-                uiImage = UIImage(named: "\(fontName)_\(firstCodepointName)")
+                uiImage = UIImage(named: "fonts/\(fontName)\(firstCodepointName)")
                 scaleForImage = scale
             }
 
