@@ -12,6 +12,7 @@
 		D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */; };
+		DB1EB9062427E1F900050A08 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = DB1EB9052427E1F900050A08 /* fonts */; };
 		DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3E769E2416CD9E000D059A /* DarkModeController.swift */; };
 		DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB51C2E221749A2A00F016DB /* JSONRequest.swift */; };
 		DB5E9DA1241562ED009F3807 /* StringUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5E9DA0241562ED009F3807 /* StringUtils.swift */; };
@@ -32,10 +33,7 @@
 		DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B221440CD90084B710 /* CalendarSource.swift */; };
 		DBCA98B52144421F0084B710 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B42144421F0084B710 /* DataSource.swift */; };
 		DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B6214518EF0084B710 /* DataSourceController.swift */; };
-		DBD94C4D241CF20A001CD37D /* AdvoCut.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DBD94C44241CF189001CD37D /* AdvoCut.ttf */; };
-		DBD94C54241D07DB001CD37D /* Silkscreen.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DBD94C53241D07B0001CD37D /* Silkscreen.ttf */; };
 		DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */; };
-		DBF15EFF215C1134006B0A58 /* amiga4ever.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */; };
 		DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF1C553223D519C0080CADE /* TFLSettingsController.swift */; };
 /* End PBXBuildFile section */
 
@@ -119,6 +117,8 @@
 		D85E11852196BAC300E535D3 /* Sodium.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sodium.xcodeproj; path = "swift-sodium/Sodium.xcodeproj"; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxLinesController.swift; sourceTree = "<group>"; };
+		DB1EB9052427E1F900050A08 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = StatusPanel/fonts; sourceTree = "<group>"; };
+		DB1EB9072427E67F00050A08 /* README.markdown */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.markdown; sourceTree = "<group>"; };
 		DB3E769E2416CD9E000D059A /* DarkModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeController.swift; sourceTree = "<group>"; };
 		DB51C2E221749A2A00F016DB /* JSONRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRequest.swift; sourceTree = "<group>"; };
 		DB5E9DA0241562ED009F3807 /* StringUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringUtils.swift; sourceTree = "<group>"; };
@@ -142,10 +142,7 @@
 		DBCA98B221440CD90084B710 /* CalendarSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSource.swift; sourceTree = "<group>"; };
 		DBCA98B42144421F0084B710 /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		DBCA98B6214518EF0084B710 /* DataSourceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceController.swift; sourceTree = "<group>"; };
-		DBD94C44241CF189001CD37D /* AdvoCut.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AdvoCut.ttf; sourceTree = "<group>"; };
-		DBD94C53241D07B0001CD37D /* Silkscreen.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Silkscreen.ttf; sourceTree = "<group>"; };
 		DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalRailDataSource.swift; sourceTree = "<group>"; };
-		DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = amiga4ever.ttf; sourceTree = "<group>"; };
 		DBF1C553223D519C0080CADE /* TFLSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLSettingsController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -217,8 +214,10 @@
 		DBCA98702143E2920084B710 = {
 			isa = PBXGroup;
 			children = (
+				DB1EB9072427E67F00050A08 /* README.markdown */,
 				D85E11852196BAC300E535D3 /* Sodium.xcodeproj */,
 				DBCA987B2143E2920084B710 /* StatusPanel */,
+				DB1EB9052427E1F900050A08 /* fonts */,
 				DBB2D354217C9AC3009F7549 /* Frameworks */,
 				DBB2D35C217CA677009F7549 /* Sodium.framework */,
 			);
@@ -254,23 +253,12 @@
 				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
 				DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */,
 				D80380AA23E9B6D2002606C7 /* Client.swift */,
-				DBD94C50241D06D9001CD37D /* Fonts */,
 				DBCA987A2143E2920084B710 /* Products */,
 				DB62F330224F892A00CA5E64 /* Calendar */,
 				DB62F331224F895F00CA5E64 /* National Rail */,
 				DB62F32F224F88F300CA5E64 /* TFL */,
 			);
 			path = StatusPanel;
-			sourceTree = "<group>";
-		};
-		DBD94C50241D06D9001CD37D /* Fonts */ = {
-			isa = PBXGroup;
-			children = (
-				DBF15EFE215C1134006B0A58 /* amiga4ever.ttf */,
-				DBD94C44241CF189001CD37D /* AdvoCut.ttf */,
-				DBD94C53241D07B0001CD37D /* Silkscreen.ttf */,
-			);
-			name = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -406,12 +394,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB1EB9062427E1F900050A08 /* fonts in Resources */,
 				DBCA98872143E2920084B710 /* LaunchScreen.storyboard in Resources */,
 				DBCA98842143E2920084B710 /* Assets.xcassets in Resources */,
 				DBCA98822143E2920084B710 /* Main.storyboard in Resources */,
-				DBF15EFF215C1134006B0A58 /* amiga4ever.ttf in Resources */,
-				DBD94C4D241CF20A001CD37D /* AdvoCut.ttf in Resources */,
-				DBD94C54241D07DB001CD37D /* Silkscreen.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
