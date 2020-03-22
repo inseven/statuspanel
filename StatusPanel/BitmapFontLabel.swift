@@ -182,7 +182,7 @@ class BitmapFontLabel: UILabel {
             img = scaleUp(image: cropped, factor: scale)
         } else {
             // See if we have an individual image for it
-            let charName = ch.unicodeScalars.compactMap({ String(format:"U+%X", $0.value) }).joined(separator: "_")
+            let charName = ch.unicodeScalars.map({ String(format:"U+%X", $0.value) }).joined(separator: "_")
             var scaleForImage = 1
             var uiImage = UIImage(named: "fonts/\(fontName)/\(charName)@\(scale)")
             if uiImage == nil {
