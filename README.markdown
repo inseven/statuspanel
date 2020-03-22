@@ -48,15 +48,17 @@ The EagleCAD files make use of the following component libraries which are added
 
 ### Custom Emoji
 
-The iOS client has support for custom Emoji. Simply place a file following the appropriate naming convention in the bundle.
+The iOS client has support for custom Emoji. Simply place a file following the appropriate naming convention in the fonts folder.
 
 Files are named as follows:
 
 ```
-<font name>_<unicode code>.imageset
+fonts/<font name>/<unicode code>.png
 ```
 
-For example, 'left double quotation mark', `“`, unicode code U+201C, for font named 'font6x10', would have a filename of `font6x10_U+201C.imageset`.
+For example, 'left double quotation mark', `“`, unicode code U+201C, for font named 'font6x10', is located at `fonts/font6x10/U+201C.png`.
+
+By default the font6x10 font is rendered at 2x scale, if you want to provide a custom character at that higher resolution (ie using 18x20 as the basis rather than 6x10 scaled to 200%) append `@2` on the end of the name: `fonts/font6x10/U+201C@2.png`.
 
 ```
       ◀─1px─▶ ◀─────────────5px──────────────▶               

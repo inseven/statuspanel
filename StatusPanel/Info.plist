@@ -43,9 +43,9 @@
 	<string>Read calendar events.</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>amiga4ever.ttf</string>
-		<string>AdvoCut.ttf</string>
-		<string>Silkscreen.ttf</string>
+		<string>fonts/amiga4ever.ttf</string>
+		<string>fonts/AdvoCut.ttf</string>
+		<string>fonts/Silkscreen.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
