@@ -60,13 +60,32 @@ class DummyDataSource : DataSource {
         var data: [DataItemBase] = []
         #if targetEnvironment(simulator)
         if Config().showDummyData {
+            var specialChars: [String] = []
+            let images = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: "fonts/font6x10") ?? []
+            for imgName in images.map({$0.lastPathComponent}).sorted() {
+                let parts = StringUtils.regex(imgName, pattern: #"U\+([0-9A-Fa-f]+)(?:_U\+([0-9A-Fa-f]+))*(?:@[2-4])?\.png"#)
+                if parts.count == 0 {
+                    continue
+                }
+                var scalars: [UnicodeScalar] = []
+                for part in parts {
+                    if let num = UInt32(part, radix: 16) {
+                        if let scalar = UnicodeScalar(num) {
+                            scalars.append(scalar)
+                        }
+                    }
+                }
+                if scalars.count != parts.count {
+                    continue // Some weirdly formatted img name?
+                }
+                let str = String(String.UnicodeScalarView(scalars))
+                specialChars.append(str)
+            }
             let dummyData: [DataItemBase] = [
-                CalendarItem(title: "Some event", location: "Somewhere"),
-                CalendarItem(time: "06:00", title: "Something else that has really long text that needs to wrap. Like, really really long…", location: "A place that is also really really lengthy"),
+                CalendarItem(title: specialChars.joined(separator: ""), location: "All the emoji"),
+                CalendarItem(time: "06:00", title: "Something that has really long text that needs to wrap. Like, really really long!", location: "A place that is also really really lengthy"),
                 DataItem("Northern line: part suspended", flags: [.warning]),
                 DataItem("07:44 to CBG:\u{2028}Cancelled", flags: [.warning]),
-                DataItem("“Hello–” ‘Hi…’"),
-                DataItem("Look \u{2328} I'm a keyboard"),
                 CalendarItem(time: "09:40", title: "Some text wot is multiline", location: nil),
             ]
             data.append(contentsOf: dummyData)
