@@ -24,11 +24,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         sourceController.add(dataSource:TFLDataSource())
         sourceController.add(dataSource:NationalRailDataSource())
         sourceController.add(dataSource:CalendarSource())
-        #if targetEnvironment(simulator)
+        #if DEBUG
             sourceController.add(dataSource:DummyDataSource())
         #endif
         sourceController.add(dataSource:CalendarSource(forDayOffset: 1, header: "Tomorrow:"))
-        #if targetEnvironment(simulator)
+        #if DEBUG
             sourceController.add(dataSource:DummyDataSource())
         #endif
 
