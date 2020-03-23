@@ -58,7 +58,7 @@ class DataItem : Equatable, DataItemBase {
 class DummyDataSource : DataSource {
     func fetchData(onCompletion:@escaping Callback) {
         var data: [DataItemBase] = []
-        #if targetEnvironment(simulator)
+        #if DEBUG
         if Config().showDummyData {
             var specialChars: [String] = []
             let images = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: "fonts/font6x10") ?? []

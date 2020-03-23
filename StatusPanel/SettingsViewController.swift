@@ -65,7 +65,7 @@ class SettingsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case DataSourcesSection:
-            #if targetEnvironment(simulator)
+            #if DEBUG
                 return 4
             #else
                 return 3
@@ -77,7 +77,7 @@ class SettingsViewController: UITableViewController {
             if n == 0 {
                 n += 1 // For "No devices configured"
             }
-            #if targetEnvironment(simulator)
+            #if DEBUG
                 n += 1 // For "Add dummy device"
             #endif
             return n
@@ -139,7 +139,7 @@ class SettingsViewController: UITableViewController {
                 } else {
                     cell.detailTextLabel?.text = "Not configured"
                 }
-            #if targetEnvironment(simulator)
+            #if DEBUG
             case 3:
                 cell.textLabel?.text = "Show dummy data"
                 let control = UISwitch()
@@ -220,7 +220,7 @@ class SettingsViewController: UITableViewController {
         Config().displayTwoColumns = sender.isOn
     }
 
-#if targetEnvironment(simulator)
+#if DEBUG
     @objc func dummyDataSwitchChanged(sender: UISwitch) {
         Config().showDummyData = sender.isOn
     }
