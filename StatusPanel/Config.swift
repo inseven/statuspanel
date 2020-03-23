@@ -207,7 +207,7 @@ class Config {
         }
     }
 
-    #if targetEnvironment(simulator)
+    #if DEBUG
         var showDummyData: Bool {
             get {
                 return UserDefaults.standard.bool(forKey: "dummyData")
