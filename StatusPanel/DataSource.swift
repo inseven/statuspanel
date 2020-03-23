@@ -82,7 +82,7 @@ class DummyDataSource : DataSource {
                 specialChars.append(str)
             }
             let dummyData: [DataItemBase] = [
-                CalendarItem(title: specialChars.joined(separator: " "), location: "All the emoji"),
+                CalendarItem(title: specialChars.joined(separator: ""), location: "All the emoji"),
                 CalendarItem(time: "06:00", title: "Something that has really long text that needs to wrap. Like, really really long!", location: "A place that is also really really lengthy"),
                 DataItem("Northern line: part suspended", flags: [.warning]),
                 DataItem("07:44 to CBG:\u{2028}Cancelled", flags: [.warning]),
