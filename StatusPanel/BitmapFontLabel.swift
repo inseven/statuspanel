@@ -197,7 +197,7 @@ class BitmapFontLabel: UILabel {
                 scaleForImage = 1
             }
             if uiImage == nil {
-                uiImage = UIImage(named: "fonts/\(fontName)\(firstCodepointName)")
+                uiImage = UIImage(named: "fonts/\(fontName)/\(firstCodepointName)")
                 scaleForImage = scale
             }
 
