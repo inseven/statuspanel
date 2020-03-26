@@ -155,6 +155,33 @@ class BitmapFontLabel: UILabel {
         return uiImage.cgImage!
     }
 
+    private func makeReplacementImage(for charName: String, scale: Int) -> CGImage {
+        let textWidth = getTextWidth(charName, forScale: 1)
+        let h = charh * scale
+        let w = textWidth + 8
+        let fmt = UIGraphicsImageRendererFormat()
+        fmt.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: w, height: h), format: fmt)
+        let uiImage = renderer.image { (uictx: UIGraphicsImageRendererContext) in
+            let ctx = uictx.cgContext
+            ctx.setAllowsAntialiasing(false)
+            ctx.interpolationQuality = .none
+            ctx.scaleBy(x: 1.0, y: -1.0)
+            ctx.translateBy(x: 0, y: CGFloat(-h))
+            var x = 4
+            let y = (h - charh) / 2
+            ctx.setLineWidth(CGFloat(scale))
+            let col: CGFloat = shouldUseDarkMode() ? 1 : 0
+            ctx.setStrokeColor(red: col, green: col, blue: col, alpha: 1)
+            ctx.stroke(CGRect(x: 0, y: 0, width: w, height: h))
+            for ch in charName {
+                ctx.draw(getImageForChar(ch: ch, forScale: 1), in: CGRect(x: x, y: y, width: charw, height: charh))
+                x += charw
+            }
+        }
+        return uiImage.cgImage!
+    }
+
     private func getImageForChar(ch: Character, forScale: Int? = nil) -> CGImage {
         let darkMode = shouldUseDarkMode()
         let scale = forScale ?? self.scale
@@ -209,7 +236,11 @@ class BitmapFontLabel: UILabel {
                 img = scaleUp(image: ciImage, factor: scaleForImage)
             } else {
                 print("No font data for character \(charName)")
-                img = getImageForChar(ch: "\u{7F}")
+                if scale > 1 {
+                    img = makeReplacementImage(for: charName, scale: scale)
+                } else {
+                    img = getImageForChar(ch: "\u{7F}", forScale:scale)
+                }
             }
         }
 
