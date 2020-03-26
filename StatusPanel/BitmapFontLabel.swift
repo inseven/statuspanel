@@ -69,7 +69,7 @@ class BitmapFontLabel: UILabel {
         let maxWidth = Int(width)
         var lines: [String] = []
         for line in text.split(whereSeparator: { $0.isNewline }) {
-            let splits = StringUtils.splitLine(String(line), maxWidth: maxWidth, widthFn: { getTextWidth($0, forScale: scale) })
+            let splits = StringUtils.splitLine(line, maxWidth: maxWidth, widthFn: { getTextWidth($0, forScale: scale) })
             lines.append(contentsOf: splits)
         }
         if numberOfLines > 0 && lines.count > numberOfLines {

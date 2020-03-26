@@ -10,28 +10,59 @@ import Foundation
 
 struct StringUtils {
 
-    static func splitLine(_ line: String, maxWidth: Int, widthFn: (String) -> Int) -> [String] {
+    static func splitLine<T>(_ line: T, maxWidth: Int, widthFn: (String) -> Int) -> [String] where T: StringProtocol {
         var result: [String] = []
-        var components = line.split(separator: " ", maxSplits: Int.max, omittingEmptySubsequences: false)
+        var components = line.split(separator: " ", maxSplits: Int.max, omittingEmptySubsequences: false).map({String($0)})
         var currentLine = ""
         var lineWidth = 0
         let spaceWidth = widthFn(" ")
+        let newLine = {
+            result.append(currentLine)
+            currentLine = ""
+            lineWidth = 0
+        }
+        let addToLine = {
+            (text: String, width: Int) in
+            currentLine.append(text)
+            lineWidth += width
+        }
         while components.count > 0 {
             let word = components.removeFirst()
-            let wordWidth = widthFn(String(word))
+            let wordWidth = widthFn(word)
             let lineAndWordWidth = lineWidth + wordWidth + (lineWidth == 0 ? 0 : spaceWidth)
             if lineAndWordWidth <= maxWidth {
-                // Add to current line
+                // Fits on current line
                 if (currentLine != "") {
-                    currentLine.append(" ")
+                    addToLine(" ", spaceWidth)
                 }
-                currentLine.append(String(word))
-                lineWidth = lineAndWordWidth
+                addToLine(word, wordWidth)
+            } else if word.count > 1 && wordWidth > maxWidth / 2 {
+                // It doesn't fit, and the 'word' is so big, forcibly split it
+                let remainingLineSpace = maxWidth - (lineAndWordWidth - wordWidth)
+                if remainingLineSpace > spaceWidth * 2 {
+                    if (currentLine != "") {
+                        addToLine(" ", spaceWidth)
+                    }
+                    var remainder = ""
+                    for ch in word {
+                        let chlen = widthFn(String(ch))
+                        if lineWidth + chlen <= maxWidth {
+                            addToLine(String(ch), chlen)
+                        } else {
+                            remainder.append(ch)
+                            lineWidth = maxWidth
+                        }
+                    }
+                    newLine()
+                    components.append(remainder)
+                } else {
+                    // Just start a new line
+                    newLine()
+                    addToLine(word, wordWidth)
+                }
             } else {
-                // Start a new line
-                result.append(currentLine)
-                currentLine = String(word)
-                lineWidth = wordWidth
+                newLine()
+                addToLine(word, wordWidth)
             }
         }
         result.append(currentLine)
