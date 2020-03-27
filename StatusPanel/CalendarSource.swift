@@ -166,9 +166,19 @@ class CalendarSource : DataSource {
                 continue
             }
 
+            // Don't attempt to display calendar entries without a title.
+            guard var title = event.title else {
+                continue
+            }
+
+            // Prefix birthday calendars with a present.
+            if event.calendar.type == .birthday {
+                title = "🎁 \(title)"
+            }
+
             let timeStr = df.string(from: event.startDate)
             if event.isAllDay {
-                results.append(CalendarItem(title: event.title!, location: event.location))
+                results.append(CalendarItem(title: title, location: event.location))
             } else if event.timeZone != nil && event.timeZone != tz {
                 // a nil timezone means floating time
                 df.timeZone = event.timeZone
@@ -176,9 +186,9 @@ class CalendarSource : DataSource {
                 let eventLocalTime = df.string(from: event.startDate)
                 df.timeZone = tz
                 let tzStr = timeZoneFormatter.string(from: event.startDate)
-                results.append(CalendarItem(time: timeStr, title: "\(event.title!) (\(eventLocalTime) \(tzStr))", location: event.location))
+                results.append(CalendarItem(time: timeStr, title: "\(title) (\(eventLocalTime) \(tzStr))", location: event.location))
             } else {
-                results.append(CalendarItem(time: timeStr, title: event.title!, location: event.location))
+                results.append(CalendarItem(time: timeStr, title: title, location: event.location))
             }
         }
         callback(self, results, nil)
