@@ -53,10 +53,10 @@ The iOS client has support for custom Emoji. Simply place a file following the a
 Files are named as follows:
 
 ```
-fonts/<font name>/<unicode code>.png
+fonts/<font name>/U+<unicode code>.png
 ```
 
-For example, 'left double quotation mark', `“`, unicode code U+201C, for font named 'font6x10', is located at `fonts/font6x10/U+201C.png`.
+All codes are zero-padded to 4 digits. For example, 'left double quotation mark', `“`, unicode code 201C, for font named 'font6x10', is located at `fonts/font6x10/U+201C.png` and `é` is at `fonts/font6x10/U+00E9.png`.
 
 By default the font6x10 font is rendered at 2x scale, if you want to provide a custom character at that higher resolution (ie using 18x20 as the basis rather than 6x10 scaled to 200%) append `@2` on the end of the name: `fonts/font6x10/U+201C@2.png`.
 
