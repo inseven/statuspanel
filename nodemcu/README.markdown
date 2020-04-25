@@ -41,20 +41,7 @@ file.remove("sk")
 
 # ESP8266
 
-## Firmware
-
-```bash
-esptool.py --port /dev/tty.SLAB_USBtoUART write_flash -fm qio 0 nodemcu-master-12-modules-2018-09-29-16-30-32-integer.bin
-```
-
-## Scripts
-
-```bash
-python ~/Documents/Dev/esp8266/nodemcu-uploader/nodemcu-uploader.py \
-    --port /dev/tty.SLAB_USBtoUART \
-    upload \
-    panel.lua
-```
+_No longer supported._
 
 # ESP32
 
@@ -64,19 +51,20 @@ python ~/Documents/Dev/esp8266/nodemcu-uploader/nodemcu-uploader.py \
 
 ```bash
 esptool.py \
-	--chip esp32 \
-	--port /dev/cu.SLAB_USBtoUART \
-	--baud 921600 \
-	--before default_reset \
-	--after hard_reset \
-	write_flash \
-	-z \
-	--flash_mode dio \
-	--flash_freq 40m \
-	--flash_size detect \
-	0x1000 esp32/bootloader.bin \
-	0x10000 esp32/NodeMCU.bin \
-	0x8000 esp32/partitions_tomsci.bin
+    --chip esp32 \
+    --port /dev/cu.SLAB_USBtoUART \
+    --baud 921600 \
+    --before default_reset \
+    --after hard_reset \
+    write_flash \
+    -z \
+    --flash_mode dio \
+    --flash_freq 40m \
+    --flash_size detect \
+    0x1000 esp32/bootloader.bin \
+    0x10000 esp32/NodeMCU.bin \
+    0x8000 esp32/partitions.bin \
+    0x190000 esp32/lfs.img
 ```
     
 vs Arduino:
@@ -104,9 +92,9 @@ Ensure the device is **not** set to auto, and use `nodemcu-uploader.py` to copy 
 ```bash
 pipenv run python3 ../nodemcu-uploader/nodemcu-uploader.py \
     --port /dev/tty.SLAB_USBtoUART \
-    --baud 9600 \
+    --baud 115200 \
     --start_baud 115200 \
-    upload init.lua panel.lua network.lua rle.lua font.lua root.pem
+    upload bootstrap:init.lua root.pem
 ```
 
 ## How things were made
@@ -121,6 +109,8 @@ openssl x509 -inform der -outform pem -in "Baltimore CyberTrust Root.cer" -out r
 
 ### The ROM image
 
-drop sdkconfig in, run `make`.
+Drop sdkconfig in, run `make MORE_CFLAGS="-DLUA_NUMBER_INTEGRAL"`.
+To rebuild LFS, run `make_lfs.sh` (although that is configured for my cross-VM-mountpointed setup).
 
-Last known good dev-esp32: bf58084
+ROM built from tomsci_ir_rebase branch:
+https://github.com/tomsci/nodemcu-firmware/commit/c895362ea9793cb1a143694f21c69ce64bb8a79d
