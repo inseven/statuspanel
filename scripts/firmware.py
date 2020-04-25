@@ -42,15 +42,17 @@ def main():
                         "0x10000",
                         "esp32/NodeMCU.bin",
                         "0x8000",
-                        "esp32/partitions_tomsci.bin"])
+                        "esp32/partitions.bin",
+                        "0x190000",
+                        "esp32/lfs.img"])
     elif options.command == "upload-scripts":
         print("Uploading Lua scripts...")
         subprocess.run(["python3", "../nodemcu-uploader/nodemcu-uploader.py",
                         "--port", "/dev/tty.SLAB_USBtoUART",
-                        "--baud", "9600",
+                        "--baud", "115200",
                         "--start_baud", "115200",
                         "upload",
-                        "init.lua", "panel.lua", "network.lua", "rle.lua", "font.lua", "root.pem", "main.lua"])
+                        "bootstrap:init.lua", "root.pem"])
     elif options.command == "console":
         print("Connecting to device...")
         subprocess.run(["minicom",
