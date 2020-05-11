@@ -155,7 +155,7 @@ class CalendarSource : DataSource {
                 continue
             }
 
-            // Don't show decliend events.
+            // Don't show declined events.
             var declined = false
             for attendee in event.attendees ?? [] {
                 if attendee.isCurrentUser && attendee.participantStatus == .declined {
