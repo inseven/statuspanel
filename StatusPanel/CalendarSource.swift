@@ -134,6 +134,7 @@ class CalendarSource : DataSource {
             results.append(DataItem(self.header!, flags: [.header]))
         }
 
+        var nowBreakAdded = false
         for event in events {
 
             // We want to make sure that we only include calendar types that we support.
@@ -188,6 +189,12 @@ class CalendarSource : DataSource {
                 let tzStr = timeZoneFormatter.string(from: event.startDate)
                 results.append(CalendarItem(time: timeStr, title: "\(title) (\(eventLocalTime) \(tzStr))", location: event.location))
             } else {
+                if cal.isDateInToday(event.startDate) && now < event.startDate {
+                if nowBreakAdded == false {
+                    results.append(NowItem("p", flags: [.timeBreak]))
+                    nowBreakAdded = true
+                }
+                }
                 results.append(CalendarItem(time: timeStr, title: title, location: event.location))
             }
         }

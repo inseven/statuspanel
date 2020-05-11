@@ -97,55 +97,60 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             let w = firstItemHeader ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
             let view = UIView(frame: frame)
-            var prefix = item.getPrefix()
-            var textFrame = CGRect(origin: CGPoint.zero, size: frame.size)
-            if prefix != "" {
-                let prefixLabel = ViewController.getLabel(frame: textFrame, font: config.font)
-                prefixLabel.textColor = foregroundColor
-                prefixLabel.numberOfLines = 1
-                prefixLabel.text = prefix + " "
-                prefixLabel.sizeToFit()
-                let prefixWidth = prefixLabel.frame.width
-                if prefixWidth < frame.width / 2 {
-                    prefix = ""
-                    view.addSubview(prefixLabel)
-                    textFrame = textFrame.divided(atDistance: prefixWidth, from: .minXEdge).remainder
-                } else {
-                    // Label too long, treat as single text entity (leave 'prefix' set)
-                    prefix = prefix + " "
+            if item is NowItem {
+                view.frame = CGRect(x: x, y: y, width: w, height: 1)
+                view.backgroundColor = foregroundColor
+            } else {
+                var prefix = item.getPrefix()
+                var textFrame = CGRect(origin: CGPoint.zero, size: frame.size)
+                if prefix != "" {
+                    let prefixLabel = ViewController.getLabel(frame: textFrame, font: config.font)
+                    prefixLabel.textColor = foregroundColor
+                    prefixLabel.numberOfLines = 1
+                    prefixLabel.text = prefix + " "
+                    prefixLabel.sizeToFit()
+                    let prefixWidth = prefixLabel.frame.width
+                    if prefixWidth < frame.width / 2 {
+                        prefix = ""
+                        view.addSubview(prefixLabel)
+                        textFrame = textFrame.divided(atDistance: prefixWidth, from: .minXEdge).remainder
+                    } else {
+                        // Label too long, treat as single text entity (leave 'prefix' set)
+                        prefix = prefix + " "
+                    }
                 }
-            }
-            let label = ViewController.getLabel(frame: textFrame, font: config.font,
-                                                type: firstItemHeader ? .header : .text)
-            label.numberOfLines = 1 // Temporarily while we're using it in checkFit
-
-            let text = prefix + item.getText(checkFit: { (string: String) -> Bool in
-                label.text = prefix + string
-                let size = label.sizeThatFits(textFrame.size)
-                return size.width <= textFrame.width
-            })
-            label.textColor = foregroundColor
-            if flags.contains(.warning) {
-                // Icons don't render well on the panel, use a coloured background instead
-                label.backgroundColor = UIColor.yellow
-                label.textColor = UIColor.black
-            }
-            label.numberOfLines = config.maxLines
-            label.lineBreakMode = .byTruncatingTail
-            label.text = text
-            label.sizeToFit()
-            label.frame = CGRect(x: label.frame.minX, y: label.frame.minY, width: textFrame.width, height: label.frame.height)
-            view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: label.bounds.height))
-            view.addSubview(label)
-            if let subText = item.getSubText() {
-                let subLabel = ViewController.getLabel(frame: textFrame, font: config.font, type: .subText)
-                subLabel.textColor = foregroundColor
-                subLabel.numberOfLines = config.maxLines
-                subLabel.text = subText
-                subLabel.sizeToFit()
-                subLabel.frame = CGRect(x: textFrame.minX, y: label.frame.maxY + 1, width: textFrame.width, height: subLabel.frame.height)
-                view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: subLabel.frame.maxY))
-                view.addSubview(subLabel)
+                let label = ViewController.getLabel(frame: textFrame, font: config.font,
+                                                    type: firstItemHeader ? .header : .text)
+                label.numberOfLines = 1 // Temporarily while we're using it in checkFit
+                
+                let text = prefix + item.getText(checkFit: { (string: String) -> Bool in
+                    label.text = prefix + string
+                    let size = label.sizeThatFits(textFrame.size)
+                    return size.width <= textFrame.width
+                })
+                label.textColor = foregroundColor
+                if flags.contains(.warning) {
+                    // Icons don't render well on the panel, use a coloured background instead
+                    label.backgroundColor = UIColor.yellow
+                    label.textColor = UIColor.black
+                }
+                label.numberOfLines = config.maxLines
+                label.lineBreakMode = .byTruncatingTail
+                label.text = text
+                label.sizeToFit()
+                label.frame = CGRect(x: label.frame.minX, y: label.frame.minY, width: textFrame.width, height: label.frame.height)
+                view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: label.bounds.height))
+                view.addSubview(label)
+                if let subText = item.getSubText() {
+                    let subLabel = ViewController.getLabel(frame: textFrame, font: config.font, type: .subText)
+                    subLabel.textColor = foregroundColor
+                    subLabel.numberOfLines = config.maxLines
+                    subLabel.text = subText
+                    subLabel.sizeToFit()
+                    subLabel.frame = CGRect(x: textFrame.minX, y: label.frame.maxY + 1, width: textFrame.width, height: subLabel.frame.height)
+                    view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: subLabel.frame.maxY))
+                    view.addSubview(subLabel)
+                }
             }
             let sz = view.frame
             // Enough space for this item?
@@ -164,7 +169,12 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 y += itemGap
             }
             contentView.addSubview(view)
-            y = y + sz.height + itemGap
+            y = y + sz.height
+            if (item is NowItem || (i < data.count-1 && data[i+1] is NowItem)) {
+                y += itemGap / 2
+            } else {
+                y += itemGap
+            }
             if i == 0 && flags.contains(.header) {
                 colStart = y
             }

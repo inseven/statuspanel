@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A63BE0524694AC3004DB55E /* NowItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A63BE0424694AC3004DB55E /* NowItem.swift */; };
 		D80380AB23E9B6D2002606C7 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Client.swift */; };
 		D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */; };
 		D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */; };
@@ -111,6 +112,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1A63BE0424694AC3004DB55E /* NowItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowItem.swift; sourceTree = "<group>"; };
 		D80380AA23E9B6D2002606C7 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				D89CAF1021ABDDA200B4B314 /* Config.swift */,
 				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
 				DBCA987E2143E2920084B710 /* ViewController.swift */,
+				1A63BE0424694AC3004DB55E /* NowItem.swift */,
 				DBCA98802143E2920084B710 /* Main.storyboard */,
 				DBCA98832143E2920084B710 /* Assets.xcassets */,
 				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
@@ -421,6 +424,7 @@
 				D80380AB23E9B6D2002606C7 /* Client.swift in Sources */,
 				D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */,
 				D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */,
+				1A63BE0524694AC3004DB55E /* NowItem.swift in Sources */,
 				DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,

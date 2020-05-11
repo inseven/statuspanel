@@ -16,6 +16,7 @@ protocol DataSource : class {
 enum DataItemFlag {
     case warning
     case header
+    case timeBreak
 }
 
 protocol DataItemBase : class {
