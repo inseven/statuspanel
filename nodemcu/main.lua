@@ -171,4 +171,10 @@ function main(autoMode)
     end)
     wifi.start()
     wifi.sta.connect()
+
+    -- Despite EGC being disabled at this point (by init.lua), lua.c will reenable it once init.lua is finished!
+    -- So that can fsck right noff.
+    tmr.create():alarm(20, tmr.ALARM_SINGLE, function()
+        node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
+    end)
 end
