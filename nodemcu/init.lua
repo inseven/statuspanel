@@ -3,66 +3,46 @@
 -- Some globals needed by everything before they're require'd
 
 esp32 = (gpio.mode == nil)
+assert(esp32, "ESP8266 is no longer supported!")
 
-if esp32 then
-    -- No more horrible mappings from SDK pin numbers to GPIO numbers!
-    OriginalBusy = 13
-    NewBusy = 22 -- aka SCL
-    Reset = 27
-    DC = 33
-    CS = 15
-    Sck = 5
-    Mosi = 18
-    SpiId = 1 -- HSPI (doesn't place any restriction on pins)
-    StatusLed = 21
-    AutoPin = 14
-    VBat = 7 -- That is, ADC1_CH7 aka GPIO 35 (internally connected to BAT)
-    UnpairPin = 32
-    UsbDetect = 39 -- aka A3
-else
-    -- See https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/pinouts
-    Busy = 4 -- GPIO 2
-    Reset = 1 -- GPIO 5
-    DC = 2 -- GPIO 4
-    CS = 0 -- GPIO 16
-    SpiId = 1 -- HSPI (CLK=14, MOSI=13, MISO=12)
-    SpiClockDiv = 40
-end
+OriginalBusy = 13
+NewBusy = 22 -- aka SCL
+Reset = 27
+DC = 33
+CS = 15
+Sck = 5
+Mosi = 18
+SpiId = 1 -- HSPI (doesn't place any restriction on pins)
+StatusLed = 21
+AutoPin = 14
+VBat = 7 -- That is, ADC1_CH7 aka GPIO 35 (internally connected to BAT)
+UnpairPin = 32
+UsbDetect = 39 -- aka A3
 
 function configurePins()
-    if esp32 then
-        gpio.config({
-            gpio = { Reset, DC, StatusLed },
-            dir = gpio.OUT,
-        }, {
-            gpio = { OriginalBusy, NewBusy, UsbDetect },
-            dir = gpio.IN
-        }, {
-            gpio = { AutoPin, UnpairPin },
-            dir = gpio.IN,
-            pull = gpio.PULL_DOWN
-        })
-        local spimaster = spi.master(SpiId, {
-            sclk = Sck,
-            mosi = Mosi,
-            max_transfer_sz = 0,
-        }, 1) -- 1 means enable DMA
-        spidevice = spimaster:device({
-            cs = CS,
-            mode = 0,
-            freq = 2*1000*1000, -- ie 2 MHz
-        })
-        adc.setup(adc.ADC1, VBat, adc.ATTEN_11db)
-        adc.setwidth(adc.ADC1, 12)
-    else
-        gpio.mode(Reset, gpio.OUTPUT)
-        gpio.mode(DC, gpio.OUTPUT)
-        gpio.mode(CS, gpio.OUTPUT)
-        gpio.mode(Busy, gpio.INPUT)
-        -- See https://www.waveshare.com/wiki/7.5inch_e-Paper_HAT_(B)#Communication_protocol
-        spi.setup(SpiId, spi.MASTER, spi.CPOL_LOW, spi.CPHA_LOW, 8, SpiClockDiv)
-        gpio.write(CS, 1)
-    end
+    gpio.config({
+        gpio = { Reset, DC, StatusLed },
+        dir = gpio.OUT,
+    }, {
+        gpio = { OriginalBusy, NewBusy, UsbDetect },
+        dir = gpio.IN
+    }, {
+        gpio = { AutoPin, UnpairPin },
+        dir = gpio.IN,
+        pull = gpio.PULL_DOWN
+    })
+    local spimaster = spi.master(SpiId, {
+        sclk = Sck,
+        mosi = Mosi,
+        max_transfer_sz = 0,
+    }, 1) -- 1 means enable DMA
+    spidevice = spimaster:device({
+        cs = CS,
+        mode = 0,
+        freq = 2*1000*1000, -- ie 2 MHz
+    })
+    adc.setup(adc.ADC1, VBat, adc.ATTEN_11db)
+    adc.setwidth(adc.ADC1, 12)
     gpio.write(Reset, 0)
     if inputIsConnected(OriginalBusy) then
         Busy = OriginalBusy
@@ -83,10 +63,42 @@ function inputIsConnected(pin)
     return not(pulledUp and pulledDown)
 end
 
+local flashindex = node.flashindex
+local lfs_t = {
+      __index = function(_, name)
+        local fn_ut, base, mapped, size, modules = flashindex(name)
+        if not base then
+            return fn_ut
+        elseif name == '_time' then
+            return fn_ut
+        elseif name == '_config' then
+            local fs_ma, fs_size = file.fscfg()
+            return {
+                lfs_base = base, lfs_mapped = mapped, lfs_size = size,
+                fs_mapped = fs_ma, fs_size = fs_size
+            }
+        elseif name == '_list' then
+            return modules
+        else
+            return nil
+        end
+    end,
+
+    __newindex = function(_, name, value)
+        error("LFS is readonly. Invalid write to LFS." .. name, 2)
+    end,
+}
 
 function init()
     -- Why is the default allocation limit set to 4KB? Why even is there one?
     node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
+
+    -- Configure LFS
+    _G.LFS = setmetatable(lfs_t, lfs_t)
+    package.loaders[3] = function(module) -- loader_flash
+        local fn, base = flashindex(module)
+        return base and "\n\tModule not in LFS" or fn
+    end
 
     configurePins()
     local autoMode = gpio.read(AutoPin) == 1
