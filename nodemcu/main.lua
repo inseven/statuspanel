@@ -120,23 +120,23 @@ function slpdbg()
     getImg(completion)
 end
 
--- Sigh, bit library is 32-bit only
-function isset64(num, bitnum)
+function isset64(numlo, numhi, bitnum)
+    local num = numlo
     if bitnum >= 32 then
         bitnum = bitnum - 32
-        num = num / 0x100000000
+        num = numhi
     end
     return bit.isset(num, bitnum)
 end
 
 function main(autoMode)
     local wokeByUsb, wokeByUnpair
-    local reason, ext, pins = node.bootreason()
+    local reason, ext, pinslo, pinshi = node.bootreason()
     if ext == 5 then -- Deep sleep wake
-        if not pins then pins = 0 end
-        if isset64(pins, UnpairPin) then
+        if not pinshi then pinslo, pinshi = 0, 0 end
+        if isset64(pinslo, pinshi, UnpairPin) then
             wokeByUnpair = true
-        elseif isset64(pins, UsbDetect) then
+        elseif isset64(pinslo, pinshi, UsbDetect) then
             wokeByUsb = true
         end
     end
@@ -171,4 +171,10 @@ function main(autoMode)
     end)
     wifi.start()
     wifi.sta.connect()
+
+    -- Despite EGC being disabled at this point (by init.lua), lua.c will reenable it once init.lua is finished!
+    -- So that can fsck right noff.
+    tmr.create():alarm(20, tmr.ALARM_SINGLE, function()
+        node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
+    end)
 end
