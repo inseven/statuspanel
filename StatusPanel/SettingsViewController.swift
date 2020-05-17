@@ -261,8 +261,10 @@ class SettingsViewController: UITableViewController {
                     }
                     tableView.insertRows(at: [IndexPath(row: prevCount, section: DeviceIdSection)], with: .fade)
                 }, completion: nil)
+                vcid = "WifiProvisionerController"
+            } else {
+                return
             }
-            return
         case DisplaySection:
             let config = Config()
             if indexPath.row == 1 {
@@ -290,7 +292,12 @@ class SettingsViewController: UITableViewController {
                 print("Couldn't find view controller for \(vcid)!")
                 return
             }
-            navigationController?.pushViewController(vc, animated: true)
+            if let navvc = vc as? UINavigationController {
+                // Hack for presenting the underlying controller, useful for dummy device
+                navigationController?.pushViewController(navvc.topViewController!, animated: true)
+            } else {
+                navigationController?.pushViewController(vc, animated: true)
+            }
         } else {
             print("No view controller for \(indexPath)!")
         }
