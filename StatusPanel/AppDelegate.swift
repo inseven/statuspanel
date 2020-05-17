@@ -75,6 +75,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
+        // Now try and provision the panel
+        if let panelSsid = map["s"] {
+            openingUrl = true
+            let storyboard = window?.rootViewController?.storyboard
+            let navvc = storyboard?.instantiateViewController(identifier: "WifiProvisionerController") as! UINavigationController
+
+            let vc = navvc.topViewController as! WifiProvisionerController
+            vc.panelIdentifer = map["id"]
+            vc.setHotspotCredentials(ssid: panelSsid, password: map["pk"]!)
+            window?.rootViewController?.present(navvc, animated: true, completion: nil)
+            return true
+        }
+
+
         let config = Config()
         var devices = config.devices
         let deviceid = map["id"]!

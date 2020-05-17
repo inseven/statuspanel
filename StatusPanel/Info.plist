@@ -41,6 +41,8 @@
 	<true/>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Read calendar events.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location access required to read Wi-Fi SSID</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>fonts/amiga4ever.ttf</string>
