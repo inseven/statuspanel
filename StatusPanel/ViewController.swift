@@ -27,6 +27,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         sourceController = appDelegate.sourceController
         sourceController.delegate = self
+        sourceController.fetch()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
