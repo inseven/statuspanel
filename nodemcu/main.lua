@@ -227,7 +227,7 @@ function enterHotspotMode()
         ip = ip,
         netmask = "255.255.255.0",
         gateway = ip,
-        dns = "127.0.0.1", -- This prevents clients from even attempting DNS
+        -- dns = "127.0.0.1", -- This prevents clients from even attempting DNS
     })
     wifi.start()
 end
