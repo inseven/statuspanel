@@ -170,7 +170,18 @@ function main(autoMode)
         end
     end)
     wifi.start()
-    wifi.sta.connect()
+
+    local ok, err = pcall(wifi.sta.connect)
+    if not ok then
+        if autoMode then
+            print("Wifi connect failed, entering setup mode")
+            enterHotspotMode()
+            local url = getQRCodeURL(true)
+            initAndDisplay(url, displayQRCode, url, function() print("Finished displayQRCode") end)
+        else
+            print(err)
+        end
+    end
 
     -- Despite EGC being disabled at this point (by init.lua), lua.c will reenable it once init.lua is finished!
     -- So that can fsck right noff.
@@ -190,4 +201,56 @@ function resetDeviceState()
     end
     clearCache()
     setDeviceId(nil)
+end
+
+function enterHotspotMode()
+    wifi.stop()
+    wifi.mode(wifi.SOFTAP, false)
+    wifi.ap.on("sta_connected", function(_, info)
+        print("Connection from", info.mac)
+    end)
+    wifi.ap.on("start", function()
+        listen()
+    end)
+
+    -- The password here doesn't really matter, so just reuse the public key -
+    -- that's sufficiently unguessable as to prevent drive-by connections while
+    -- also not adding more stuff to the QR code we need to display.
+    wifi.ap.config({
+        ssid = getApSSID(),
+        pwd = encoder.toBase64(getPublicKey()),
+        auth = wifi.AUTH_WPA2_PSK,
+        hidden = false,
+    }, false)
+    local ip = "192.168.4.1"
+    wifi.ap.setip({
+        ip = ip,
+        netmask = "255.255.255.0",
+        gateway = ip,
+        dns = "127.0.0.1", -- This prevents clients from even attempting DNS
+    })
+    wifi.start()
+end
+
+function listen()
+    local port = 9001
+    print(string.format("Listening on port %d", port))
+    srv = assert(net.createServer())
+    srv:listen(port, function(sock)
+        print("listen callback", sock)
+        sock:on("receive", function(sock, payload)
+            -- print("Got data", payload:gsub("%z", " "))
+            print("Got data on", sock, payload)
+            sock:send("OK", function(sock)
+                print("Closing socket", sock)
+                sock:close()
+            end)
+        end)
+        sock:on("disconnection", function(sock, err)
+            print("Disconnect", err)
+        end)
+        sock:on("connection", function(sock, wat)
+            print("Connection", wat)
+        end)
+    end)
 end
