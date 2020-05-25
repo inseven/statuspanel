@@ -11,6 +11,7 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var background = false
+    var openingUrl = false
     var window: UIWindow?
     var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
     var sourceController = DataSourceController()
@@ -52,7 +53,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
         if (background) {
             background = false
-            update()
+            if !openingUrl {
+                update()
+            }
         }
     }
 
@@ -103,12 +106,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let alert = UIAlertController(title: "Device added", message: "Device \(deviceid) has been added.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default, handler: nil))
         let root = window?.rootViewController
-        if root?.presentedViewController != nil {
-            root?.dismiss(animated: false, completion: {
-                root?.present(alert, animated: true, completion: nil)
+        let ops = { () -> Void in
+            root?.present(alert, animated: true, completion: {
+                self.openingUrl = false
             })
+        }
+        if root?.presentedViewController != nil {
+            root?.dismiss(animated: false, completion: ops)
         } else {
-            root?.present(alert, animated: true, completion: nil)
+            ops()
         }
         return true
     }
