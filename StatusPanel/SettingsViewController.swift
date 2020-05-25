@@ -50,12 +50,11 @@ class SettingsViewController: UITableViewController {
         }
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        guard let delegate = delegate else {
-            return
+    override func viewDidDisappear(_ animated: Bool) {
+        if let delegate = delegate {
+            delegate.didDismiss(settingsViewController: self)
         }
-        delegate.didDismiss(settingsViewController: self)
+        super.viewDidDisappear(animated)
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
