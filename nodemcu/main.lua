@@ -178,3 +178,16 @@ function main(autoMode)
         node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
     end)
 end
+
+function resetDeviceState()
+    local files = {
+        "deviceid",
+        "pk",
+        "sk",
+    }
+    for _, name in ipairs(files) do
+        file.remove(name)
+    end
+    clearCache()
+    setDeviceId(nil)
+end
