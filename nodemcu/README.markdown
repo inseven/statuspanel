@@ -2,6 +2,12 @@
 
 ## Getting Started
 
+Install submodules:
+
+```bash
+git submodule update --init
+```
+
 Install dependencies:
 
 ```bash
