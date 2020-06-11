@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 
 
 DEFAULT_DEVICE = "/dev/cu.SLAB_USBtoUART"
@@ -81,6 +82,8 @@ def main():
              os.path.join(ESP32_DIRECTORY, "partitions.bin"),
              "0x190000",
              os.path.join(ESP32_DIRECTORY, "lfs.img")])
+        logging.info("Sleeping...")
+        time.sleep(1)
         logging.info("Uploading Lua scripts...")
         run([sys.executable,
              NODEMCU_UPLOADER_PATH,
