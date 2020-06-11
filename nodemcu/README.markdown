@@ -40,12 +40,6 @@ Open a serial console:
 
 The USB device can be customized by specifying `--device` on the command line, or setting the `STATUSPANEL_DEVICE` environment variable.
 
-N.B. If you're using Linux, it may be necessary to grant access to your USB device:
-
-```bash
-sudo chmod o+rw /dev/ttyUSB0
-```
-
 ## Using Commands Directly
 
 Run the following commands from the `nodecmu` directory:
