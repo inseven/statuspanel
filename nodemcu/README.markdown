@@ -18,10 +18,16 @@ cd scripts
 pipenv install
 ```
 
-Once your dependencies are installed:
+Flash the latest firmware:
 
 ```bash
 ./scripts/firmware flash
+```
+
+Open a serial console:
+
+```bash
+./scripts/firmware console
 ```
 
 N.B. If you're using Linux, it may be necessary to grant access to your USB device:
