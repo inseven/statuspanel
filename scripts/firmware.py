@@ -10,6 +10,12 @@ import tempfile
 
 DEFAULT_DEVICE = "/dev/cu.SLAB_USBtoUART"
 
+# Support overriding defaults using environment variables.
+try:
+    DEFAULT_DEVICE = os.environ["STATUSPANEL_DEVICE"]
+except KeyError:
+    pass
+
 SCRIPT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIRECTORY = os.path.dirname(SCRIPT_DIRECTORY)
 NODEMCU_DIRECTORY = os.path.join(ROOT_DIRECTORY, "nodemcu")
@@ -27,6 +33,13 @@ def run(command):
     return subprocess.run(command)
 
 
+def check_access(device):
+    if os.access(device, os.R_OK | os.W_OK):
+        return
+    logging.info("Changing permissions on '%s'...", device)
+    subprocess.check_call(["sudo", "chmod", "o+rw", device])
+
+
 def main():
     parser = argparse.ArgumentParser(description="Convenience utility for managing StatusPanel firmware.")
     parser.add_argument("--device", type=str, default=DEFAULT_DEVICE, help="USB serial device (defaults to %s)" % (DEFAULT_DEVICE, ))
@@ -35,6 +48,8 @@ def main():
                                             "console",
                                             "configure-wifi"], help="command to run")
     options = parser.parse_args()
+
+    check_access(options.device)
 
     if options.command == "erase":
         logging.info("Erasing device...")
