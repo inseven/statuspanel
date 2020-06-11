@@ -1,9 +1,11 @@
 #!/bin/bash
 
+SCRIPT=$( basename "$0" )
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROOT_DIR="${SCRIPTS_DIR}/.."
 NODEMCU_DIR="${ROOT_DIR}/nodemcu"
 
-pushd "${NODEMCU_DIR}" > /dev/null
-pipenv run python3 "${SCRIPTS_DIR}/firmware.py" $@
-popd > /dev/null
+# pushd "${NODEMCU_DIR}" > /dev/null
+export PIPENV_PIPFILE=$( realpath "${NODEMCU_DIR}/Pipfile" )
+pipenv run python3 "${SCRIPTS_DIR}/${SCRIPT}.py" $@
+# popd > /dev/null
