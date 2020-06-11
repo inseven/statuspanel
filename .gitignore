@@ -4,4 +4,5 @@ StatusPanel.xcodeproj/xcuserdata
 node_modules
 apns.p8
 .DS_Store
+console.log
 xcuserdata
