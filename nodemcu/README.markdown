@@ -1,3 +1,37 @@
+# Firmware
+
+## Getting Started
+
+Install dependencies:
+
+```bash
+sudo apt install \
+     minicom \
+     pipenv \
+     libpq-dev
+```
+
+Install the Python dependencies:
+
+```bash
+cd scripts
+pipenv install
+```
+
+Once your dependencies are installed:
+
+```bash
+./scripts/firmware flash
+```
+
+N.B. If you're using Linux, it may be necessary to grant access to your USB device:
+
+```bash
+sudo chmod o+rw /dev/ttyUSB0
+```
+
+## Using Commands Directly
+
 Run the following commands from the `nodecmu` directory:
 
     cd ~/Documents/Dev/StatusPanel/nodemcu

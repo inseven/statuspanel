@@ -10,3 +10,6 @@
 [submodule "pcb/libraries/SparkFun-Eagle-Libraries"]
 	path = pcb/libraries/SparkFun-Eagle-Libraries
 	url = git@github.com:sparkfun/SparkFun-Eagle-Libraries.git
+[submodule "esptool"]
+	path = esptool
+	url = git@github.com:jbmorley/esptool.git
