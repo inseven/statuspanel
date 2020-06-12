@@ -13,6 +13,7 @@
 		D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D835EC972471D811003E402E /* NetworkExtension.framework */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
+		D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D98E422493019A00F853CA /* NetworkProvisioner.swift */; };
 		DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */; };
 		DB1EB9062427E1F900050A08 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = DB1EB9052427E1F900050A08 /* fonts */; };
 		DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3E769E2416CD9E000D059A /* DarkModeController.swift */; };
@@ -122,6 +123,7 @@
 		D85E11852196BAC300E535D3 /* Sodium.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sodium.xcodeproj; path = "swift-sodium/Sodium.xcodeproj"; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
+		D8D98E422493019A00F853CA /* NetworkProvisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvisioner.swift; sourceTree = "<group>"; };
 		DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxLinesController.swift; sourceTree = "<group>"; };
 		DB1EB9052427E1F900050A08 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = StatusPanel/fonts; sourceTree = "<group>"; };
 		DB1EB9072427E67F00050A08 /* README.markdown */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.markdown; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 				DB62F330224F892A00CA5E64 /* Calendar */,
 				DB62F331224F895F00CA5E64 /* National Rail */,
 				DB62F32F224F88F300CA5E64 /* TFL */,
+				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
@@ -439,6 +442,7 @@
 				D80380AB23E9B6D2002606C7 /* Client.swift in Sources */,
 				D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */,
 				D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */,
+				D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */,
 				DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */,
 				DBF15BC72471A61E004AA972 /* WifiProvisionerController.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
