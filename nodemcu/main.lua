@@ -129,6 +129,12 @@ function isset64(numlo, numhi, bitnum)
     return bit.isset(num, bitnum)
 end
 
+local provisioningSocket = nil
+local function closeSocket(sock)
+    print("Closing socket", sock)
+    sock:close()
+end
+
 function main(autoMode)
     local wokeByUsb, wokeByUnpair
     local reason, ext, pinslo, pinshi = node.bootreason()
@@ -163,6 +169,11 @@ function main(autoMode)
     wifi.mode(wifi.STATION)
     wifi.sta.on("got_ip", function(name, event)
         print("Got IP "..event.ip)
+        if provisioningSocket then
+            print("Huzzah, got creds!")
+            provisioningSocket:send("OK", closeSocket)
+            provisioningSocket = nil
+        end
         ip = event.ip
         gw = event.gw
         if shouldFetchImage then
@@ -170,9 +181,17 @@ function main(autoMode)
         end
     end)
     wifi.sta.on("disconnected", function(name, event)
-        --print("Disconnected", event.ssid, event.reason)
-        if not ip then
-            -- This is another way in which wifi config failure can manifest
+        print("Disconnected", event.ssid, event.reason)
+        if provisioningSocket then
+            print("Bad creds")
+            provisioningSocket:send("NO", closeSocket)
+            provisioningSocket = nil
+            wifi.mode(wifi.SOFTAP, false)
+            return -- Already in hotspot mode, no need to retry
+        end
+        -- It seems like low reasons like AUTH_EXPIRE(2) can occur with valid creds, and are seemingly transient errors
+        if not ip and event.reason >= 15 then
+            -- This is another way in which wifi config failure can manifest.
             enterHotspotMode()
         end
     end)
@@ -209,7 +228,9 @@ function resetDeviceState()
 end
 
 function enterHotspotMode()
-    wifi.stop()
+    if wifi.getmode() == wifi.STATION then
+        wifi.stop()
+    end
     wifi.mode(wifi.SOFTAP, false)
     wifi.ap.on("sta_connected", function(_, info)
         print("Connection from", info.mac)
@@ -240,6 +261,13 @@ function enterHotspotMode()
     initAndDisplay(url, displayQRCode, url, function() print("Finished displayQRCode") end)
 end
 
+function forgetWifiCredentials()
+    wifi.stop()
+    wifi.mode(wifi.STATION)
+    wifi.sta.config({ssid="", auto=false}, true)
+    node.restart()
+end
+
 function listen()
     local port = 9001
     print(string.format("Listening on port %d", port))
@@ -256,8 +284,9 @@ function listen()
             end
 
             if ssid and pass then
-                wifi.sta.config({ ssid=ssid, pwd=pass, auto=false }, true)
+                provisioningSocket = sock
                 wifi.mode(wifi.STATIONAP, false)
+                wifi.sta.config({ ssid=ssid, pwd=pass, auto=false }, true)
             else
                 print("Payload not understood")
                 sock.send("NO", sendComplete)
