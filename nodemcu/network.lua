@@ -197,6 +197,7 @@ function getQRCodeURL(includeSsid)
 end
 
 function displayQRCode(url, completion)
+    file.remove("last_modified")
     local font = require("font")
     local urlWidth = #url * font.charw
     local data = qrcodegen.encodeText(url)
@@ -237,6 +238,7 @@ function fetch()
             initAndDisplay(hash, displayStatusImg, function(wakeTime) sleepFromDate(date, wakeTime) end)
         elseif status == 304 then
             -- Need to grab waketime from existing img
+            require "panel"
             local f, packed, wakeTime = openImg("img_panel_rle")
             f:close()
             sleepFromDate(date, wakeTime)
