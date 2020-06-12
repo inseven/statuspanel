@@ -267,6 +267,7 @@
 				DB51C2E221749A2A00F016DB /* JSONRequest.swift */,
 				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
 				DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */,
+				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
 				DB5E9DA0241562ED009F3807 /* StringUtils.swift */,
 				DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */,
 				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
@@ -276,7 +277,6 @@
 				DB62F330224F892A00CA5E64 /* Calendar */,
 				DB62F331224F895F00CA5E64 /* National Rail */,
 				DB62F32F224F88F300CA5E64 /* TFL */,
-				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
