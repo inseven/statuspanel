@@ -169,6 +169,13 @@ function main(autoMode)
             fetch()
         end
     end)
+    wifi.sta.on("disconnected", function(name, event)
+        --print("Disconnected", event.ssid, event.reason)
+        if not ip then
+            -- This is another way in which wifi config failure can manifest
+            enterHotspotMode()
+        end
+    end)
     wifi.start()
 
     local ok, err = pcall(wifi.sta.connect)
@@ -176,8 +183,6 @@ function main(autoMode)
         if autoMode then
             print("Wifi connect failed, entering setup mode")
             enterHotspotMode()
-            local url = getQRCodeURL(true)
-            initAndDisplay(url, displayQRCode, url, function() print("Finished displayQRCode") end)
         else
             print(err)
         end
@@ -230,6 +235,9 @@ function enterHotspotMode()
         -- dns = "127.0.0.1", -- This prevents clients from even attempting DNS
     })
     wifi.start()
+
+    local url = getQRCodeURL(true)
+    initAndDisplay(url, displayQRCode, url, function() print("Finished displayQRCode") end)
 end
 
 function listen()
@@ -237,14 +245,25 @@ function listen()
     print(string.format("Listening on port %d", port))
     srv = assert(net.createServer())
     srv:listen(port, function(sock)
-        print("listen callback", sock)
+        -- print("listen callback", sock)
         sock:on("receive", function(sock, payload)
+            local ssid, pass = payload:match("([^%z]+)%z([^%z]+)")
             -- print("Got data", payload:gsub("%z", " "))
-            print("Got data on", sock, payload)
-            sock:send("OK", function(sock)
+            -- print("ssid,pass=", ssid, pass)
+            local function sendComplete(sock)
                 print("Closing socket", sock)
                 sock:close()
-            end)
+            end
+
+            if ssid and pass then
+                wifi.sta.config({ ssid=ssid, pwd=pass, auto=false }, true)
+                wifi.mode(wifi.STATIONAP, false)
+            else
+                print("Payload not understood")
+                sock.send("NO", sendComplete)
+            end
+            -- print("Got data on", sock, payload)
+            -- sock:send("OK", sendComplete)
         end)
         sock:on("disconnection", function(sock, err)
             print("Disconnect", err)
