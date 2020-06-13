@@ -27,8 +27,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         sourceController = appDelegate.sourceController
         sourceController.delegate = self
-        if !appDelegate.openingUrl {
+        if appDelegate.shouldFetch() {
             sourceController.fetch()
+        } else {
+            print("ViewController.vieWDidLoad: App delegate said not to fetch")
         }
     }
 

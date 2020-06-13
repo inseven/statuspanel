@@ -29,8 +29,8 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
     private var hotspotPassword: String?
     private var configuredHotspotCredentials: NEHotspotConfiguration?
     var panelIdentifer: String?
+    var panelPubkey: String?
     private var connecting = false
-    private var conn: NWConnection?
     private var networkProvisioner: NetworkProvisioner!
 
     func setHotspotCredentials(ssid: String, password: String) {
@@ -43,6 +43,7 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
         let conf = NEHotspotConfiguration(ssid: hotspotSsid!, passphrase: hotspotPassword!, isWEP: false)
         conf.joinOnce = true
         connecting = true
+        footerViewLabel.text = ""
         updateButton()
         spot.apply(conf) { (err: Error?) in
             self.connecting = false
@@ -53,11 +54,18 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
                     switch result {
                     case .success:
                         print("Successfully configured network!")
+                        let delegate = UIApplication.shared.delegate as! AppDelegate
+                        delegate.addDevice(id: self.panelIdentifer!, pubkey: self.panelPubkey!)
+                        // addDevice will dismiss us, so we're done!
                     case .failure(let error):
                         print("Failed to configure network with error '\(error)'.")
-                        DispatchQueue.main.async {
+                        if error as? NetworkProvisionerError == .badCredentials {
+                            self.showError("Panel was unable to connect with these credentials. Is the password correct?")
+                        } else {
                             self.showError(String(describing: error))
                         }
+                        self.disconnectHotspot()
+                        self.updateButton()
                     }
                 }
             } else {
@@ -67,12 +75,20 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
         }
     }
 
+    func disconnectHotspot() {
+        if let creds = configuredHotspotCredentials {
+            spot.removeConfiguration(forSSID: creds.ssid)
+            configuredHotspotCredentials = nil
+        }
+    }
+
     @IBAction func textChanged(_ sender: UITextField) {
         updateButton()
     }
 
     func updateButton() {
-        var enable = false
+        var enableButton = false
+        var enableEditing = false
         guard let button = buttonCell.textLabel else {
             return
         }
@@ -81,17 +97,22 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
         } else if self.configuredHotspotCredentials != nil {
             button.text = "Provisioning..."
         } else {
+            enableEditing = true
             if let ssid = ssidField.text {
                 if ssid.count > 0 {
-                    enable = true
+                    enableButton = true
                     button.text = "Provision"
+                    passwordField.returnKeyType = .go
                 } else {
                     button.text = "Enter an SSID"
+                    passwordField.returnKeyType = .next
                 }
             }
         }
-        buttonCell.isUserInteractionEnabled = enable
-        button.textColor = enable ? .label : .secondaryLabel
+        ssidField.isUserInteractionEnabled = enableEditing
+        passwordField.isUserInteractionEnabled = enableEditing
+        buttonCell.isUserInteractionEnabled = enableButton
+        button.textColor = enableButton ? .label : .secondaryLabel
     }
 
     @IBAction func cancel() {
@@ -119,7 +140,11 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
         if textField == ssidField {
             passwordField.becomeFirstResponder()
         } else if textField == passwordField {
-            provision()
+            if (ssidField.text?.count ?? 0) > 0 {
+                provision()
+            } else {
+                ssidField.becomeFirstResponder()
+            }
         }
         return false
     }
@@ -132,10 +157,13 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-        if let creds = configuredHotspotCredentials {
-            conn = nil
-            spot.removeConfiguration(forSSID: creds.ssid)
-            configuredHotspotCredentials = nil
+        disconnectHotspot()
+        if let delegate = UIApplication.shared.delegate as? AppDelegate {
+            if delegate.shouldFetch() {
+                delegate.update()
+            } else {
+                print("Not fetching from WifiProvisionerController.viewDidDisappear")
+            }
         }
         super.viewDidDisappear(animated)
     }
@@ -167,7 +195,7 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
     }
 
     func showError(_ error: String) {
-        footerViewLabel?.text = error
+        footerViewLabel.text = error
     }
 
     private func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {

@@ -15,10 +15,12 @@ enum NetworkProvisionerError: Error {
     case cancelled
     case unknown
     case invalidResponse
+    case badCredentials // The device reported the credentials didn't work
 }
 
 enum NetworkProvisionerResponse: String {
     case ok = "OK"
+    case no = "NO"
 }
 
 class NetworkProvisioner {
@@ -26,20 +28,26 @@ class NetworkProvisioner {
     let address: String
     let port: UInt16
     let syncQueue: DispatchQueue
-    let targetQueue: DispatchQueue
+    let targetQueue = DispatchQueue.main
+    private var connection: NWConnection?
 
     init(address: String, port: UInt16) {
         self.address = address
         self.port = port
         syncQueue = DispatchQueue(label: "syncQueue")
-        targetQueue = DispatchQueue(label: "targetQueue", attributes: .concurrent)
     }
 
     func configure(ssid: String, password: String, completion: @escaping (Result<Bool, Error>) -> Void) {
 
+        var completed = false
         let targetQueueCompletion: ((Result<Bool, Error>) -> Void)! = { result in
-            self.targetQueue.async {
-                completion(result)
+            if !completed {
+                completed = true
+                self.connection?.cancel()
+                self.connection = nil
+                self.targetQueue.async {
+                    completion(result)
+                }
             }
         }
 
@@ -57,6 +65,7 @@ class NetworkProvisioner {
         params.multipathServiceType = .disabled
 
         let connection = NWConnection(host: host, port: port, using: params)
+        self.connection = connection
         connection.stateUpdateHandler = { state in
             switch state {
             case .setup:
@@ -89,12 +98,14 @@ class NetworkProvisioner {
                 targetQueueCompletion(.failure(error ?? NetworkProvisionerError.unknown))
                 return
             }
-            let response = String(data: data, encoding: .utf8)
-            guard response == NetworkProvisionerResponse.ok.rawValue else {
+            let response = NetworkProvisionerResponse(rawValue: String(data: data, encoding: .utf8) ?? "")
+            if response == .ok {
+                targetQueueCompletion(.success(true))
+            } else if response == .no {
+                targetQueueCompletion(.failure(NetworkProvisionerError.badCredentials))
+            } else {
                 targetQueueCompletion(.failure(NetworkProvisionerError.invalidResponse))
-                return
             }
-            targetQueueCompletion(.success(true))
         }
         connection.start(queue: self.syncQueue)
     }
