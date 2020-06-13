@@ -171,8 +171,21 @@ function main(autoMode)
         print("Got IP "..event.ip)
         if provisioningSocket then
             print("Huzzah, got creds!")
-            provisioningSocket:send("OK", closeSocket)
-            provisioningSocket = nil
+            provisioningSocket:send("OK", function()
+                provisioningSocket:close()
+                provisioningSocket = nil
+                -- Give the phone time to provision an image
+                tmr.create():alarm(30 * 1000, tmr.ALARM_SINGLE, function()
+                    -- It appears more reliable to reboot here rather than
+                    -- attempt a direct fetch, although I'm not sure why. Maybe
+                    -- memory fragmentation? Or something to do with still being
+                    -- in stationap mode?
+                    node.restart()
+                end)
+            end)
+            -- Don't want to drop through and immediately fetch an image, it
+            -- probably won't be available yet
+            shouldFetchImage = false
         end
         ip = event.ip
         gw = event.gw
@@ -275,7 +288,7 @@ function listen()
     srv:listen(port, function(sock)
         -- print("listen callback", sock)
         sock:on("receive", function(sock, payload)
-            local ssid, pass = payload:match("([^%z]+)%z([^%z]+)")
+            local ssid, pass = payload:match("([^%z]+)%z([^%z]*)")
             -- print("Got data", payload:gsub("%z", " "))
             -- print("ssid,pass=", ssid, pass)
             local function sendComplete(sock)
@@ -287,12 +300,11 @@ function listen()
                 provisioningSocket = sock
                 wifi.mode(wifi.STATIONAP, false)
                 wifi.sta.config({ ssid=ssid, pwd=pass, auto=false }, true)
+                -- we should now get a got_ip or disconnected callback
             else
                 print("Payload not understood")
-                sock.send("NO", sendComplete)
+                sock:send("NO", sendComplete)
             end
-            -- print("Got data on", sock, payload)
-            -- sock:send("OK", sendComplete)
         end)
         sock:on("disconnection", function(sock, err)
             print("Disconnect", err)
