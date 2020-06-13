@@ -18,11 +18,20 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     var sourceController: DataSourceController!
     var prevImage: UIImage?
 
+    @IBAction func refresh(_ sender: Any) {
+        sourceController.fetch()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         sourceController = appDelegate.sourceController
         sourceController.delegate = self
+        if appDelegate.shouldFetch() {
+            sourceController.fetch()
+        } else {
+            print("ViewController.vieWDidLoad: App delegate said not to fetch")
+        }
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

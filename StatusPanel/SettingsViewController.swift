@@ -50,12 +50,11 @@ class SettingsViewController: UITableViewController {
         }
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        guard let delegate = delegate else {
-            return
+    override func viewDidDisappear(_ animated: Bool) {
+        if let delegate = delegate {
+            delegate.didDismiss(settingsViewController: self)
         }
-        delegate.didDismiss(settingsViewController: self)
+        super.viewDidDisappear(animated)
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -261,8 +260,10 @@ class SettingsViewController: UITableViewController {
                     }
                     tableView.insertRows(at: [IndexPath(row: prevCount, section: DeviceIdSection)], with: .fade)
                 }, completion: nil)
+                vcid = "WifiProvisionerController"
+            } else {
+                return
             }
-            return
         case DisplaySection:
             let config = Config()
             if indexPath.row == 1 {
@@ -290,7 +291,12 @@ class SettingsViewController: UITableViewController {
                 print("Couldn't find view controller for \(vcid)!")
                 return
             }
-            navigationController?.pushViewController(vc, animated: true)
+            if let navvc = vc as? UINavigationController {
+                // Hack for presenting the underlying controller, useful for dummy device
+                navigationController?.pushViewController(navvc.topViewController!, animated: true)
+            } else {
+                navigationController?.pushViewController(vc, animated: true)
+            }
         } else {
             print("No view controller for \(indexPath)!")
         }
