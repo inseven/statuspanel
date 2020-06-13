@@ -10,8 +10,8 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    var background = false
-    var openingUrl = false
+    private var background = false
+    private var blockUpdates = false
     var window: UIWindow?
     var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
     var sourceController = DataSourceController()
@@ -53,7 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
         if (background) {
             background = false
-            if !openingUrl {
+            if shouldFetch() {
                 update()
             }
         }
@@ -83,40 +83,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Unrecognised operation \(operation)")
             return false
         }
+        let deviceid = map["id"]!
+        let pubkey = map["pk"]!
 
         // Now try and provision the panel
         if let panelSsid = map["s"] {
-            openingUrl = true
+            // If the panel is telling us about an SSID, it's in AP mode and needs wifi credentials
             let storyboard = window?.rootViewController?.storyboard
             let navvc = storyboard?.instantiateViewController(identifier: "WifiProvisionerController") as! UINavigationController
 
             let vc = navvc.topViewController as! WifiProvisionerController
-            vc.panelIdentifer = map["id"]
-            vc.setHotspotCredentials(ssid: panelSsid, password: map["pk"]!)
+            vc.panelIdentifer = deviceid
+            vc.panelPubkey = pubkey
+            vc.setHotspotCredentials(ssid: panelSsid, password: pubkey)
             window?.rootViewController?.present(navvc, animated: true, completion: nil)
             return true
+        } else {
+            addDevice(id: deviceid, pubkey: pubkey)
+            return true
         }
+    }
 
-
+    func addDevice(id: String, pubkey: String) {
         let config = Config()
         var devices = config.devices
-        let deviceid = map["id"]!
-        devices.append((deviceid, map["pk"]!))
+        devices.append((id, pubkey))
         config.devices = devices
-        let alert = UIAlertController(title: "Device added", message: "Device \(deviceid) has been added.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default, handler: nil))
+        let alert = UIAlertController(title: "Device added", message: "Device \(id) has been added.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default, handler: {
+            (action: UIAlertAction) in
+            // Sneakily delay fetching data until the user taps ok, to give wifi more time to come back up
+            self.blockUpdates = false
+            self.update()
+        }))
         let root = window?.rootViewController
         let ops = { () -> Void in
-            root?.present(alert, animated: true, completion: {
-                self.openingUrl = false
-            })
+            root?.present(alert, animated: true, completion: nil)
         }
         if root?.presentedViewController != nil {
+            blockUpdates = true // So the dismissal of the WifiProvisionerController itself doesn't trigger an update
             root?.dismiss(animated: false, completion: ops)
         } else {
             ops()
         }
-        return true
+    }
+
+    func shouldFetch() -> Bool {
+        // Don't do extraneous fetches when settings or Wifi Provisioner are showing
+        return !blockUpdates && window?.rootViewController?.presentedViewController == nil
     }
 
     /*
@@ -166,7 +180,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("didReceiveRemoteNotification")
         backgroundFetchCompletionFn = completionHandler
-        sourceController.fetch()
+        if shouldFetch() {
+            sourceController.fetch()
+        } else {
+            print("Not fetching on remote notification")
+        }
 
         // Re-register the device to ensure it doesn't time out on the server.
         if let deviceToken = apnsToken {
