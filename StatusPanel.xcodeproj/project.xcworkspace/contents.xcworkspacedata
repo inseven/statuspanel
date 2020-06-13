@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:../swift-sodium/Sodium.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "self:StatusPanel.xcodeproj">
    </FileRef>
 </Workspace>

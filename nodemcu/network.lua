@@ -45,6 +45,7 @@ function getImg(completion)
 
     collectgarbage() -- Maximise change of TLS code not crapping itself
     http.get("https://statuspanel.io/api/v2/"..deviceId, options, function(status, response, headers)
+        local hash
         if status == 304 then
             addStatus("Not modified since: %s", currentLastModified)
         elseif status == 404 then
@@ -68,16 +69,12 @@ function getImg(completion)
                 status = nil
             else
                 local needToUpdate = true
-                local hash = sodium.generichash(decrypted)
-                local f = file.open("img_hash", "r")
-                if f then
-                    local existingHash = f:read()
-                    f:close()
-                    if hash == existingHash then
-                        print("Image has not changed")
-                        needToUpdate = false
-                        status = 304 -- Prevent main() from updating the panel
-                    end
+                hash = sodium.generichash(decrypted)
+                local existingHash = getCurrentDisplayIdentifier()
+                if hash == existingHash then
+                    print("Image has not changed")
+                    needToUpdate = false
+                    status = 304 -- Prevent main() from updating the panel
                 end
 
                 if needToUpdate then
@@ -91,12 +88,6 @@ function getImg(completion)
                     f:write(lastModifiedHeader)
                     f:close()
                 end
-
-                if needToUpdate then
-                    local f = assert(file.open("img_hash", "w"))
-                    f:write(hash)
-                    f:close()
-                end
             end
         end
 
@@ -107,14 +98,14 @@ function getImg(completion)
             -- current time. Will be off by maybe a minute by the time we come
             -- to use it, but oh well. Hope there's some proper RTC and tz
             -- support before DST comes along...
-            node.task.post(function() completion(status, headers and headers.date) end)
+            node.task.post(function() completion(status, headers and headers.date, hash) end)
         end
     end)
 end
 
 function clearCache()
     file.remove("last_modified")
-    file.remove("img_hash")
+    setCurrentDisplayIdentifier(nil)
 end
 
 -- Avoid o, i, 0, 1
@@ -144,11 +135,19 @@ function getDeviceId()
     return id
 end
 
+function getApSSID()
+    return "SP"..getDeviceId()
+end
+
 function setDeviceId(aId)
     id = aId
-    f = assert(file.open("deviceid", "w"))
-    f:write(id)
-    f:close()
+    if aId == nil then
+        file.remove("deviceid")
+    else
+        local f = assert(file.open("deviceid", "w"))
+        f:write(id)
+        f:close()
+    end
 end
 
 function generateKeyPair()
@@ -184,17 +183,22 @@ function getSecretKey()
     return sk
 end
 
-function getQRCodeURL()
+function getQRCodeURL(includeSsid)
     local id = getDeviceId()
+    local ssid = getApSSID()
     local pk = getPublicKey()
     -- toBase64 doesn't URL-encode the unsafe chars, so do that too
     local pkstr = encoder.toBase64(pk):gsub("[/%+%=]", function(ch) return string.format("%%%02X", ch:byte()) end)
-    return string.format("statuspanel:r?id=%s&pk=%s", id, pkstr)
+    local result = string.format("statuspanel:r?id=%s&pk=%s", id, pkstr)
+    if includeSsid then
+        result = result.."&s="..getApSSID()
+    end
+    return result
 end
 
-function displayRegisterScreen()
+function displayQRCode(url, completion)
+    file.remove("last_modified")
     local font = require("font")
-    local url = getQRCodeURL()
     local urlWidth = #url * font.charw
     local data = qrcodegen.encodeText(url)
     local sz = qrcodegen.getSize(data)
@@ -216,7 +220,7 @@ function displayRegisterScreen()
             return WHITE
         end
     end
-    display(getPixel)
+    display(getPixel, completion)
 end
 
 function displayStatusImg(completion)
@@ -225,19 +229,16 @@ end
 
 function fetch()
     print("Fetching image...")
-    getImg(function(status, date)
-        if not initp then
-            require "panel"
-        end
+    getImg(function(status, date, hash)
         if status == 404 then
             clearCache()
-            initp(displayRegisterScreen)
+            local url = getQRCodeURL(false)
+            initAndDisplay(url, displayQRCode, url, nil)
         elseif status == 200 then
-            initp(function()
-                displayStatusImg(function(wakeTime) sleepFromDate(date, wakeTime) end)
-            end)
+            initAndDisplay(hash, displayStatusImg, function(wakeTime) sleepFromDate(date, wakeTime) end)
         elseif status == 304 then
             -- Need to grab waketime from existing img
+            require "panel"
             local f, packed, wakeTime = openImg("img_panel_rle")
             f:close()
             sleepFromDate(date, wakeTime)
@@ -248,7 +249,61 @@ function fetch()
                 -- Try again in 5 minutes?
                 sleepFor(60 * 5)
             end
-            initp(function() displayStatusLineOnly(completion) end)
+            initAndDisplay(nil, displayStatusLineOnly, completion)
         end
     end)
+end
+
+function getCurrentDisplayIdentifier()
+    local id
+    local f = file.open("current_display", "r")
+    if f then
+        id = f:read()
+        f:close()
+    end
+    return id
+end
+
+function setCurrentDisplayIdentifier(id)
+    if id then
+        local f = assert(file.open("current_display", "w"))
+        f:write(id)
+        f:close()
+    else
+        file.remove("current_display")
+    end
+end
+
+function initAndDisplay(id, displayFn, ...)
+    if not initp then
+        require "panel"
+    end
+
+    -- Last arg is completion
+    local nargs = select("#", ...)
+    if nargs == 0 then
+        -- We can assume a nil completion in this case
+        nargs = 1
+    end
+    local args = { ... }
+    local completion = args[nargs]
+    if completion == nil then
+        completion = function() end
+    end
+    assert(type(completion) == "function", "Last argument to initAndDisplay must be nil or a completion function")
+
+    if id and id == getCurrentDisplayIdentifier() then
+        print("Requested contents are already on screen, doing nothing")
+        completion()
+        return
+    else
+        setCurrentDisplayIdentifier(nil)
+    end
+
+    -- Set new completion function that wraps the passed-in one in order to call setCurrentDisplayIdentifier
+    args[nargs] = function(...)
+        setCurrentDisplayIdentifier(id)
+        completion(...)
+    end
+    initp(function() displayFn(unpack(args, 1, nargs)) end)
 end
