@@ -129,6 +129,12 @@ function isset64(numlo, numhi, bitnum)
     return bit.isset(num, bitnum)
 end
 
+local provisioningSocket = nil
+local function closeSocket(sock)
+    print("Closing socket", sock)
+    sock:close()
+end
+
 function main(autoMode)
     local wokeByUsb, wokeByUnpair
     local reason, ext, pinslo, pinshi = node.bootreason()
@@ -163,18 +169,148 @@ function main(autoMode)
     wifi.mode(wifi.STATION)
     wifi.sta.on("got_ip", function(name, event)
         print("Got IP "..event.ip)
+        if provisioningSocket then
+            print("Huzzah, got creds!")
+            provisioningSocket:send("OK", function()
+                provisioningSocket:close()
+                provisioningSocket = nil
+                -- Give the phone time to provision an image
+                tmr.create():alarm(30 * 1000, tmr.ALARM_SINGLE, function()
+                    -- It appears more reliable to reboot here rather than
+                    -- attempt a direct fetch, although I'm not sure why. Maybe
+                    -- memory fragmentation? Or something to do with still being
+                    -- in stationap mode?
+                    node.restart()
+                end)
+            end)
+            -- Don't want to drop through and immediately fetch an image, it
+            -- probably won't be available yet
+            shouldFetchImage = false
+        end
         ip = event.ip
         gw = event.gw
         if shouldFetchImage then
             fetch()
         end
     end)
+    wifi.sta.on("disconnected", function(name, event)
+        print("Disconnected", event.ssid, event.reason)
+        if provisioningSocket then
+            print("Bad creds")
+            provisioningSocket:send("NO", closeSocket)
+            provisioningSocket = nil
+            wifi.mode(wifi.SOFTAP, false)
+            return -- Already in hotspot mode, no need to retry
+        end
+        -- It seems like low reasons like AUTH_EXPIRE(2) can occur with valid creds, and are seemingly transient errors
+        if not ip and event.reason >= 15 then
+            -- This is another way in which wifi config failure can manifest.
+            enterHotspotMode()
+        end
+    end)
     wifi.start()
-    wifi.sta.connect()
+
+    local ok, err = pcall(wifi.sta.connect)
+    if not ok then
+        if autoMode then
+            print("Wifi connect failed, entering setup mode")
+            enterHotspotMode()
+        else
+            print(err)
+        end
+    end
 
     -- Despite EGC being disabled at this point (by init.lua), lua.c will reenable it once init.lua is finished!
     -- So that can fsck right noff.
     tmr.create():alarm(20, tmr.ALARM_SINGLE, function()
         node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
+    end)
+end
+
+function resetDeviceState()
+    local files = {
+        "deviceid",
+        "pk",
+        "sk",
+    }
+    for _, name in ipairs(files) do
+        file.remove(name)
+    end
+    clearCache()
+    setDeviceId(nil)
+end
+
+function enterHotspotMode()
+    if wifi.getmode() == wifi.STATION then
+        wifi.stop()
+    end
+    wifi.mode(wifi.SOFTAP, false)
+    wifi.ap.on("sta_connected", function(_, info)
+        print("Connection from", info.mac)
+    end)
+    wifi.ap.on("start", function()
+        listen()
+    end)
+
+    -- The password here doesn't really matter, so just reuse the public key -
+    -- that's sufficiently unguessable as to prevent drive-by connections while
+    -- also not adding more stuff to the QR code we need to display.
+    wifi.ap.config({
+        ssid = getApSSID(),
+        pwd = encoder.toBase64(getPublicKey()),
+        auth = wifi.AUTH_WPA2_PSK,
+        hidden = false,
+    }, false)
+    local ip = "192.168.4.1"
+    wifi.ap.setip({
+        ip = ip,
+        netmask = "255.255.255.0",
+        gateway = ip,
+        -- dns = "127.0.0.1", -- This prevents clients from even attempting DNS
+    })
+    wifi.start()
+
+    local url = getQRCodeURL(true)
+    initAndDisplay(url, displayQRCode, url, function() print("Finished displayQRCode") end)
+end
+
+function forgetWifiCredentials()
+    wifi.stop()
+    wifi.mode(wifi.STATION)
+    wifi.sta.config({ssid="", auto=false}, true)
+    node.restart()
+end
+
+function listen()
+    local port = 9001
+    print(string.format("Listening on port %d", port))
+    srv = assert(net.createServer())
+    srv:listen(port, function(sock)
+        -- print("listen callback", sock)
+        sock:on("receive", function(sock, payload)
+            local ssid, pass = payload:match("([^%z]+)%z([^%z]*)")
+            -- print("Got data", payload:gsub("%z", " "))
+            -- print("ssid,pass=", ssid, pass)
+            local function sendComplete(sock)
+                print("Closing socket", sock)
+                sock:close()
+            end
+
+            if ssid and pass then
+                provisioningSocket = sock
+                wifi.mode(wifi.STATIONAP, false)
+                wifi.sta.config({ ssid=ssid, pwd=pass, auto=false }, true)
+                -- we should now get a got_ip or disconnected callback
+            else
+                print("Payload not understood")
+                sock:send("NO", sendComplete)
+            end
+        end)
+        sock:on("disconnection", function(sock, err)
+            print("Disconnect", err)
+        end)
+        sock:on("connection", function(sock, wat)
+            print("Connection", wat)
+        end)
     end)
 end
