@@ -70,7 +70,10 @@ class SettingsViewController: UITableViewController {
                 return 3
             #endif
         case UpdateTimeSection: return 1
-        case DisplaySection: return NumDisplaySettings + Config().availableFonts.count
+        case DisplaySection:
+            let numFonts = Config().availableFonts.count
+            // Don't display font choices if there's only one
+            return NumDisplaySettings + (numFonts > 1 ? numFonts : 0)
         case DeviceIdSection:
             var n = devices.count
             if n == 0 {
