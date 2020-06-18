@@ -188,10 +188,10 @@ class Config {
     }
 
     let availableFonts = [
-        ("amiga4ever", "Amiga Forever"),
         ("font6x10_2", "Guicons Font"), // Genuinely have no idea what this is actually called
-        ("advocut", "AdvoCut"),
-        ("silkscreen", "Silkscreen"),
+       // ("amiga4ever", "Amiga Forever"),
+       // ("advocut", "AdvoCut"),
+       // ("silkscreen", "Silkscreen"),
     ]
 
     enum DarkModeConfig: Int {
