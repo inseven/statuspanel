@@ -28,6 +28,7 @@ class BitmapFontLabel: UILabel {
     let scale: Int
     private var invertedForDarkMode: CIImage?
     let maxFullSizeLines = Int.max
+    var shouldRedact = false
 
     init(frame: CGRect, fontNamed: String, scale: Int = 1) {
         self.fontName = fontNamed
@@ -259,6 +260,7 @@ class BitmapFontLabel: UILabel {
             ctx.setFillColor(col.cgColor)
             ctx.fill(rect)
         }
+        ctx.setFillColor(textColor.cgColor)
 
         let lines = flow(text: self.text, width: self.bounds.width)
         let numFullsizeLines = min(lines.count, maxFullSizeLines)
@@ -269,6 +271,10 @@ class BitmapFontLabel: UILabel {
             let shrunkLines = flow(text: overflowText, width: self.bounds.width, scale: shrunkLineScale)
             drawLines(shrunkLines, at:pos, forScale: shrunkLineScale, in: ctx)
         }
+
+        if shouldRedact {
+            ctx.drawPath(using: .fill)
+        }
     }
 
     private func drawLines(_ lines: [String], at y: Int, forScale scale: Int, in ctx: CGContext) {
@@ -276,7 +282,12 @@ class BitmapFontLabel: UILabel {
             var x = 0
             for ch in text {
                 let chImg = getImageForChar(ch: ch, forScale: scale)
-                ctx.draw(chImg, in: CGRect(x: x, y: y + line * lineHeight * scale, width: chImg.width, height: charh * scale))
+                let rect = CGRect(x: x, y: y + line * lineHeight * scale, width: chImg.width, height: charh * scale)
+                if shouldRedact {
+                    ctx.addRect(rect)
+                } else {
+                    ctx.draw(chImg, in: rect)
+                }
                 x = x + chImg.width
             }
         }
