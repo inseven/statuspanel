@@ -263,21 +263,56 @@ function getDisplayStatusLineFn()
     return getTextPixelFn(statusText, fg, bg)
 end
 
-function displayImg(filename, completion)
+function getPixelFnForImgFile(filename)
     local rle = require("rle")
+    local table_remove, rle_getByte, band, rshift, string_byte = table.remove, rle.getByte, bit.band, bit.rshift, string.byte
     local f, packed, wakeTime = openImg(filename)
     if packed then
         packed = {}
     end
+    local bufSize = 256
+    local buf, bufIdx
     local function reader()
-        local ch = f:read(1)
-        if ch then
-            return string.byte(ch)
-        else
-            return nil
+        if not buf or bufIdx > #buf then
+            buf = f:read(bufSize)
+            if buf == nil then
+                return nil
+            end
+            bufIdx = 1
         end
+        local ch = string_byte(buf, bufIdx)
+        bufIdx = bufIdx + 1
+        return ch
     end
     local ctx = rle.beginDecode(reader)
+
+    local function getPixel(x, y)
+        if not x then
+            f:close()
+            f = nil
+            return
+        end
+
+        -- getPixel is always called in sequence, so don't need to seek
+        if packed then
+            local b = table_remove(packed, 1)
+            if b == nil then
+                local packedb = rle_getByte(ctx)
+                for i = 0, 3 do
+                    packed[i+1] = packedToColour[band(3, rshift(packedb, i * 2))]
+                end
+                b = table_remove(packed, 1)
+            end
+            return b
+        else
+            return rle_getByte(ctx)
+        end
+    end
+
+    return getPixel, wakeTime
+end
+
+function displayImg(filename, completion)
     local statusLineStart, getTextPixel
     if esp32 then
         -- Not enough RAM for this on esp8266 (try lcross?)
@@ -285,30 +320,18 @@ function displayImg(filename, completion)
         getTextPixel = getDisplayStatusLineFn()
     end
 
-    local table_remove, rle_getByte, band, rshift = table.remove, rle.getByte, bit.band, bit.rshift
+    local getImgPixel, wakeTime = getPixelFnForImgFile(filename)
+
     local function getPixel(x, y)
         if statusLineStart and y >= statusLineStart then
             return getTextPixel(x, y - statusLineStart)
         else
-            -- getPixel is always called in sequence, so don't need to seek
-            if packed then
-                local b = table_remove(packed, 1)
-                if b == nil then
-                    local packedb = rle_getByte(ctx)
-                    for i = 0, 3 do
-                        packed[i+1] = packedToColour[band(3, rshift(packedb, i * 2))]
-                    end
-                    b = table_remove(packed, 1)
-                end
-                return b
-            else
-                return rle_getByte(ctx)
-            end
+            return getImgPixel(x, y)
         end
     end
 
     display(getPixel, function()
-        f:close()
+        getImgPixel(nil) -- Closes file
         if completion then completion(wakeTime) end
     end)
 end
