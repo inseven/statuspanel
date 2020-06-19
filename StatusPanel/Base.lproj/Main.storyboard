@@ -34,14 +34,22 @@
                                 <segue destination="h6m-t0-RnA" kind="modal" identifier="settings" id="BDV-kQ-Aip"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Refresh" id="f8x-mG-zRg">
-                            <connections>
-                                <action selector="refresh:" destination="BYZ-38-t0r" id="Meh-cm-yqD"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Refresh" id="f8x-mG-zRg">
+                                <connections>
+                                    <action selector="refresh:" destination="BYZ-38-t0r" id="Meh-cm-yqD"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="🅁" id="SxZ-zy-cep">
+                                <connections>
+                                    <action selector="redact:" destination="BYZ-38-t0r" id="ogo-eW-MCE"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="imageView" destination="FFU-oW-4OP" id="PVv-bA-T4k"/>
+                        <outlet property="redactButton" destination="SxZ-zy-cep" id="uUm-1r-Oo1"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

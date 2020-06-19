@@ -13,13 +13,33 @@ import Sodium
 class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var redactButton: UIBarButtonItem!
+    private var image: UIImage?
+    private var redactedImage: UIImage?
+    private var prevImage: UIImage?
+    private var showRedacted = false
+
     let SettingsButtonTag = 1
 
     var sourceController: DataSourceController!
-    var prevImage: UIImage?
 
     @IBAction func refresh(_ sender: Any) {
         sourceController.fetch()
+    }
+
+    @IBAction func redact(_ sender: Any) {
+        showRedacted = !showRedacted
+        updateImageView()
+    }
+
+    func updateImageView() {
+        if showRedacted {
+            imageView.image = redactedImage
+            redactButton.title = "🆁"
+        } else {
+            imageView.image = image
+            redactButton.title = "🅁"
+        }
     }
 
     override func viewDidLoad() {
@@ -79,6 +99,56 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
+        let image = renderToImage(data: data, shouldRedact: false)
+        let redactedImage = renderToImage(data: data, shouldRedact: true)
+        let (rleData, panelImage) = constructImagesFor(image: image, name: "img")
+        let (redactedRleData, redactedPanelImage) = constructImagesFor(image: redactedImage, name: "img_redacted")
+        let changes = !panelImage.isEqual(prevImage)
+
+        self.image = panelImage
+        self.redactedImage = redactedPanelImage
+        updateImageView()
+
+        uploadData(data: rleData, redactedData: redactedRleData, completion: {
+            print("Update: changes = \(changes)")
+            self.prevImage = panelImage
+            completion(changes)
+        })
+
+    }
+
+    // From a full colour image, construct the RLE-compressed panel format image
+    // and the 2BPP flattened UIImage
+    func constructImagesFor(image: UIImage, name: String) -> (Data, UIImage) {
+        let (rawdata, panelImage) = imgToARGBData(image)
+        let wakeTime = Int(Config.getLocalWakeTime() / 60)
+        let panelData = ARGBtoPanel(rawdata)
+
+        // Header format is as below. Any fields beyond length can be omitted
+        // providing the length is set appropriately.
+        // FF 00 - indicating header present
+        // NN    - Length of header
+        // TT TT - wakeup time
+        let header = Data([0xFF, 0x00, 0x05, UInt8(wakeTime >> 8), UInt8(wakeTime & 0xFF)])
+        let rleData = header + rleEncode(panelData)
+
+        // Save the image to disk, this is mainly for after-the-fact debugging
+        // in the simulator
+        do {
+            let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            print("GOT DIR! " + dir.absoluteString)
+            let imgdata = UIImagePNGRepresentation(panelImage)
+            try imgdata?.write(to: dir.appendingPathComponent(name + ".png"))
+            try rawdata.write(to: dir.appendingPathComponent(name + ".raw"))
+            try panelData.write(to: dir.appendingPathComponent(name + "_panel"))
+            try rleData.write(to: dir.appendingPathComponent(name + "_panel_rle"))
+        } catch {
+            print("meh")
+        }
+        return (rleData, panelImage)
+    }
+
+    func renderToImage(data: [DataItemBase], shouldRedact: Bool) -> UIImage {
         let contentView = UIView(frame: CGRect(x: 0, y: 0, width: 640, height: 384))
         contentView.contentScaleFactor = 1.0
 
@@ -110,6 +180,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             var textFrame = CGRect(origin: CGPoint.zero, size: frame.size)
             if prefix != "" {
                 let prefixLabel = ViewController.getLabel(frame: textFrame, font: config.font)
+                (prefixLabel as? BitmapFontLabel)?.shouldRedact = shouldRedact
                 prefixLabel.textColor = foregroundColor
                 prefixLabel.numberOfLines = 1
                 prefixLabel.text = prefix + " "
@@ -126,6 +197,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             }
             let label = ViewController.getLabel(frame: textFrame, font: config.font,
                                                 type: firstItemHeader ? .header : .text)
+            (label as? BitmapFontLabel)?.shouldRedact = shouldRedact
             label.numberOfLines = 1 // Temporarily while we're using it in checkFit
 
             let text = prefix + item.getText(checkFit: { (string: String) -> Bool in
@@ -148,6 +220,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             view.addSubview(label)
             if let subText = item.getSubText() {
                 let subLabel = ViewController.getLabel(frame: textFrame, font: config.font, type: .subText)
+                (subLabel as? BitmapFontLabel)?.shouldRedact = shouldRedact
                 subLabel.textColor = foregroundColor
                 subLabel.numberOfLines = config.maxLines
                 subLabel.text = subText
@@ -207,63 +280,51 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
         let img = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-
-        guard let image = img else {
-            print("Unable to generate image")
-            return
-        }
-
-        let (rawdata, panelImage) = imgToARGBData(image)
-        let changes = !panelImage.isEqual(prevImage)
-        let panelData = ARGBtoPanel(rawdata)
-        // Header format is as below. Any fields beyond length can be omitted
-        // providing the length is set appropriately.
-        // FF 00 - indicating header present
-        // NN    - Length of header
-        // TT TT - wakeup time
-        let wakeTime = Int(Config.getLocalWakeTime() / 60)
-        let header = Data([0xFF, 0x00, 0x05, UInt8(wakeTime >> 8), UInt8(wakeTime & 0xFF)])
-        let rleData = header + rleEncode(panelData)
-
-        // Finally, do something with that image
-        do {
-            let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            print("GOT DIR! " + dir.absoluteString)
-            let imgdata = UIImagePNGRepresentation(panelImage)
-            self.imageView.image = panelImage
-            try imgdata?.write(to: dir.appendingPathComponent("img.png"))
-            try rawdata.write(to: dir.appendingPathComponent("img.raw"))
-            try panelData.write(to: dir.appendingPathComponent("img_panel"))
-            try rleData.write(to: dir.appendingPathComponent("img_panel_rle"))
-            uploadData(rleData, completion: {
-                print("Update: changes = \(changes)")
-                self.prevImage = panelImage
-                completion(changes)
-            })
-        } catch {
-            print("meh")
-        }
+        // I don't think this can realistically ever be nil
+        return img!
     }
 
-    func uploadData(_ data: Data, completion: @escaping () -> Void) {
-        var devices = Config().devices
+    func redactedDeviceId(_ deviceid: String) -> String {
+        let idchars = "abcdefghjklmnpqrstuvwxyz23456789"
+        let rotchrs = "stuvwxyz23456789abcdefghjklmnpqr"
+        var result = ""
+        for ch in deviceid {
+            let idx = idchars.index(of: ch)!
+            result.append(rotchrs[idx])
+        }
+        return result
+    }
+
+    func uploadData(data: Data, redactedData: Data, completion: @escaping () -> Void) {
+        let devices = Config().devices
         if devices.count == 0 {
             print("No keys configured, not uploading")
             completion()
             return
         }
+
+        var uploadItems : [(String, String, Data)] = []
+        for (deviceid, pubkey) in devices {
+            uploadItems.append((deviceid, pubkey, data))
+            // The web service expects all deviceids to match [0-9a-z]{8} so we
+            // have to invent a new id for the redacted image, we can't just use
+            // deviceid + "_redacted".
+            let redactId = redactedDeviceId(deviceid)
+            uploadItems.append((redactId, pubkey, redactedData))
+        }
+
         var nextUpload : () -> Void = {}
         nextUpload = {
-            if devices.count == 0 {
+            if uploadItems.count == 0 {
                 completion()
             } else {
-                let (firstDevice, firstKey) = devices.remove(at: 0)
-                if firstKey.isEmpty {
+                let (id, pubkey, data) = uploadItems.remove(at: 0)
+                if pubkey.isEmpty {
                     // Empty keys are used for debugging the UI, and shouldn't cause an upload
                     nextUpload()
                     return
                 }
-                self.uploadData(data, deviceid: firstDevice, publickey: firstKey, completion: nextUpload)
+                self.uploadData(data, deviceid: id, publickey: pubkey, completion: nextUpload)
             }
         }
         nextUpload()
