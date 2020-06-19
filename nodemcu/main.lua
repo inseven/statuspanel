@@ -46,6 +46,26 @@ end
 
 function shortPressUnpair()
     print("Short press on unpair")
+    if getCurrentDisplayIdentifier() == "img_redacted" then
+        -- Unpair should unredact
+        if ip then
+            fetch()
+        else
+            -- Still waiting for the got_ip call, need to tell it to go ahead when it does
+            shouldFetchImage = true
+        end
+    else
+        -- redact and sleep until further notice
+        require "panel"
+        local function completion()
+            sleepFor(-1)
+        end
+        if file.exists("img_redacted") then
+            initAndDisplay("img_redacted", displayImg, "img_redacted", completion)
+        else
+            initAndDisplay("img_redacted", dither, completion)
+        end
+    end
 end
 
 function longPressUnpair()
