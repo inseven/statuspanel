@@ -179,16 +179,32 @@ function main(autoMode)
         end
     end
 
-    local shouldFetchImage = autoMode
+    shouldFetchImage = autoMode
 
     if wokeByUnpair then
         shouldFetchImage = false
         unpairPressed()
     end
 
+    local connectTimer
+    if shouldFetchImage then
+        -- Start timer so that regardless of whatever confusing status events we
+        -- get back from the wifi stack, if we haven't got an IP address in 10
+        -- seconds we go into hotspot mode.
+        connectTimer = tmr.create()
+        connectTimer:alarm(10000, tmr.ALARM_SINGLE, function(timer)
+            print("Timed out waiting for an IP address, entering hotspot mode")
+            enterHotspotMode()
+        end)
+    end
+
     wifi.mode(wifi.STATION)
     wifi.sta.on("got_ip", function(name, event)
         print("Got IP "..event.ip)
+        if connectTimer then
+            connectTimer:unregister()
+            connectTimer = nil
+        end
         if provisioningSocket then
             print("Huzzah, got creds!")
             provisioningSocket:send("OK", function()
@@ -221,11 +237,6 @@ function main(autoMode)
             provisioningSocket = nil
             wifi.mode(wifi.SOFTAP, false)
             return -- Already in hotspot mode, no need to retry
-        end
-        -- It seems like low reasons like AUTH_EXPIRE(2) can occur with valid creds, and are seemingly transient errors
-        if not ip and event.reason >= 15 then
-            -- This is another way in which wifi config failure can manifest.
-            enterHotspotMode()
         end
     end)
     wifi.start()
