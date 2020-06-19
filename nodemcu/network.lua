@@ -8,10 +8,6 @@ function getImg(completion)
         lastModifiedFile:close()
     end
 
-    local f = assert(file.open("root.pem", "r"))
-    local cert = f:read(2048)
-    f:close()
-
     local deviceId = getDeviceId()
     statusTable = {}
     local batstat, batteryLow = getBatteryVoltageStatus()
@@ -37,7 +33,7 @@ function getImg(completion)
     end
 
     local options = {
-        cert = cert,
+        cert = getRootCert(),
         headers = {
             ["If-Modified-Since"] = currentLastModified,
         },
@@ -81,6 +77,9 @@ function getImg(completion)
                     local f = assert(file.open("img_panel_rle", "w"))
                     f:write(decrypted)
                     f:close()
+                    f = assert(file.open("img_hash", "w"))
+                    f:write(hash)
+                    f:close()
                 end
 
                 if lastModifiedHeader then
@@ -98,9 +97,53 @@ function getImg(completion)
             -- current time. Will be off by maybe a minute by the time we come
             -- to use it, but oh well. Hope there's some proper RTC and tz
             -- support before DST comes along...
-            node.task.post(function() completion(status, headers and headers.date, hash) end)
+            node.task.post(function() completion(status, headers and headers.date) end)
         end
     end)
+end
+
+function getRootCert()
+    local f = assert(file.open("root.pem", "r"))
+    local cert = f:read(2048)
+    f:close()
+    return cert
+end
+
+function getRedactedImage()
+    file.remove("img_redacted")
+    local id = getRedactedDeviceId()
+    local options = {
+        cert = getRootCert(),
+        headers = {
+            ["If-Modified-Since"] = currentLastModified,
+        },
+    }
+
+    collectgarbage() -- Maximise change of TLS code not crapping itself
+    http.get("https://statuspanel.io/api/v2/"..id, options, function(status, response, headers)
+        print("getRedactedImage completed with status "..tostring(status))
+        if status ~= 200 then
+            return
+        end
+        local pk = getPublicKey()
+        local sk = getSecretKey()
+        local decrypted = sodium.crypto_box.seal_open(response, pk, sk)
+        if decrypted then
+            local f = assert(file.open("img_redacted", "w"))
+            f:write(decrypted)
+            f:close()
+        end
+    end)
+end
+
+function getImgHash()
+    local f = file.open("img_hash", "r")
+    local hash
+    if f then
+        hash = f:read(32)
+        f:close()
+    end
+    return hash
 end
 
 function clearCache()
@@ -110,6 +153,8 @@ end
 
 -- Avoid o, i, 0, 1
 local idchars = "abcdefghjklmnpqrstuvwxyz23456789"
+local rotchrs = "stuvwxyz23456789abcdefghjklmnpqr"
+
 function makeDeviceId()
     local t = {}
     for i = 1, 8 do
@@ -133,6 +178,15 @@ function getDeviceId()
     -- Otherwise generate one and save it
     setDeviceId(makeDeviceId())
     return id
+end
+
+function getRedactedDeviceId()
+    local id = getDeviceId()
+    local result = id:gsub(".", function(ch)
+        local idx = idchars:find(ch, 1, true)
+        return rotchrs:sub(idx, idx)
+    end)
+    return result
 end
 
 function getApSSID()
@@ -229,19 +283,26 @@ end
 
 function fetch()
     print("Fetching image...")
-    getImg(function(status, date, hash)
+    getImg(function(status, date)
         if status == 404 then
             clearCache()
             local url = getQRCodeURL(false)
             initAndDisplay(url, displayQRCode, url, nil)
         elseif status == 200 then
+            getRedactedImage()
+            local hash = getImgHash()
             initAndDisplay(hash, displayStatusImg, function(wakeTime) sleepFromDate(date, wakeTime) end)
         elseif status == 304 then
-            -- Need to grab waketime from existing img
-            require "panel"
-            local f, packed, wakeTime = openImg("img_panel_rle")
-            f:close()
-            sleepFromDate(date, wakeTime)
+            if getCurrentDisplayIdentifier() == "img_redacted" then
+                -- We need to redisplay
+                initAndDisplay(getImgHash(), displayStatusImg, function(wakeTime) sleepFromDate(date, wakeTime) end)
+            else
+                -- Need to grab waketime from existing img
+                require "panel"
+                local f, packed, wakeTime = openImg("img_panel_rle")
+                f:close()
+                sleepFromDate(date, wakeTime)
+            end
         else
             -- Some sort of error we weren't expecting (network?)
             clearCache()
