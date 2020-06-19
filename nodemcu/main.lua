@@ -71,6 +71,10 @@ end
 function longPressUnpair()
     print("Long press on unpair")
     setStatusLed(1)
+    resetDeviceState()
+    tmr.create():alarm(1000, tmr.ALARM_SINGLE, function()
+        node.restart()
+    end)
 end
 
 -- Returns the time since midnight, in seconds
