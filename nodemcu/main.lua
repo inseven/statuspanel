@@ -61,7 +61,7 @@ function shortPressUnpair()
             sleepFor(-1)
         end
         if file.exists("img_redacted") then
-            initAndDisplay("img_redacted", displayImg, "img_redacted", completion)
+            initAndDisplay("img_redacted", displayImg, "img_redacted", false, completion)
         else
             initAndDisplay("img_redacted", dither, completion)
         end
