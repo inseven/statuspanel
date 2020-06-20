@@ -198,7 +198,7 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
         footerViewLabel.text = error
     }
 
-    private func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if (status == .authorizedWhenInUse) {
             setSSID()
         }

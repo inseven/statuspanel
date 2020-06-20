@@ -90,6 +90,8 @@ class NetworkProvisioner {
             case .cancelled:
                 print("The connection has been canceled.")
                 targetQueueCompletion(.failure(NetworkProvisionerError.cancelled))
+            @unknown default:
+                print("wat")
             }
         }
 
