@@ -278,7 +278,7 @@ function displayQRCode(url, completion)
 end
 
 function displayStatusImg(completion)
-    displayImg("img_panel_rle", completion)
+    displayImg("img_panel_rle", true, completion)
 end
 
 function fetch()
