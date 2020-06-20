@@ -19,7 +19,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     let DataSourcesSection = 0
     let UpdateTimeSection = 1
     let DisplaySection = 2
-    let NumDisplaySettings = 3
+    let NumDisplaySettings = 4
 
     let DeviceIdSection = 3
 
@@ -186,7 +186,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return cell
         case DisplaySection:
             let row = indexPath.row
-            let cell = UITableViewCell(style: row == 1 || row == 2 ? .value1 : .default, reuseIdentifier: nil)
+            let cell = UITableViewCell(style: row == 1 || row == 2  || row == 3 ? .value1 : .default, reuseIdentifier: nil)
             switch row {
             case 0:
                 cell.textLabel?.text = "Use two columns"
@@ -210,15 +210,26 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 let val = config.maxLines
                 cell.detailTextLabel?.text = val == 0 ? "Unlimited" : String(format: "%d", val)
                 cell.accessoryType = .disclosureIndicator
+            case 3:
+                cell.textLabel?.text = "Privacy mode"
+                switch config.privacyMode {
+                case .redactLines:
+                    cell.detailTextLabel?.text = "Redact lines"
+                case .redactWords:
+                    cell.detailTextLabel?.text = "Redact words"
+                case .customImage:
+                    cell.detailTextLabel?.text = "Custom image"
+                }
+                cell.accessoryType = .disclosureIndicator
             default:
                 let (font, text) = Config().availableFonts[indexPath.row - NumDisplaySettings]
                 let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
-                let view = ViewController.getLabel(frame:frame, font: font)
-                view.text = text
-                view.sizeToFit()
-                view.frame = view.frame.offsetBy(dx: 0, dy: (frame.height - view.bounds.height) / 2)
+                let label = ViewController.getLabel(frame:frame, font: font)
+                label.text = text
+                label.sizeToFit()
+                label.frame = label.frame.offsetBy(dx: 0, dy: (frame.height - label.bounds.height) / 2)
                 cell.accessoryType = (font == Config().font) ? .checkmark : .none
-                cell.contentView.addSubview(view)
+                cell.contentView.addSubview(label)
             }
             return cell
         default:
@@ -279,21 +290,22 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             let config = Config()
             if indexPath.row == 1 {
                 vcid = "DarkModeEditor"
-                break
             } else if indexPath.row == 2 {
                 vcid = "MaxLinesEditor"
-                break
+            } else if indexPath.row == 3 {
+                vcid = "PrivacyModeEditor"
+            } else {
+                config.font = config.availableFonts[indexPath.row - NumDisplaySettings].0
+                tableView.performBatchUpdates({
+                    var paths: [IndexPath] = []
+                    for i in 0 ..< config.availableFonts.count {
+                        paths.append(IndexPath(row: i+NumDisplaySettings, section: DisplaySection))
+                    }
+                    tableView.deselectRow(at: indexPath, animated: true)
+                    tableView.reloadRows(at: paths, with: .automatic)
+                }, completion: nil)
+                return
             }
-            config.font = config.availableFonts[indexPath.row - NumDisplaySettings].0
-            tableView.performBatchUpdates({
-                var paths: [IndexPath] = []
-                for i in 0 ..< config.availableFonts.count {
-                    paths.append(IndexPath(row: i+NumDisplaySettings, section: DisplaySection))
-                }
-                tableView.deselectRow(at: indexPath, animated: true)
-                tableView.reloadRows(at: paths, with: .automatic)
-            }, completion: nil)
-            return
         default:
             break
         }
