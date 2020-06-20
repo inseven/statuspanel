@@ -194,7 +194,7 @@ class Config {
        // ("silkscreen", "Silkscreen"),
     ]
 
-    enum DarkModeConfig: Int {
+    enum DarkModeConfig: Int, CaseIterable {
         case off = 0, on = 1, system = 2
     }
 
@@ -234,6 +234,19 @@ class Config {
         }
         set {
             UserDefaults.standard.set(newValue, forKey: "maxLines")
+        }
+    }
+
+    enum PrivacyMode: Int, CaseIterable {
+        case redactLines = 0, redactWords = 1, customImage = 2
+    }
+
+    var privacyMode: PrivacyMode {
+        get {
+            return PrivacyMode.init(rawValue: UserDefaults.standard.integer(forKey: "privacyMode"))!
+        }
+        set {
+            UserDefaults.standard.setValue(newValue.rawValue, forKey: "privacyMode")
         }
     }
 }

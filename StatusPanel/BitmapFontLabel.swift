@@ -19,6 +19,10 @@ class ImagesDict {
     }
 }
 
+enum RedactMode {
+    case none, redactLines, redactWords
+}
+
 class BitmapFontLabel: UILabel {
     private static var globalCache: [String : ImagesDict] = [:]
     let fontName: String
@@ -28,9 +32,9 @@ class BitmapFontLabel: UILabel {
     let scale: Int
     private var invertedForDarkMode: CIImage?
     let maxFullSizeLines = Int.max
-    var shouldRedact = false
+    var redactMode: RedactMode
 
-    init(frame: CGRect, fontNamed: String, scale: Int = 1) {
+    init(frame: CGRect, fontNamed: String, scale: Int = 1, redactMode: RedactMode = .none) {
         self.fontName = fontNamed
         let font = UIImage(named: "fonts/" + self.fontName)!
         image = CIImage(image: font)!
@@ -39,6 +43,7 @@ class BitmapFontLabel: UILabel {
         charw = (Int)(w / 8)
         charh = (Int)(h / 12)
         self.scale = scale
+        self.redactMode = redactMode
         super.init(frame: frame)
         assert((CGFloat)(charw * 8) == w && (CGFloat)(charh * 12) == h,
                "Image size \(w)x\(h) must be a multiple of 8 wide and 12 high")
@@ -272,7 +277,7 @@ class BitmapFontLabel: UILabel {
             drawLines(shrunkLines, at:pos, forScale: shrunkLineScale, in: ctx)
         }
 
-        if shouldRedact {
+        if redactMode != .none {
             ctx.drawPath(using: .fill)
         }
     }
@@ -283,7 +288,7 @@ class BitmapFontLabel: UILabel {
             for ch in text {
                 let chImg = getImageForChar(ch: ch, forScale: scale)
                 let rect = CGRect(x: x, y: y + line * lineHeight * scale, width: chImg.width, height: charh * scale)
-                if shouldRedact {
+                if redactMode == .redactLines || (redactMode == .redactWords && !ch.isWhitespace) {
                     ctx.addRect(rect)
                 } else {
                     ctx.draw(chImg, in: rect)

@@ -14,6 +14,7 @@
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
 		D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D98E422493019A00F853CA /* NetworkProvisioner.swift */; };
+		DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB17F92E249E3BAD008CD83E /* CGExtensions.swift */; };
 		DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */; };
 		DB1EB9062427E1F900050A08 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = DB1EB9052427E1F900050A08 /* fonts */; };
 		DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3E769E2416CD9E000D059A /* DarkModeController.swift */; };
@@ -25,6 +26,7 @@
 		DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB62F33D224FEA4400CA5E64 /* StationsList.swift */; };
 		DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */; };
 		DB87810C223D67B2005AEBD8 /* UpdateTimeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */; };
+		DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */; };
 		DBB2D35D217CA677009F7549 /* Sodium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2D35C217CA677009F7549 /* Sodium.framework */; };
 		DBB2D35E217CA677009F7549 /* Sodium.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2D35C217CA677009F7549 /* Sodium.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987C2143E2920084B710 /* AppDelegate.swift */; };
@@ -124,6 +126,7 @@
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		D8D98E422493019A00F853CA /* NetworkProvisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvisioner.swift; sourceTree = "<group>"; };
+		DB17F92E249E3BAD008CD83E /* CGExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
 		DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxLinesController.swift; sourceTree = "<group>"; };
 		DB1EB9052427E1F900050A08 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = StatusPanel/fonts; sourceTree = "<group>"; };
 		DB1EB9072427E67F00050A08 /* README.markdown */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.markdown; sourceTree = "<group>"; };
@@ -138,6 +141,7 @@
 		DB62F33F2258FD6100CA5E64 /* StatusPanel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatusPanel.entitlements; sourceTree = "<group>"; };
 		DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapFontLabel.swift; sourceTree = "<group>"; };
 		DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateTimeController.swift; sourceTree = "<group>"; };
+		DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyModeController.swift; sourceTree = "<group>"; };
 		DBB2D35C217CA677009F7549 /* Sodium.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Sodium.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA987C2143E2920084B710 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -258,6 +262,7 @@
 				D89CAF1021ABDDA200B4B314 /* Config.swift */,
 				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
 				DBCA987E2143E2920084B710 /* ViewController.swift */,
+				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
 				DBCA98802143E2920084B710 /* Main.storyboard */,
 				DBCA98832143E2920084B710 /* Assets.xcassets */,
 				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
@@ -272,6 +277,7 @@
 				DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */,
 				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
 				DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */,
+				DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */,
 				D80380AA23E9B6D2002606C7 /* Client.swift */,
 				DBCA987A2143E2920084B710 /* Products */,
 				DB62F330224F892A00CA5E64 /* Calendar */,
@@ -432,6 +438,8 @@
 				DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */,
 				DB62F335224FB47A00CA5E64 /* Station.swift in Sources */,
 				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
+				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
+				DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */,
 				DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
 				DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */,
