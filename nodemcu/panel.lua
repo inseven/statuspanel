@@ -312,9 +312,9 @@ function getPixelFnForImgFile(filename)
     return getPixel, wakeTime
 end
 
-function displayImg(filename, completion)
+function displayImg(filename, includeStatusLine, completion)
     local statusLineStart, getTextPixel
-    if esp32 then
+    if includeStatusLine and esp32 then
         -- Not enough RAM for this on esp8266 (try lcross?)
         statusLineStart = h - require("font").charh
         getTextPixel = getDisplayStatusLineFn()
