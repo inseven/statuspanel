@@ -40,7 +40,7 @@
                                     <action selector="refresh:" destination="BYZ-38-t0r" id="Meh-cm-yqD"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="🅁" id="SxZ-zy-cep">
+                            <barButtonItem title="Ⓟ" id="SxZ-zy-cep">
                                 <connections>
                                     <action selector="redact:" destination="BYZ-38-t0r" id="ogo-eW-MCE"/>
                                 </connections>
@@ -623,7 +623,7 @@
                     <viewLayoutGuide key="safeArea" id="jcd-2x-6qP"/>
                 </view>
             </objects>
-            <point key="canvasLocation" x="4093" y="3283"/>
+            <point key="canvasLocation" x="4328" y="3947"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="S37-9W-SxX">
@@ -639,7 +639,27 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dOh-36-d5j" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3095" y="3222"/>
+            <point key="canvasLocation" x="3225" y="3892"/>
+        </scene>
+        <!--Privacy Mode-->
+        <scene sceneID="sGG-fc-weP">
+            <objects>
+                <tableViewController storyboardIdentifier="PrivacyModeEditor" id="CMG-R2-5dE" userLabel="Privacy Mode" customClass="PrivacyModeController" customModule="StatusPanel" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="6d9-Se-OWf">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <sections/>
+                        <connections>
+                            <outlet property="dataSource" destination="CMG-R2-5dE" id="l0e-hr-8bQ"/>
+                            <outlet property="delegate" destination="CMG-R2-5dE" id="bE6-9U-lc3"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Privacy Mode" id="f3n-Q5-UMS"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="T3N-id-Ak0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3819" y="3181"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
