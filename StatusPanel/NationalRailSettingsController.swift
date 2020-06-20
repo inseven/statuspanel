@@ -36,7 +36,7 @@ class NationalRailSettingsController : UITableViewController {
 
     override func viewDidLoad() {
         let enabledSwitch = UISwitch()
-        enabledSwitch.addTarget(self, action: #selector(enabledSwitchDidChange), for: UIControlEvents.valueChanged)
+        enabledSwitch.addTarget(self, action: #selector(enabledSwitchDidChange), for: UIControl.Event.valueChanged)
         enabledCell.accessoryView = enabledSwitch
         super.viewDidLoad()
     }

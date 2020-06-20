@@ -43,7 +43,7 @@ class BitmapFontLabel: UILabel {
         assert((CGFloat)(charw * 8) == w && (CGFloat)(charh * 12) == h,
                "Image size \(w)x\(h) must be a multiple of 8 wide and 12 high")
         isAccessibilityElement = true
-        accessibilityTraits = UIAccessibilityTraitStaticText
+        accessibilityTraits = UIAccessibilityTraits.staticText
         isOpaque = false
     }
 

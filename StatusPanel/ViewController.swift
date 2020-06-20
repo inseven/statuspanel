@@ -137,7 +137,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         do {
             let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             print("GOT DIR! " + dir.absoluteString)
-            let imgdata = UIImagePNGRepresentation(panelImage)
+            let imgdata = panelImage.pngData()
             try imgdata?.write(to: dir.appendingPathComponent(name + ".png"))
             try rawdata.write(to: dir.appendingPathComponent(name + ".raw"))
             try panelData.write(to: dir.appendingPathComponent(name + "_panel"))
@@ -289,7 +289,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let rotchrs = "stuvwxyz23456789abcdefghjklmnpqr"
         var result = ""
         for ch in deviceid {
-            let idx = idchars.index(of: ch)!
+            let idx = idchars.firstIndex(of: ch)!
             result.append(rotchrs[idx])
         }
         return result
