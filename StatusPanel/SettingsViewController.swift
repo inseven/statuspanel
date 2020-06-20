@@ -15,7 +15,7 @@ protocol SettingsViewControllerDelegate: AnyObject {
 
 }
 
-class SettingsViewController: UITableViewController {
+class SettingsViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
     let DataSourcesSection = 0
     let UpdateTimeSection = 1
     let DisplaySection = 2
@@ -39,7 +39,17 @@ class SettingsViewController: UITableViewController {
     }
 
     @IBAction func cancelTapped(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true, completion: {
+            if self.delegate != nil {
+                self.delegate?.didDismiss(settingsViewController: self)
+            }
+        })
+    }
+
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        if delegate != nil {
+            delegate?.didDismiss(settingsViewController: self)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -48,12 +58,10 @@ class SettingsViewController: UITableViewController {
         if self.viewIfLoaded != nil {
             self.tableView.reloadData()
         }
+        self.navigationController?.presentationController?.delegate = self
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-        if let delegate = delegate {
-            delegate.didDismiss(settingsViewController: self)
-        }
         super.viewDidDisappear(animated)
     }
 
