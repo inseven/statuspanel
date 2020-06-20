@@ -11,6 +11,8 @@ import EventKit
 import Sodium
 
 class ViewController: UIViewController, SettingsViewControllerDelegate {
+    static let kPanelWidth = 640
+    static let kPanelHeight = 384
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var redactButton: UIBarButtonItem!
@@ -35,10 +37,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     func updateImageView() {
         if showRedacted {
             imageView.image = redactedImage
-            redactButton.title = "🆁"
+            redactButton.title = "🅟"
         } else {
             imageView.image = image
-            redactButton.title = "🅁"
+            redactButton.title = "Ⓟ"
         }
     }
 
@@ -73,9 +75,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         case text, header, subText
     }
 
-    static func getLabel(frame: CGRect, font fontName: String, type: LabelType = .text) -> UILabel {
+    static func getLabel(frame: CGRect, font fontName: String, type: LabelType = .text, redactMode: RedactMode = .none) -> UILabel {
         if fontName == "font6x10_2" && type != .header {
-            return BitmapFontLabel(frame: frame, fontNamed: "font6x10", scale: type == .text ? 2 : 1)
+            return BitmapFontLabel(frame: frame, fontNamed: "font6x10", scale: type == .text ? 2 : 1, redactMode: redactMode)
         }
 
         // Otherwise it's a UIFont-based label
@@ -100,7 +102,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
         let image = renderToImage(data: data, shouldRedact: false)
-        let redactedImage = renderToImage(data: data, shouldRedact: true)
+        let redactedImage = (Config().privacyMode == .customImage) ?
+            ViewController.cropCustomRedactImageToPanelSize() : renderToImage(data: data, shouldRedact: true)
         let (rleData, panelImage) = constructImagesFor(image: image, name: "img")
         let (redactedRleData, redactedPanelImage) = constructImagesFor(image: redactedImage, name: "img_redacted")
         let changes = !panelImage.isEqual(prevImage)
@@ -148,8 +151,36 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         return (rleData, panelImage)
     }
 
+    class func blankPanelImage() -> UIImage {
+        let fmt = UIGraphicsImageRendererFormat()
+        fmt.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: kPanelWidth, height: kPanelHeight), format: fmt)
+        let uiImage = renderer.image {(uictx: UIGraphicsImageRendererContext) in }
+        return uiImage
+    }
+
+    class func cropCustomRedactImageToPanelSize() -> UIImage {
+        var path: URL?
+        do {
+            let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            path = dir.appendingPathComponent("customPrivacyImage.png")
+        } catch {
+            print("meh")
+            return blankPanelImage()
+        }
+        guard let source = UIImage(contentsOfFile: path!.path) else {
+            return blankPanelImage()
+        }
+        let rect = CGRect(center: source.center, size: CGSize(width: kPanelWidth, height: kPanelHeight))
+        if let cgCrop = source.cgImage?.cropping(to: rect) {
+            return UIImage(cgImage: cgCrop)
+        } else {
+            return blankPanelImage()
+        }
+    }
+
     func renderToImage(data: [DataItemBase], shouldRedact: Bool) -> UIImage {
-        let contentView = UIView(frame: CGRect(x: 0, y: 0, width: 640, height: 384))
+        let contentView = UIView(frame: CGRect(x: 0, y: 0, width: ViewController.kPanelWidth, height: ViewController.kPanelHeight))
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
@@ -169,6 +200,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         var colStart = y
         var col = 1
         var verticalBreak: CGFloat = 0
+        let redactMode: RedactMode = (shouldRedact ? (config.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
         for (i, item) in data.enumerated() {
             // print(item)
             let flags = item.getFlags()
@@ -179,8 +211,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             var prefix = item.getPrefix()
             var textFrame = CGRect(origin: CGPoint.zero, size: frame.size)
             if prefix != "" {
-                let prefixLabel = ViewController.getLabel(frame: textFrame, font: config.font)
-                (prefixLabel as? BitmapFontLabel)?.shouldRedact = shouldRedact
+                let prefixLabel = ViewController.getLabel(frame: textFrame, font: config.font, redactMode: redactMode)
                 prefixLabel.textColor = foregroundColor
                 prefixLabel.numberOfLines = 1
                 prefixLabel.text = prefix + " "
@@ -196,8 +227,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 }
             }
             let label = ViewController.getLabel(frame: textFrame, font: config.font,
-                                                type: firstItemHeader ? .header : .text)
-            (label as? BitmapFontLabel)?.shouldRedact = shouldRedact
+                                                type: firstItemHeader ? .header : .text,
+                                                redactMode: redactMode)
             label.numberOfLines = 1 // Temporarily while we're using it in checkFit
 
             let text = prefix + item.getText(checkFit: { (string: String) -> Bool in
@@ -219,8 +250,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: label.bounds.height))
             view.addSubview(label)
             if let subText = item.getSubText() {
-                let subLabel = ViewController.getLabel(frame: textFrame, font: config.font, type: .subText)
-                (subLabel as? BitmapFontLabel)?.shouldRedact = shouldRedact
+                let subLabel = ViewController.getLabel(frame: textFrame, font: config.font, type: .subText, redactMode: redactMode)
                 subLabel.textColor = foregroundColor
                 subLabel.numberOfLines = config.maxLines
                 subLabel.text = subText

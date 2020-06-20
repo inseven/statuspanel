@@ -16,7 +16,8 @@ class DarkModeController : UITableViewController {
     }
 
     func updateTickMark(_ selected: Int) {
-        for i in 0 ..< 3 {
+        for mode in Config.DarkModeConfig.allCases {
+            let i = mode.rawValue
             let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0))
             cell?.accessoryType = (i == selected) ? .checkmark : .none
         }
