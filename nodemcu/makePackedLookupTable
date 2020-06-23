@@ -1,0 +1,15 @@
+#!/usr/local/bin/lua5.3
+
+WHITE = 3
+COLOURED = 4 
+BLACK = 0
+INVALID = BLACK
+packedToColour = { [0] = BLACK, [1] = COLOURED, [2] = WHITE, [3] = INVALID }
+packedToName = { [0] = "B", [1] = "C", [2] = "W", [3] = "X"  }
+
+for i = 0, 15 do
+    local aa = i & 0x3
+    local bb = i >> 2
+    local result = (packedToColour[aa] << 4) | packedToColour[bb]
+    print(string.format("    [%d] = 0x%02x, -- %s%s", i, result, packedToName[aa], packedToName[bb]))
+end
