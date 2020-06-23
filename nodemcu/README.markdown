@@ -57,9 +57,9 @@ The Arduino IDE can be a convenient way to communicate with the device. You can 
 The firmware will automatically start if GPIO 14 is held high. This can be done by shorting it to the 3.3V pin. For debugging purposes, you may wish to leave it low (or disconnected) and execute the code directly from the serial console:
 
 ```lua
-initp(displayRegisterScreen) -- To show enrollment QR code
-getImg()                     -- To fetch latest image
-initp(displayStatusImg)      -- To display last-fetched image
+enterHotspotMode()           -- To show enrollment QR code
+fetch()                      -- To fetch latest image
+showFile("img_1")            -- To display last-fetched image
 ```
 
 ### Wi-Fi

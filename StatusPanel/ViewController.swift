@@ -18,7 +18,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     @IBOutlet weak var redactButton: UIBarButtonItem!
     private var image: UIImage?
     private var redactedImage: UIImage?
-    private var prevImage: UIImage?
     private var showRedacted = false
 
     let SettingsButtonTag = 1
@@ -26,6 +25,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     var sourceController: DataSourceController!
 
     @IBAction func refresh(_ sender: Any) {
+        // Wipe all stored hashes to force reupload
+        for (deviceid, _) in Config().devices {
+            Config.setLastUploadHash(for: deviceid, to: nil)
+        }
+
         sourceController.fetch()
     }
 
@@ -102,53 +106,43 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
         let image = renderToImage(data: data, shouldRedact: false)
-        let redactedImage = (Config().privacyMode == .customImage) ?
+        let privacyImage = (Config().privacyMode == .customImage) ?
             ViewController.cropCustomRedactImageToPanelSize() : renderToImage(data: data, shouldRedact: true)
-        let (rleData, panelImage) = constructImagesFor(image: image, name: "img")
-        let (redactedRleData, redactedPanelImage) = constructImagesFor(image: redactedImage, name: "img_redacted")
-        let changes = !panelImage.isEqual(prevImage)
 
-        self.image = panelImage
-        self.redactedImage = redactedPanelImage
+        let payloads = makeRlePayloadsFor(images: [image, privacyImage])
+        self.image = payloads[0].1
+        self.redactedImage = payloads[1].1
+
         updateImageView()
-
-        uploadData(data: rleData, redactedData: redactedRleData, completion: {
-            print("Update: changes = \(changes)")
-            self.prevImage = panelImage
-            completion(changes)
+        let imageData = payloads.map { $0.0 }
+        print("Uploading new images")
+        uploadImages(imageData, completion: { (anythingChanged: Bool) in
+            print("Changes: \(anythingChanged)")
+            completion(anythingChanged)
         })
-
     }
 
-    // From a full colour image, construct the RLE-compressed panel format image
-    // and the 2BPP flattened UIImage
-    func constructImagesFor(image: UIImage, name: String) -> (Data, UIImage) {
-        let (rawdata, panelImage) = imgToARGBData(image)
-        let wakeTime = Int(Config.getLocalWakeTime() / 60)
-        let panelData = ARGBtoPanel(rawdata)
-
-        // Header format is as below. Any fields beyond length can be omitted
-        // providing the length is set appropriately.
-        // FF 00 - indicating header present
-        // NN    - Length of header
-        // TT TT - wakeup time
-        let header = Data([0xFF, 0x00, 0x05, UInt8(wakeTime >> 8), UInt8(wakeTime & 0xFF)])
-        let rleData = header + rleEncode(panelData)
-
-        // Save the image to disk, this is mainly for after-the-fact debugging
-        // in the simulator
-        do {
-            let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            print("GOT DIR! " + dir.absoluteString)
-            let imgdata = panelImage.pngData()
-            try imgdata?.write(to: dir.appendingPathComponent(name + ".png"))
-            try rawdata.write(to: dir.appendingPathComponent(name + ".raw"))
-            try panelData.write(to: dir.appendingPathComponent(name + "_panel"))
-            try rleData.write(to: dir.appendingPathComponent(name + "_panel_rle"))
-        } catch {
-            print("meh")
+    func makeRlePayloadsFor(images: [UIImage]) -> [(Data, UIImage)] {
+        var result: [(Data, UIImage)] = []
+        for (i, image) in images.enumerated() {
+            let (rawdata, panelImage) = imgToARGBData(image)
+            let panelData = ARGBtoPanel(rawdata)
+            let rleData = rleEncode(panelData)
+            do {
+                let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                print("GOT DIR! " + dir.absoluteString)
+                let imgdata = panelImage.pngData()
+                let name = "img_\(i)"
+                try imgdata?.write(to: dir.appendingPathComponent(name + ".png"))
+                try rawdata.write(to: dir.appendingPathComponent(name + ".raw"))
+                try panelData.write(to: dir.appendingPathComponent(name + "_panel"))
+                try rleData.write(to: dir.appendingPathComponent(name + "_panel_rle"))
+            } catch {
+                print("meh")
+            }
+            result.append((rleData, panelImage))
         }
-        return (rleData, panelImage)
+        return result
     }
 
     class func blankPanelImage() -> UIImage {
@@ -168,11 +162,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             print("meh")
             return blankPanelImage()
         }
-        guard let source = UIImage(contentsOfFile: path!.path) else {
+        guard let source = UIImage(contentsOfFile: path!.path), let cgImage = source.cgImage else {
             return blankPanelImage()
         }
         let rect = CGRect(center: source.center, size: CGSize(width: kPanelWidth, height: kPanelHeight))
-        if let cgCrop = source.cgImage?.cropping(to: rect) {
+        if let cgCrop = cgImage.cropping(to: rect) {
             return UIImage(cgImage: cgCrop)
         } else {
             return blankPanelImage()
@@ -314,71 +308,68 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         return img!
     }
 
-    func redactedDeviceId(_ deviceid: String) -> String {
-        let idchars = "abcdefghjklmnpqrstuvwxyz23456789"
-        let rotchrs = "stuvwxyz23456789abcdefghjklmnpqr"
-        var result = ""
-        for ch in deviceid {
-            let idx = idchars.firstIndex(of: ch)!
-            result.append(rotchrs[idx])
-        }
-        return result
-    }
-
-    func uploadData(data: Data, redactedData: Data, completion: @escaping () -> Void) {
-        let devices = Config().devices
+    func uploadImages(_ images: [Data], completion: @escaping (Bool) -> Void) {
+        var devices = Config().devices
         if devices.count == 0 {
             print("No keys configured, not uploading")
-            completion()
+            completion(false)
             return
         }
 
-        var uploadItems : [(String, String, Data)] = []
-        for (deviceid, pubkey) in devices {
-            uploadItems.append((deviceid, pubkey, data))
-            // The web service expects all deviceids to match [0-9a-z]{8} so we
-            // have to invent a new id for the redacted image, we can't just use
-            // deviceid + "_redacted".
-            let redactId = redactedDeviceId(deviceid)
-            uploadItems.append((redactId, pubkey, redactedData))
-        }
-
-        var nextUpload : () -> Void = {}
-        nextUpload = {
-            if uploadItems.count == 0 {
-                completion()
+        var nextUpload : (Bool) -> Void = { (b: Bool) -> Void in }
+        var anythingUploaded = false
+        nextUpload = { (lastUploadDidUpload: Bool) in
+            if lastUploadDidUpload {
+                anythingUploaded = true
+            }
+            if devices.count == 0 {
+                completion(anythingUploaded)
             } else {
-                let (id, pubkey, data) = uploadItems.remove(at: 0)
+                let (id, pubkey) = devices.remove(at: 0)
                 if pubkey.isEmpty {
                     // Empty keys are used for debugging the UI, and shouldn't cause an upload
-                    nextUpload()
+                    nextUpload(false)
                     return
                 }
-                self.uploadData(data, deviceid: id, publickey: pubkey, completion: nextUpload)
+                self.uploadImages(images, deviceid: id, publickey: pubkey, completion: nextUpload)
             }
         }
-        nextUpload()
+        nextUpload(false)
     }
 
-    func uploadData(_ data: Data, deviceid: String, publickey: String, completion: @escaping () -> Void) {
+    func uploadImages(_ images: [Data], deviceid: String, publickey: String, completion: @escaping (Bool) -> Void) {
         let sodium = Sodium()
         guard let key = sodium.utils.base642bin(publickey, variant: .ORIGINAL) else {
             print("Failed to decode key from publickey userdefault!")
-            completion()
+            completion(false)
             return
         }
-        let encryptedDataBytes = sodium.box.seal(message: Array(data), recipientPublicKey: key)
-        if encryptedDataBytes == nil {
-            print("Failed to seal box")
-            completion()
-            return
-        }
-        let encryptedData = Data(encryptedDataBytes!)
 
+        // We can't just hash the resulting encryptedData because libsodium ensures it is different every time even
+        // for identical input data (which normally is a good thing!) so we have to construct a unencrypted blob just
+        // for the purposes of calculating the hash.
+        let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(makeMultipartUpload(parts: images)))!, variant: .ORIGINAL)!
+        if hash == Config.getLastUploadHash(for: deviceid) {
+            print("Data for \(deviceid) is the same as before, not uploading")
+            completion(false)
+            return
+        }
+
+        var encryptedParts: [Data] = []
+        for image in images {
+            let encryptedDataBytes = sodium.box.seal(message: Array(image), recipientPublicKey: key)
+            if encryptedDataBytes == nil {
+                print("Failed to seal box")
+                completion(false)
+                return
+            }
+            encryptedParts.append(Data(encryptedDataBytes!))
+        }
+        let encryptedData = makeMultipartUpload(parts: encryptedParts)
         let path = "https://statuspanel.io/api/v2/\(deviceid)"
         guard let url = URL(string: path) else {
             print("Unable to create URL")
-            completion()
+            completion(false)
             return
         }
 
@@ -407,10 +398,39 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         request.httpBody = body
         let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
             // print(response ?? "")
-            print(error ?? "")
-            completion()
+            if let error = error {
+                print(error)
+            } else {
+                Config.setLastUploadHash(for: deviceid, to: hash)
+            }
+            completion(true)
         })
         task.resume()
+    }
+
+    func makeMultipartUpload(parts: [Data]) -> Data {
+        let wakeTime = Int(Config.getLocalWakeTime() / 60)
+        // Header format is as below. Any fields beyond length can be omitted
+        // providing the length is set appropriately.
+        // FF 00 - indicating header present
+        // NN    - Length of header
+        // TT TT - wakeup time
+        // CC    - count of images (index immediately follows header)
+        var data = Data([0xFF, 0x00, 0x06, UInt8(wakeTime >> 8), UInt8(wakeTime & 0xFF), UInt8(parts.count)])
+        // I'm sure there's a way to do this with UnsafeRawPointers or something, but eh
+        let u32le = { (val: Int) -> Data in
+            let u32 = UInt32(val)
+            return Data([UInt8(u32 & 0xFF), UInt8((u32 & 0xFF00) >> 8), UInt8((u32 & 0xFF0000) >> 16), UInt8(u32 >> 24)])
+        }
+        var idx = data.count + 4 * parts.count
+        for part in parts {
+            data += u32le(idx)
+            idx += part.count
+        }
+        for part in parts {
+            data += part
+        }
+        return data
     }
 
     func flattenColours(_ red: UInt8, _ green: UInt8, _ blue: UInt8) -> (UInt8, UInt8, UInt8) {

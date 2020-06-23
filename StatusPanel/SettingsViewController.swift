@@ -330,13 +330,14 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return nil
         }
         let action = UIContextualAction(style: .destructive, title: "Delete") { (_, _, completion) in
-            self.devices.remove(at: indexPath.row)
+            let deviceBeingRemoved = self.devices.remove(at: indexPath.row).0
             tableView.performBatchUpdates({
                 tableView.deleteRows(at: [indexPath], with: .automatic)
                 if self.devices.count == 0 {
                     tableView.insertRows(at: [IndexPath(row: 0, section: self.DeviceIdSection)], with: .automatic)
                 }
             }, completion: nil)
+            Config.setLastUploadHash(for: deviceBeingRemoved, to: nil)
             Config().devices = self.devices
             completion(true)
         }
