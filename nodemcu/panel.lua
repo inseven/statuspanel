@@ -1,4 +1,5 @@
 -- panel.lua
+_ENV = module()
 
 -- Translated from https://www.waveshare.com/w/upload/8/80/7.5inch-e-paper-hat-b-code.7z raspberrypi/python/epd7in5b.py
 PANEL_SETTING = 0x00
@@ -51,22 +52,10 @@ local print, select = print, select
 local uptime = node.uptime or tmr.now
 local Reset, DC, CS, Sck, Mso, SpiId = Reset, DC, CS, Sck, Mso, SpiId
 
-local sendByte
-if esp32 then
-    function sendByte(b, dc)
-        gpio_write(DC, dc)
-        spidevice_transfer(spidevice, ch(b))
-        bytesSent = bytesSent + 1
-    end
-else
-    function sendByte(b, dc)
-        gpio_write(DC, dc)
-        -- Have to toggle CS on *every byte*
-        gpio_write(CS, 0)
-        spi.send(SpiId, b)
-        bytesSent = bytesSent + 1
-        gpio_write(CS, 1)
-    end
+local function sendByte(b, dc)
+    gpio_write(DC, dc)
+    spidevice_transfer(spidevice, ch(b))
+    bytesSent = bytesSent + 1
 end
 
 local function cmd(id, ...)
@@ -156,26 +145,21 @@ w, h = 640, 384
 
 -- The actual display code!
 
-function display(getPixelFn, completion)
+function displayLines(lineFn, completion)
+    -- This overload assumes the caller already has the pixel data assembled into panel format
     setStatusLed(1)
-    if not getPixelFn then
-        getPixelFn = whiteColourBlack
-    end
     local t = uptime()
     cmd(DATA_START_TRANSMISSION_1)
     local y = 0
-    bytesSent = 0
-    if esp32 then
-        gpio_write(DC, DC_DATA)
-    end
+    gpio_write(DC, DC_DATA)
+
     local function drawLine()
         if y == h then
-            local pixels = bytesSent * 2
             cmd(DISPLAY_REFRESH)
             waitUntilIdle(function()
                 local elapsed = math.floor((uptime() - t) / 1000000)
                 sleep(function()
-                    print(string.format("Wrote %d pixels, took %ds", pixels, elapsed))
+                    printf("Display complete, took %ds", elapsed)
                     setStatusLed(0)
                     if completion then
                         completion()
@@ -185,29 +169,31 @@ function display(getPixelFn, completion)
             return
         end
 
-        -- print("Line " ..tostring(y))
         setStatusLed(y % 2)
-        if esp32 then
-            local line = {}
-            for i = 0, math.floor(w / 2) - 1 do
-                local x = i * 2
-                local b = getPixelFn(x, y) * 16 + getPixelFn(x + 1, y)
-                line[i+1] = ch(b)
-            end
-            local data = table.concat(line)
-            spidevice_transfer(spidevice, data)
-            bytesSent = bytesSent + #data
-        else
-            for x = 0, w - 1, 2 do
-                local b = getPixelFn(x, y) * 16 + getPixelFn(x + 1, y)
-                sendByte(b, DC_DATA)
-            end
-        end
+        local data = lineFn(y)
+        spidevice_transfer(spidevice, data)
         y = y + 1
         node.task.post(drawLine)
-        -- tmr.create():alarm(10, tmr.ALARM_SINGLE, drawLine)
     end
     node.task.post(drawLine)
+end
+
+function pixelFnToLineFn(getPixelFn)
+    local function getLine(y)
+        local line = {}
+        for i = 0, math.floor(w / 2) - 1 do
+            local x = i * 2
+            local b = getPixelFn(x, y) * 16 + getPixelFn(x + 1, y)
+            line[i+1] = ch(b)
+        end
+        local data = table.concat(line)
+        return data
+    end
+    return getLine
+end
+
+function display(getPixelFn, completion)
+    displayLines(pixelFnToLineFn(getPixelFn), completion)
 end
 
 local mod3 = { [0] = WHITE, [1] = COLOURED, [2] = BLACK }
@@ -234,108 +220,6 @@ function dither()
     end)
 end  
 
-local packedToColour = { [0] = BLACK, [1] = COLOURED, [2] = WHITE }
-
-function openImg(filename)
-    local f = assert(file.open(filename, "rb"))
-    local headerLen = 0
-    local packed = false
-    local header = f:read(2)
-    local wakeTime
-    if header == "\255\0" then
-        -- FF 00 is not a valid sequence in our RLE scheme
-        headerLen = f:read(1):byte()
-        -- Having a header always implies packed
-        packed = true
-        if headerLen >= 5 then
-            local wh, wl = f:read(2):byte(1, 2)
-            wakeTime = wh * 256 + wl
-        end
-    end
-    f:seek("set", headerLen)
-    return f, packed, wakeTime
-end
-
-function getDisplayStatusLineFn()
-    local statusText = table.concat(statusTable, " | ")
-    local fg = BLACK
-    local bg = statusTable.err and COLOURED or WHITE
-    return getTextPixelFn(statusText, fg, bg)
-end
-
-function getPixelFnForImgFile(filename)
-    local rle = require("rle")
-    local table_remove, rle_getByte, band, rshift, string_byte = table.remove, rle.getByte, bit.band, bit.rshift, string.byte
-    local f, packed, wakeTime = openImg(filename)
-    if packed then
-        packed = {}
-    end
-    local bufSize = 256
-    local buf, bufIdx
-    local function reader()
-        if not buf or bufIdx > #buf then
-            buf = f:read(bufSize)
-            if buf == nil then
-                return nil
-            end
-            bufIdx = 1
-        end
-        local ch = string_byte(buf, bufIdx)
-        bufIdx = bufIdx + 1
-        return ch
-    end
-    local ctx = rle.beginDecode(reader)
-
-    local function getPixel(x, y)
-        if not x then
-            f:close()
-            f = nil
-            return
-        end
-
-        -- getPixel is always called in sequence, so don't need to seek
-        if packed then
-            local b = table_remove(packed, 1)
-            if b == nil then
-                local packedb = rle_getByte(ctx)
-                for i = 0, 3 do
-                    packed[i+1] = packedToColour[band(3, rshift(packedb, i * 2))]
-                end
-                b = table_remove(packed, 1)
-            end
-            return b
-        else
-            return rle_getByte(ctx)
-        end
-    end
-
-    return getPixel, wakeTime
-end
-
-function displayImg(filename, includeStatusLine, completion)
-    local statusLineStart, getTextPixel
-    if includeStatusLine and esp32 then
-        -- Not enough RAM for this on esp8266 (try lcross?)
-        statusLineStart = h - require("font").charh
-        getTextPixel = getDisplayStatusLineFn()
-    end
-
-    local getImgPixel, wakeTime = getPixelFnForImgFile(filename)
-
-    local function getPixel(x, y)
-        if statusLineStart and y >= statusLineStart then
-            return getTextPixel(x, y - statusLineStart)
-        else
-            return getImgPixel(x, y)
-        end
-    end
-
-    display(getPixel, function()
-        getImgPixel(nil) -- Closes file
-        if completion then completion(wakeTime) end
-    end)
-end
-
 function getTextPixelFn(text, fg, bg)
     local font = require("font")
     local charw, charh = font.charw, font.charh
@@ -361,16 +245,4 @@ function displayText()
     display(getPixel, function() h = oldh end)
 end
 
-function displayStatusLineOnly(completion)
-    local getTextPixel = getDisplayStatusLineFn()
-    local charh = require("font").charh
-    local starth = (h - charh) / 2
-    local endh = starth + charh
-    display(function(x, y)
-        if y >= starth and y < endh then
-            return getTextPixel(x, y - starth)
-        else
-            return WHITE
-        end
-    end, completion)
-end
+return _ENV -- Must be last

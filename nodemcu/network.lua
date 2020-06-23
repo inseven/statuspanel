@@ -1,149 +1,86 @@
 -- Network and stuff
+_ENV = module()
 
-function getImg(completion)
-    local currentLastModified
-    local lastModifiedFile = file.open("last_modified", "r")
-    if lastModifiedFile then
-        currentLastModified = lastModifiedFile:read(32)
-        lastModifiedFile:close()
+function getImages(completion)
+    collectgarbage() -- Clear the decks...
+    if not completion then
+        completion = function() print("Done!") end
     end
-
     local deviceId = getDeviceId()
-    statusTable = {}
-    local batstat, batteryLow = getBatteryVoltageStatus()
-    addStatus(batstat)
-    if batteryLow then
-        setStatusErrored()
-    end
-    addStatus("Device ID: %s", deviceId)
-    
-    if not gw and wifi.sta.getip then
-        -- TODO remove this after retesting esp8266 code
-        local _
-        _, _, gw = wifi.sta.getip()
-    end
+
     if gw then
         setStatusLed(1)
     else
-        addErrorStatus("No internet connection!")
-        if completion then
-            node.task.post(function() completion(nil) end)
-        end
+        -- No internet connection?
+        node.task.post(function() completion(nil) end)
         return
     end
 
+    local currentLastModified = readFile("last_modified", 32)
     local options = {
+        async = true,
+        bufsz = 1024,
         cert = getRootCert(),
         headers = {
+            Connection = "close",
             ["If-Modified-Since"] = currentLastModified,
         },
     }
 
-    collectgarbage() -- Maximise change of TLS code not crapping itself
-    http.get("https://statuspanel.io/api/v2/"..deviceId, options, function(status, response, headers)
-        local hash
-        if status == 304 then
-            addStatus("Not modified since: %s", currentLastModified)
-        elseif status == 404 then
-            print("No image on server yet")
-        elseif status ~= 200 then
-            addErrorStatus("Error %d returned from http.get()", status)
-        else
-            local clen = tonumber(headers["content-length"])
-            if clen and clen ~= #response then
-                print("Bad response!")
-            end
-            print(string.format("Got data %d bytes", #response))
-            local lastModifiedHeader = headers["last-modified"]
-            addStatus("Update fetched: %s", headers.date)
-            local pk = getPublicKey()
-            local sk = getSecretKey()
-            local decrypted = sodium.crypto_box.seal_open(response, pk, sk)
-            if decrypted == nil then
-                addErrorStatus("Failed to decrypt image data")
-                -- print(response)
-                status = nil
-            else
-                local needToUpdate = true
-                hash = sodium.generichash(decrypted)
-                local existingHash = getCurrentDisplayIdentifier()
-                if hash == existingHash then
-                    print("Image has not changed")
-                    needToUpdate = false
-                    status = 304 -- Prevent main() from updating the panel
-                end
-
-                if needToUpdate then
-                    local f = assert(file.open("img_panel_rle", "w"))
-                    f:write(decrypted)
-                    f:close()
-                    f = assert(file.open("img_hash", "w"))
-                    f:write(hash)
-                    f:close()
-                end
-
-                if lastModifiedHeader then
-                    local f = assert(file.open("last_modified", "w"))
-                    f:write(lastModifiedHeader)
-                    f:close()
-                end
-            end
-        end
-
-        print("Done!")
-        setStatusLed(0)
-        if completion then
-            -- Super hacky, use the date header as an approximation of the
-            -- current time. Will be off by maybe a minute by the time we come
-            -- to use it, but oh well. Hope there's some proper RTC and tz
-            -- support before DST comes along...
-            node.task.post(function() completion(status, headers and headers.date) end)
+    local conn = http.createConnection("https://statuspanel.io/api/v2/"..deviceId, http.GET, options)
+    local f
+    local result = {}
+    conn:on("headers", function(status, headers)
+        result.date = headers.date
+        if status == 200 then
+            result.lastModified = headers["last-modified"]
         end
     end)
+    conn:on("data", function(status, data)
+        if status == 200 then
+            if f == nil then
+                f = assert(file.open("img_raw", "w"))
+            end
+            f:write(data)
+        end
+    end)
+    conn:on("complete", function(status)
+        print("HTTP request complete")
+        conn:close()
+        conn = nil
+        if f then
+            f:close()
+        end
+        setStatusLed(0)
+        result.status = status
+        completion(result)
+    end)
+    conn:request()
+end
+
+function readFile(name, maxSize)
+    local f = file.open(name, "r")
+    if f then
+        local contents = f:read(maxSize)
+        f:close()
+        return contents
+    else
+        return nil, "File not found: "..name
+    end
+end
+
+function writeFile(name, contents)
+    if contents == nil then
+        file.remove(name)
+    else
+        local f = assert(file.open(name, "w"))
+        assert(f:write(contents))
+        f:close()
+    end
 end
 
 function getRootCert()
-    local f = assert(file.open("root.pem", "r"))
-    local cert = f:read(2048)
-    f:close()
-    return cert
-end
-
-function getRedactedImage()
-    file.remove("img_redacted")
-    local id = getRedactedDeviceId()
-    local options = {
-        cert = getRootCert(),
-        headers = {
-            ["If-Modified-Since"] = currentLastModified,
-        },
-    }
-
-    collectgarbage() -- Maximise change of TLS code not crapping itself
-    http.get("https://statuspanel.io/api/v2/"..id, options, function(status, response, headers)
-        print("getRedactedImage completed with status "..tostring(status))
-        if status ~= 200 then
-            return
-        end
-        local pk = getPublicKey()
-        local sk = getSecretKey()
-        local decrypted = sodium.crypto_box.seal_open(response, pk, sk)
-        if decrypted then
-            local f = assert(file.open("img_redacted", "w"))
-            f:write(decrypted)
-            f:close()
-        end
-    end)
-end
-
-function getImgHash()
-    local f = file.open("img_hash", "r")
-    local hash
-    if f then
-        hash = f:read(32)
-        f:close()
-    end
-    return hash
+    return assert(readFile("root.pem", 2048))
 end
 
 function clearCache()
@@ -153,7 +90,6 @@ end
 
 -- Avoid o, i, 0, 1
 local idchars = "abcdefghjklmnpqrstuvwxyz23456789"
-local rotchrs = "stuvwxyz23456789abcdefghjklmnpqr"
 
 function makeDeviceId()
     local t = {}
@@ -169,24 +105,13 @@ function getDeviceId()
     if id then
         return id
     end
-    local f = file.open("deviceid", "r")
-    if f then
-        id = assert(f:read(8))
-        f:close()
+    id = readFile("deviceid", 8)
+    if id then
         return id
     end
     -- Otherwise generate one and save it
     setDeviceId(makeDeviceId())
     return id
-end
-
-function getRedactedDeviceId()
-    local id = getDeviceId()
-    local result = id:gsub(".", function(ch)
-        local idx = idchars:find(ch, 1, true)
-        return rotchrs:sub(idx, idx)
-    end)
-    return result
 end
 
 function getApSSID()
@@ -195,23 +120,13 @@ end
 
 function setDeviceId(aId)
     id = aId
-    if aId == nil then
-        file.remove("deviceid")
-    else
-        local f = assert(file.open("deviceid", "w"))
-        f:write(id)
-        f:close()
-    end
+    writeFile("deviceid", id)
 end
 
 function generateKeyPair()
     local pk, sk = sodium.crypto_box.keypair()
-    local f = assert(file.open("pk", "w"))
-    f:write(pk)
-    f:close()
-    f = assert(file.open("sk", "w"))
-    f:write(sk)
-    f:close()
+    writeFile("pk", pk)
+    writeFile("sk", sk)
     return pk, sk
 end
 
@@ -220,10 +135,7 @@ function getPublicKey()
         local pk, sk = generateKeyPair()
         return pk
     end
-    local f = assert(file.open("pk", "r"))
-    local pk = f:read()
-    f:close()
-    return pk
+    return assert(readFile("pk", 32))
 end
 
 function getSecretKey()
@@ -231,10 +143,7 @@ function getSecretKey()
         local pk, sk = generateKeyPair()
         return sk
     end
-    local f = assert(file.open("sk", "r"))
-    local sk = f:read()
-    f:close()
-    return sk
+    return assert(readFile("sk", 32))
 end
 
 function getQRCodeURL(includeSsid)
@@ -251,15 +160,15 @@ function getQRCodeURL(includeSsid)
 end
 
 function displayQRCode(url, completion)
-    file.remove("last_modified")
     local font = require("font")
+    local BLACK, WHITE, w, h = panel.BLACK, panel.WHITE, panel.w, panel.h
     local urlWidth = #url * font.charw
     local data = qrcodegen.encodeText(url)
     local sz = qrcodegen.getSize(data)
     local scale = 8
     local startx = math.floor((w - sz * scale) / 2)
     local starty = math.floor((h - sz * scale) / 2)
-    local textPixel = getTextPixelFn(url)
+    local textPixel = panel.getTextPixelFn(url)
     local texty = 20
     local textStart = math.floor((w - urlWidth) / 2)
     local function getPixel(x, y)
@@ -274,97 +183,31 @@ function displayQRCode(url, completion)
             return WHITE
         end
     end
-    display(getPixel, completion)
+    panel.display(getPixel, completion)
 end
 
-function displayStatusImg(completion)
-    displayImg("img_panel_rle", true, completion)
-end
-
-function fetch()
-    print("Fetching image...")
-    getImg(function(status, date)
-        if status == 404 then
-            clearCache()
-            local url = getQRCodeURL(false)
-            initAndDisplay(url, displayQRCode, url, nil)
-        elseif status == 200 then
-            getRedactedImage()
-            local hash = getImgHash()
-            initAndDisplay(hash, displayStatusImg, function(wakeTime) sleepFromDate(date, wakeTime) end)
-        elseif status == 304 then
-            if getCurrentDisplayIdentifier() == "img_redacted" then
-                -- We need to redisplay
-                initAndDisplay(getImgHash(), displayStatusImg, function(wakeTime) sleepFromDate(date, wakeTime) end)
-            else
-                -- Need to grab waketime from existing img
-                require "panel"
-                local f, packed, wakeTime = openImg("img_panel_rle")
-                f:close()
-                sleepFromDate(date, wakeTime)
-            end
-        else
-            -- Some sort of error we weren't expecting (network?)
-            clearCache()
-            local function completion()
-                -- Try again in 5 minutes?
-                sleepFor(60 * 5)
-            end
-            initAndDisplay(nil, displayStatusLineOnly, completion)
+function parseImgHeader(data)
+    local headerLen = 0
+    local wakeTime = nil
+    local imageIndexes = nil
+    -- FF 00 is not a valid sequence in our RLE scheme
+    if data:sub(1, 2) == "\255\0" then
+        headerLen = data:byte(3)
+        if headerLen >= 5 then
+            local wh, wl = data:byte(4, 5)
+            wakeTime = wh * 256 + wl
         end
-    end)
+        if headerLen >= 6 then
+            local numImages = data:byte(6)
+            if numImages and #data >= headerLen + numImages * 4 then
+                imageIndexes = {}
+                for i = 0, numImages - 1 do
+                    imageIndexes[i+1] = struct.unpack("<I4", data, headerLen + (i * 4) + 1)
+                end
+            end
+        end
+    end
+    return wakeTime, imageIndexes
 end
 
-function getCurrentDisplayIdentifier()
-    local id
-    local f = file.open("current_display", "r")
-    if f then
-        id = f:read()
-        f:close()
-    end
-    return id
-end
-
-function setCurrentDisplayIdentifier(id)
-    if id then
-        local f = assert(file.open("current_display", "w"))
-        f:write(id)
-        f:close()
-    else
-        file.remove("current_display")
-    end
-end
-
-function initAndDisplay(id, displayFn, ...)
-    if not initp then
-        require "panel"
-    end
-
-    -- Last arg is completion
-    local nargs = select("#", ...)
-    if nargs == 0 then
-        -- We can assume a nil completion in this case
-        nargs = 1
-    end
-    local args = { ... }
-    local completion = args[nargs]
-    if completion == nil then
-        completion = function() end
-    end
-    assert(type(completion) == "function", "Last argument to initAndDisplay must be nil or a completion function")
-
-    if id and id == getCurrentDisplayIdentifier() then
-        print("Requested contents are already on screen, doing nothing")
-        completion()
-        return
-    else
-        setCurrentDisplayIdentifier(nil)
-    end
-
-    -- Set new completion function that wraps the passed-in one in order to call setCurrentDisplayIdentifier
-    args[nargs] = function(...)
-        setCurrentDisplayIdentifier(id)
-        completion(...)
-    end
-    initp(function() displayFn(unpack(args, 1, nargs)) end)
-end
+return _ENV -- Must be last
