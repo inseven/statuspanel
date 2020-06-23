@@ -101,19 +101,20 @@ function init()
     end
 
     configurePins()
-    local autoMode = gpio.read(AutoPin) == 1
 
-    if not autoMode then
-        -- Require panel now, so as to catch syntax errors early. But in auto mode, don't load it
-        -- until after we've done the network ops, to save RAM.
-        require "panel"
-    end
-    require "main"
-    main(autoMode)
+    require("main")
+    main()
 end
 
-
-statusTable = {}
+-- Syntax: _ENV = module()
+-- This works on both Lua 5.1 and >= 5.2
+function module()
+    local env = setmetatable({}, {__index = _G})
+    if setfenv then
+        setfenv(2, env)
+    end
+    return env
+end
 
 function setStatusLed(val)
     if StatusLed then
@@ -121,19 +122,8 @@ function setStatusLed(val)
     end
 end
 
-function addStatus(...)
-    local status = string.format(...)
-    print(status)
-    table.insert(statusTable, status)
-end
-
-function addErrorStatus(...)
-    setStatusErrored()
-    addStatus(...)
-end
-
-function setStatusErrored()
-    statusTable.err = true
+function printf(...)
+    print(string.format(...))
 end
 
 function getBatteryVoltage()
@@ -155,5 +145,5 @@ end
 
 local ok, err = pcall(init)
 if not ok then
-    addStatus(err)
+    print(err)
 end

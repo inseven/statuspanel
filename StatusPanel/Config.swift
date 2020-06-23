@@ -249,4 +249,21 @@ class Config {
             UserDefaults.standard.setValue(newValue.rawValue, forKey: "privacyMode")
         }
     }
+
+    private static func getLastUploadHashKey(for deviceid: String) -> String {
+        return "lastUploadedHash_\(deviceid)"
+    }
+
+    static func setLastUploadHash(for deviceid: String, to hash:String?) {
+        let key = getLastUploadHashKey(for: deviceid)
+        if let hash = hash {
+            UserDefaults.standard.setValue(hash, forKey: key)
+        } else {
+            UserDefaults.standard.removeObject(forKey: key)
+        }
+    }
+
+    static func getLastUploadHash(for deviceid: String) -> String? {
+        return UserDefaults.standard.string(forKey: getLastUploadHashKey(for: deviceid))
+    }
 }
