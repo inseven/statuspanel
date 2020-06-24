@@ -79,7 +79,7 @@ struct StringUtils {
             // If there's only one match (ie no subgroups) return just it, otherwise
             // return just the subgroups.
             if match.numberOfRanges == 1 {
-                result.append(nsstring.substring(with: match.range(at: 1)))
+                result.append(nsstring.substring(with: match.range(at: 0)))
             } else {
                 for i in 1 ..< match.numberOfRanges {
                     let range = match.range(at: i)

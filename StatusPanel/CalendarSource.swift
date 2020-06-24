@@ -69,11 +69,7 @@ class CalendarItem : DataItemBase {
     }
 
     func getSubText() -> String? {
-        if Config().showCalendarLocations {
-            return location
-        } else {
-            return nil
-        }
+        return location
     }
 
     let time: String?
@@ -134,6 +130,10 @@ class CalendarSource : DataSource {
             results.append(DataItem(self.header!, flags: [.header]))
         }
 
+        let config = Config()
+        let showLocations = config.showCalendarLocations
+        let shouldRedactUrls = !config.showUrlsInCalendarLocations
+
         for event in events {
 
             // We want to make sure that we only include calendar types that we support.
@@ -177,8 +177,13 @@ class CalendarSource : DataSource {
             }
 
             let timeStr = df.string(from: event.startDate)
+            var location = showLocations ? event.location : nil
+            if location != nil && shouldRedactUrls {
+                location = redactUrls(location!)
+            }
+
             if event.isAllDay {
-                results.append(CalendarItem(title: title, location: event.location))
+                results.append(CalendarItem(title: title, location: location))
             } else if event.timeZone != nil && event.timeZone != tz {
                 // a nil timezone means floating time
                 df.timeZone = event.timeZone
@@ -186,12 +191,21 @@ class CalendarSource : DataSource {
                 let eventLocalTime = df.string(from: event.startDate)
                 df.timeZone = tz
                 let tzStr = timeZoneFormatter.string(from: event.startDate)
-                results.append(CalendarItem(time: timeStr, title: "\(title) (\(eventLocalTime) \(tzStr))", location: event.location))
+                results.append(CalendarItem(time: timeStr, title: "\(title) (\(eventLocalTime) \(tzStr))", location: location))
             } else {
-                results.append(CalendarItem(time: timeStr, title: title, location: event.location))
+                results.append(CalendarItem(time: timeStr, title: title, location: location))
             }
         }
         callback(self, results, nil)
+    }
+
+    func redactUrls(_ value: String) -> String {
+        let urls = StringUtils.regex(value, pattern: "https?://[^ ]+")
+        var result = value
+        for url in urls {
+            result = result.replacingOccurrences(of: url, with: "https://▒▒▒▒▒▒▒▒▒▒▒▒▒/")
+        }
+        return result
     }
 
     static func getHeader() -> DataItemBase {
