@@ -227,6 +227,15 @@ class Config {
         }
     }
 
+    var showUrlsInCalendarLocations: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: "showUrlsInCalendarLocations")
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "showUrlsInCalendarLocations")
+        }
+    }
+
     // 0 means unlimited
     var maxLines: Int {
         get {
