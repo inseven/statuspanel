@@ -202,8 +202,13 @@ class CalendarSource : DataSource {
     func redactUrls(_ value: String) -> String {
         let urls = StringUtils.regex(value, pattern: "https?://[^ ]+")
         var result = value
-        for url in urls {
-            result = result.replacingOccurrences(of: url, with: "https://▒▒▒▒▒▒▒▒▒▒▒▒▒/")
+        for urlString in urls {
+            if let url = URL(string: urlString), let scheme = url.scheme, let host = url.host {
+                let newUrl = "\(scheme)://\(host)/▒▒▒▒▒▒▒▒▒▒▒▒▒"
+                result = result.replacingOccurrences(of: urlString, with: newUrl)
+            } else {
+                result = result.replacingOccurrences(of: urlString, with: "▒▒▒▒▒▒▒▒▒▒▒▒▒")
+            }
         }
         return result
     }

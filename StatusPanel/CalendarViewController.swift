@@ -66,7 +66,7 @@ class CalendarViewController: UITableViewController {
                 control.addTarget(self, action:#selector(showCalendarLocationsSwitchChanged(sender:)), for: .valueChanged)
                 cell.accessoryView = control
             case 1:
-                cell.textLabel?.text = "Show URLs in locations"
+                cell.textLabel?.text = "Show full URLs in locations"
                 let control = UISwitch()
                 control.isOn = Config().showUrlsInCalendarLocations
                 control.addTarget(self, action:#selector(showUrlsInCalendarLocationsSwitchChanged(sender:)), for: .valueChanged)
