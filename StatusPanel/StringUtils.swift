@@ -54,7 +54,7 @@ struct StringUtils {
                         }
                     }
                     newLine()
-                    components.append(remainder)
+                    components.insert(remainder, at: 0)
                 } else {
                     // Just start a new line
                     newLine()
