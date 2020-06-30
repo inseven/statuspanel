@@ -35,6 +35,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         application.registerForRemoteNotifications()
 
+        window?.tintColor = UIColor(named: "TintColor")
+        if let navigationController = window?.rootViewController as? UINavigationController {
+            navigationController.navigationBar.prefersLargeTitles = true
+        }
+
         return true
     }
 
