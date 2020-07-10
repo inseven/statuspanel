@@ -42,6 +42,8 @@
 		DBF15BC92471CAB7004AA972 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF15BC82471CAB7004AA972 /* NetworkExtension.framework */; };
 		DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */; };
 		DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF1C553223D519C0080CADE /* TFLSettingsController.swift */; };
+		DBFCBB7A24B8A55700E3B3D3 /* FontInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFCBB7924B8A55700E3B3D3 /* FontInfoController.swift */; };
+		DBFCBB7C24B8B6AD00E3B3D3 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -159,6 +161,8 @@
 		DBF15BC82471CAB7004AA972 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalRailDataSource.swift; sourceTree = "<group>"; };
 		DBF1C553223D519C0080CADE /* TFLSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLSettingsController.swift; sourceTree = "<group>"; };
+		DBFCBB7924B8A55700E3B3D3 /* FontInfoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontInfoController.swift; sourceTree = "<group>"; };
+		DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -260,6 +264,7 @@
 				DB62F33F2258FD6100CA5E64 /* StatusPanel.entitlements */,
 				DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */,
 				D89CAF1021ABDDA200B4B314 /* Config.swift */,
+				DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */,
 				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
 				DBCA987E2143E2920084B710 /* ViewController.swift */,
 				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
@@ -271,6 +276,7 @@
 				DBCA98B6214518EF0084B710 /* DataSourceController.swift */,
 				DB51C2E221749A2A00F016DB /* JSONRequest.swift */,
 				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
+				DBFCBB7924B8A55700E3B3D3 /* FontInfoController.swift */,
 				DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */,
 				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
 				DB5E9DA0241562ED009F3807 /* StringUtils.swift */,
@@ -435,9 +441,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBFCBB7C24B8B6AD00E3B3D3 /* Fonts.swift in Sources */,
 				DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */,
 				DB62F335224FB47A00CA5E64 /* Station.swift in Sources */,
 				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
+				DBFCBB7A24B8A55700E3B3D3 /* FontInfoController.swift in Sources */,
 				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
 				DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */,
 				DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */,
