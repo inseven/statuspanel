@@ -100,6 +100,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             font = UIFont(name: "RobotY", size: type == .subText ? 16 : 32)
         } else if fontName == "pixelbyzantine" {
             font = UIFont(name: "PixelByzantine", size: type == .subText ? 16 : 32)
+        } else if fontName == "chikarego" {
+            font = UIFont(name: "ChiKareGo", size: type == .header ? 48 : type == .text ? 32 : 16)
+        } else if fontName == "chikarego2" {
+            font = UIFont(name: "ChiKareGo2", size: type == .header ? 48 : type == .text ? 32 : 16)
         } else {
             // amiga4ever
             font = UIFont(name: "Amiga Forever", size:
