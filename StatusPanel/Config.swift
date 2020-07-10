@@ -189,6 +189,10 @@ class Config {
 
     let availableFonts = [
         ("font6x10_2", "Guicons Font"), // Genuinely have no idea what this is actually called
+        ("jinxedwizards", "Jinxed Wizards"),
+        ("heroinesword", "Heroine Sword"),
+        ("roboty", "RobotY"),
+        ("pixelbyzantine", "PixelByzantine"),
        // ("amiga4ever", "Amiga Forever"),
        // ("advocut", "AdvoCut"),
        // ("silkscreen", "Silkscreen"),

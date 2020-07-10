@@ -92,6 +92,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         } else if fontName == "silkscreen" {
             font = UIFont(name: "Silkscreen", size:
                 type == .header ? 32 : type == .text ? 17 : 11)
+        } else if fontName == "jinxedwizards" {
+            font = UIFont(name: "JinxedWizards", size: 16)
+        } else if fontName == "heroinesword" {
+            font = UIFont(name: "8x8BoldWideMono", size: type == .subText ? 16 : 32)
+        } else if fontName == "roboty" {
+            font = UIFont(name: "RobotY", size: type == .subText ? 16 : 32)
+        } else if fontName == "pixelbyzantine" {
+            font = UIFont(name: "PixelByzantine", size: type == .subText ? 16 : 32)
         } else {
             // amiga4ever
             font = UIFont(name: "Amiga Forever", size:
