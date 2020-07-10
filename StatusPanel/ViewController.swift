@@ -80,40 +80,23 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     static func getLabel(frame: CGRect, font fontName: String, type: LabelType = .text, redactMode: RedactMode = .none) -> UILabel {
-        if fontName == "font6x10_2" && type != .header {
-            return BitmapFontLabel(frame: frame, fontNamed: "font6x10", scale: type == .text ? 2 : 1, redactMode: redactMode)
-        }
-
-        // Otherwise it's a UIFont-based label
-        var font: UIFont?
-        if fontName == "advocut" {
-            font = UIFont(name: "AdvoCut", size:
-                type == .header ? 37 : type == .text ? 27 : 13)
-        } else if fontName == "silkscreen" {
-            font = UIFont(name: "Silkscreen", size:
-                type == .header ? 32 : type == .text ? 17 : 11)
-        } else if fontName == "jinxedwizards" {
-            font = UIFont(name: "JinxedWizards", size: 16)
-        } else if fontName == "heroinesword" {
-            font = UIFont(name: "8x8BoldWideMono", size: type == .subText ? 16 : 32)
-        } else if fontName == "roboty" {
-            font = UIFont(name: "RobotY", size: type == .subText ? 16 : 32)
-        } else if fontName == "pixelbyzantine" {
-            font = UIFont(name: "PixelByzantine", size: type == .subText ? 16 : 32)
-        } else if fontName == "chikarego" {
-            font = UIFont(name: "ChiKareGo", size: type == .header ? 48 : type == .text ? 32 : 16)
-        } else if fontName == "chikarego2" {
-            font = UIFont(name: "ChiKareGo2", size: type == .header ? 48 : type == .text ? 32 : 16)
+        let font = Config().getFont(named: fontName)
+        let size = (type == .header) ? font.headerSize : (type == .subText) ? font.subTextSize : font.textSize
+        if let bitmapName = font.bitmapName {
+            if bitmapName == "font6x10" && type == .header {
+                // Special case this, as guicons does not look good as a header font
+                let label = UILabel(frame: frame)
+                label.lineBreakMode = .byWordWrapping
+                label.font = UIFont(name: "Amiga Forever", size: 24)
+                return label
+            }
+            return BitmapFontLabel(frame: frame, fontNamed: bitmapName, scale: size, redactMode: redactMode)
         } else {
-            // amiga4ever
-            font = UIFont(name: "Amiga Forever", size:
-                type == .header ? 24 : type == .text ? 16 : 8)
+            let label = UILabel(frame: frame)
+            label.lineBreakMode = .byWordWrapping
+            label.font = UIFont(name: font.uifontName!, size: CGFloat(size))
+            return label
         }
-
-        let label = UILabel(frame: frame)
-        label.lineBreakMode = .byWordWrapping
-        label.font = font
-        return label
     }
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {

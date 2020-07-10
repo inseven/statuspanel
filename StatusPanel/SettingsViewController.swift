@@ -20,8 +20,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     let UpdateTimeSection = 1
     let DisplaySection = 2
     let NumDisplaySettings = 4
-
-    let DeviceIdSection = 3
+    let FontSection = 3
+    let DeviceIdSection = 4
 
     // These are the view controller storyboard IDs, in IndexPath order
     let DataSourceEditors = [
@@ -66,7 +66,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 4
+        return 5
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -79,9 +79,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             #endif
         case UpdateTimeSection: return 1
         case DisplaySection:
-            let numFonts = Config().availableFonts.count
-            // Don't display font choices if there's only one
-            return NumDisplaySettings + (numFonts > 1 ? numFonts : 0)
+            return NumDisplaySettings
+        case FontSection:
+            return Config().availableFonts.count
         case DeviceIdSection:
             var n = devices.count
             if n == 0 {
@@ -101,6 +101,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DataSourcesSection: return "Data Sources"
         case UpdateTimeSection: return "Update Time"
         case DisplaySection: return "Display Settings"
+        case FontSection: return "Font"
         case DeviceIdSection: return "Paired Devices"
         default: return nil
         }
@@ -222,15 +223,23 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 }
                 cell.accessoryType = .disclosureIndicator
             default:
-                let (font, text) = Config().availableFonts[indexPath.row - NumDisplaySettings]
-                let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
-                let label = ViewController.getLabel(frame:frame, font: font)
-                label.text = text
-                label.sizeToFit()
-                label.frame = label.frame.offsetBy(dx: 0, dy: (frame.height - label.bounds.height) / 2)
-                cell.accessoryType = (font == Config().font) ? .checkmark : .none
-                cell.contentView.addSubview(label)
+                break
             }
+            return cell
+        case FontSection:
+            let config = Config()
+            let font = config.availableFonts[indexPath.row]
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
+            let label = ViewController.getLabel(frame:frame, font: font.configName)
+            label.text = font.humanReadableName
+            label.sizeToFit()
+            label.frame = label.frame.offsetBy(dx: 30, dy: (frame.height - label.bounds.height) / 2)
+            if font.configName == config.font {
+                cell.imageView?.image = UIImage(systemName: "checkmark")
+            }
+            cell.contentView.addSubview(label)
+            cell.accessoryType = .detailButton
             return cell
         default:
             return UITableViewCell(style: .default, reuseIdentifier: nil)
@@ -287,25 +296,25 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 return
             }
         case DisplaySection:
-            let config = Config()
             if indexPath.row == 1 {
                 vcid = "DarkModeEditor"
             } else if indexPath.row == 2 {
                 vcid = "MaxLinesEditor"
             } else if indexPath.row == 3 {
                 vcid = "PrivacyModeEditor"
-            } else {
-                config.font = config.availableFonts[indexPath.row - NumDisplaySettings].0
-                tableView.performBatchUpdates({
-                    var paths: [IndexPath] = []
-                    for i in 0 ..< config.availableFonts.count {
-                        paths.append(IndexPath(row: i+NumDisplaySettings, section: DisplaySection))
-                    }
-                    tableView.deselectRow(at: indexPath, animated: true)
-                    tableView.reloadRows(at: paths, with: .automatic)
-                }, completion: nil)
-                return
             }
+        case FontSection:
+            let config = Config()
+            config.font = config.availableFonts[indexPath.row].configName
+            tableView.performBatchUpdates({
+                var paths: [IndexPath] = []
+                for i in 0 ..< config.availableFonts.count {
+                    paths.append(IndexPath(row: i, section: FontSection))
+                }
+                tableView.deselectRow(at: indexPath, animated: true)
+                tableView.reloadRows(at: paths, with: .automatic)
+            }, completion: nil)
+            return
         default:
             break
         }
@@ -343,6 +352,14 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         }
         let actions = UISwipeActionsConfiguration(actions: [action])
         return actions
+    }
+
+    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        if indexPath.section == FontSection {
+            let vc = storyboard?.instantiateViewController(withIdentifier: "FontInfo") as! FontInfoController
+            vc.font = Config().availableFonts[indexPath.row]
+            navigationController?.pushViewController(vc, animated: true)
+        }
     }
 
 }

@@ -174,12 +174,10 @@ class Config {
 
     var font: String {
         get {
-            let result = UserDefaults.standard.string(forKey: "font")
-            if result == nil || !availableFonts.contains(where: { $0.0 == result }) {
-                // Unset, or a font we've since removed?
-                return availableFonts[0].0
+            if let result = UserDefaults.standard.string(forKey: "font") {
+                return result
             } else {
-                return result!
+                return availableFonts[0].configName
             }
         }
         set {
@@ -187,18 +185,17 @@ class Config {
         }
     }
 
-    let availableFonts = [
-        ("font6x10_2", "Guicons Font"), // Genuinely have no idea what this is actually called
-        ("jinxedwizards", "Jinxed Wizards"),
-        ("heroinesword", "Heroine Sword"),
-        ("roboty", "RobotY"),
-        ("pixelbyzantine", "PixelByzantine"),
-        ("chikarego", "ChiKareGo"),
-        ("chikarego2", "ChiKareGo 2"),
-       // ("amiga4ever", "Amiga Forever"),
-       // ("advocut", "AdvoCut"),
-       // ("silkscreen", "Silkscreen"),
-    ]
+    typealias Font = Fonts.Font
+    let availableFonts = Fonts.availableFonts
+
+    func getFont(named: String) -> Font {
+        for font in availableFonts {
+            if font.configName == named {
+                return font
+            }
+        }
+        return availableFonts[0]
+    }
 
     enum DarkModeConfig: Int, CaseIterable {
         case off = 0, on = 1, system = 2
