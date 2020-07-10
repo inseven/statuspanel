@@ -52,6 +52,8 @@
 		<string>fonts/8x8 Wide Mono Bold.ttf</string>
 		<string>fonts/RobotY.ttf</string>
 		<string>fonts/PixelByzantine.ttf</string>
+		<string>fonts/ChiKareGo.ttf</string>
+		<string>fonts/ChiKareGo2.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
