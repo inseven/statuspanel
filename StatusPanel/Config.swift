@@ -193,6 +193,8 @@ class Config {
         ("heroinesword", "Heroine Sword"),
         ("roboty", "RobotY"),
         ("pixelbyzantine", "PixelByzantine"),
+        ("chikarego", "ChiKareGo"),
+        ("chikarego2", "ChiKareGo 2"),
        // ("amiga4ever", "Amiga Forever"),
        // ("advocut", "AdvoCut"),
        // ("silkscreen", "Silkscreen"),
