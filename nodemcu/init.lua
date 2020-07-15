@@ -44,7 +44,9 @@ function configurePins()
     adc.setup(adc.ADC1, VBat, adc.ATTEN_11db)
     adc.setwidth(adc.ADC1, 12)
     gpio.write(Reset, 0)
-    if inputIsConnected(OriginalBusy) then
+    -- if inputIsConnected(OriginalBusy) then
+    -- Don't get clever, just hard code for my board (for the moment)
+    if node.chipid() ~= "0xee30aea419be" then
         Busy = OriginalBusy
     else
         Busy = NewBusy
