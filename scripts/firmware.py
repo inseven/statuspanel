@@ -46,6 +46,7 @@ def main():
     parser.add_argument("--device", type=str, default=DEFAULT_DEVICE, help="USB serial device (defaults to %s)" % (DEFAULT_DEVICE, ))
     parser.add_argument("command", choices=["erase",
                                             "flash",
+                                            "upload",
                                             "console",
                                             "configure-wifi"], help="command to run")
     options = parser.parse_args()
@@ -82,8 +83,7 @@ def main():
              os.path.join(ESP32_DIRECTORY, "partitions.bin"),
              "0x190000",
              os.path.join(ESP32_DIRECTORY, "lfs.img")])
-        logging.info("Sleeping...")
-        time.sleep(1)
+    elif options.command == "upload":
         logging.info("Uploading Lua scripts...")
         run([sys.executable,
              NODEMCU_UPLOADER_PATH,
