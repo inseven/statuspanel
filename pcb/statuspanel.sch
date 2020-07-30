@@ -5413,9 +5413,9 @@ W = angled&lt;p&gt;
 <label x="33.02" y="58.42" size="0.8128" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="HUZZAH32" gate="G$1" pin="GPIO13"/>
-<wire x1="91.44" y1="66.04" x2="86.36" y2="66.04" width="0.1524" layer="91"/>
-<label x="86.36" y="66.04" size="0.8128" layer="95" rot="R180" xref="yes"/>
+<pinref part="HUZZAH32" gate="G$1" pin="GPIOSCL"/>
+<wire x1="91.44" y1="83.82" x2="86.36" y2="83.82" width="0.1524" layer="91"/>
+<label x="86.36" y="83.82" size="0.8128" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="3V3" class="0">
