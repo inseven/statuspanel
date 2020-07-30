@@ -184,6 +184,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("didReceiveRemoteNotification")
+        Config().lastBackgroundUpdate = Date()
         backgroundFetchCompletionFn = completionHandler
         if shouldFetch() {
             sourceController.fetch()
