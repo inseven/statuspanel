@@ -5495,8 +5495,12 @@ W = angled&lt;p&gt;
 </segment>
 <segment>
 <pinref part="DISPLAY" gate="G$1" pin="25"/>
-<wire x1="53.34" y1="68.58" x2="58.42" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="68.58" x2="55.88" y2="68.58" width="0.1524" layer="91"/>
 <label x="58.42" y="68.58" size="0.8128" layer="95" xref="yes"/>
+<pinref part="DISPLAY" gate="G$1" pin="39"/>
+<wire x1="55.88" y1="68.58" x2="58.42" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="86.36" x2="55.88" y2="86.36" width="0.1524" layer="91"/>
+<wire x1="55.88" y1="86.36" x2="55.88" y2="68.58" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="AUTO" class="0">
