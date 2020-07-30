@@ -10,6 +10,15 @@ import Foundation
 
 class Config {
 
+    private enum Key: String {
+        case activeCalendars = "activeCalendars"
+        case activeTFLLines = "activeTFLLines"
+        case updateTime = "updateTime"
+        case trainRoutes = "trainRoutes"
+        case lastBackgroundUpdate = "lastBackgroundUpdate"
+        case privacyMode = "privacyMode"
+    }
+
     struct TrainRoute {
         var from: String?
         var to: String?
@@ -19,55 +28,50 @@ class Config {
         }
     }
 
-    private let activeCalendarsKey = "activeCalendars"
-    private let activeTFLLinesKey = "activeTFLLines"
-    private let updateTimeKey = "updateTime"
-    private let trainRoutesKey = "trainRoutes"
-
     var activeCalendars: [String] {
         get {
             let userDefaults = UserDefaults.standard
-            guard let identifiers = userDefaults.object(forKey: activeCalendarsKey) as? [String] else {
+            guard let identifiers = userDefaults.object(forKey: Key.activeCalendars.rawValue) as? [String] else {
                 return []
             }
             return identifiers
         }
         set {
             let userDefaults = UserDefaults.standard
-            userDefaults.set(newValue, forKey: activeCalendarsKey)
+            userDefaults.set(newValue, forKey: Key.activeCalendars.rawValue)
         }
     }
 
     var activeTFLLines: [String] {
         get {
             let userDefaults = UserDefaults.standard
-            guard let lines = userDefaults.object(forKey: activeTFLLinesKey) as? [String] else {
+            guard let lines = userDefaults.object(forKey: Key.activeTFLLines.rawValue) as? [String] else {
                 return []
             }
             return lines
         }
         set {
             let userDefaults = UserDefaults.standard
-            userDefaults.set(newValue, forKey: activeTFLLinesKey)
+            userDefaults.set(newValue, forKey: Key.activeTFLLines.rawValue)
         }
     }
 
     // The desired panel wake time, as a number of seconds since midnight (floating time)
     var updateTime: TimeInterval {
         get {
-            guard let result = UserDefaults.standard.value(forKey: updateTimeKey) as? TimeInterval else {
+            guard let result = UserDefaults.standard.value(forKey: Key.updateTime.rawValue) as? TimeInterval else {
                 return (6 * 60 + 20) * 60
             }
             return result
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: updateTimeKey)
+            UserDefaults.standard.set(newValue, forKey: Key.updateTime.rawValue)
         }
     }
 
     var trainRoutes: [TrainRoute] {
         get {
-            guard let val = UserDefaults.standard.array(forKey: trainRoutesKey) as? [Dictionary<String,String>] else {
+            guard let val = UserDefaults.standard.array(forKey: Key.trainRoutes.rawValue) as? [Dictionary<String,String>] else {
                 return []
             }
             var result: [TrainRoute] = []
@@ -88,7 +92,7 @@ class Config {
                 }
                 val.append(dict)
             }
-            UserDefaults.standard.set(val, forKey: trainRoutesKey)
+            UserDefaults.standard.set(val, forKey: Key.trainRoutes.rawValue)
         }
     }
 
@@ -255,10 +259,10 @@ class Config {
 
     var privacyMode: PrivacyMode {
         get {
-            return PrivacyMode.init(rawValue: UserDefaults.standard.integer(forKey: "privacyMode"))!
+            return PrivacyMode.init(rawValue: UserDefaults.standard.integer(forKey: Key.privacyMode.rawValue))!
         }
         set {
-            UserDefaults.standard.setValue(newValue.rawValue, forKey: "privacyMode")
+            UserDefaults.standard.setValue(newValue.rawValue, forKey: Key.privacyMode.rawValue)
         }
     }
 
@@ -277,5 +281,16 @@ class Config {
 
     static func getLastUploadHash(for deviceid: String) -> String? {
         return UserDefaults.standard.string(forKey: getLastUploadHashKey(for: deviceid))
+    }
+
+    var lastBackgroundUpdate: Date? {
+        get {
+            return UserDefaults.standard.object(forKey: Key.lastBackgroundUpdate.rawValue) as? Date
+        }
+        set {
+            let userDefaults = UserDefaults.standard
+            userDefaults.set(newValue, forKey: Key.lastBackgroundUpdate.rawValue)
+            userDefaults.synchronize()
+        }
     }
 }
