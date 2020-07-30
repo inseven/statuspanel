@@ -107,6 +107,20 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         }
     }
 
+    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        switch section {
+        case DeviceIdSection:
+            guard let lastBackgroundUpdate = Config().lastBackgroundUpdate else {
+                return nil
+            }
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .short
+            dateFormatter.timeStyle = .short
+            return "Last background update at \(dateFormatter.string(from: lastBackgroundUpdate))"
+        default: return nil
+        }
+    }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let config = Config()
         switch indexPath.section {
