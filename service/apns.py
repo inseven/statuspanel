@@ -51,7 +51,7 @@ class APNS(object):
                         content_available=True,
                     )
                     print("Success!")
-                except gobiko.apns.exceptions.BadDeviceToken, gobiko.apns.exceptions.Unregistered:
+                except (gobiko.apns.exceptions.BadDeviceToken, gobiko.apns.exceptions.Unregistered):
                     print(f"Failed to send notification to bad device token '{device_token}'.")
                     bad_tokens.append(device_token)
                 except Exception as e:
