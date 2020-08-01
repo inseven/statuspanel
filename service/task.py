@@ -7,7 +7,7 @@ import apns
 import database
 
 
-def send_keepalive(use_sandbox, tokens):
+def send_keepalive(db, use_sandbox, tokens):
     if tokens:
         print(f"Devices: {tokens}")
         client = apns.APNS(use_sandbox=use_sandbox)
@@ -36,10 +36,10 @@ def main():
     devices = db.get_devices()
 
     print("Sending sandbox tokens...")
-    send_keepalive(use_sandbox=True, tokens=[device["token"] for device in devices if device["use_sandbox"]])
+    send_keepalive(db, use_sandbox=True, tokens=[device["token"] for device in devices if device["use_sandbox"]])
 
     print("Sending tokens...")
-    send_keepalive(use_sandbox=False, tokens=[device["token"] for device in devices if not device["use_sandbox"]])
+    send_keepalive(db, use_sandbox=False, tokens=[device["token"] for device in devices if not device["use_sandbox"]])
 
 
 if __name__=="__main__":
