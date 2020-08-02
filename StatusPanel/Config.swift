@@ -13,10 +13,17 @@ class Config {
     private enum Key: String {
         case activeCalendars = "activeCalendars"
         case activeTFLLines = "activeTFLLines"
-        case updateTime = "updateTime"
-        case trainRoutes = "trainRoutes"
+        case darkMode = "darkMode"
+        case displaySingleColumn = "displaySingleColumn"
+        case dummyData = "dummyData"
+        case font = "font"
         case lastBackgroundUpdate = "lastBackgroundUpdate"
+        case maxLines = "maxLines"
         case privacyMode = "privacyMode"
+        case showCalendarLocations = "showCalendarLocations"
+        case showUrlsInCalendarLocations = "showUrlsInCalendarLocations"
+        case trainRoutes = "trainRoutes"
+        case updateTime = "updateTime"
     }
 
     struct TrainRoute {
@@ -28,50 +35,75 @@ class Config {
         }
     }
 
+    let userDefaults = UserDefaults.standard
+
+    private func object(for key: Key) -> Any? {
+        return self.userDefaults.object(forKey: key.rawValue)
+    }
+
+    private func value(for key: Key) -> Any? {
+        return self.userDefaults.value(forKey: key.rawValue)
+    }
+
+    private func array(for key: Key) -> [Any]? {
+        return self.userDefaults.array(forKey: key.rawValue)
+    }
+
+    private func string(for key: Key) -> String? {
+        return self.userDefaults.string(forKey: key.rawValue)
+    }
+
+    private func integer(for key: Key) -> Int {
+        return self.userDefaults.integer(forKey: key.rawValue)
+    }
+
+    private func bool(for key: Key) -> Bool {
+        return self.userDefaults.bool(forKey: key.rawValue)
+    }
+
+    private func set(_ value: Any?, for key: Key) {
+        self.userDefaults.set(value, forKey: key.rawValue)
+    }
+
+    private func set(_ value: Int, for key: Key) {
+        self.userDefaults.set(value, forKey: key.rawValue)
+    }
+
+    private func set(_ value: Bool, for key: Key) {
+        self.userDefaults.set(value, forKey: key.rawValue)
+    }
+
     var activeCalendars: [String] {
         get {
-            let userDefaults = UserDefaults.standard
-            guard let identifiers = userDefaults.object(forKey: Key.activeCalendars.rawValue) as? [String] else {
-                return []
-            }
-            return identifiers
+            self.object(for: .activeCalendars) as? [String] ?? []
         }
         set {
-            let userDefaults = UserDefaults.standard
-            userDefaults.set(newValue, forKey: Key.activeCalendars.rawValue)
+            self.set(newValue, for: .activeCalendars)
         }
     }
 
     var activeTFLLines: [String] {
         get {
-            let userDefaults = UserDefaults.standard
-            guard let lines = userDefaults.object(forKey: Key.activeTFLLines.rawValue) as? [String] else {
-                return []
-            }
-            return lines
+            self.object(for: .activeTFLLines) as? [String] ?? []
         }
         set {
-            let userDefaults = UserDefaults.standard
-            userDefaults.set(newValue, forKey: Key.activeTFLLines.rawValue)
+            self.set(newValue, for: .activeTFLLines)
         }
     }
 
     // The desired panel wake time, as a number of seconds since midnight (floating time)
     var updateTime: TimeInterval {
         get {
-            guard let result = UserDefaults.standard.value(forKey: Key.updateTime.rawValue) as? TimeInterval else {
-                return (6 * 60 + 20) * 60
-            }
-            return result
+            self.value(for: .updateTime) as? TimeInterval ?? (6 * 60 + 20) * 60
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: Key.updateTime.rawValue)
+            self.set(newValue, for: .updateTime)
         }
     }
 
     var trainRoutes: [TrainRoute] {
         get {
-            guard let val = UserDefaults.standard.array(forKey: Key.trainRoutes.rawValue) as? [Dictionary<String,String>] else {
+            guard let val = self.array(for: .trainRoutes) as? [Dictionary<String,String>] else {
                 return []
             }
             var result: [TrainRoute] = []
@@ -92,7 +124,7 @@ class Config {
                 }
                 val.append(dict)
             }
-            UserDefaults.standard.set(val, forKey: Key.trainRoutes.rawValue)
+            self.set(val, for: .trainRoutes)
         }
     }
 
@@ -163,29 +195,25 @@ class Config {
             for (deviceid, publickey) in newValue {
                 objs.append(["publickey": publickey, "deviceid": deviceid])
             }
-            UserDefaults.standard.setValue(objs, forKey: "devices")
+            self.userDefaults.set(objs, forKey: "devices")
         }
     }
 
     var displayTwoColumns: Bool {
         get {
-            return !UserDefaults.standard.bool(forKey:"displaySingleColumn")
+            !self.bool(for: .displaySingleColumn)
         }
         set {
-            UserDefaults.standard.set(!newValue, forKey: "displaySingleColumn")
+            self.set(!newValue, for: .displaySingleColumn)
         }
     }
 
     var font: String {
         get {
-            if let result = UserDefaults.standard.string(forKey: "font") {
-                return result
-            } else {
-                return availableFonts[0].configName
-            }
+            self.string(for: .font) ?? availableFonts[0].configName
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "font")
+            self.set(newValue, for: .font)
         }
     }
 
@@ -202,67 +230,71 @@ class Config {
     }
 
     enum DarkModeConfig: Int, CaseIterable {
-        case off = 0, on = 1, system = 2
+        case off = 0
+        case on = 1
+        case system = 2
     }
 
     var darkMode: DarkModeConfig {
         get {
-            return DarkModeConfig.init(rawValue: UserDefaults.standard.integer(forKey: "darkMode"))!
+            DarkModeConfig.init(rawValue: self.integer(for: .darkMode))!
         }
         set {
-            UserDefaults.standard.setValue(newValue.rawValue, forKey: "darkMode")
+            self.set(newValue.rawValue, for: .darkMode)
         }
     }
 
     #if DEBUG
         var showDummyData: Bool {
             get {
-                return UserDefaults.standard.bool(forKey: "dummyData")
+                self.bool(for: .dummyData)
             }
             set {
-                UserDefaults.standard.set(newValue, forKey: "dummyData")
+                self.set(newValue, for: .dummyData)
             }
         }
     #endif
 
     var showCalendarLocations: Bool {
         get {
-            return UserDefaults.standard.bool(forKey: "showCalendarLocations")
+            self.bool(for: .showCalendarLocations)
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "showCalendarLocations")
+            self.set(newValue, for: .showCalendarLocations)
         }
     }
 
     var showUrlsInCalendarLocations: Bool {
         get {
-            return UserDefaults.standard.bool(forKey: "showUrlsInCalendarLocations")
+            self.bool(for: .showUrlsInCalendarLocations)
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "showUrlsInCalendarLocations")
+            self.set(newValue, for: .showUrlsInCalendarLocations)
         }
     }
 
     // 0 means unlimited
     var maxLines: Int {
         get {
-            return UserDefaults.standard.integer(forKey: "maxLines")
+            self.integer(for: .maxLines)
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: "maxLines")
+            self.set(newValue, for: .maxLines)
         }
     }
 
     enum PrivacyMode: Int, CaseIterable {
-        case redactLines = 0, redactWords = 1, customImage = 2
+        case redactLines = 0
+        case redactWords = 1
+        case customImage = 2
     }
 
     var privacyMode: PrivacyMode {
         get {
-            return PrivacyMode.init(rawValue: UserDefaults.standard.integer(forKey: Key.privacyMode.rawValue))!
+            PrivacyMode.init(rawValue: self.integer(for: Key.privacyMode))!
         }
         set {
-            UserDefaults.standard.setValue(newValue.rawValue, forKey: Key.privacyMode.rawValue)
+            self.set(newValue.rawValue, for: .privacyMode)
         }
     }
 
@@ -270,27 +302,25 @@ class Config {
         return "lastUploadedHash_\(deviceid)"
     }
 
-    static func setLastUploadHash(for deviceid: String, to hash:String?) {
-        let key = getLastUploadHashKey(for: deviceid)
+    func setLastUploadHash(for deviceid: String, to hash:String?) {
+        let key = Config.getLastUploadHashKey(for: deviceid)
         if let hash = hash {
-            UserDefaults.standard.setValue(hash, forKey: key)
+            self.userDefaults.set(hash, forKey: key)
         } else {
-            UserDefaults.standard.removeObject(forKey: key)
+            self.userDefaults.removeObject(forKey: key)
         }
     }
 
-    static func getLastUploadHash(for deviceid: String) -> String? {
-        return UserDefaults.standard.string(forKey: getLastUploadHashKey(for: deviceid))
+    func getLastUploadHash(for deviceid: String) -> String? {
+        return self.userDefaults.string(forKey: Config.getLastUploadHashKey(for: deviceid))
     }
 
     var lastBackgroundUpdate: Date? {
         get {
-            return UserDefaults.standard.object(forKey: Key.lastBackgroundUpdate.rawValue) as? Date
+            self.object(for: .lastBackgroundUpdate) as? Date
         }
         set {
-            let userDefaults = UserDefaults.standard
-            userDefaults.set(newValue, forKey: Key.lastBackgroundUpdate.rawValue)
-            userDefaults.synchronize()
+            self.set(newValue, for: .lastBackgroundUpdate)
         }
     }
 }
