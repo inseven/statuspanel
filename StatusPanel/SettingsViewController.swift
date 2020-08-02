@@ -360,8 +360,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                     tableView.insertRows(at: [IndexPath(row: 0, section: self.DeviceIdSection)], with: .automatic)
                 }
             }, completion: nil)
-            Config.setLastUploadHash(for: deviceBeingRemoved, to: nil)
-            Config().devices = self.devices
+            let config = Config()
+            config.setLastUploadHash(for: deviceBeingRemoved, to: nil)
+            config.devices = self.devices
             completion(true)
         }
         let actions = UISwipeActionsConfiguration(actions: [action])

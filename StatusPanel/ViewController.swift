@@ -26,8 +26,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     @IBAction func refresh(_ sender: Any) {
         // Wipe all stored hashes to force reupload
-        for (deviceid, _) in Config().devices {
-            Config.setLastUploadHash(for: deviceid, to: nil)
+        let config = Config()
+        for (deviceid, _) in config.devices {
+            config.setLastUploadHash(for: deviceid, to: nil)
         }
 
         sourceController.fetch()
@@ -344,7 +345,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         // for identical input data (which normally is a good thing!) so we have to construct a unencrypted blob just
         // for the purposes of calculating the hash.
         let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(makeMultipartUpload(parts: images)))!, variant: .ORIGINAL)!
-        if hash == Config.getLastUploadHash(for: deviceid) {
+        if hash == Config().getLastUploadHash(for: deviceid) {
             print("Data for \(deviceid) is the same as before, not uploading")
             completion(false)
             return
@@ -396,7 +397,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             if let error = error {
                 print(error)
             } else {
-                Config.setLastUploadHash(for: deviceid, to: hash)
+                Config().setLastUploadHash(for: deviceid, to: hash)
             }
             completion(true)
         })
