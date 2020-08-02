@@ -291,7 +291,7 @@ class Config {
 
     var privacyMode: PrivacyMode {
         get {
-            PrivacyMode.init(rawValue: self.integer(for: Key.privacyMode))!
+            PrivacyMode.init(rawValue: self.integer(for: .privacyMode))!
         }
         set {
             self.set(newValue.rawValue, for: .privacyMode)
