@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,7 @@
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
 		D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D98E422493019A00F853CA /* NetworkProvisioner.swift */; };
+		D8EED7F12630EF19009E2166 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = D8EED7F02630EF19009E2166 /* Sodium */; };
 		DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB17F92E249E3BAD008CD83E /* CGExtensions.swift */; };
 		DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */; };
 		DB1EB9062427E1F900050A08 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = DB1EB9052427E1F900050A08 /* fonts */; };
@@ -27,8 +28,6 @@
 		DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */; };
 		DB87810C223D67B2005AEBD8 /* UpdateTimeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */; };
 		DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */; };
-		DBB2D35D217CA677009F7549 /* Sodium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2D35C217CA677009F7549 /* Sodium.framework */; };
-		DBB2D35E217CA677009F7549 /* Sodium.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DBB2D35C217CA677009F7549 /* Sodium.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987C2143E2920084B710 /* AppDelegate.swift */; };
 		DBCA987F2143E2920084B710 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987E2143E2920084B710 /* ViewController.swift */; };
 		DBCA98822143E2920084B710 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBCA98802143E2920084B710 /* Main.storyboard */; };
@@ -46,73 +45,13 @@
 		DBFCBB7C24B8B6AD00E3B3D3 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		D85E118D2196BAC300E535D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 09A943C71A4EB5F500C8A04F;
-			remoteInfo = Sodium_iOS;
-		};
-		D85E118F2196BAC300E535D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 09A943D21A4EB5F500C8A04F;
-			remoteInfo = SodiumTests;
-		};
-		D85E11912196BAC300E535D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 90C75E941AE3571900F1E749;
-			remoteInfo = Sodium_OSX;
-		};
-		D85E11932196BAC300E535D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 901644B61AE36EA700163E3E;
-			remoteInfo = "Example iOS";
-		};
-		D85E11952196BAC300E535D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 901644DC1AE36F2D00163E3E;
-			remoteInfo = "Example OSX";
-		};
-		D8EEB0E323E8CB0900AA9C86 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D891FE9421642CB40092AA84;
-			remoteInfo = Sodium_watchOS;
-		};
-		D8EEB0E523E8CB0900AA9C86 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D87D515521647597006D2C03;
-			remoteInfo = "Example Watch";
-		};
-		D8EEB0E723E8CB0900AA9C86 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D87D516121647598006D2C03;
-			remoteInfo = "Example Watch Extension";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
-		DBB2D35B217CA122009F7549 /* Embed Frameworks */ = {
+		D8EED7EE2630EE8F009E2166 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				DBB2D35E217CA677009F7549 /* Sodium.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -124,10 +63,10 @@
 		D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		D835EC972471D811003E402E /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
-		D85E11852196BAC300E535D3 /* Sodium.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Sodium.xcodeproj; path = "swift-sodium/Sodium.xcodeproj"; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		D8D98E422493019A00F853CA /* NetworkProvisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvisioner.swift; sourceTree = "<group>"; };
+		D8EED7EF2630EEFF009E2166 /* swift-sodium */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "swift-sodium"; sourceTree = "<group>"; };
 		DB17F92E249E3BAD008CD83E /* CGExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
 		DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxLinesController.swift; sourceTree = "<group>"; };
 		DB1EB9052427E1F900050A08 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = StatusPanel/fonts; sourceTree = "<group>"; };
@@ -144,7 +83,6 @@
 		DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapFontLabel.swift; sourceTree = "<group>"; };
 		DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateTimeController.swift; sourceTree = "<group>"; };
 		DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyModeController.swift; sourceTree = "<group>"; };
-		DBB2D35C217CA677009F7549 /* Sodium.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Sodium.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA987C2143E2920084B710 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DBCA987E2143E2920084B710 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -172,29 +110,14 @@
 			files = (
 				D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */,
 				D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */,
-				DBB2D35D217CA677009F7549 /* Sodium.framework in Frameworks */,
 				DBF15BC92471CAB7004AA972 /* NetworkExtension.framework in Frameworks */,
+				D8EED7F12630EF19009E2166 /* Sodium in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D85E11862196BAC300E535D3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				D85E118E2196BAC300E535D3 /* Sodium.framework */,
-				D85E11902196BAC300E535D3 /* SodiumTests.xctest */,
-				D85E11922196BAC300E535D3 /* Sodium.framework */,
-				D8EEB0E423E8CB0900AA9C86 /* Sodium.framework */,
-				D85E11942196BAC300E535D3 /* Example iOS.app */,
-				D85E11962196BAC300E535D3 /* Example OSX.app */,
-				D8EEB0E623E8CB0900AA9C86 /* Example Watch.app */,
-				D8EEB0E823E8CB0900AA9C86 /* Example Watch Extension.appex */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		DB62F32F224F88F300CA5E64 /* TFL */ = {
 			isa = PBXGroup;
 			children = (
@@ -239,12 +162,11 @@
 		DBCA98702143E2920084B710 = {
 			isa = PBXGroup;
 			children = (
+				D8EED7EF2630EEFF009E2166 /* swift-sodium */,
 				DB1EB9072427E67F00050A08 /* README.markdown */,
-				D85E11852196BAC300E535D3 /* Sodium.xcodeproj */,
 				DBCA987B2143E2920084B710 /* StatusPanel */,
 				DB1EB9052427E1F900050A08 /* fonts */,
 				DBB2D354217C9AC3009F7549 /* Frameworks */,
-				DBB2D35C217CA677009F7549 /* Sodium.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -303,13 +225,16 @@
 				DBCA98752143E2920084B710 /* Sources */,
 				DBCA98762143E2920084B710 /* Frameworks */,
 				DBCA98772143E2920084B710 /* Resources */,
-				DBB2D35B217CA122009F7549 /* Embed Frameworks */,
+				D8EED7EE2630EE8F009E2166 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = StatusPanel;
+			packageProductDependencies = (
+				D8EED7F02630EF19009E2166 /* Sodium */,
+			);
 			productName = StatusPanel;
 			productReference = DBCA98792143E2920084B710 /* StatusPanel.app */;
 			productType = "com.apple.product-type.application";
@@ -350,77 +275,12 @@
 			mainGroup = DBCA98702143E2920084B710;
 			productRefGroup = DBCA987A2143E2920084B710 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = D85E11862196BAC300E535D3 /* Products */;
-					ProjectRef = D85E11852196BAC300E535D3 /* Sodium.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				DBCA98782143E2920084B710 /* StatusPanel */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		D85E118E2196BAC300E535D3 /* Sodium.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Sodium.framework;
-			remoteRef = D85E118D2196BAC300E535D3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		D85E11902196BAC300E535D3 /* SodiumTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = SodiumTests.xctest;
-			remoteRef = D85E118F2196BAC300E535D3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		D85E11922196BAC300E535D3 /* Sodium.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Sodium.framework;
-			remoteRef = D85E11912196BAC300E535D3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		D85E11942196BAC300E535D3 /* Example iOS.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "Example iOS.app";
-			remoteRef = D85E11932196BAC300E535D3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		D85E11962196BAC300E535D3 /* Example OSX.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "Example OSX.app";
-			remoteRef = D85E11952196BAC300E535D3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		D8EEB0E423E8CB0900AA9C86 /* Sodium.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Sodium.framework;
-			remoteRef = D8EEB0E323E8CB0900AA9C86 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		D8EEB0E623E8CB0900AA9C86 /* Example Watch.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "Example Watch.app";
-			remoteRef = D8EEB0E523E8CB0900AA9C86 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		D8EEB0E823E8CB0900AA9C86 /* Example Watch Extension.appex */ = {
-			isa = PBXReferenceProxy;
-			fileType = "wrapper.app-extension";
-			path = "Example Watch Extension.appex";
-			remoteRef = D8EEB0E723E8CB0900AA9C86 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DBCA98772143E2920084B710 /* Resources */ = {
@@ -596,7 +456,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -613,7 +474,10 @@
 				DEVELOPMENT_TEAM = S4WXAUZQEV;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "uk.co.inseven.status-panel";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -636,7 +500,10 @@
 				DEVELOPMENT_TEAM = S4WXAUZQEV;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "uk.co.inseven.status-panel";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -668,6 +535,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D8EED7F02630EF19009E2166 /* Sodium */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Sodium;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DBCA98712143E2920084B710 /* Project object */;
 }
