@@ -22,7 +22,7 @@ sudo apt install \
 Install the Python dependencies:
 
 ```bash
-cd scripts
+cd nodecmu
 pipenv install
 ```
 
