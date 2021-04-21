@@ -1,0 +1,12 @@
+StatusPanel.xcodeproj/project.pbxproj
+Pipfile.lock
+nodemcu
+nodemcu-uploader
+graphics
+esptool
+pcb/libraries
+swift-sodium
+package-lock.json
+cardboard-4mm-ponoko-p2-template.eps
+case/cardboard-4mm-ponoko-p2-template.eps
+service/tests/test_api.py
