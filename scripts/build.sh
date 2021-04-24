@@ -7,8 +7,6 @@ set -x
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 ROOT_DIRECTORY="${SCRIPT_DIRECTORY}/.."
 
-# TODO: Re-enable test builds if possible using a locally generated signing key.
-
 IPHONE_DESTINATION="platform=iOS Simulator,name=iPhone 12 Pro,OS=14.4"
 
 function build_scheme {
