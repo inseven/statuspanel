@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol DataSource : class {
+protocol DataSource : AnyObject {
     typealias Callback = (DataSource, [DataItemBase], Error?) -> Void
     func fetchData(onCompletion:@escaping Callback)
 }
@@ -18,7 +18,7 @@ enum DataItemFlag {
     case header
 }
 
-protocol DataItemBase : class {
+protocol DataItemBase : AnyObject {
     func getPrefix() -> String
     func getText(checkFit: (String) -> Bool) -> String
     func getSubText() -> String?
