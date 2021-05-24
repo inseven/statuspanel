@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol DataSourceControllerDelegate: class {
+protocol DataSourceControllerDelegate: AnyObject {
     // Always called in context of main thread
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase])
 }
