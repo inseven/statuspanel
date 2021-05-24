@@ -75,7 +75,7 @@
 		DB5E9DA0241562ED009F3807 /* StringUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringUtils.swift; sourceTree = "<group>"; };
 		DB62F332224F89C200CA5E64 /* StationPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPickerController.swift; sourceTree = "<group>"; };
 		DB62F334224FB47A00CA5E64 /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
-		DB62F33A224FC66E00CA5E64 /* stations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = stations.json; path = Assets.xcassets/NationalRailStations.dataset/stations.json; sourceTree = "<group>"; };
+		DB62F33A224FC66E00CA5E64 /* stations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = stations.json; sourceTree = "<group>"; };
 		DB62F33B224FCEBA00CA5E64 /* NationalRailSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalRailSettingsController.swift; sourceTree = "<group>"; };
 		DB62F33D224FEA4400CA5E64 /* StationsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationsList.swift; sourceTree = "<group>"; };
 		DB62F33F2258FD6100CA5E64 /* StatusPanel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatusPanel.entitlements; sourceTree = "<group>"; };
@@ -116,35 +116,59 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		DB62F32F224F88F300CA5E64 /* TFL */ = {
-			isa = PBXGroup;
-			children = (
-				DBCA98B02143F2B30084B710 /* TFLDataSource.swift */,
-				DBF1C553223D519C0080CADE /* TFLSettingsController.swift */,
-			);
-			name = TFL;
-			sourceTree = "<group>";
-		};
-		DB62F330224F892A00CA5E64 /* Calendar */ = {
+		D842A3FC265BE81F009C1156 /* Calendar */ = {
 			isa = PBXGroup;
 			children = (
 				DBCA98B221440CD90084B710 /* CalendarSource.swift */,
 				D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */,
 			);
-			name = Calendar;
+			path = Calendar;
 			sourceTree = "<group>";
 		};
-		DB62F331224F895F00CA5E64 /* National Rail */ = {
+		D842A3FE265BE878009C1156 /* National Rail */ = {
 			isa = PBXGroup;
 			children = (
 				DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */,
 				DB62F33B224FCEBA00CA5E64 /* NationalRailSettingsController.swift */,
-				DB62F332224F89C200CA5E64 /* StationPickerController.swift */,
 				DB62F334224FB47A00CA5E64 /* Station.swift */,
+				DB62F332224F89C200CA5E64 /* StationPickerController.swift */,
 				DB62F33A224FC66E00CA5E64 /* stations.json */,
 				DB62F33D224FEA4400CA5E64 /* StationsList.swift */,
 			);
-			name = "National Rail";
+			path = "National Rail";
+			sourceTree = "<group>";
+		};
+		D842A3FF265BE8A2009C1156 /* TFL */ = {
+			isa = PBXGroup;
+			children = (
+				DBCA98B02143F2B30084B710 /* TFLDataSource.swift */,
+				DBF1C553223D519C0080CADE /* TFLSettingsController.swift */,
+			);
+			path = TFL;
+			sourceTree = "<group>";
+		};
+		D842A400265BE8C1009C1156 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				D842A3FC265BE81F009C1156 /* Calendar */,
+				D842A3FE265BE878009C1156 /* National Rail */,
+				D842A3FF265BE8A2009C1156 /* TFL */,
+				DBCA98B42144421F0084B710 /* DataSource.swift */,
+				DBCA98B6214518EF0084B710 /* DataSourceController.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		D842A401265BE916009C1156 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				DBFCBB7924B8A55700E3B3D3 /* FontInfoController.swift */,
+				DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */,
+				DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */,
+				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
+				DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */,
+			);
+			path = "View Controllers";
 			sourceTree = "<group>";
 		};
 		DBB2D354217C9AC3009F7549 /* Frameworks */ = {
@@ -180,35 +204,27 @@
 		DBCA987B2143E2920084B710 /* StatusPanel */ = {
 			isa = PBXGroup;
 			children = (
+				D842A401265BE916009C1156 /* View Controllers */,
+				D842A400265BE8C1009C1156 /* Data */,
+				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
+				DBCA98832143E2920084B710 /* Assets.xcassets */,
+				DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */,
+				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
+				D80380AA23E9B6D2002606C7 /* Client.swift */,
+				D89CAF1021ABDDA200B4B314 /* Config.swift */,
+				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
+				DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */,
+				DBCA98882143E2920084B710 /* Info.plist */,
+				DB51C2E221749A2A00F016DB /* JSONRequest.swift */,
+				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
+				DBCA98802143E2920084B710 /* Main.storyboard */,
+				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
 				DBF15BBB2471A322004AA972 /* StatusPanel-Bridging-Header.h */,
 				DB62F33F2258FD6100CA5E64 /* StatusPanel.entitlements */,
-				DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */,
-				D89CAF1021ABDDA200B4B314 /* Config.swift */,
-				DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */,
-				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
-				DBCA987E2143E2920084B710 /* ViewController.swift */,
-				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
-				DBCA98802143E2920084B710 /* Main.storyboard */,
-				DBCA98832143E2920084B710 /* Assets.xcassets */,
-				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
-				DBCA98882143E2920084B710 /* Info.plist */,
-				DBCA98B42144421F0084B710 /* DataSource.swift */,
-				DBCA98B6214518EF0084B710 /* DataSourceController.swift */,
-				DB51C2E221749A2A00F016DB /* JSONRequest.swift */,
-				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
-				DBFCBB7924B8A55700E3B3D3 /* FontInfoController.swift */,
-				DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */,
-				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
 				DB5E9DA0241562ED009F3807 /* StringUtils.swift */,
-				DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */,
-				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
-				DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */,
-				DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */,
-				D80380AA23E9B6D2002606C7 /* Client.swift */,
+				DBCA987E2143E2920084B710 /* ViewController.swift */,
+				DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */,
 				DBCA987A2143E2920084B710 /* Products */,
-				DB62F330224F892A00CA5E64 /* Calendar */,
-				DB62F331224F895F00CA5E64 /* National Rail */,
-				DB62F32F224F88F300CA5E64 /* TFL */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
