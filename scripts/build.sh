@@ -7,11 +7,11 @@ set -x
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 ROOT_DIRECTORY="${SCRIPT_DIRECTORY}/.."
 
-IPHONE_DESTINATION="platform=iOS Simulator,name=iPhone 12 Pro,OS=14.4"
+IPHONE_DESTINATION="platform=iOS Simulator,name=iPhone 12 Pro"
 
 function build_scheme {
     xcodebuild \
-        -project StatusPanel.xcodeproj \
+        -project "ios/StatusPanel.xcodeproj" \
         -scheme "$1" \
         CODE_SIGN_IDENTITY="" \
         CODE_SIGNING_REQUIRED=NO \

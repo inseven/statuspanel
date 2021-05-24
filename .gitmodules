@@ -1,6 +1,3 @@
-[submodule "swift-sodium"]
-	path = swift-sodium
-	url = https://github.com/jedisct1/swift-sodium.git
 [submodule "nodemcu-uploader"]
 	path = nodemcu-uploader
 	url = git@github.com:jbmorley/nodemcu-uploader.git
@@ -13,3 +10,6 @@
 [submodule "esptool"]
 	path = esptool
 	url = git@github.com:jbmorley/esptool.git
+[submodule "ios/swift-sodium"]
+	path = ios/swift-sodium
+	url = https://github.com/jedisct1/swift-sodium.git
