@@ -261,7 +261,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 subLabel.numberOfLines = config.maxLines
                 subLabel.text = subText
                 subLabel.sizeToFit()
-                subLabel.frame = CGRect(x: textFrame.minX, y: view.frame.maxY + 1, width: textFrame.width, height: subLabel.frame.height)
+                subLabel.frame = CGRect(x: textFrame.minX, y: view.bounds.maxY + 1, width: textFrame.width, height: subLabel.frame.height)
                 view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: subLabel.frame.maxY))
                 view.addSubview(subLabel)
             }
