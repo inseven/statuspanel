@@ -197,18 +197,20 @@ class CalendarSource : DataSource {
             if allDay {
                 results.append(CalendarItem(title: title, location: location))
             } else {
-                var timeStr = df.string(from: event.startDate)
+                var relevantTime: Date = event.startDate
+                var timeStr = df.string(from: relevantTime)
                 if event.startDate <= dayStart /* And the end time is today */ {
-                    timeStr = "Ends\n" + df.string(from: event.endDate)
+                    relevantTime = event.endDate
+                    timeStr = "Ends\n" + df.string(from: relevantTime)
                 }
 
                 if event.timeZone != nil && event.timeZone != tz {
                     // a nil timezone means floating time
                     df.timeZone = event.timeZone
                     timeZoneFormatter.timeZone = event.timeZone
-                    let eventLocalTime = df.string(from: event.startDate)
+                    let eventLocalTime = df.string(from: relevantTime)
                     df.timeZone = tz
-                    let tzStr = timeZoneFormatter.string(from: event.startDate)
+                    let tzStr = timeZoneFormatter.string(from: relevantTime)
                     title = "\(title) (\(eventLocalTime) \(tzStr))"
                 }
                 results.append(CalendarItem(time: timeStr, title: title, location: location))
