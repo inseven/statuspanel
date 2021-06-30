@@ -166,7 +166,7 @@ class CalendarSource : DataSource {
                 continue
             }
 
-            // Don't show decliend events.
+            // Don't show declined events.
             var declined = false
             for attendee in event.attendees ?? [] {
                 if attendee.isCurrentUser && attendee.participantStatus == .declined {
@@ -188,23 +188,29 @@ class CalendarSource : DataSource {
                 title = "🎁 \(title)"
             }
 
-            let timeStr = df.string(from: event.startDate)
             var location = showLocations ? event.location : nil
             if location != nil && shouldRedactUrls {
                 location = redactUrls(location!)
             }
 
-            if event.isAllDay {
+            let allDay = event.isAllDay || (event.startDate <= dayStart && event.endDate >= dayEnd)
+            if allDay {
                 results.append(CalendarItem(title: title, location: location))
-            } else if event.timeZone != nil && event.timeZone != tz {
-                // a nil timezone means floating time
-                df.timeZone = event.timeZone
-                timeZoneFormatter.timeZone = event.timeZone
-                let eventLocalTime = df.string(from: event.startDate)
-                df.timeZone = tz
-                let tzStr = timeZoneFormatter.string(from: event.startDate)
-                results.append(CalendarItem(time: timeStr, title: "\(title) (\(eventLocalTime) \(tzStr))", location: location))
             } else {
+                var timeStr = df.string(from: event.startDate)
+                if event.startDate <= dayStart /* And the end time is today */ {
+                    timeStr = "Ends\n" + df.string(from: event.endDate)
+                }
+
+                if event.timeZone != nil && event.timeZone != tz {
+                    // a nil timezone means floating time
+                    df.timeZone = event.timeZone
+                    timeZoneFormatter.timeZone = event.timeZone
+                    let eventLocalTime = df.string(from: event.startDate)
+                    df.timeZone = tz
+                    let tzStr = timeZoneFormatter.string(from: event.startDate)
+                    title = "\(title) (\(eventLocalTime) \(tzStr))"
+                }
                 results.append(CalendarItem(time: timeStr, title: title, location: location))
             }
         }
