@@ -211,11 +211,13 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             let frame = CGRect(x: x, y: y, width: w, height: 0)
             let view = UIView(frame: frame)
             var prefix = item.getPrefix()
+            let numPrefixLines = prefix.split(separator: "\n").count
             var textFrame = CGRect(origin: CGPoint.zero, size: frame.size)
+            var itemHeight: CGFloat = 0
             if prefix != "" {
                 let prefixLabel = ViewController.getLabel(frame: textFrame, font: config.font, redactMode: redactMode)
                 prefixLabel.textColor = foregroundColor
-                prefixLabel.numberOfLines = 1
+                prefixLabel.numberOfLines = numPrefixLines
                 prefixLabel.text = prefix + " "
                 prefixLabel.sizeToFit()
                 let prefixWidth = prefixLabel.frame.width
@@ -223,6 +225,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                     prefix = ""
                     view.addSubview(prefixLabel)
                     textFrame = textFrame.divided(atDistance: prefixWidth, from: .minXEdge).remainder
+                    itemHeight = prefixLabel.frame.height
                 } else {
                     // Label too long, treat as single text entity (leave 'prefix' set)
                     prefix = prefix + " "
@@ -248,8 +251,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             label.lineBreakMode = .byTruncatingTail
             label.text = text
             label.sizeToFit()
+            itemHeight = max(itemHeight, label.bounds.height)
             label.frame = CGRect(x: label.frame.minX, y: label.frame.minY, width: textFrame.width, height: label.frame.height)
-            view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: label.bounds.height))
+            view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: itemHeight))
             view.addSubview(label)
             if let subText = item.getSubText() {
                 let subLabel = ViewController.getLabel(frame: textFrame, font: config.font, type: .subText, redactMode: redactMode)
@@ -257,7 +261,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 subLabel.numberOfLines = config.maxLines
                 subLabel.text = subText
                 subLabel.sizeToFit()
-                subLabel.frame = CGRect(x: textFrame.minX, y: label.frame.maxY + 1, width: textFrame.width, height: subLabel.frame.height)
+                subLabel.frame = CGRect(x: textFrame.minX, y: view.bounds.maxY + 1, width: textFrame.width, height: subLabel.frame.height)
                 view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: subLabel.frame.maxY))
                 view.addSubview(subLabel)
             }
