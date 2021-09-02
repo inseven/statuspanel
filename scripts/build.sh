@@ -142,6 +142,9 @@ BUILD_NUMBER=`build-tools generate-build-number`
 # Import the certificates into our dedicated keychain.
 echo "$IOS_CERTIFICATE_PASSWORD" | build-tools import-base64-certificate --password "$KEYCHAIN_PATH" "$IOS_CERTIFICATE_BASE64"
 
+# Install the provisioning profiles.
+build-tools install-provisioning-profile "ios/StatusPanel_App_Store_Profile.mobileprovision"
+
 # Build and archive the iOS project.
 xcode_project \
     -scheme "StatusPanel" \
