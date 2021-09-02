@@ -98,11 +98,9 @@ In order to make continuous integration easy the `scripts/build.sh` script build
 
 - `IOS_CERTIFICATE_BASE64` -- base64 encoded PKCS 12 certificate for iOS App Store builds (see above for details)
 - `IOS_CERTIFICATE_PASSWORD` -- password used to protect the iOS certificate
-- `APPLE_DEVELOPER_ID` -- individual Apple Developer Account ID (used for notarization)
 - `APPLE_API_KEY` -- base64 encoded App Store Connect API key (see https://appstoreconnect.apple.com/access/api)
 - `APPLE_API_KEY_ID` -- App Store Connect API key id (see https://appstoreconnect.apple.com/access/api)
 - `APPLE_API_KEY_ISSUER_ID` -- App Store connect API key issuer id (see https://appstoreconnect.apple.com/access/api)
-- `FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD` -- [app-specific password](https://support.apple.com/en-us/HT204397) for the Developer Account
 - `NOTARIZE` -- boolean indicating whether to attempt notarize the build (conditionally set based on the current branch using `${{ github.ref == 'refs/heads/main' }}`)
 - `TRY_RELEASE` -- boolean indicating whether to attempt a release (conditionally set based on the current branch using `${{ github.ref == 'refs/heads/main' }}`)
 - `GITHUB_TOKEN` -- [GitHub token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) used to create the release
@@ -115,11 +113,9 @@ export IOS_CERTIFICATE_BASE64=
 export IOS_CERTIFICATE_PASSWORD=
 
 # Developer account
-export APPLE_DEVELOPER_ID=
 export APPLE_API_KEY=
 export APPLE_API_KEY_ID=
 export APPLE_API_KEY_ISSUER_ID=
-export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=
 
 # GitHub (only required if publishing releases locally)
 export GITHUB_TOKEN=
