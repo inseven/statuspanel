@@ -1,5 +1,7 @@
 # StatusPanel
 
+eInk status board for displaying every-day information
+
 ## Getting Started
 
 StatusPanel uses [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so before doing anything else, you'll need to do:
