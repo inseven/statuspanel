@@ -23,9 +23,11 @@
 set -e
 set -o pipefail
 set -x
+set -u
 
-SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-ROOT_DIRECTORY="${SCRIPT_DIRECTORY}/.."
+SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 
 IPHONE_DESTINATION="platform=iOS Simulator,name=iPhone 12 Pro"
 
