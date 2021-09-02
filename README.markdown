@@ -98,8 +98,6 @@ In order to make continuous integration easy the `scripts/build.sh` script build
 
 - `IOS_CERTIFICATE_BASE64` -- base64 encoded PKCS 12 certificate for iOS App Store builds (see above for details)
 - `IOS_CERTIFICATE_PASSWORD` -- password used to protect the iOS certificate
-- `MACOS_CERTIFICATE_BASE64` -- base64 encoded PKCS 12 certificate for macOS Developer ID builds (see above for details)
-- `MACOS_CERTIFICATE_PASSWORD` -- password used to protect the macOS certificate
 - `APPLE_DEVELOPER_ID` -- individual Apple Developer Account ID (used for notarization)
 - `APPLE_API_KEY` -- base64 encoded App Store Connect API key (see https://appstoreconnect.apple.com/access/api)
 - `APPLE_API_KEY_ID` -- App Store Connect API key id (see https://appstoreconnect.apple.com/access/api)
@@ -115,8 +113,6 @@ The script (like Fastlane) will look for and source an environment file in the F
 # Certificate store
 export IOS_CERTIFICATE_BASE64=
 export IOS_CERTIFICATE_PASSWORD=
-export MACOS_CERTIFICATE_BASE64=
-export MACOS_CERTIFICATE_PASSWORD=
 
 # Developer account
 export APPLE_DEVELOPER_ID=
