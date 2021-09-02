@@ -84,9 +84,14 @@ if [ -f "$FASTLANE_ENV_PATH" ] ; then
     source "$FASTLANE_ENV_PATH"
 fi
 
-function build_scheme {
+function xcode_project {
     xcodebuild \
-        -project "ios/StatusPanel.xcodeproj" \
+        -project ios/StatusPanel.xcodeproj "$@"
+}
+
+function build_scheme {
+    # Disable code signing for the build server.
+    xcode_project \
         -scheme "$1" \
         CODE_SIGN_IDENTITY="" \
         CODE_SIGNING_REQUIRED=NO \
