@@ -106,6 +106,9 @@ xcrun instruments -s devices
 # List the available schemes.
 xcode_project -list
 
+# Smoke test builds.
+
+# iOS
 build_scheme "StatusPanel" clean build \
     -sdk iphonesimulator \
     -destination "$IPHONE_DESTINATION"
@@ -138,3 +141,22 @@ BUILD_NUMBER=`build-tools generate-build-number`
 
 # Import the certificates into our dedicated keychain.
 echo "$IOS_CERTIFICATE_PASSWORD" | build-tools import-base64-certificate --password "$KEYCHAIN_PATH" "$IOS_CERTIFICATE_BASE64"
+
+# Build and archive the iOS project.
+xcode_project \
+    -scheme "StatusPanel" \
+    -config Release \
+    -archivePath "$ARCHIVE_PATH" \
+    OTHER_CODE_SIGN_FLAGS="--keychain=\"${KEYCHAIN_PATH}\"" \
+    BUILD_NUMBER=$BUILD_NUMBER \
+    MARKETING_VERSION=$VERSION_NUMBER \
+    clean archive
+xcodebuild \
+    -archivePath "$ARCHIVE_PATH" \
+    -exportArchive \
+    -exportPath "$BUILD_DIRECTORY" \
+    -exportOptionsPlist "ios/ExportOptions.plist"
+
+
+IPA_BASENAME="StatusPanel.ipa"
+IPA_PATH="$BUILD_DIRECTORY/$IPA_BASENAME"
