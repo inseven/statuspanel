@@ -212,7 +212,7 @@ class TestAPI(unittest.TestCase):
         response = self._upload(url, data)
         # TODO: Large uploads fail with 503 and 524 errors on staging and production #75
         #       https://github.com/jbmorley/statuspanel/issues/75
-        self.assertTrue(response.status_code in [413, 524, 503],
+        self.assertTrue(response.status_code in [413, 524, 503, 520],
                         "Uploading large file encountered unexpected status (%s)" % response.status_code)
 
     def test_api_v2_upload_large_file_fails(self):
@@ -247,7 +247,7 @@ class TestAPI(unittest.TestCase):
         response = self.client.post(url, json={'token': token})
         self.assertEqual(response.status_code, 200, "Registering device succeeds")
         db = database.Database(readonly=True)
-        self.assertEqual(db.get_devices(), [{"token": apns.encode_token(token), "use_sandbox": False}])
+        self.assertTrue({"token": apns.encode_token(token), "use_sandbox": False} in db.get_devices())
 
     def test_api_v3_post_device_no_sandbox_explicit(self):
         url = '/api/v3/device/'
