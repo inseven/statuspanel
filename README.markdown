@@ -165,6 +165,12 @@ pipenv run python3 service/task.py --database-url <database_url>
 
 ### Tests
 
+Install the Python dependencies:
+
+```bash
+pipenv install
+```
+
 Local API tests make use of a named docker container (creating and deleting the container where appropriate), and the Flask test client:
 
 ```bash
