@@ -51,7 +51,7 @@ The EagleCAD files make use of the following component libraries which are added
 
 ### Build Numbers
 
-The iOS and macOS apps use auto-generated build numbers that attempt to encode the build timestamp, along with some details of the commit used. They follow the format:
+The iOS app uses auto-generated build numbers that attempt to encode the build timestamp, along with some details of the commit used. They follow the format:
 
 ```
 YYmmddHHMMxxxxxxxx
