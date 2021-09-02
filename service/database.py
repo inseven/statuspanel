@@ -91,10 +91,17 @@ class Database(object):
         11: add_devices_use_sandbox,
     }
 
-    def __init__(self, database_url=None):
+    def __init__(self, database_url=None, readonly=False):
+
         if database_url is None:
             database_url = os.environ['DATABASE_URL']
+
         self.connection = psycopg2.connect(database_url)
+        self.connection.set_session(readonly=readonly)
+
+        # Migrations are disabled on readonly connections.
+        if readonly:
+            return
 
         # Create the metadata table (used for versioning).
         with Transaction(self.connection) as cursor:
