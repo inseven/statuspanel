@@ -4,8 +4,8 @@
 <dict>
 	<key>provisioningProfiles</key>
 	<dict>
-		<key>uk.co.inseven.bookmarks</key>
-		<string>Bookmarks App Store Profile</string>
+		<key>uk.co.inseven.status-panel</key>
+		<string>StatusPanel App Store Profile</string>
 	</dict>
 	<key>destination</key>
 	<string>export</string>
