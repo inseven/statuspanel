@@ -6,3 +6,4 @@ apns.p8
 .DS_Store
 console.log
 xcuserdata
+.env*
