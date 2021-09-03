@@ -100,9 +100,6 @@ function build_scheme {
 
 cd "$ROOT_DIRECTORY"
 
-# List the available devices for future reference (predominantly for build servers)
-xcrun instruments -s devices
-
 # List the available schemes.
 xcode_project -list
 
