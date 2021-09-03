@@ -74,7 +74,7 @@ These can be quickly decoded using the `build-tools` script:
 
 ### Managing Certificates
 
-Builds use base64 encoded [PKCS 12](https://en.wikipedia.org/wiki/PKCS_12) certificate and private key containers specified in the `IOS_CERTIFICATE_BASE64` and `MACOS_CERTIFICATE_BASE64` environment variables (with the password given in the `IOS_CERTIFICATE_PASSWORD` and `MACOS_CERTIFICATE_PASSWORD` environment variables respectively). This loosely follows the GitHub approach to [managing certificates](https://docs.github.com/en/actions/guides/installing-an-apple-certificate-on-macos-runners-for-xcode-development).
+Builds use base64 encoded [PKCS 12](https://en.wikipedia.org/wiki/PKCS_12) certificate and private key containers specified in the `IOS_CERTIFICATE_BASE64` environment variable (with the password given in the `IOS_CERTIFICATE_PASSWORD` environment variable). This loosely follows the GitHub approach to [managing certificates](https://docs.github.com/en/actions/guides/installing-an-apple-certificate-on-macos-runners-for-xcode-development).
 
 Keychain Access can be used to export your certificate and private key in the PKCS 12 format, and the base64 encoded version is generated as follows:
 
