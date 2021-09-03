@@ -15,6 +15,9 @@
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
 		D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D98E422493019A00F853CA /* NetworkProvisioner.swift */; };
+		D8DC8D8126E1ADAF004B081D /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */; };
+		D8DC8D8226E1ADAF004B081D /* Common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */; };
+		D8DC8D8326E1ADAF004B081D /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D8026E1ADAF004B081D /* Release.xcconfig */; };
 		D8EED7F12630EF19009E2166 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = D8EED7F02630EF19009E2166 /* Sodium */; };
 		DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB17F92E249E3BAD008CD83E /* CGExtensions.swift */; };
 		DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */; };
@@ -66,6 +69,9 @@
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		D8D98E422493019A00F853CA /* NetworkProvisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvisioner.swift; sourceTree = "<group>"; };
+		D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
+		D8DC8D8026E1ADAF004B081D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		D8EED7EF2630EEFF009E2166 /* swift-sodium */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "swift-sodium"; sourceTree = "<group>"; };
 		DB17F92E249E3BAD008CD83E /* CGExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
 		DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxLinesController.swift; sourceTree = "<group>"; };
@@ -185,6 +191,9 @@
 		DBCA98702143E2920084B710 = {
 			isa = PBXGroup;
 			children = (
+				D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */,
+				D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */,
+				D8DC8D8026E1ADAF004B081D /* Release.xcconfig */,
 				D8EED7EF2630EEFF009E2166 /* swift-sodium */,
 				DBCA987B2143E2920084B710 /* StatusPanel */,
 				DB1EB9052427E1F900050A08 /* fonts */,
@@ -304,7 +313,10 @@
 				DB1EB9062427E1F900050A08 /* fonts in Resources */,
 				DBCA98872143E2920084B710 /* LaunchScreen.storyboard in Resources */,
 				DBCA98842143E2920084B710 /* Assets.xcassets in Resources */,
+				D8DC8D8126E1ADAF004B081D /* Debug.xcconfig in Resources */,
 				DBCA98822143E2920084B710 /* Main.storyboard in Resources */,
+				D8DC8D8326E1ADAF004B081D /* Release.xcconfig in Resources */,
+				D8DC8D8226E1ADAF004B081D /* Common.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,6 +382,7 @@
 /* Begin XCBuildConfiguration section */
 		DBCA98892143E2920084B710 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -430,6 +443,7 @@
 		};
 		DBCA988A2143E2920084B710 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D8DC8D8026E1ADAF004B081D /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -490,7 +504,7 @@
 				CODE_SIGN_ENTITLEMENTS = StatusPanel/StatusPanel.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = $BUILD_NUMBER;
 				DEVELOPMENT_TEAM = S4WXAUZQEV;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -516,7 +530,7 @@
 				CODE_SIGN_ENTITLEMENTS = StatusPanel/StatusPanel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = $BUILD_NUMBER;
 				DEVELOPMENT_TEAM = S4WXAUZQEV;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
