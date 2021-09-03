@@ -264,7 +264,6 @@
 					DBCA98782143E2920084B710 = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1140;
-						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -512,8 +511,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = StatusPanel/StatusPanel.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = S4WXAUZQEV;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
@@ -524,7 +523,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "uk.co.inseven.status-panel";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "StatusPanel App Store Profile";
 				SWIFT_OBJC_BRIDGING_HEADER = "StatusPanel/StatusPanel-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
