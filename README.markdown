@@ -34,6 +34,7 @@ StatusPanel comprises a number of different components:
 
 - [Firmware](nodemcu/README.markdown)
 - [PCB](#pcb)
+- [Client](#client)
 - [Service](#service)
 
 ## PCB
@@ -47,6 +48,82 @@ The EagleCAD files make use of the following component libraries which are added
 ![Tom's notes](images/pinout.jpg)
 
 ## Client
+
+### Build Numbers
+
+The iOS app uses auto-generated build numbers that attempt to encode the build timestamp, along with some details of the commit used. They follow the format:
+
+```
+YYmmddHHMMxxxxxxxx
+```
+
+- `YY` -- two-digit year
+- `mm` -- month
+- `dd` -- day
+- `HH` -- hours (24h)
+- `MM` -- minutes
+- `xxxxxxxx` -- zero-padded integer representation of a 6-character commit SHA
+
+These can be quickly decoded using the `build-tools` script:
+
+```
+% scripts/build-tools/build-tools parse-build-number 210727192100869578
+2021-07-27 19:21:00 (UTC)
+0d44ca
+```
+
+### Managing Certificates
+
+Builds use a base64 encoded [PKCS 12](https://en.wikipedia.org/wiki/PKCS_12) certificate and private key container, specified in the `IOS_CERTIFICATE_BASE64` environment variable (with the password given in the `IOS_CERTIFICATE_PASSWORD` environment variable). This loosely follows the GitHub approach to [managing certificates](https://docs.github.com/en/actions/guides/installing-an-apple-certificate-on-macos-runners-for-xcode-development).
+
+Keychain Access can be used to export your certificate and private key in the PKCS 12 format, and the base64 encoded version is generated as follows:
+
+```bash
+base64 build_certificate.p12 | pbcopy
+```
+
+This, along with the password used to protect the certificate, can then be added to the GitHub project secrets.
+
+---
+
+Unlike `.cer` files (which can be viewed using [Quick Look](https://support.apple.com/en-gb/guide/mac-help/mh14119/mac)), macOS doesn't make it particularly easy to work with `.p12` PCKS 12 files; only Keychain Access is able to open these files and they will be automatically added to your keychain. If you want to double-check what's in a PCKS 12 file before adding it to your GitHub secrets, you can do this using `openssl`:
+
+```bash
+openssl pkcs12 -info -nodes -in build_certificate.p12
+```
+
+### Builds
+
+In order to make continuous integration easy the `scripts/build.sh` script builds the full project, including submitting the macOS app for notarization. In order to run this script (noting that you probably don't want to use it for regular development cycles), you'll need to configure your environment accordingly, by setting the following environment variables:
+
+- `IOS_CERTIFICATE_BASE64` -- base64 encoded PKCS 12 certificate for iOS App Store builds (see above for details)
+- `IOS_CERTIFICATE_PASSWORD` -- password used to protect the iOS certificate
+- `APPLE_API_KEY` -- base64 encoded App Store Connect API key (see https://appstoreconnect.apple.com/access/api)
+- `APPLE_API_KEY_ID` -- App Store Connect API key id (see https://appstoreconnect.apple.com/access/api)
+- `APPLE_API_KEY_ISSUER_ID` -- App Store connect API key issuer id (see https://appstoreconnect.apple.com/access/api)
+- `GITHUB_TOKEN` -- [GitHub token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) used to create the release
+
+The script (like Fastlane) will look for and source an environment file in the Fastlane directory (`Fastlane/.env`) which you can add your local details to. This file is, of course, in `.gitignore`. For example,
+
+```bash
+# Certificate store
+export IOS_CERTIFICATE_BASE64=
+export IOS_CERTIFICATE_PASSWORD=
+
+# Developer account
+export APPLE_API_KEY=
+export APPLE_API_KEY_ID=
+export APPLE_API_KEY_ISSUER_ID=
+
+# GitHub (only required if publishing releases locally)
+export GITHUB_TOKEN=
+```
+
+Once you've added your environment variables to this, run the script from the root of the project directory as follows:
+
+```bash
+./scripts/build.sh
+```
 
 ### Custom Emoji
 

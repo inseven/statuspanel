@@ -7,3 +7,5 @@ apns.p8
 console.log
 xcuserdata
 .env*
+/.local
+/build
