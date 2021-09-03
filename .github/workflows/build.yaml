@@ -36,7 +36,6 @@ jobs:
         APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TRY_RELEASE: ${{ github.ref == 'refs/heads/main' }}
         TESTFLIGHT_UPLOAD: ${{ github.ref == 'refs/heads/main' }}
 
       run: |

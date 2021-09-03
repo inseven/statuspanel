@@ -38,8 +38,6 @@ FASTLANE_ENV_PATH="${ROOT_DIRECTORY}/fastlane/.env"
 CHANGES_DIRECTORY="${SCRIPTS_DIRECTORY}/changes"
 BUILD_TOOLS_DIRECTORY="${SCRIPTS_DIRECTORY}/build-tools"
 
-CHANGES_GITHUB_RELEASE_SCRIPT="${CHANGES_DIRECTORY}/examples/gh-release.sh"
-
 PATH=$PATH:$CHANGES_DIRECTORY
 PATH=$PATH:$BUILD_TOOLS_DIRECTORY
 
@@ -50,16 +48,11 @@ which gh || (echo "GitHub cli (gh) not available on the path." && exit 1)
 
 # Process the command line arguments.
 POSITIONAL=()
-RELEASE=${TRY_RELEASE:-false}
 TESTFLIGHT_UPLOAD=${TESTFLIGHT_UPLOAD:-false}
 while [[ $# -gt 0 ]]
 do
     key="$1"
     case $key in
-        -r|--release)
-        RELEASE=true
-        shift
-        ;;
         -t|--testflight-upload)
         TESTFLIGHT_UPLOAD=true
         shift
