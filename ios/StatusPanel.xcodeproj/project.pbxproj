@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D80380AB23E9B6D2002606C7 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Client.swift */; };
+		D81DE20326E19F9200504703 /* Clibsodium in Frameworks */ = {isa = PBXBuildFile; productRef = D81DE20226E19F9200504703 /* Clibsodium */; };
 		D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */; };
 		D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */; };
 		D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D835EC972471D811003E402E /* NetworkExtension.framework */; };
@@ -107,6 +108,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */,
+				D81DE20326E19F9200504703 /* Clibsodium in Frameworks */,
 				D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */,
 				D8EED7F12630EF19009E2166 /* Sodium in Frameworks */,
 			);
@@ -246,6 +248,7 @@
 			name = StatusPanel;
 			packageProductDependencies = (
 				D8EED7F02630EF19009E2166 /* Sodium */,
+				D81DE20226E19F9200504703 /* Clibsodium */,
 			);
 			productName = StatusPanel;
 			productReference = DBCA98792143E2920084B710 /* StatusPanel.app */;
@@ -554,6 +557,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D81DE20226E19F9200504703 /* Clibsodium */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Clibsodium;
+		};
 		D8EED7F02630EF19009E2166 /* Sodium */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Sodium;
