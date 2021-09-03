@@ -157,6 +157,17 @@ xcodebuild \
     -exportPath "$BUILD_DIRECTORY" \
     -exportOptionsPlist "ios/ExportOptions.plist"
 
-
 IPA_BASENAME="StatusPanel.ipa"
 IPA_PATH="$BUILD_DIRECTORY/$IPA_BASENAME"
+
+# Upload the build to TestFlight
+if $TESTFLIGHT_UPLOAD ; then
+    API_KEY_PATH="${TEMPORARY_DIRECTORY}/AuthKey.p8"
+    echo -n "$APPLE_API_KEY" | base64 --decode --output "$API_KEY_PATH"
+    bundle exec fastlane upload \
+        api_key:"$API_KEY_PATH" \
+        api_key_id:"$APPLE_API_KEY_ID" \
+        api_key_issuer_id:"$APPLE_API_KEY_ISSUER_ID" \
+        ipa:"$IPA_PATH"
+    unlink "$API_KEY_PATH"
+fi
