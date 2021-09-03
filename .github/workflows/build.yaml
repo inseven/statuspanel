@@ -12,7 +12,7 @@ jobs:
   test:
 
     name: Build for iOS
-    runs-on: macOS-latest  # Unfortunately macOS 11 is currently unavailable.
+    runs-on: macos-monterey
 
     steps:
 
