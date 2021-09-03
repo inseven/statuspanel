@@ -12,7 +12,7 @@ jobs:
   test:
 
     name: Build for iOS
-    runs-on: macOS-latest  # Unfortunately macOS 11 is currently unavailable.
+    runs-on: macos-monterey
 
     steps:
 
@@ -20,6 +20,23 @@ jobs:
       uses: actions/checkout@v2
       with:
         submodules: recursive
+        fetch-depth: 0
 
-    - name: Build
-      run: exec ./scripts/build.sh
+    - name: Install dependencies
+      run: scripts/install-dependencies.sh
+
+    - name: Build, test, and release
+      env:
+
+        IOS_CERTIFICATE_BASE64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
+        IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+
+        APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+        APPLE_API_KEY_ISSUER_ID: ${{ secrets.APPLE_API_KEY_ISSUER_ID }}
+        APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TESTFLIGHT_UPLOAD: ${{ github.ref == 'refs/heads/main' }}
+
+      run: |
+        scripts/build.sh
