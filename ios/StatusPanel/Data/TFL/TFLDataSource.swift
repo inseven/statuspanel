@@ -29,13 +29,13 @@ class TFLDataSource : DataSource {
         "cirle": "Circle",
         "central": "Central",
         "district": "District",
-        // TODO what is Hammersmith & City's id?
+        "hammersmith-city": "Hammersmith & City",
         "jubilee": "Jubilee",
         "metropolitan": "Metropolitan",
         "northern": "Northern",
         "piccadilly": "Piccadilly",
         "victoria": "Victoria",
-        // TODO what is Waterloo & City's id?
+        "waterloo-city": "Waterloo & City",
     ]
 
     let configuration: Configuration
