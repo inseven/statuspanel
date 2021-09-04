@@ -9,9 +9,9 @@ on:
     - cron:  '0 1 * * *'
 
 jobs:
-  test:
+  build-app:
 
-    name: Build for iOS
+    name: Build app
     runs-on: macos-monterey
 
     steps:
@@ -40,3 +40,25 @@ jobs:
 
       run: |
         scripts/build.sh
+
+  build-firmware:
+
+    name: Build firmware
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+        fetch-depth: 0
+
+    - name: Install dependencies
+      run: scripts/install-dependencies.sh
+
+    - name: Build
+      env:
+        CHECKOUT: true
+      run: |
+        firmware/build.sh
