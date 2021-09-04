@@ -40,7 +40,7 @@ class NationalRailDataSource : DataSource {
 
     func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) -> URLSessionTask where T : Decodable {
         let sep = what.contains("?") ? "&" : "?"
-        let url = URL(string: "https://huxley.apphb.com/" + what + sep + "accessToken=\(configuration.nationalRailAPIToken)")!
+        let url = URL(string: "https://huxley.apphb.com/" + what + sep + "accessToken=\(configuration.nationalRailApiToken)")!
         return JSONRequest.makeRequest(url: url, onCompletion: onCompletion)
     }
 

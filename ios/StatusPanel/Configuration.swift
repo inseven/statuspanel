@@ -22,10 +22,15 @@ import Foundation
 
 struct Configuration: Codable {
 
-    var nationalRailAPIToken: String
+    var nationalRailApiToken: String
+
+    var tflApiId: String
+    var tflApiKey: String
 
     public enum CodingKeys: String, CodingKey {
-        case nationalRailAPIToken = "national-rail-api-token"
+        case nationalRailApiToken = "national-rail-api-token"
+        case tflApiId = "tfl-api-id"
+        case tflApiKey = "tfl-api-key"
     }
 
     static func load(path: URL) throws -> Configuration {
@@ -36,7 +41,9 @@ struct Configuration: Codable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        nationalRailAPIToken = try container.decode(String.self, forKey: .nationalRailAPIToken)
+        nationalRailApiToken = try container.decode(String.self, forKey: .nationalRailApiToken)
+        tflApiId = try container.decode(String.self, forKey: .tflApiId)
+        tflApiKey = try container.decode(String.self, forKey: .tflApiKey)
     }
 
 }
