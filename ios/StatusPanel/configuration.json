@@ -1,3 +1,5 @@
 {
-    "national-rail-api-token": "KEY"
+    "national-rail-api-token": "KEY",
+    "tfl-api-id": "KEY",
+    "tfl-api-key": "KEY"
 }
