@@ -41,24 +41,31 @@ class BitmapFontLabel: UILabel {
     let image: CIImage
     let charw: Int
     let charh: Int
+    let imagew: Int
+    let imageh: Int
+    let startIndex: Unicode.Scalar
+    let minCharWidth: Int?
     let scale: Int
     private var invertedForDarkMode: CIImage?
     let maxFullSizeLines = Int.max
     var redactMode: RedactMode
 
-    init(frame: CGRect, fontNamed: String, scale: Int = 1, redactMode: RedactMode = .none) {
-        self.fontName = fontNamed
+    init(frame: CGRect, font: Fonts.Font, scale: Int = 1, redactMode: RedactMode = .none) {
+        let bitmapInfo = font.bitmapInfo!
+        self.fontName = bitmapInfo.bitmapName
         let font = UIImage(named: "fonts/" + self.fontName)!
         image = CIImage(image: font)!
-        let w = image.extent.width
-        let h = image.extent.height
-        charw = (Int)(w / 8)
-        charh = (Int)(h / 12)
+        imagew = Int(image.extent.width)
+        imageh = Int(image.extent.height)
+        charw = bitmapInfo.charw
+        charh = bitmapInfo.charh
+        startIndex = bitmapInfo.startIndex
+        minCharWidth = bitmapInfo.minWidth
         self.scale = scale
         self.redactMode = redactMode
         super.init(frame: frame)
-        assert((CGFloat)(charw * 8) == w && (CGFloat)(charh * 12) == h,
-               "Image size \(w)x\(h) must be a multiple of 8 wide and 12 high")
+        assert(imagew % charsPerRow == 0 && imageh % numRows == 0,
+               "Image size \(imagew)x\(imageh) must be a multiple of the char width \(charw) and the char height \(charh)")
         isAccessibilityElement = true
         accessibilityTraits = UIAccessibilityTraits.staticText
         isOpaque = false
@@ -77,6 +84,18 @@ class BitmapFontLabel: UILabel {
     var shrunkLineScale: Int {
         get {
             return scale / 2
+        }
+    }
+
+    var charsPerRow: Int {
+        get {
+            return imagew / charw
+        }
+    }
+
+    var numRows: Int {
+        get {
+            return imageh / charh
         }
     }
 
@@ -110,11 +129,21 @@ class BitmapFontLabel: UILabel {
     }
 
     private func getCharWidth(_ char: Character, forScale scale: Int? = nil) -> Int {
-        if char.isASCII {
+        if charInImage(char) && minCharWidth == nil {
+            // Can't optimise unless it's a character within the image range and the image doesn't require trimming
             return charw * (scale ?? self.scale)
         } else {
             return getImageForChar(ch: char, forScale: scale).width
         }
+    }
+
+    private func charInImage(_ char: Character) -> Bool {
+        if char.unicodeScalars.count != 1 {
+            return false
+        }
+        let scalarValue = char.unicodeScalars.first!.value
+        let maxValue = startIndex.value + UInt32(self.charsPerRow * self.numRows)
+        return scalarValue >= startIndex.value && scalarValue < maxValue
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {
@@ -155,13 +184,12 @@ class BitmapFontLabel: UILabel {
 
     // Must be an easier way than this...
     // Note this effectively also does a flip, thanks to rendering a CGImage in a context
-    private func scaleUp(image ciImage: CIImage, factor: Int) -> CGImage {
-        let unscaledCGImage = CIContext().createCGImage(ciImage, from: ciImage.extent)!
+    private func scaleUp(image unscaledCGImage: CGImage, factor: Int) -> CGImage {
         let fmt = UIGraphicsImageRendererFormat()
         fmt.scale = 1.0
         let scaleFactor = CGFloat(factor)
-        let unscaledWidth = ciImage.extent.width
-        let unscaledHeight = ciImage.extent.height
+        let unscaledWidth = CGFloat(unscaledCGImage.width)
+        let unscaledHeight = CGFloat(unscaledCGImage.height)
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: unscaledWidth * scaleFactor, height: unscaledHeight * scaleFactor), format: fmt)
         let uiImage = renderer.image { (uictx: UIGraphicsImageRendererContext) in
             let ctx = uictx.cgContext
@@ -193,8 +221,9 @@ class BitmapFontLabel: UILabel {
             ctx.setStrokeColor(red: col, green: col, blue: col, alpha: 1)
             ctx.stroke(CGRect(x: 0, y: 0, width: w, height: h))
             for ch in charName {
-                ctx.draw(getImageForChar(ch: ch, forScale: 1), in: CGRect(x: x, y: y, width: charw, height: charh))
-                x += charw
+                let img = getImageForChar(ch: ch, forScale: 1)
+                ctx.draw(img, in: CGRect(x: x, y: y, width: img.width, height: img.height))
+                x += img.width
             }
         }
         return uiImage.cgImage!
@@ -209,7 +238,7 @@ class BitmapFontLabel: UILabel {
             return img
         }
 
-        if ch.isASCII && ch.asciiValue! >= 0x20 && ch.asciiValue! <= 0x7F {
+        if charInImage(ch) {
             // Get from main image
             if darkMode && invertedForDarkMode == nil {
                 invertedForDarkMode = self.image.applyingFilter("CIColorInvert")
@@ -218,13 +247,46 @@ class BitmapFontLabel: UILabel {
                 // filter.setValue(CIImage(image: self.image), forKey: kCIInputImageKey)
                 // let invertedCgImage = CIContext().createCGImage(filter.outputImage!, from: filter.outputImage!.extent)!
             }
-            let char = Int(ch.asciiValue!) - 0x20
-            let x = char & 0x7
-            // y is counting from the bottom because of stupid coordinate space rubbish, and there's 12 rows
-            let y = 12 - (char >> 3) - 1
+            let charIdx = ch.unicodeScalars.first!.value - startIndex.value
+            let x = Int(charIdx % UInt32(self.charsPerRow))
+            // y is counting from the bottom because of stupid coordinate space rubbish
+            let y = self.numRows - Int(charIdx / UInt32(self.charsPerRow)) - 1
             let imageToUse = darkMode ? invertedForDarkMode! : self.image
             let cropped = imageToUse.cropped(to: CGRect(x: x * charw, y: y * charh, width: charw, height: charh))
-            img = scaleUp(image: cropped, factor: scale)
+            var cgImage = CIContext().createCGImage(cropped, from: cropped.extent)!
+            if let minCharWidth = minCharWidth {
+                // See if we need to trim any whitespace from the right-hand side of the image
+                var w = charw
+                let pixelData = cgImage.dataProvider!.data!
+                let ptr: UnsafePointer<UInt8> = CFDataGetBytePtr(pixelData)
+                func columnIsClear(_ x:Int) -> Bool {
+                    for y in 0 ..< charh {
+                        let offset = y * cgImage.bytesPerRow + x * (cgImage.bitsPerPixel / 8)
+                        // let r = ptr[offset]
+                        // let g = ptr[offset+1]
+                        // let b = ptr[offset+2]
+                        let a = ptr[offset+3]
+                        // print("X: \(x) Y: \(y) rgba = \(r) \(g) \(b) \(a)")
+                        if a != 0 {
+                            return false
+                        }
+                    }
+                    return true
+                }
+
+                while w > minCharWidth {
+                    if columnIsClear(w-1) {
+                        w = w - 1
+                    } else {
+                        break
+                    }
+                }
+                if w != charw {
+                    // print("Trimming \(ch) image to \(w) pixels wide")
+                    cgImage = cgImage.cropping(to: CGRect(x: 0, y: 0, width: w, height: charh))!
+                }
+            }
+            img = scaleUp(image: cgImage, factor: scale)
         } else {
             // See if we have an individual image for it
             let charName = ch.unicodeScalars.map({ String(format:"U+%04X", $0.value) }).joined(separator: "_")
@@ -251,7 +313,8 @@ class BitmapFontLabel: UILabel {
                 if darkMode {
                     ciImage = ciImage.applyingFilter("CIColorInvert")
                 }
-                img = scaleUp(image: ciImage, factor: scaleForImage)
+                let cgImage = CIContext().createCGImage(ciImage, from: ciImage.extent)!
+                img = scaleUp(image: cgImage, factor: scaleForImage)
             } else {
                 print("No font data for character \(charName)")
                 if scale > 1 {
