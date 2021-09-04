@@ -51,6 +51,7 @@ do
     esac
 done
 
+
 if $CHECKOUT ; then
     cd "${FIRMWARE_DIRECTORY}"
     if [ -d nodemcu-firmware ] ; then
@@ -64,4 +65,6 @@ fi
 cd "${FIRMWARE_DIRECTORY}/nodemcu-firmware"
 cp "$SDKCONFIG_PATH" .
 docker pull marcelstoer/nodemcu-build
-docker run --rm -ti -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
+# TODO: Consider a flag for non-interactive.
+# docker run --rm -ti -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
+docker run --rm -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
