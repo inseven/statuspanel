@@ -91,7 +91,6 @@ class TFLDataSource : DataSource {
             }
             dataItems.append(DataItem("\(line.name) line: \(desc)", flags: flags))
         }
-        // print(dataItems)
         completion?(self, dataItems, err)
     }
 }
