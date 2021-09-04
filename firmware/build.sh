@@ -29,9 +29,39 @@ FIRMWARE_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd
 
 ROOT_DIRECTORY="${FIRMWARE_DIRECTORY}/.."
 NODEMCU_FIRMWARE_DIRECTORY="${FIRMWARE_DIRECTORY}/nodemcu-firmware"
+NODEMCU_ESP32_BUILD_DIRECTORY="${ROOT_DIRECTORY}/nodemcu/esp32"
 
+SDKCONFIG_PATH="${NODEMCU_ESP32_BUILD_DIRECTORY}/sdkconfig"
+
+# Process the command line arguments.
+POSITIONAL=()
+CHECKOUT=${CHECKOUT:-false}
+while [[ $# -gt 0 ]]
+do
+    key="$1"
+    case $key in
+        -c|--checkout)
+        CHECKOUT=true
+        shift
+        ;;
+        *)
+        POSITIONAL+=("$1")
+        shift
+        ;;
+    esac
+done
+
+if $CHECKOUT ; then
+    cd "${FIRMWARE_DIRECTORY}"
+    if [ -d nodemcu-firmware ] ; then
+        rm -rf nodemcu-firmware
+    fi
+    git clone --branch tomsci_ir_rebase https://github.com/tomsci/nodemcu-firmware.git --depth 1
+    cd nodemcu-firmware
+    git submodule update --init --recursive --depth 1
+fi
+
+cd "${FIRMWARE_DIRECTORY}/nodemcu-firmware"
+cp "$SDKCONFIG_PATH" .
 docker pull marcelstoer/nodemcu-build
-
-pushd "$NODEMCU_FIRMWARE_DIRECTORY"
 docker run --rm -ti -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
-popd

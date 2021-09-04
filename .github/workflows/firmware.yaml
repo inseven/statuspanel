@@ -26,5 +26,7 @@ jobs:
       run: scripts/install-dependencies.sh
 
     - name: Build
+      env:
+        CHECKOUT: true
       run: |
         firmware/build.sh
