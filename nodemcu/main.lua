@@ -412,8 +412,8 @@ function fetch()
         end
 
         if status == 404 then
-            local url = getQRCodeURL(false)
-            initAndDisplay(url, displayQRCode, url, retry)
+            local url = network.getQRCodeURL(false)
+            initAndDisplay(url, network.displayQRCode, url, retry)
         elseif status == 200 then
             processRawImage(result.lastModified)
         elseif status == 304 then
