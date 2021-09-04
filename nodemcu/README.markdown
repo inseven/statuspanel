@@ -22,8 +22,7 @@ sudo apt install \
 Install the Python dependencies:
 
 ```bash
-cd nodecmu
-pipenv install
+./scripts/install_dependencies.sh
 ```
 
 Flash the latest firmware:
@@ -32,7 +31,7 @@ Flash the latest firmware:
 ./scripts/firmware flash
 ```
 
-Open a serial console:
+Open a serial console (useful for debugging):
 
 ```bash
 ./scripts/firmware console
@@ -151,5 +150,4 @@ openssl x509 -inform der -outform pem -in "Baltimore CyberTrust Root.cer" -out r
 Drop sdkconfig in, run `make MORE_CFLAGS="-DLUA_NUMBER_INTEGRAL"`.
 To rebuild LFS, run `make_lfs.sh` (although that is configured for my cross-VM-mountpointed setup).
 
-ROM built from tomsci_ir_rebase branch:
-https://github.com/tomsci/nodemcu-firmware/commit/c895362ea9793cb1a143694f21c69ce64bb8a79d
+The ROM image should be built using @tomsci's branch of NodeMCU at https://github.com/tomsci/nodemcu-firmware/tree/tomsci_dev_esp32.
