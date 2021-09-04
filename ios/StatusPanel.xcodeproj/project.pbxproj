@@ -15,6 +15,10 @@
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
 		D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D98E422493019A00F853CA /* NetworkProvisioner.swift */; };
+		D8DAED7026E3EAA90002F388 /* configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = D8DAED6F26E3EAA90002F388 /* configuration.json */; };
+		D8DAED7226E3F3320002F388 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7126E3F3320002F388 /* Configuration.swift */; };
+		D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7326E3F3930002F388 /* StatusPanelError.swift */; };
+		D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7626E3F3D40002F388 /* Bundle.swift */; };
 		D8DC8D8126E1ADAF004B081D /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */; };
 		D8DC8D8226E1ADAF004B081D /* Common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */; };
 		D8DC8D8326E1ADAF004B081D /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D8026E1ADAF004B081D /* Release.xcconfig */; };
@@ -69,6 +73,10 @@
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		D8D98E422493019A00F853CA /* NetworkProvisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvisioner.swift; sourceTree = "<group>"; };
+		D8DAED6F26E3EAA90002F388 /* configuration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = configuration.json; sourceTree = "<group>"; };
+		D8DAED7126E3F3320002F388 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		D8DAED7326E3F3930002F388 /* StatusPanelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusPanelError.swift; sourceTree = "<group>"; };
+		D8DAED7626E3F3D40002F388 /* Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
 		D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
 		D8DC8D8026E1ADAF004B081D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -178,6 +186,14 @@
 			path = "View Controllers";
 			sourceTree = "<group>";
 		};
+		D8DAED7526E3F3C40002F388 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D8DAED7626E3F3D40002F388 /* Bundle.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		DBB2D354217C9AC3009F7549 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -213,27 +229,31 @@
 		DBCA987B2143E2920084B710 /* StatusPanel */ = {
 			isa = PBXGroup;
 			children = (
-				D842A401265BE916009C1156 /* View Controllers */,
-				D842A400265BE8C1009C1156 /* Data */,
+				DB62F33F2258FD6100CA5E64 /* StatusPanel.entitlements */,
+				DBF15BBB2471A322004AA972 /* StatusPanel-Bridging-Header.h */,
+				D8DAED6F26E3EAA90002F388 /* configuration.json */,
+				DBCA98882143E2920084B710 /* Info.plist */,
 				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
-				DBCA98832143E2920084B710 /* Assets.xcassets */,
 				DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */,
 				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
 				D80380AA23E9B6D2002606C7 /* Client.swift */,
 				D89CAF1021ABDDA200B4B314 /* Config.swift */,
+				D8DAED7126E3F3320002F388 /* Configuration.swift */,
 				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
 				DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */,
-				DBCA98882143E2920084B710 /* Info.plist */,
 				DB51C2E221749A2A00F016DB /* JSONRequest.swift */,
-				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
-				DBCA98802143E2920084B710 /* Main.storyboard */,
 				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
-				DBF15BBB2471A322004AA972 /* StatusPanel-Bridging-Header.h */,
-				DB62F33F2258FD6100CA5E64 /* StatusPanel.entitlements */,
+				D8DAED7326E3F3930002F388 /* StatusPanelError.swift */,
 				DB5E9DA0241562ED009F3807 /* StringUtils.swift */,
 				DBCA987E2143E2920084B710 /* ViewController.swift */,
 				DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */,
+				DBCA98832143E2920084B710 /* Assets.xcassets */,
+				D842A400265BE8C1009C1156 /* Data */,
+				D8DAED7526E3F3C40002F388 /* Extensions */,
+				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
+				DBCA98802143E2920084B710 /* Main.storyboard */,
 				DBCA987A2143E2920084B710 /* Products */,
+				D842A401265BE916009C1156 /* View Controllers */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
@@ -315,6 +335,7 @@
 				DBCA98842143E2920084B710 /* Assets.xcassets in Resources */,
 				D8DC8D8126E1ADAF004B081D /* Debug.xcconfig in Resources */,
 				DBCA98822143E2920084B710 /* Main.storyboard in Resources */,
+				D8DAED7026E3EAA90002F388 /* configuration.json in Resources */,
 				D8DC8D8326E1ADAF004B081D /* Release.xcconfig in Resources */,
 				D8DC8D8226E1ADAF004B081D /* Common.xcconfig in Resources */,
 			);
@@ -331,14 +352,17 @@
 				DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */,
 				DB62F335224FB47A00CA5E64 /* Station.swift in Sources */,
 				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
+				D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */,
 				DBFCBB7A24B8A55700E3B3D3 /* FontInfoController.swift in Sources */,
 				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
 				DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */,
 				DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
 				DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */,
+				D8DAED7226E3F3320002F388 /* Configuration.swift in Sources */,
 				DB87810C223D67B2005AEBD8 /* UpdateTimeController.swift in Sources */,
 				DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */,
+				D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */,
 				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
 				D80380AB23E9B6D2002606C7 /* Client.swift in Sources */,

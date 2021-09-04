@@ -24,7 +24,8 @@ class NationalRailDataSource : DataSource {
     // See https://wiki.openraildata.com/index.php/NRE_Darwin_Web_Service_(Public)
     // and https://lite.realtime.nationalrail.co.uk/OpenLDBWS/
     // As implemented by https://huxley.unop.uk/ because the raw national rail API is so bad
-    let token = "KEY"
+
+    let configuration: Configuration
 
     var targetCrs: String?
     var sourceCrs: String?
@@ -33,9 +34,13 @@ class NationalRailDataSource : DataSource {
     var completion: DataSource.Callback?
     var task: URLSessionTask?
 
+    init(configuration: Configuration) {
+        self.configuration = configuration
+    }
+
     func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) -> URLSessionTask where T : Decodable {
         let sep = what.contains("?") ? "&" : "?"
-        let url = URL(string: "https://huxley.apphb.com/" + what + sep + "accessToken=\(token)")!
+        let url = URL(string: "https://huxley.apphb.com/" + what + sep + "accessToken=\(configuration.nationalRailAPIToken)")!
         return JSONRequest.makeRequest(url: url, onCompletion: onCompletion)
     }
 
