@@ -21,33 +21,51 @@
 import Foundation
 
 class Fonts {
+    struct BitmapInfo {
+        let bitmapName: String
+        let startIndex: Unicode.Scalar
+        let charw: Int
+        let charh: Int
+        let minWidth: Int? // If set, empty space on the right hand side of the image will be shrunk down to, at a minimum, this size
+
+        init(bitmap: String, charWidth: Int, charHeight: Int, startIndex: Unicode.Scalar, minWidth: Int? = nil) {
+            self.bitmapName = bitmap
+            self.charw = charWidth
+            self.charh = charHeight
+            self.startIndex = startIndex
+            self.minWidth = minWidth
+        }
+    }
     struct Font {
         let configName: String
         let humanReadableName: String
         let uifontName: String? // nil if a bitmap font
-        let bitmapName: String? // nil if a UIFont
+        let bitmapInfo: BitmapInfo? // nil if a UIFont
         // These three are scale factors for bitmap fonts, point sizes for UIFonts
         let subTextSize: Int
         let textSize: Int
         let headerSize: Int
+        // Copyright etc
         let attribution: String
 
+        // UIFont constructor
         init(configName: String, humanName: String, uifont: String, subTextSize: Int, textSize: Int, headerSize: Int, attribution: String) {
             self.configName = configName
             self.humanReadableName = humanName
             self.uifontName = uifont
-            self.bitmapName = nil
+            self.bitmapInfo = nil
             self.subTextSize = subTextSize
             self.textSize = textSize
             self.headerSize = headerSize
             self.attribution = attribution
         }
 
-        init(configName: String, humanName: String, bitmap: String, subTextScale: Int, textScale: Int, headerScale: Int, attribution: String) {
+        // Bitmap constructor
+        init(configName: String, humanName: String, bitmapInfo: BitmapInfo, subTextScale: Int, textScale: Int, headerScale: Int, attribution: String) {
             self.configName = configName
             self.humanReadableName = humanName
             self.uifontName = nil
-            self.bitmapName = bitmap
+            self.bitmapInfo = bitmapInfo
             self.subTextSize = subTextScale
             self.textSize = textScale
             self.headerSize = headerScale
@@ -67,7 +85,7 @@ class Fonts {
         """
 
     static let availableFonts = [
-        Font(configName: "font6x10_2", humanName: "Guicons Font", bitmap: "font6x10", subTextScale: 1, textScale: 2, headerScale: 2,
+        Font(configName: "font6x10_2", humanName: "Guicons Font", bitmapInfo: BitmapInfo(bitmap: "font6x10", charWidth: 6, charHeight: 10, startIndex: " "), subTextScale: 1, textScale: 2, headerScale: 2,
              attribution: "Guicons font taken from https://sourceforge.net/p/fshell/code/ci/default/tree/plugins/consoles/guicons/data/font_6x10.PNG licensed under the EPL. Original author uncertain."),
         Font(configName: "amiga4ever", humanName: "Amiga Forever", uifont: "Amiga Forever", subTextSize: 8, textSize: 16, headerSize: 24, attribution: """
             "Amiga 4ever" Truetype Font
@@ -115,5 +133,10 @@ class Fonts {
             """),
         // Font(configName: "advocut", humanName: "AdvoCut", uifont: "AdvoCut", subTextSize: 13, textSize: 27, headerSize: 37),
         // Font(configName: "silkscreen", humanName: "Silkscreen", uifont: "Silkscreen", subTextSize: 11, textSize: 17, headerSize: 32),
+        Font(configName: "unifont", humanName: "Unifont", bitmapInfo: BitmapInfo(bitmap: "unifont-13.0.06", charWidth: 16, charHeight: 16, startIndex: "\0", minWidth: 7), subTextScale: 1, textScale: 2, headerScale: 2, attribution: """
+            GNU Unifont 13.0.06.
+            http://unifoundry.com/unifont/index.html
+            License: SIL Open Font License version 1.1
+            """),
     ]
 }
