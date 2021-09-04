@@ -19,3 +19,6 @@
 [submodule "scripts/changes"]
 	path = scripts/changes
 	url = git@github.com:jbmorley/changes.git
+[submodule "firmware/nodemcu-firmware"]
+	path = firmware/nodemcu-firmware
+	url = git@github.com:tomsci/nodemcu-firmware.git
