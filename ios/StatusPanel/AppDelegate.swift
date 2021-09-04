@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         client = Client(baseUrl: "https://statuspanel.io/")
 
         let configuration = try! Bundle.main.configuration
-        sourceController.add(dataSource:TFLDataSource())
+        sourceController.add(dataSource:TFLDataSource(configuration: configuration))
         sourceController.add(dataSource:NationalRailDataSource(configuration: configuration))
         sourceController.add(dataSource:CalendarSource())
         #if DEBUG

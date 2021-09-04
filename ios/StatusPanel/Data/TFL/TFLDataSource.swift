@@ -22,8 +22,6 @@ import Foundation
 
 class TFLDataSource : DataSource {
     // See https://api-portal.tfl.gov.uk/admin/applications/1409617922524
-    let app_id = "1f85b5bb"
-    let app_key = "49b995489314995e79c9b4faa0d1d43c"
 
     // Key is the line id in the API, value is the human-readable name
     static let lines = [
@@ -40,13 +38,19 @@ class TFLDataSource : DataSource {
         // TODO what is Waterloo & City's id?
     ]
 
+    let configuration: Configuration
+
     var dataItems = [DataItem]()
     var completion: DataSource.Callback?
     var task: URLSessionTask?
 
+    init(configuration: Configuration) {
+        self.configuration = configuration
+    }
+
     func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) -> URLSessionTask where T : Decodable {
         let sep = what.contains("?") ? "&" : "?"
-        let url = URL(string: "https://api.tfl.gov.uk/" + what + sep + "app_id=\(app_id)&app_key=\(app_key)")!
+        let url = URL(string: "https://api.tfl.gov.uk/" + what + sep + "app_id=\(configuration.tflApiId)&app_key=\(configuration.tflApiKey)")!
         return JSONRequest.makeRequest(url: url, onCompletion: onCompletion)
     }
 
