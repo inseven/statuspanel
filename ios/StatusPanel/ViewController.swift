@@ -95,19 +95,28 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     static func getLabel(frame: CGRect, font fontName: String, type: LabelType = .text, redactMode: RedactMode = .none) -> UILabel {
         let font = Config().getFont(named: fontName)
         let size = (type == .header) ? font.headerSize : (type == .subText) ? font.subTextSize : font.textSize
-        if let bitmapName = font.bitmapName {
-            if bitmapName == "font6x10" && type == .header {
-                // Special case this, as guicons does not look good as a header font
+        if let bitmapInfo = font.bitmapInfo {
+            if (bitmapInfo.bitmapName == "font6x10" || font.configName == "unifont") && type == .header {
+                // Special case this, as neither guicons nor Unifont look good as a header font
                 let label = UILabel(frame: frame)
                 label.lineBreakMode = .byWordWrapping
                 label.font = UIFont(name: "Amiga Forever", size: 24)
                 return label
             }
-            return BitmapFontLabel(frame: frame, fontNamed: bitmapName, scale: size, redactMode: redactMode)
+            return BitmapFontLabel(frame: frame, font: font, scale: size, redactMode: redactMode)
         } else {
             let label = UILabel(frame: frame)
             label.lineBreakMode = .byWordWrapping
-            label.font = UIFont(name: font.uifontName!, size: CGFloat(size))
+            if let uifont = UIFont(name: font.uifontName!, size: CGFloat(size)) {
+                label.font = uifont
+            } else {
+                print("No UIFont found for \(font.uifontName!)!")
+                for family in UIFont.familyNames {
+                    for fontName in UIFont.fontNames(forFamilyName: family) {
+                        print("Candidate: \(fontName)")
+                    }
+                }
+            }
             return label
         }
     }
