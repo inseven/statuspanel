@@ -57,7 +57,7 @@ if $CHECKOUT ; then
     if [ -d nodemcu-firmware ] ; then
         rm -rf nodemcu-firmware
     fi
-    git clone --branch tomsci_ir_rebase https://github.com/tomsci/nodemcu-firmware.git --depth 1
+    git clone --branch tomsci_dev_esp32 https://github.com/tomsci/nodemcu-firmware.git --depth 1
     cd nodemcu-firmware
     git submodule update --init --recursive --depth 1
 fi
