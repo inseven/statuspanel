@@ -89,7 +89,7 @@ class TFLDataSource : DataSource {
             if sev < 10 {
                 flags.insert(.warning)
             }
-            dataItems.append(DataItem("\(line.name) line: \(desc)", flags: flags))
+            dataItems.append(DataItem("🚇 \(line.name) line: \(desc)", flags: flags))
         }
         completion?(self, dataItems, err)
     }
