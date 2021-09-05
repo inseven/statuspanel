@@ -53,7 +53,6 @@ do
     esac
 done
 
-
 if $CHECKOUT ; then
     cd "${FIRMWARE_DIRECTORY}"
     if [ -d nodemcu-firmware ] ; then
@@ -67,19 +66,24 @@ fi
 cd "${FIRMWARE_DIRECTORY}/nodemcu-firmware"
 cp "$SDKCONFIG_PATH" .
 
+# Pass the interactive flags to Docker if we're running in interactive mode.
+# https://stackoverflow.com/questions/911168/how-to-detect-if-my-shell-script-is-running-through-a-pipe
+DOCKER_INTERACTIVE_FLAGS=""
+if [ -t 1 ]; then
+    DOCKER_INTERACTIVE_FLAGS="-ti"
+fi
 
-# TODO: Consider a flag for enabling/disabling interactive builds (since this easily allows configuration)
-# docker run --rm -ti -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
-
+# Ensure the Docker container is up-to-date
+# TODO: Perhaps this should be a flag.
 docker pull marcelstoer/nodemcu-build
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
     docker run --rm -v `pwd`:/opt/nodemcu-firmware:delegated marcelstoer/nodemcu-build build
-
 else
-    docker run --rm \
+    docker run --rm $DOCKER_INTERACTIVE_FLAGS \
         -v `pwd`:/opt/nodemcu-firmware \
         marcelstoer/nodemcu-build build
-    docker run --rm \
+    docker run --rm $DOCKER_INTERACTIVE_FLAGS \
         -v `pwd`:/opt/nodemcu-firmware \
         -v "${NODEMCU_DIRECTORY}:/opt/lua" \
         -v "${FIRMWARE_DIRECTORY}/make-lfs.sh:/opt/make-lfs.sh" \
