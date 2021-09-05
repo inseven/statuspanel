@@ -66,9 +66,9 @@ jobs:
         name: Firmware
         path: firmware/build
 
-    - name: Archive the build directory
+    - name: Archive the build directory on failure
       uses: actions/upload-artifact@v2
-      if: always()
+      if: ${{ failure() }}
       with:
         name: Build Directory
         path: firmware/nodemcu-firmware/build
