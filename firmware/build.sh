@@ -64,7 +64,13 @@ fi
 
 cd "${FIRMWARE_DIRECTORY}/nodemcu-firmware"
 cp "$SDKCONFIG_PATH" .
+
+cp components/platform/partitions-tomsci.csv components/platform/partitions.csv
+echo "CONFIG_PARTITION_TABLE_CUSTOM_FILENAME=" >> sdkconfig
+echo "CONFIG_PARTITION_TABLE_FILENAME=" >> sdkconfig
+
 docker pull marcelstoer/nodemcu-build
 # TODO: Consider a flag for non-interactive.
+# TODO: Custom macOS build. -v `pwd`:/opt/nodemcu-firmware:delegate
 # docker run --rm -ti -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
 docker run --rm -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
