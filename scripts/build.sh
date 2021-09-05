@@ -93,6 +93,9 @@ function build_scheme {
 
 cd "$ROOT_DIRECTORY"
 
+# Create the configuration file.
+echo $APP_CONFIGURATION > ios/StatusPanel/configuration.json
+
 # List the available schemes.
 xcode_project -list
 
