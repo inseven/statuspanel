@@ -79,7 +79,7 @@ else
         -v `pwd`:/opt/nodemcu-firmware \
         -v "${NODEMCU_DIRECTORY}:/opt/lua" \
         -v "${FIRMWARE_DIRECTORY}/make-lfs.sh:/opt/make-lfs.sh" \
-        marcelstoer/nodemcu-build exec "/opt/make-lfs.sh"
+        marcelstoer/nodemcu-build bash "/opt/make-lfs.sh"
     exit
     docker run --rm \
         -v `pwd`:/opt/nodemcu-firmware \
