@@ -29,7 +29,8 @@ FIRMWARE_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd
 
 ROOT_DIRECTORY="${FIRMWARE_DIRECTORY}/.."
 NODEMCU_FIRMWARE_DIRECTORY="${FIRMWARE_DIRECTORY}/nodemcu-firmware"
-NODEMCU_ESP32_BUILD_DIRECTORY="${ROOT_DIRECTORY}/nodemcu/esp32"
+NODEMCU_DIRECTORY="${ROOT_DIRECTORY}/nodemcu"
+NODEMCU_ESP32_BUILD_DIRECTORY="${NODEMCU_DIRECTORY}/esp32"
 
 SDKCONFIG_PATH="${NODEMCU_ESP32_BUILD_DIRECTORY}/sdkconfig"
 
@@ -72,6 +73,8 @@ cp "$SDKCONFIG_PATH" .
 docker pull marcelstoer/nodemcu-build
 if [[ "$OSTYPE" == "darwin"* ]]; then
     docker run --rm -v `pwd`:/opt/nodemcu-firmware:delegated marcelstoer/nodemcu-build build
+
 else
     docker run --rm -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
+    docker run --rm -v `pwd`:/opt/nodemcu-firmware:delegated marcelstoer/nodemcu-build -v "${NODEMCU_DIRECTORY}:/opt/lua" lfs-image
 fi
