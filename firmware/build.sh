@@ -38,12 +38,17 @@ SDKCONFIG_PATH="${NODEMCU_ESP32_BUILD_DIRECTORY}/sdkconfig"
 # Process the command line arguments.
 POSITIONAL=()
 CHECKOUT=${CHECKOUT:-false}
+UPDATE=${UPDATE:-false}
 while [[ $# -gt 0 ]]
 do
     key="$1"
     case $key in
         -c|--checkout)
         CHECKOUT=true
+        shift
+        ;;
+        -u|--update)
+        UPDATE=true
         shift
         ;;
         *)
@@ -53,6 +58,8 @@ do
     esac
 done
 
+# Checkout the source.
+# TODO: Update the build script to use a local submodule to avoid any confusion from repository management here.
 if $CHECKOUT ; then
     cd "${FIRMWARE_DIRECTORY}"
     if [ -d nodemcu-firmware ] ; then
@@ -73,10 +80,12 @@ if [ -t 1 ]; then
     DOCKER_INTERACTIVE_FLAGS="-ti"
 fi
 
-# Ensure the Docker container is up-to-date
-# TODO: Perhaps this should be a flag.
-docker pull marcelstoer/nodemcu-build
+# Ensure the Docker container is up-to-date.
+if $CHECKOUT ; then
+    docker pull marcelstoer/nodemcu-build
+fi
 
+# Build the firmware and LFS.
 if [[ "$OSTYPE" == "darwin"* ]]; then
     docker run --rm -v `pwd`:/opt/nodemcu-firmware:delegated marcelstoer/nodemcu-build build
 else
@@ -90,6 +99,7 @@ else
         marcelstoer/nodemcu-build bash "/opt/make-lfs.sh"
 fi
 
+# Copy the build output.
 mkdir -p "${FIRMWARE_BUILD_DIRECTORY}"
 cp "${NODEMCU_FIRMWARE_DIRECTORY}/build/bootloader/bootloader".{bin,elf,map} "${FIRMWARE_BUILD_DIRECTORY}"
 cp "${NODEMCU_FIRMWARE_DIRECTORY}/build/NodeMCU".{bin,elf,map} "${FIRMWARE_BUILD_DIRECTORY}"
