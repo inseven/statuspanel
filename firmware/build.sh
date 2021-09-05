@@ -26,13 +26,11 @@ set -x
 set -u
 
 FIRMWARE_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-
 ROOT_DIRECTORY="$( cd "$( dirname "${FIRMWARE_DIRECTORY}" )" &> /dev/null && pwd )"
 FIRMWARE_BUILD_DIRECTORY="${FIRMWARE_DIRECTORY}/build"
 NODEMCU_FIRMWARE_DIRECTORY="${FIRMWARE_DIRECTORY}/nodemcu-firmware"
 NODEMCU_DIRECTORY="${ROOT_DIRECTORY}/nodemcu"
 NODEMCU_ESP32_BUILD_DIRECTORY="${NODEMCU_DIRECTORY}/esp32"
-
 SDKCONFIG_PATH="${NODEMCU_ESP32_BUILD_DIRECTORY}/sdkconfig"
 
 # Process the command line arguments.
