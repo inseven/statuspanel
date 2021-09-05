@@ -69,8 +69,12 @@ cp components/platform/partitions-tomsci.csv components/platform/partitions.csv
 echo "CONFIG_PARTITION_TABLE_CUSTOM_FILENAME=" >> sdkconfig
 echo "CONFIG_PARTITION_TABLE_FILENAME=" >> sdkconfig
 
-docker pull marcelstoer/nodemcu-build
-# TODO: Consider a flag for non-interactive.
-# TODO: Custom macOS build. -v `pwd`:/opt/nodemcu-firmware:delegate
+# TODO: Consider a flag for enabling/disabling interactive builds (since this easily allows configuration)
 # docker run --rm -ti -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
-docker run --rm -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
+
+docker pull marcelstoer/nodemcu-build
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    docker run --rm -v `pwd`:/opt/nodemcu-firmware:delegated marcelstoer/nodemcu-build build
+else
+    docker run --rm -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
+fi
