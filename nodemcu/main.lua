@@ -123,8 +123,9 @@ function sleepFor(delta)
         -- that would mean we'd wake immediately.
         shouldUsbDetect = false
     end
-    node.dsleeps(delta, {
-        UnpairPin, (shouldUsbDetect and UsbDetect or nil),
+    node.dsleep({
+        secs = delta,
+        gpio = { UnpairPin, shouldUsbDetect and UsbDetect or nil },
         pull = true,
         isolate = { 12, OldBusy, AutoPin, CS, Reset, DC },
     })
