@@ -10,3 +10,4 @@ xcuserdata
 /.local
 /build
 /firmware/nodemcu-firmware
+/ios/StatusPanel/configuration.json
