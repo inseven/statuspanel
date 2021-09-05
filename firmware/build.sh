@@ -65,9 +65,6 @@ fi
 cd "${FIRMWARE_DIRECTORY}/nodemcu-firmware"
 cp "$SDKCONFIG_PATH" .
 
-cp components/platform/partitions-tomsci.csv components/platform/partitions.csv
-echo "CONFIG_PARTITION_TABLE_CUSTOM_FILENAME=" >> sdkconfig
-echo "CONFIG_PARTITION_TABLE_FILENAME=" >> sdkconfig
 
 # TODO: Consider a flag for enabling/disabling interactive builds (since this easily allows configuration)
 # docker run --rm -ti -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
