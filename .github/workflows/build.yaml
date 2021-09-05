@@ -9,9 +9,9 @@ on:
     - cron:  '0 1 * * *'
 
 jobs:
-  test:
+  build-app:
 
-    name: Build for iOS
+    name: Build app
     runs-on: macos-monterey
 
     steps:
@@ -40,3 +40,36 @@ jobs:
 
       run: |
         scripts/build.sh
+
+  build-firmware:
+
+    name: Build firmware
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+        fetch-depth: 0
+
+    - name: Build
+      env:
+        CHECKOUT: true
+        UPDATE: true
+      run: |
+        firmware/build.sh
+
+    - name: Archive the firmware
+      uses: actions/upload-artifact@v2
+      with:
+        name: Firmware
+        path: firmware/build
+
+    - name: Archive the build directory on failure
+      uses: actions/upload-artifact@v2
+      if: ${{ failure() }}
+      with:
+        name: Build Directory
+        path: firmware/nodemcu-firmware/build

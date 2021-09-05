@@ -9,3 +9,4 @@ xcuserdata
 .env*
 /.local
 /build
+/firmware/nodemcu-firmware
