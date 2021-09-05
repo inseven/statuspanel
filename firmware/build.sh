@@ -56,6 +56,16 @@ do
     esac
 done
 
+function volume-flag {
+    # Echo a Docker volume flag optimised for the current platform.
+    # This appends the 'delegated' option when on macOS as this apparently significantly improves build times.
+    VOLUME_FLAGS=""
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        VOLUME_FLAGS=":delegated"
+    fi
+    echo "--volume ${1}:${2}${VOLUME_FLAGS}"
+}
+
 # Checkout the source.
 # TODO: Update the build script to use a local submodule to avoid any confusion from repository management here.
 if $CHECKOUT ; then
@@ -68,7 +78,7 @@ if $CHECKOUT ; then
     git submodule update --init --recursive --depth 1
 fi
 
-cd "${FIRMWARE_DIRECTORY}/nodemcu-firmware"
+cd "${NODEMCU_FIRMWARE_DIRECTORY}"
 cp "$SDKCONFIG_PATH" .
 
 # Pass the interactive flags to Docker if we're running in interactive mode.
@@ -84,18 +94,15 @@ if $CHECKOUT ; then
 fi
 
 # Build the firmware and LFS.
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    docker run --rm -v `pwd`:/opt/nodemcu-firmware:delegated marcelstoer/nodemcu-build build
-else
-    docker run --rm $DOCKER_INTERACTIVE_FLAGS \
-        -v `pwd`:/opt/nodemcu-firmware \
-        marcelstoer/nodemcu-build build
-    docker run --rm $DOCKER_INTERACTIVE_FLAGS \
-        -v `pwd`:/opt/nodemcu-firmware \
-        -v "${NODEMCU_DIRECTORY}:/opt/lua" \
-        -v "${FIRMWARE_DIRECTORY}/make-lfs.sh:/opt/make-lfs.sh" \
-        marcelstoer/nodemcu-build bash "/opt/make-lfs.sh"
-fi
+docker run --rm $DOCKER_INTERACTIVE_FLAGS \
+    `volume-flag "${NODEMCU_FIRMWARE_DIRECTORY}" /opt/nodemcu-firmware` \
+    marcelstoer/nodemcu-build build
+docker run --rm $DOCKER_INTERACTIVE_FLAGS \
+    -v `pwd`:/opt/nodemcu-firmware \
+    `volume-flag "${NODEMCU_FIRMWARE_DIRECTORY}" /opt/nodemcu-firmware` \
+    `volume-flag "${NODEMCU_DIRECTORY}" /opt/lua` \
+    -v "${FIRMWARE_DIRECTORY}/make-lfs.sh:/opt/make-lfs.sh" \
+    marcelstoer/nodemcu-build bash "/opt/make-lfs.sh"
 
 # Copy the build output.
 mkdir -p "${FIRMWARE_BUILD_DIRECTORY}"
