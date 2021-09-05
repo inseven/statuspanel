@@ -57,6 +57,7 @@ jobs:
     - name: Build
       env:
         CHECKOUT: true
+        UPDATE: true
       run: |
         firmware/build.sh
 
