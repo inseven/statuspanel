@@ -75,6 +75,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     docker run --rm -v `pwd`:/opt/nodemcu-firmware:delegated marcelstoer/nodemcu-build build
 
 else
-    docker run --rm -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build build
-    docker run --rm -v `pwd`:/opt/nodemcu-firmware marcelstoer/nodemcu-build -v "${NODEMCU_DIRECTORY}:/opt/lua" lfs-image
+    docker run --rm \
+        -v `pwd`:/opt/nodemcu-firmware \
+        marcelstoer/nodemcu-build build
+    docker run --rm \
+        -v `pwd`:/opt/nodemcu-firmware \
+        -v "${NODEMCU_DIRECTORY}:/opt/lua" \
+        marcelstoer/nodemcu-build lfs-image
 fi
