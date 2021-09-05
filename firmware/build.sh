@@ -67,7 +67,8 @@ function volume-flag {
 }
 
 # Checkout the source.
-# TODO: Update the build script to use a local submodule to avoid any confusion from repository management here.
+# TODO: Add the NodeMCU firmware as a git submodule #98
+#       https://github.com/inseven/statuspanel/issues/98
 if $CHECKOUT ; then
     cd "${FIRMWARE_DIRECTORY}"
     if [ -d nodemcu-firmware ] ; then
