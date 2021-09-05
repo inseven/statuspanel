@@ -60,6 +60,12 @@ jobs:
       run: |
         firmware/build.sh
 
+    - name: Archive the firmware
+      uses: actions/upload-artifact@v2
+      with:
+        name: Firmware
+        path: firmware/build
+
     - name: Archive the build directory
       uses: actions/upload-artifact@v2
       if: always()

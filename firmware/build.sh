@@ -28,6 +28,7 @@ set -u
 FIRMWARE_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 ROOT_DIRECTORY="$( cd "$( dirname "${FIRMWARE_DIRECTORY}" )" &> /dev/null && pwd )"
+FIRMWARE_BUILD_DIRECTORY="${FIRMWARE_DIRECTORY}/build"
 NODEMCU_FIRMWARE_DIRECTORY="${FIRMWARE_DIRECTORY}/nodemcu-firmware"
 NODEMCU_DIRECTORY="${ROOT_DIRECTORY}/nodemcu"
 NODEMCU_ESP32_BUILD_DIRECTORY="${NODEMCU_DIRECTORY}/esp32"
@@ -84,3 +85,9 @@ else
         -v "${FIRMWARE_DIRECTORY}/make-lfs.sh:/opt/make-lfs.sh" \
         marcelstoer/nodemcu-build bash "/opt/make-lfs.sh"
 fi
+
+mkdir -p "${FIRMWARE_BUILD_DIRECTORY}"
+cp "${NODEMCU_FIRMWARE_DIRECTORY}/booatloader/bootloader".{bin,elf,map} "${FIRMWARE_BUILD_DIRECTORY}"
+cp "${NODEMCU_FIRMWARE_DIRECTORY}/NodeMCU".{bin,elf,map} "${FIRMWARE_BUILD_DIRECTORY}"
+cp "${NODEMCU_FIRMWARE_DIRECTORY}/partitions.bin" "${FIRMWARE_BUILD_DIRECTORY}"
+cp "${NODEMCU_ESP32_BUILD_DIRECTORY}/lfs.img" "${FIRMWARE_BUILD_DIRECTORY}"
