@@ -77,6 +77,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else
     docker run --rm \
         -v `pwd`:/opt/nodemcu-firmware \
+        -v "${NODEMCU_DIRECTORY}:/opt/lua" \
+        -v "${FIRMWARE_DIRECTORY}/make-lfs.sh:/opt/make-lfs.sh" \
+        marcelstoer/nodemcu-build exec "/opt/make-lfs.sh"
+    exit
+    docker run --rm \
+        -v `pwd`:/opt/nodemcu-firmware \
         marcelstoer/nodemcu-build build
     docker run --rm \
         -v `pwd`:/opt/nodemcu-firmware \
