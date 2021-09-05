@@ -22,7 +22,7 @@ import Foundation
 
 extension Bundle {
 
-    func getConfiguration() throws -> Configuration {
+    func configuration() throws -> Configuration {
         guard let url = Bundle.main.url(forResource: "configuration", withExtension: "json") else {
             throw StatusPanelError.missingConfiguration
         }
