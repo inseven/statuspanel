@@ -131,8 +131,6 @@ class Fonts {
             http://www.pentacom.jp/pentacom/bitfontmaker2/gallery/?id=3780
             License: Creative Commons Attribution
             """),
-        // Font(configName: "advocut", humanName: "AdvoCut", uifont: "AdvoCut", subTextSize: 13, textSize: 27, headerSize: 37),
-        // Font(configName: "silkscreen", humanName: "Silkscreen", uifont: "Silkscreen", subTextSize: 11, textSize: 17, headerSize: 32),
         Font(configName: "unifont", humanName: "Unifont", bitmapInfo: BitmapInfo(bitmap: "unifont-13.0.06", charWidth: 16, charHeight: 16, startIndex: "\0", minWidth: 7), subTextScale: 1, textScale: 2, headerScale: 2, attribution: """
             GNU Unifont 13.0.06.
             http://unifoundry.com/unifont/index.html
