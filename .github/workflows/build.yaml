@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-monterey, macos-latest]
+        os: [macos-monterey, macos-10.15]
 
     steps:
 
