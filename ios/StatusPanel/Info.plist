@@ -46,10 +46,7 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>fonts/amiga4ever.ttf</string>
-		<string>fonts/AdvoCut.ttf</string>
-		<string>fonts/Silkscreen.ttf</string>
 		<string>fonts/JinxedWizards.ttf</string>
-		<string>fonts/8x8 Wide Mono Bold.ttf</string>
 		<string>fonts/RobotY.ttf</string>
 		<string>fonts/PixelByzantine.ttf</string>
 		<string>fonts/ChiKareGo.ttf</string>
