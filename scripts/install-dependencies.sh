@@ -37,6 +37,9 @@ source "$environment_path"
 
 # Install the Python dependencies
 pip3 install --user pipenv
+pushd "$root_directory"
+pipenv install psycopg2-binary
+popd
 PIPENV_PIPFILE="$root_directory/Pipfile" pipenv install
 PIPENV_PIPFILE="$changes_directory/Pipfile" pipenv install
 PIPENV_PIPFILE="$build_tools_directory/Pipfile" pipenv install
