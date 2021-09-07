@@ -6,8 +6,6 @@ verify_ssl = true
 
 [packages]
 
-django = "*"
-django-heroku = "*"
 Flask = "*"
 "gobiko.apns" = "*"
 gunicorn = "*"
