@@ -159,7 +159,7 @@ if $ARCHIVE || $TESTFLIGHT_UPLOAD ; then
         -archivePath "$ARCHIVE_PATH" \
         -exportArchive \
         -exportPath "$BUILD_DIRECTORY" \
-        -exportOptionsPlist "i${APP_DIRECTORY}/ExportOptions.plist"
+        -exportOptionsPlist "${APP_DIRECTORY}/ExportOptions.plist"
 
 fi
 
