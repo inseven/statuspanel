@@ -12,7 +12,10 @@ jobs:
   build-app:
 
     name: Build app
-    runs-on: macos-monterey
+
+    strategy:
+      matrix:
+        os: [macos-monterey, macos-latest]
 
     steps:
 
@@ -38,7 +41,9 @@ jobs:
         APP_CONFIGURATION: ${{ secrets.APP_CONFIGURATION }}
 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TESTFLIGHT_UPLOAD: ${{ github.ref == 'refs/heads/main' }}
+
+        ARCHIVE: ${{ matrix.os == 'macos-monterey' }}
+        TESTFLIGHT_UPLOAD: ${{ github.ref == 'refs/heads/main' && matrix.os == 'macos-monterey' }}
 
       run: |
         scripts/build.sh
