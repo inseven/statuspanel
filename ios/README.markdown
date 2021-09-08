@@ -6,12 +6,7 @@ The iOS app handles all the heavy lifting of StatusPanel; it's responsible for c
 
 ### Installing Dependencies
 
-Just like the other components of StatusPanel, you'll first want to install the dependencies:
-
-```bash
-git submodule update --init --recursive
-scripts/install-dependencies.sh
-```
+- [Install the project dependencies](README.markdown#installing-dependencies)
 
 ### Configuration
 
