@@ -82,10 +82,6 @@ file.remove("sk")
 
 ---
 
-# ESP8266
-
-_No longer supported._
-
 # ESP32
 
 ## Firmware
