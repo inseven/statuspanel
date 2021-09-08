@@ -17,21 +17,21 @@ StatusPanel comprises a number of different components:
 
 ### Installing Dependencies
 
-- StatusPanel uses [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so before doing anything else, you'll need to do:
+1. StatusPanel uses [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so before doing anything else, you'll need to do:
 
-  ```bash
-  git submodule update --init --recursive
-  ```
+   ```bash
+   git submodule update --init --recursive
+   ```
 
-  N.B. You'll also need to run this command if the submodules change.
+   N.B. You'll also need to run this command if the submodules change.
 
-- Once your submodules are up-to-date, you can install the dependencies for all StatusPanel components using the `install-dependencies.sh` script:
+2. Once your submodules are up-to-date, you can install the dependencies for all StatusPanel components using the `install-dependencies.sh` script:
 
-  ```bash
-  scripts/install-dependencies.sh
-  ```
+   ```bash
+   scripts/install-dependencies.sh
+   ```
  
-  This script installs all dependencies in the `.local` folder within the project root, does not require root, and should not impact your local machine configuration. Scripts that rely on these dependencies source the `scripts/environment.sh` script which configures the path at runtime.
+   This script installs all dependencies in the `.local` folder within the project root, does not require root, and should not impact your local machine configuration. Scripts that rely on these dependencies source the `scripts/environment.sh` script which configures the path at runtime.
 
 ## Licensing
 
