@@ -11,7 +11,9 @@ StatusPanel comprises a number of different components:
 - [iOS app](ios/README.markdown)
 - [Service](service/README.markdown)
 
-## Getting Started
+## Development
+
+### Installing Dependencies
 
 StatusPanel uses [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so before doing anything else, you'll need to do:
 
@@ -37,6 +39,6 @@ Possible future display:
 
 It looks like Waveshare are phasing out the display we're currently using and replacing it with one of the same physical size, but a higher resolution.
 
-# Licensing
+## Licensing
 
 StatusPanel is licensed under the MIT License (see [LICENSE](LICENSE)).
