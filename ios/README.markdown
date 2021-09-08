@@ -13,6 +13,27 @@ git submodule update --init --recursive
 scripts/install-dependencies.sh
 ```
 
+### Configuration
+
+API keys for data sources (TfL, National Rail, ... etc) are stored in a separate JSON configuration file so we can keep them out of the GitHub repository to reduce the risk of casual abuse. In order to perform a local build of the app and for local testing, you'll need to create your own copy of this file.
+
+Create `ios/StatusPanel/configuration.json` with the following contents, populating the relevant API keys where appropriate:
+
+```json
+{
+    "national-rail-api-token": "...",
+    "tfl-api-id": "...",
+    "tfl-api-key": "..."
+}
+```
+
+#### Obtaining API Keys
+
+APIs for the built-in data sources can be found at:
+
+- [Transport for London](https://api.tfl.gov.uk/)
+- [National Rail Live Departure Boards](https://realtime.nationalrail.co.uk/OpenLDBWSRegistration/Registration)
+
 ### Build Numbers
 
 The iOS app uses auto-generated build numbers that attempt to encode the build timestamp, along with some details of the commit used. They follow the format:
@@ -60,11 +81,12 @@ openssl pkcs12 -info -nodes -in build_certificate.p12
 
 In order to make continuous integration easy the `scripts/build.sh` script builds the full project, including submitting the macOS app for notarization. In order to run this script (noting that you probably don't want to use it for regular development cycles), you'll need to configure your environment accordingly, by setting the following environment variables:
 
-- `IOS_CERTIFICATE_BASE64` -- base64 encoded PKCS 12 certificate for iOS App Store builds (see above for details)
-- `IOS_CERTIFICATE_PASSWORD` -- password used to protect the iOS certificate
-- `APPLE_API_KEY` -- base64 encoded App Store Connect API key (see https://appstoreconnect.apple.com/access/api)
-- `APPLE_API_KEY_ID` -- App Store Connect API key id (see https://appstoreconnect.apple.com/access/api)
-- `APPLE_API_KEY_ISSUER_ID` -- App Store connect API key issuer id (see https://appstoreconnect.apple.com/access/api)
+- `IOS_CERTIFICATE_BASE64` – base64 encoded PKCS 12 certificate for iOS App Store builds (see above for details)
+- `IOS_CERTIFICATE_PASSWORD` – password used to protect the iOS certificate
+- `APPLE_API_KEY` – base64 encoded App Store Connect API key (see https://appstoreconnect.apple.com/access/api)
+- `APPLE_API_KEY_ID` – App Store Connect API key id (see https://appstoreconnect.apple.com/access/api)
+- `APPLE_API_KEY_ISSUER_ID` – App Store connect API key issuer id (see https://appstoreconnect.apple.com/access/api)
+- `APP_CONFIGURATION` – JSON blob containing the [app configuration](#configuration) including, amongst other things, service API keys
 - `GITHUB_TOKEN` -- [GitHub token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) used to create the release
 
 The script (like Fastlane) will look for and source an environment file in the Fastlane directory (`Fastlane/.env`) which you can add your local details to. This file is, of course, in `.gitignore`. For example,
@@ -78,6 +100,9 @@ export IOS_CERTIFICATE_PASSWORD=
 export APPLE_API_KEY=
 export APPLE_API_KEY_ID=
 export APPLE_API_KEY_ISSUER_ID=
+
+# Configuration
+export APP_CONFIGURATION=
 
 # GitHub (only required if publishing releases locally)
 export GITHUB_TOKEN=
