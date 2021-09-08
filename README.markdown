@@ -1,5 +1,7 @@
 # StatusPanel
 
+[![Build](https://github.com/inseven/statuspanel/actions/workflows/build.yaml/badge.svg)](https://github.com/inseven/statuspanel/actions/workflows/build.yaml)
+
 eInk status board for displaying every-day information
 
 ## Components
