@@ -78,6 +78,7 @@ fi
 
 # Build the firmware and LFS.
 docker run --rm $DOCKER_INTERACTIVE_FLAGS \
+    --env GIT_DIR=/firmware/nodemcu-firmware \
     `volume-flag "${NODEMCU_FIRMWARE_DIRECTORY}" /opt/nodemcu-firmware` \
     `volume-flag "${NODEMCU_FIRMWARE_DIRECTORY}" /firmware/nodemcu-firmware` \
     `volume-flag "${ROOT_DIRECTORY}/.git/modules/firmware/nodemcu-firmware" /.git/modules/firmware/nodemcu-firmware` \
