@@ -30,10 +30,11 @@ SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 BUILD_DIRECTORY="${ROOT_DIRECTORY}/build"
 TEMPORARY_DIRECTORY="${ROOT_DIRECTORY}/temp"
+APP_DIRECTORY="${ROOT_DIRECTORY}/ios"
 
 KEYCHAIN_PATH="${TEMPORARY_DIRECTORY}/temporary.keychain"
 ARCHIVE_PATH="${BUILD_DIRECTORY}/Bookmarks.xcarchive"
-FASTLANE_ENV_PATH="${ROOT_DIRECTORY}/fastlane/.env"
+FASTLANE_ENV_PATH="${APP_DIRECTORY}/fastlane/.env"
 
 CHANGES_DIRECTORY="${SCRIPTS_DIRECTORY}/changes"
 BUILD_TOOLS_DIRECTORY="${SCRIPTS_DIRECTORY}/build-tools"
@@ -84,7 +85,7 @@ fi
 
 function xcode_project {
     xcodebuild \
-        -project ios/StatusPanel.xcodeproj "$@"
+        -project StatusPanel.xcodeproj "$@"
 }
 
 function build_scheme {
@@ -96,10 +97,10 @@ function build_scheme {
         CODE_SIGNING_ALLOWED=NO "${@:2}"
 }
 
-cd "$ROOT_DIRECTORY"
+cd "$APP_DIRECTORY"
 
 # Create the configuration file.
-echo $APP_CONFIGURATION > ios/StatusPanel/configuration.json
+echo $APP_CONFIGURATION > "${APP_DIRECTORY}/StatusPanel/configuration.json"
 
 # List the available schemes.
 xcode_project -list
@@ -141,7 +142,7 @@ BUILD_NUMBER=`build-tools generate-build-number`
 echo "$IOS_CERTIFICATE_PASSWORD" | build-tools import-base64-certificate --password "$KEYCHAIN_PATH" "$IOS_CERTIFICATE_BASE64"
 
 # Install the provisioning profiles.
-build-tools install-provisioning-profile "ios/StatusPanel_App_Store_Profile.mobileprovision"
+build-tools install-provisioning-profile "${APP_DIRECTORY}/StatusPanel_App_Store_Profile.mobileprovision"
 
 if $ARCHIVE || $TESTFLIGHT_UPLOAD ; then
 
@@ -158,7 +159,7 @@ if $ARCHIVE || $TESTFLIGHT_UPLOAD ; then
         -archivePath "$ARCHIVE_PATH" \
         -exportArchive \
         -exportPath "$BUILD_DIRECTORY" \
-        -exportOptionsPlist "ios/ExportOptions.plist"
+        -exportOptionsPlist "${APP_DIRECTORY}/ExportOptions.plist"
 
 fi
 
