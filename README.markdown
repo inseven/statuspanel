@@ -37,3 +37,6 @@ Possible future display:
 
 It looks like Waveshare are phasing out the display we're currently using and replacing it with one of the same physical size, but a higher resolution.
 
+# Licensing
+
+StatusPanel is licensed under the MIT License (see [LICENSE](LICENSE)).
