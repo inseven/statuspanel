@@ -4,7 +4,7 @@ The iOS app handles all the heavy lifting of StatusPanel; it's responsible for c
 
 ## Development
 
-First, [install the project dependencies](/README.markdown#installing-dependencies).
+If you want to start developing for the iOS app, you should first [install the project dependencies](/README.markdown#installing-dependencies).
 
 ### Configuration
 
