@@ -27,9 +27,7 @@ Create `ios/StatusPanel/configuration.json` with the following contents, populat
 }
 ```
 
-#### Obtaining API Keys
-
-APIs for the built-in data sources can be found at:
+You can obtain development API keys at:
 
 - [National Rail Live Departure Boards](https://realtime.nationalrail.co.uk/OpenLDBWSRegistration/Registration)
 - [Transport for London](https://api.tfl.gov.uk/)
