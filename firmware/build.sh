@@ -78,16 +78,17 @@ fi
 
 # Build the firmware and LFS.
 docker run --rm $DOCKER_INTERACTIVE_FLAGS \
-    --env GIT_DIR=/firmware/nodemcu-firmware \
+    --env GIT_DIR=/opt/statuspanel/firmware/nodemcu-firmware/.git \
+    --env GIT_WORK_TREE=/opt/nodemcu-firmware \
+    `volume-flag "${ROOT_DIRECTORY}" /opt/statuspanel` \
     `volume-flag "${NODEMCU_FIRMWARE_DIRECTORY}" /opt/nodemcu-firmware` \
-    `volume-flag "${NODEMCU_FIRMWARE_DIRECTORY}" /firmware/nodemcu-firmware` \
-    `volume-flag "${ROOT_DIRECTORY}/.git/modules/firmware/nodemcu-firmware" /.git/modules/firmware/nodemcu-firmware` \
     marcelstoer/nodemcu-build build
 docker run --rm $DOCKER_INTERACTIVE_FLAGS \
     -v `pwd`:/opt/nodemcu-firmware \
+    --env GIT_DIR=/opt/statuspanel/firmware/nodemcu-firmware/.git \
+    --env GIT_WORK_TREE=/opt/nodemcu-firmware \
+    `volume-flag "${ROOT_DIRECTORY}" /opt/statuspanel` \
     `volume-flag "${NODEMCU_FIRMWARE_DIRECTORY}" /opt/nodemcu-firmware` \
-    `volume-flag "${NODEMCU_FIRMWARE_DIRECTORY}" /firmware/nodemcu-firmware` \
-    `volume-flag "${ROOT_DIRECTORY}/.git/modules/firmware/nodemcu-firmware" /.git/modules/firmware/nodemcu-firmware` \
     `volume-flag "${NODEMCU_DIRECTORY}" /opt/lua` \
     -v "${FIRMWARE_DIRECTORY}/make-lfs.sh:/opt/make-lfs.sh" \
     marcelstoer/nodemcu-build bash "/opt/make-lfs.sh"
