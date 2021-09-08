@@ -86,7 +86,7 @@ In order to make continuous integration easy the `scripts/build.sh` script build
 - `APPLE_API_KEY` – base64 encoded App Store Connect API key (see https://appstoreconnect.apple.com/access/api)
 - `APPLE_API_KEY_ID` – App Store Connect API key id (see https://appstoreconnect.apple.com/access/api)
 - `APPLE_API_KEY_ISSUER_ID` – App Store connect API key issuer id (see https://appstoreconnect.apple.com/access/api)
-- `APP_CONFIGURATION` – JSON blob containing the [app configuration](#configuration) including, amongst other things, service API keys
+- `APP_CONFIGURATION` – JSON blob containing the [app configuration](#configuration)
 - `GITHUB_TOKEN` -- [GitHub token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) used to create the release
 
 The script (like Fastlane) will look for and source an environment file in the Fastlane directory (`Fastlane/.env`) which you can add your local details to. This file is, of course, in `.gitignore`. For example,
