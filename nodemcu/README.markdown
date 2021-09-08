@@ -1,5 +1,9 @@
 # Firmware
 
+The firmware is responsible for managing the StatusPanel device itself. It handles WiFi setup, encryption keys, device sleep, and scheduling fetching updates, and drawing on the eInk display.
+
+The device runs Lua using [NodeMCU](https://nodemcu.readthedocs.io/en/release/). We the [`tomsci_dev_esp32`](https://github.com/tomsci/nodemcu-firmware/tree/tomsci_dev_esp32) branch of NodeMCU which provides some additional features that have not yet been accepted upstream.
+
 ## Development
 
 ### Installing dependencies
@@ -86,8 +90,6 @@ The device run-loop will automatically start if the auto switch is on (GPIO 14 h
 
 ---
 
-# ESP32
-
 ## Firmware
 
 ### Last Known Good
@@ -129,5 +131,3 @@ openssl x509 -inform der -outform pem -in "Baltimore CyberTrust Root.cer" -out r
 
 Drop sdkconfig in, run `make MORE_CFLAGS="-DLUA_NUMBER_INTEGRAL"`.
 To rebuild LFS, run `make_lfs.sh` (although that is configured for my cross-VM-mountpointed setup).
-
-The ROM image should be built using @tomsci's branch of NodeMCU at https://github.com/tomsci/nodemcu-firmware/tree/tomsci_dev_esp32.
