@@ -2,6 +2,15 @@
 
 eInk status board for displaying every-day information
 
+## Components
+
+StatusPanel comprises a number of different components:
+
+- [Firmware](nodemcu/README.markdown)
+- [PCB](#pcb)
+- [iOS app](ios/README.markdown)
+- [Service](service/README.markdown)
+
 ## Getting Started
 
 StatusPanel uses [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so before doing anything else, you'll need to do:
@@ -27,15 +36,6 @@ Possible future display:
 - [Waveshare 1304×984, 12.48inch E-Ink display module, red/black/white three-color](https://www.waveshare.com/product/raspberry-pi/12.48inch-e-paper-module-b.htm)
 
 It looks like Waveshare are phasing out the display we're currently using and replacing it with one of the same physical size, but a higher resolution.
-
-## Components
-
-StatusPanel comprises a number of different components:
-
-- [Firmware](nodemcu/README.markdown)
-- [PCB](#pcb)
-- [iOS app](ios/README.markdown)
-- [Service](service/README.markdown)
 
 ## PCB
 
