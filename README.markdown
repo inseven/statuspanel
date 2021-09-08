@@ -8,7 +8,7 @@ eInk status board for displaying every-day information
 
 StatusPanel comprises a number of different components:
 
-- [Firmware](nodemcu/README.markdown)
+- [Firmware](firmware/README.markdown)
 - [PCB](pcb/README.markdown)
 - [iOS app](ios/README.markdown)
 - [Service](service/README.markdown)
@@ -30,7 +30,7 @@ Once your submodules are up-to-date, you can install the dependencies for all St
 ```bash
 scripts/install-dependencies.sh
 ```
- 
+
 This script installs all dependencies in the `.local` folder within the project root, does not require root, and should not impact your local machine configuration. Scripts that rely on these dependencies source the `scripts/environment.sh` script which configures the path at runtime.
 
 ## Licensing
