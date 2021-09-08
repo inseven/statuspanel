@@ -7,7 +7,7 @@ eInk status board for displaying every-day information
 StatusPanel comprises a number of different components:
 
 - [Firmware](nodemcu/README.markdown)
-- [PCB](#pcb)
+- [PCB](pcb/README.markdown)
 - [iOS app](ios/README.markdown)
 - [Service](service/README.markdown)
 
@@ -36,14 +36,4 @@ Possible future display:
 - [Waveshare 1304×984, 12.48inch E-Ink display module, red/black/white three-color](https://www.waveshare.com/product/raspberry-pi/12.48inch-e-paper-module-b.htm)
 
 It looks like Waveshare are phasing out the display we're currently using and replacing it with one of the same physical size, but a higher resolution.
-
-## PCB
-
-The EagleCAD files make use of the following component libraries which are added to the project as submodules:
-
-- pcb/libraries/SparkFun-Eagle-Libraries/SparkFun-LED.lbr
-
-![Schematics](pcb/statuspanel.png)
-
-![Tom's notes](images/pinout.jpg)
 
