@@ -31,8 +31,8 @@ Create `ios/StatusPanel/configuration.json` with the following contents, populat
 
 APIs for the built-in data sources can be found at:
 
-- [Transport for London](https://api.tfl.gov.uk/)
 - [National Rail Live Departure Boards](https://realtime.nationalrail.co.uk/OpenLDBWSRegistration/Registration)
+- [Transport for London](https://api.tfl.gov.uk/)
 
 ### Build Numbers
 
