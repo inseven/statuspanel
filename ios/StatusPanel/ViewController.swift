@@ -387,7 +387,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             encryptedParts.append(Data(encryptedDataBytes!))
         }
         let encryptedData = makeMultipartUpload(parts: encryptedParts)
-        let path = "https://statuspanel.io/api/v2/\(deviceid)"
+        let path = "https://api.statuspanel.io/api/v2/\(deviceid)"
         guard let url = URL(string: path) else {
             print("Unable to create URL")
             completion(false)
