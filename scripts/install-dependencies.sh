@@ -27,6 +27,7 @@ set -u
 
 scripts_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 root_directory="${scripts_directory}/.."
+ios_directory="${root_directory}/ios"
 changes_directory="${scripts_directory}/changes"
 build_tools_directory="${scripts_directory}/build-tools"
 nodemcu_directory="${root_directory}/nodemcu"
@@ -43,7 +44,7 @@ PIPENV_PIPFILE="$build_tools_directory/Pipfile" pipenv install
 PIPENV_PIPFILE="$nodemcu_directory/Pipfile" pipenv install
 
 # Install the Ruby dependencies
-cd "$root_directory"
+cd "$ios_directory"
 gem install bundler
 bundle install
 
