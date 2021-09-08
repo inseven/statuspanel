@@ -110,12 +110,35 @@ esptool.py \
 vs Arduino:
 
 ```bash
-/Users/tomsci/Library/Arduino15/packages/esp32/tools/esptool/2.3.1/esptool --chip esp32 --port /dev/cu.SLAB_USBtoUART --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size detect 0xe000 /Users/tomsci/Library/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/partitions/boot_app0.bin 0x1000 /Users/tomsci/Library/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/bin/bootloader_dio_80m.bin 0x10000 /var/folders/h2/xybvrtgs07g17_yvy7njh2tc0000gn/T/arduino_build_680606/epd7in5b-demo.ino.bin 0x8000 /var/folders/h2/xybvrtgs07g17_yvy7njh2tc0000gn/T/arduino_build_680606/epd7in5b-demo.ino.partitions.bin
+/Users/tomsci/Library/Arduino15/packages/esp32/tools/esptool/2.3.1/esptool \
+    --chip esp32 \
+    --port /dev/cu.SLAB_USBtoUART \
+    --baud 921600 \
+    --before default_reset \
+    --after hard_reset write_flash \
+    -z \
+    --flash_mode dio \
+    --flash_freq 80m \
+    --flash_size detect \
+    0xe000 /Users/tomsci/Library/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/partitions/boot_app0.bin \
+    0x1000 /Users/tomsci/Library/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/bin/bootloader_dio_80m.bin \
+    0x10000 /var/folders/h2/xybvrtgs07g17_yvy7njh2tc0000gn/T/arduino_build_680606/epd7in5b-demo.ino.bin \
+    0x8000 /var/folders/h2/xybvrtgs07g17_yvy7njh2tc0000gn/T/arduino_build_680606/epd7in5b-demo.ino.partitions.bin
 ```
 
 ### Latest
 
-    esptool.py --port /dev/cu.SLAB_USBtoUART --baud 921600 write_flash --flash_mode dio --flash_freq 40m 0x1000 ~/Documents/Dev/nodemcu/esp32/build/bootloader/bootloader.bin 0x10000 ~/Documents/Dev/nodemcu/esp32/build/NodeMCU.bin 0x8000 ~/Documents/Dev/nodemcu/esp32/build/partitions_tomsci.bin
+```bash
+esptool.py \
+    --port /dev/cu.SLAB_USBtoUART \
+    --baud 921600 \
+    write_flash \
+    --flash_mode dio \
+    --flash_freq 40m \
+    0x1000 ~/Documents/Dev/nodemcu/esp32/build/bootloader/bootloader.bin \
+    0x10000 ~/Documents/Dev/nodemcu/esp32/build/NodeMCU.bin \
+    0x8000 ~/Documents/Dev/nodemcu/esp32/build/partitions_tomsci.bin
+```
 
 ## How things were made
 
