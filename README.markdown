@@ -23,7 +23,7 @@ StatusPanel uses [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submo
 git submodule update --init --recursive
 ```
 
-You'll also need to run this command if the submodules change.
+(You'll also need to run this command if the submodules change.)
 
 Once your submodules are up-to-date, you can install the dependencies for all StatusPanel components using the `install-dependencies.sh` script:
 
