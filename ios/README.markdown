@@ -6,7 +6,7 @@ The iOS app handles all the heavy lifting of StatusPanel; it's responsible for c
 
 ### Installing dependencies
 
-StatusPanel uses a shared script for installing and managing dependencies. You can find details of this [here](/README.markdown#installing-dependencies).
+StatusPanel uses a shared script for installing and managing dependencies. Follow the instructions [here](/README.markdown#installing-dependencies).
 
 ### Configuration
 
