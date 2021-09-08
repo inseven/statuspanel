@@ -10,7 +10,7 @@ The StatusPanel service provides two pieces of functionality:
 The StatusPanel service is currently hosted using [Heroku](https://heroku.com). There are two apps in the pipeline:
 
 - [statuspanel-staging](https://staging.statuspanel.io) - auto-deploys master
-- [statuspanel-production](https://statuspanel.io) - manual deploy from staging
+- [statuspanel-production](https://api.statuspanel.io) - manual deploy from staging
 
 The environments for these can be set up using the `configure-heroku-app`:
 
