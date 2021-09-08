@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/inseven/statuspanel/actions/workflows/build.yaml/badge.svg)](https://github.com/inseven/statuspanel/actions/workflows/build.yaml)
 
-eInk calendar and status board
+eInk desk calendar and status board
 
 ## Components
 
