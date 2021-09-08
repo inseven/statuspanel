@@ -33,7 +33,6 @@ APNS_KEY=$JWT_PRIVATE_KEY
 
 heroku buildpacks:clear --app $1
 heroku buildpacks:set heroku/python --app $1
-heroku buildpacks:add --index 2 heroku/nodejs --app $1
 
 heroku config:set "JWT_PRIVATE_KEY=$JWT_PRIVATE_KEY" --app $1
 heroku config:set "APNS_TEAM_ID=$APNS_TEAM_ID" --app $1
