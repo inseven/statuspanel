@@ -30,9 +30,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var apnsToken: Data?
     var client: Client!
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        client = Client(baseUrl: "https://statuspanel.io/")
+        client = Client(baseUrl: "https://api.statuspanel.io/")
 
         let configuration = try! Bundle.main.configuration()
         sourceController.add(dataSource:TFLDataSource(configuration: configuration))
