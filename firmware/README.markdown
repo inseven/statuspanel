@@ -40,7 +40,7 @@ The serial console is your first port of call when trying to work out why someth
   ```bash
   scripts/firmware console
   ```
-  
+
 - Using Minicom directly (the `firmware` tool uses Minicom under the hood, but you can launch it yourself if you want full control):
 
   ```bash
@@ -50,7 +50,7 @@ The serial console is your first port of call when trying to work out why someth
 - Using the Arduino IDE
 
   The Arduino IDE can also be a convenient way to communicate with the device. You can find out more about setting this up on the [Adafruit website](https://learn.adafruit.com/adafruit-huzzah32-esp32-feather/using-with-arduino-ide).
-  
+
 ### Running code on-device
 
 The device run-loop will automatically start if the auto switch is on (GPIO 14 held high). If you wish to run Lua code on-device and manually step through the lifecycle to investigate problems, disable this and connect to the StatusPanel with a [console](#debugging-and-troubleshooting).
@@ -87,6 +87,13 @@ The device run-loop will automatically start if the auto switch is on (GPIO 14 h
   ```
 
   N.B. If you remove just `"deviceid"`, you'll initiate new device registration but with the same keys as before, which probably isn't desirable.
+
+## Building firmware
+
+https://github.com/marcelstoer/docker-nodemcu-build
+
+Drop sdkconfig in, run `make MORE_CFLAGS="-DLUA_NUMBER_INTEGRAL"`.
+To rebuild LFS, run `make_lfs.sh` (although that is configured for my cross-VM-mountpointed setup).
 
 ---
 
@@ -149,8 +156,3 @@ Is the root cert that statuspanel.io is using, created by:
 ```bash
 openssl x509 -inform der -outform pem -in "Baltimore CyberTrust Root.cer" -out root.pem
 ```
-
-### The ROM image
-
-Drop sdkconfig in, run `make MORE_CFLAGS="-DLUA_NUMBER_INTEGRAL"`.
-To rebuild LFS, run `make_lfs.sh` (although that is configured for my cross-VM-mountpointed setup).
