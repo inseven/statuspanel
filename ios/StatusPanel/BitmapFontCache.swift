@@ -50,7 +50,7 @@ class BitmapFontCache {
         var charh: Int { return font.charh }
         var charsPerRow: Int { return imagew / charw }
         var numRows: Int { return imageh / charh }
-        private var value: [Character : CGImage] = [:]
+        private var charMap: [Character : CGImage] = [:]
 
         init(forKey key: Style) {
             self.style = key
@@ -66,13 +66,35 @@ class BitmapFontCache {
                    "Image size \(imagew)x\(imageh) must be a multiple of the char width \(charw) and the char height \(charh)")
         }
 
-        func getImageForChar(ch: Character) -> CGImage {
-            if let img = value[ch] {
+        func getImageForChar(_ char: Character) -> CGImage? {
+            // First try and remove any modifiers from the character which we can't represent and don't care about
+            var scalars = char.unicodeScalars
+            while scalars.count > 1 {
+                let lastScalar = scalars.last?.value ?? 0
+                if lastScalar >= 0xFE00 && lastScalar <= 0xFE0F {
+                    // Variation selector, particularly U+FE0E and U+FE0F for emoji-style and text-only style.
+                    scalars.removeLast()
+                } else if lastScalar >= 0x1F3FB && lastScalar <= 0x1F3FF {
+                    // Skin tone modifier
+                    scalars.removeLast()
+                } else {
+                    break
+                }
+            }
+            let ch = Character(String(scalars))
+
+            if let img = charMap[ch] {
                 return img
             }
-            let img = createImageForChar(ch)
-            value[ch] = img
-            return img
+            if let img = createImageForChar(ch) {
+                setImageForChar(ch, image: img)
+                return img
+            }
+            return nil
+        }
+
+        func setImageForChar(_ ch: Character, image: CGImage) {
+            charMap[ch] = image
         }
 
         func charInImage(_ char: Character) -> Bool {
@@ -82,23 +104,6 @@ class BitmapFontCache {
             let scalarValue = char.unicodeScalars.first!.value
             let maxValue = font.startIndex.value + UInt32(self.charsPerRow * self.numRows)
             return scalarValue >= font.startIndex.value && scalarValue < maxValue
-        }
-
-        func getTextWidth<T>(_ text: T) -> Int where T : StringProtocol {
-            var result = 0
-            for ch in text {
-                result = result + getCharWidth(ch)
-            }
-            return result
-        }
-
-        func getCharWidth(_ char: Character) -> Int {
-            if charInImage(char) && style.font.minWidth == nil {
-                // Can't optimise unless it's a character within the image range and the image doesn't require trimming
-                return charw * style.scale
-            } else {
-                return getImageForChar(ch: char).width
-            }
         }
 
         // Must be an easier way than this...
@@ -120,38 +125,11 @@ class BitmapFontCache {
             return uiImage.cgImage!
         }
 
-        func makeReplacementImage(for charName: String) -> CGImage {
-            let cache = BitmapFontCache.shared
-            let replacementStyle = BitmapFontCache.Style(font: Fonts.guiConsFont, scale: 1, darkMode: style.darkMode)
-
-            let textWidth = cache.getTextWidth(charName, forStyle: replacementStyle)
-            let h = charh * style.scale
-            let w = textWidth + 8
-            let fmt = UIGraphicsImageRendererFormat()
-            fmt.scale = 1.0
-            let renderer = UIGraphicsImageRenderer(size: CGSize(width: w, height: h), format: fmt)
-            let uiImage = renderer.image { (uictx: UIGraphicsImageRendererContext) in
-                let ctx = uictx.cgContext
-                ctx.setAllowsAntialiasing(false)
-                ctx.interpolationQuality = .none
-                ctx.scaleBy(x: 1.0, y: -1.0)
-                ctx.translateBy(x: 0, y: CGFloat(-h))
-                var x = 4
-                let y = (h - replacementStyle.font.charh) / 2
-                ctx.setLineWidth(CGFloat(style.scale))
-                let col: CGFloat = style.darkMode ? 1 : 0
-                ctx.setStrokeColor(red: col, green: col, blue: col, alpha: 1)
-                ctx.stroke(CGRect(x: 0, y: 0, width: w, height: h))
-                for ch in charName {
-                    let img = cache.getImage(ch, forStyle: replacementStyle)
-                    ctx.draw(img, in: CGRect(x: x, y: y, width: img.width, height: img.height))
-                    x += img.width
-                }
-            }
-            return uiImage.cgImage!
+        static func getCharName(_ ch: Character) -> String {
+            return ch.unicodeScalars.map({ String(format:"U+%04X", $0.value) }).joined(separator: "_")
         }
 
-        func createImageForChar(_ ch: Character) -> CGImage {
+        func createImageForChar(_ ch: Character) -> CGImage? {
             if charInImage(ch) {
                 // Get from main image
                 let charIdx = ch.unicodeScalars.first!.value - font.startIndex.value
@@ -195,22 +173,12 @@ class BitmapFontCache {
                 return ImagesDict.scaleUp(image: cgImage, factor: style.scale)
             } else {
                 // See if we have an individual image for it
-                let charName = ch.unicodeScalars.map({ String(format:"U+%04X", $0.value) }).joined(separator: "_")
+                let charName = ImagesDict.getCharName(ch)
                 var scaleForImage = 1
                 var uiImage = UIImage(named: "fonts/\(fontName)/\(charName)@\(style.scale)")
                 if uiImage == nil {
                     // Try an unscaled one we can scale up
                     uiImage = UIImage(named: "fonts/\(fontName)/\(charName)")
-                    scaleForImage = style.scale
-                }
-                // If there's still no joy, try just the first code point, scaled then unscaled
-                let firstCodepointName = String(format:"U+%X", ch.unicodeScalars.first!.value)
-                if uiImage == nil {
-                    uiImage = UIImage(named: "fonts/\(fontName)/\(firstCodepointName)@\(style.scale)")
-                    scaleForImage = 1
-                }
-                if uiImage == nil {
-                    uiImage = UIImage(named: "fonts/\(fontName)/\(firstCodepointName)")
                     scaleForImage = style.scale
                 }
 
@@ -222,18 +190,7 @@ class BitmapFontCache {
                     let cgImage = CIContext().createCGImage(ciImage, from: ciImage.extent)!
                     return ImagesDict.scaleUp(image: cgImage, factor: scaleForImage)
                 } else {
-                    print("No font data for character \(charName)")
-                    if style.scale > 1 {
-                        return makeReplacementImage(for: charName)
-                    } else {
-                        // Do we have replacement character?
-                        if charInImage("\u{FFFD}") {
-                            return BitmapFontCache.shared.getImage("\u{FFFD}", forStyle: style)
-                        } else {
-                            // Assume it's a bitmap that uses 7f as a box char
-                            return BitmapFontCache.shared.getImage("\u{7F}", forStyle: style)
-                        }
-                    }
+                    return nil
                 }
             }
         }
@@ -253,12 +210,85 @@ class BitmapFontCache {
 
     func getImage(_ ch: Character, forStyle style: Style) -> CGImage {
         let imgDict = getImageDict(style)
-        return imgDict.getImageForChar(ch: ch)
+        if let img = imgDict.getImageForChar(ch) {
+            return img
+        }
+
+        let charName = ImagesDict.getCharName(ch)
+        print("No font data for character \(charName)")
+
+        let lineHeight = style.font.charh * style.scale
+        if style.font.bitmapName != Fonts.unifont.bitmapName && lineHeight >= Fonts.unifont.charh {
+            // See if unifont has what we need (which it obviously will for any single-code-point character, but
+            // we may still need to fall back to drawing a replacement image/char for composites
+            let unifontDict = getImageDict(Style(font: Fonts.unifont, scale: 1, darkMode: style.darkMode))
+            if let img = unifontDict.getImageForChar(ch) {
+                imgDict.setImageForChar(ch, image: img)
+                return img
+            }
+        }
+        if lineHeight >= Fonts.guiConsFont.charh + 4 {
+            // Then we have enough space to draw our replacement image box thing
+            let img = makeReplacementImage(forCharName: charName, style: style)
+            imgDict.setImageForChar(ch, image: img)
+            return img
+        } else {
+            // Do we have replacement character?
+            if imgDict.charInImage("\u{FFFD}") {
+                return getImage("\u{FFFD}", forStyle: style)
+            } else {
+                // Assume it's a bitmap that uses 7f as a box char
+                return getImage("\u{7F}", forStyle: style)
+            }
+        }
+    }
+
+    func makeReplacementImage(forCharName charName: String, style: Style) -> CGImage {
+        let replacementStyle = BitmapFontCache.Style(font: Fonts.guiConsFont, scale: 1, darkMode: style.darkMode)
+
+        let textWidth = getTextWidth(charName, forStyle: replacementStyle)
+        let h = style.font.charh * style.scale
+        let w = textWidth + 8
+        let fmt = UIGraphicsImageRendererFormat()
+        fmt.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: w, height: h), format: fmt)
+        let uiImage = renderer.image { (uictx: UIGraphicsImageRendererContext) in
+            let ctx = uictx.cgContext
+            ctx.setAllowsAntialiasing(false)
+            ctx.interpolationQuality = .none
+            ctx.scaleBy(x: 1.0, y: -1.0)
+            ctx.translateBy(x: 0, y: CGFloat(-h))
+            var x = 4
+            let y = (h - replacementStyle.font.charh) / 2
+            ctx.setLineWidth(CGFloat(style.scale))
+            let col: CGFloat = style.darkMode ? 1 : 0
+            ctx.setStrokeColor(red: col, green: col, blue: col, alpha: 1)
+            ctx.stroke(CGRect(x: 0, y: 0, width: w, height: h))
+            for ch in charName {
+                let img = getImage(ch, forStyle: replacementStyle)
+                ctx.draw(img, in: CGRect(x: x, y: y, width: img.width, height: img.height))
+                x += img.width
+            }
+        }
+        return uiImage.cgImage!
     }
 
     func getTextWidth<T>(_ text: T, forStyle style: Style) -> Int where T : StringProtocol {
+        var result = 0
+        for ch in text {
+            result = result + getCharWidth(ch, forStyle: style)
+        }
+        return result
+    }
+
+    func getCharWidth(_ char: Character, forStyle style: Style) -> Int {
         let imgDict = getImageDict(style)
-        return imgDict.getTextWidth(text)
+        if imgDict.charInImage(char) && style.font.minWidth == nil {
+            // Can't optimise unless it's a character within the image range and the image doesn't require trimming
+            return style.font.charw * style.scale
+        } else {
+            return getImage(char, forStyle: style).width
+        }
     }
 
     func emptyCache() {

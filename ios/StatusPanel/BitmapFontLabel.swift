@@ -147,7 +147,9 @@ class BitmapFontLabel: UILabel {
             var x = 0
             for ch in text {
                 let chImg = getImageForChar(ch: ch, forScale: scale)
-                let rect = CGRect(x: x, y: y + line * lineHeight * scale, width: chImg.width, height: style.font.charh * scale)
+                let scaledCharHeight = style.font.charh * scale
+                let chY = y + line * lineHeight * scale + (scaledCharHeight - chImg.height) / 2
+                let rect = CGRect(x: x, y: chY, width: chImg.width, height: chImg.height)
                 if redactMode == .redactLines || (redactMode == .redactWords && !ch.isWhitespace) {
                     ctx.addRect(rect)
                 } else {

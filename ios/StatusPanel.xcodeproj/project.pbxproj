@@ -236,6 +236,7 @@
 				D8DAED6F26E3EAA90002F388 /* configuration.json */,
 				DBCA98882143E2920084B710 /* Info.plist */,
 				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
+				DBC3B35F26F5FA4600BC5FF0 /* BitmapFontCache.swift */,
 				DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */,
 				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
 				D80380AA23E9B6D2002606C7 /* Client.swift */,
@@ -256,7 +257,6 @@
 				DBCA98802143E2920084B710 /* Main.storyboard */,
 				DBCA987A2143E2920084B710 /* Products */,
 				D842A401265BE916009C1156 /* View Controllers */,
-				DBC3B35F26F5FA4600BC5FF0 /* BitmapFontCache.swift */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
