@@ -77,7 +77,7 @@ class BitmapFontLabel: UILabel {
     }
 
     private func getTextWidth<T>(_ text: T, forScale scale: Int? = nil) -> Int where T : StringProtocol {
-        let style = BitmapFontCache.Style(font: style.font, scale: scale ?? self.scale, darkMode: style.darkMode)
+        let style = BitmapFontCache.Style(font: self.style.font, scale: scale ?? self.scale, darkMode: self.style.darkMode)
         return BitmapFontCache.shared.getTextWidth(text, forStyle: style)
     }
 
