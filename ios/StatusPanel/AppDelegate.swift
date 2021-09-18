@@ -30,9 +30,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var apnsToken: Data?
     var client: Client!
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        client = Client(baseUrl: "https://statuspanel.io/")
+        client = Client(baseUrl: "https://api.statuspanel.io/")
 
         let configuration = try! Bundle.main.configuration()
         sourceController.add(dataSource:TFLDataSource(configuration: configuration))
@@ -151,39 +152,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return !blockUpdates && window?.rootViewController?.presentedViewController == nil
     }
 
-    /*
-    func getTimeUntilPanelWakeup() -> TimeInterval {
-        let now = Date()
-        let cal = Calendar.current
-        let dayComponents = cal.dateComponents([.year, .month, .day], from: now)
-        let todayStart = cal.date(from: dayComponents)!
-        let nowSinceMidnight = now.timeIntervalSince(todayStart) // always positive
-        let wakeTime = Config.getWakeTime()
-        let nextWake = wakeTime < nowSinceMidnight ? wakeTime + 86400 : wakeTime
-        return nextWake - nowSinceMidnight
-    }
-    */
-
-    /*
-    func updateFetchInterval() {
-        let app = UIApplication.shared
-        let timeLeft = getTimeUntilPanelWakeup()
-        if timeLeft < 60 * 60 {
-            // Less than an hour to go, ask for wakeup every 15 mins
-            app.setMinimumBackgroundFetchInterval(15 * 60)
-        } else {
-            // Otherwise every hour
-            app.setMinimumBackgroundFetchInterval(60 * 60)
-        }
-    }
-
-    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("Background fetch requested")
-        backgroundFetchCompletionFn = completionHandler
-        sourceController.fetch()
-    }
-    */
-
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("Got APNS token")
         apnsToken = deviceToken
@@ -234,7 +202,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Background fetch completed")
             fn(hasChanged ? .newData : .noData)
             backgroundFetchCompletionFn = nil
-            // updateFetchInterval()
         }
     }
 }

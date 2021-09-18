@@ -84,9 +84,20 @@ class Fonts {
         License: Free for any use
         """
 
+    private static let unifontAttribution = """
+        GNU Unifont 13.0.06.
+        http://unifoundry.com/unifont/index.html
+        License: SIL Open Font License version 1.1
+        """
+
+    static let guiConsFont = BitmapInfo(bitmap: "font6x10", charWidth: 6, charHeight: 10, startIndex: " ")
+    static let unifont = BitmapInfo(bitmap: "unifont-13.0.06", charWidth: 16, charHeight: 16, startIndex: "\0", minWidth: 7)
+
     static let availableFonts = [
-        Font(configName: "font6x10_2", humanName: "Guicons Font", bitmapInfo: BitmapInfo(bitmap: "font6x10", charWidth: 6, charHeight: 10, startIndex: " "), subTextScale: 1, textScale: 2, headerScale: 2,
+        Font(configName: "font6x10_2", humanName: "Guicons Font", bitmapInfo: guiConsFont, subTextScale: 1, textScale: 2, headerScale: 2,
              attribution: "Guicons font taken from https://sourceforge.net/p/fshell/code/ci/default/tree/plugins/consoles/guicons/data/font_6x10.PNG licensed under the EPL. Original author uncertain."),
+        Font(configName: "unifont", humanName: "Unifont 16pt", bitmapInfo: unifont, subTextScale: 1, textScale: 1, headerScale: 2, attribution: unifontAttribution),
+        Font(configName: "unifont_2", humanName: "Unifont 32pt", bitmapInfo: unifont, subTextScale: 1, textScale: 2, headerScale: 2, attribution: unifontAttribution),
         Font(configName: "amiga4ever", humanName: "Amiga Forever", uifont: "Amiga Forever", subTextSize: 8, textSize: 16, headerSize: 24, attribution: """
             "Amiga 4ever" Truetype Font
             Copyright (c) 2001 by ck! [Freaky Fonts]. All rights reserved.
@@ -130,11 +141,6 @@ class Fonts {
             ChiKareGo2 by Giles Booth
             http://www.pentacom.jp/pentacom/bitfontmaker2/gallery/?id=3780
             License: Creative Commons Attribution
-            """),
-        Font(configName: "unifont", humanName: "Unifont", bitmapInfo: BitmapInfo(bitmap: "unifont-13.0.06", charWidth: 16, charHeight: 16, startIndex: "\0", minWidth: 7), subTextScale: 1, textScale: 2, headerScale: 2, attribution: """
-            GNU Unifont 13.0.06.
-            http://unifoundry.com/unifont/index.html
-            License: SIL Open Font License version 1.1
             """),
     ]
 }
