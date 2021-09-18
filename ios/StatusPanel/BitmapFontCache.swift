@@ -120,12 +120,12 @@ class BitmapFontCache {
             return uiImage.cgImage!
         }
 
-        static func makeReplacementImage(for charName: String, scale: Int, darkMode: Bool) -> CGImage {
+        func makeReplacementImage(for charName: String) -> CGImage {
             let cache = BitmapFontCache.shared
-            let replacementStyle = BitmapFontCache.Style(font: Fonts.guiConsFont, scale: 1, darkMode: darkMode)
+            let replacementStyle = BitmapFontCache.Style(font: Fonts.guiConsFont, scale: 1, darkMode: style.darkMode)
 
             let textWidth = cache.getTextWidth(charName, forStyle: replacementStyle)
-            let h = replacementStyle.font.charh * scale
+            let h = charh * style.scale
             let w = textWidth + 8
             let fmt = UIGraphicsImageRendererFormat()
             fmt.scale = 1.0
@@ -138,8 +138,8 @@ class BitmapFontCache {
                 ctx.translateBy(x: 0, y: CGFloat(-h))
                 var x = 4
                 let y = (h - replacementStyle.font.charh) / 2
-                ctx.setLineWidth(CGFloat(scale))
-                let col: CGFloat = darkMode ? 1 : 0
+                ctx.setLineWidth(CGFloat(style.scale))
+                let col: CGFloat = style.darkMode ? 1 : 0
                 ctx.setStrokeColor(red: col, green: col, blue: col, alpha: 1)
                 ctx.stroke(CGRect(x: 0, y: 0, width: w, height: h))
                 for ch in charName {
@@ -224,7 +224,7 @@ class BitmapFontCache {
                 } else {
                     print("No font data for character \(charName)")
                     if style.scale > 1 {
-                        return ImagesDict.makeReplacementImage(for: charName, scale: style.scale, darkMode: style.darkMode)
+                        return makeReplacementImage(for: charName)
                     } else {
                         // Do we have replacement character?
                         if charInImage("\u{FFFD}") {
