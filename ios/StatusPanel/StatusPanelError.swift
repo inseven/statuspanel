@@ -22,4 +22,5 @@ import Foundation
 
 enum StatusPanelError: Error {
     case missingConfiguration
+    case invalidResponse(String)
 }
