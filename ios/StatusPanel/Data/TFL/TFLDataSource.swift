@@ -20,22 +20,33 @@
 
 import Foundation
 
-class TFLDataSource : DataSource {
-    // See https://api-portal.tfl.gov.uk/admin/applications/1409617922524
+// See https://api-portal.tfl.gov.uk/admin/applications/1409617922524
+class TFLDataSource: DataSource {
+
+    struct LineStatus: Decodable {
+        var id: String
+        var name: String
+        var lineStatuses: [LineStatusItem]
+
+        struct LineStatusItem: Codable {
+            var statusSeverity: Int
+            var statusSeverityDescription: String
+        }
+    }
 
     // Key is the line id in the API, value is the human-readable name
     static let lines = [
-        "bakerloo": "Bakerloo",
-        "cirle": "Circle",
-        "central": "Central",
-        "district": "District",
-        "hammersmith-city": "Hammersmith & City",
-        "jubilee": "Jubilee",
-        "metropolitan": "Metropolitan",
-        "northern": "Northern",
-        "piccadilly": "Piccadilly",
-        "victoria": "Victoria",
-        "waterloo-city": "Waterloo & City",
+        "bakerloo": "Bakerloo Line",
+        "cirle": "Circle Line",
+        "central": "Central Line",
+        "district": "District Line",
+        "hammersmith-city": "Hammersmith & City Line",
+        "jubilee": "Jubilee Line",
+        "metropolitan": "Metropolitan Line",
+        "northern": "Northern Line",
+        "piccadilly": "Piccadilly Line",
+        "victoria": "Victoria Line",
+        "waterloo-city": "Waterloo & City Line",
     ]
 
     let configuration: Configuration
@@ -66,16 +77,6 @@ class TFLDataSource : DataSource {
         }
     }
 
-    struct LineStatus: Decodable {
-        var name: String
-        var lineStatuses: [LineStatusItem]
-
-        struct LineStatusItem: Codable {
-            var statusSeverity: Int
-            var statusSeverityDescription: String
-        }
-    }
-
     func gotLineData(data: [LineStatus]?, err: Error?) {
         task = nil
         dataItems = []
@@ -89,7 +90,13 @@ class TFLDataSource : DataSource {
             if sev < 10 {
                 flags.insert(.warning)
             }
-            dataItems.append(DataItem("\(line.name) line: \(desc)", flags: flags))
+
+            guard let name = Self.lines[line.id] else {
+                completion?(self, [], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
+                return
+            }
+
+            dataItems.append(DataItem("\(name): \(desc)", flags: flags))
         }
         completion?(self, dataItems, err)
     }
