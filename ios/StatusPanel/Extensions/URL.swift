@@ -20,8 +20,16 @@
 
 import Foundation
 
-enum StatusPanelError: Error {
-    case missingConfiguration
-    case invalidResponse(String)
-    case invalidUrl
+public extension URL {
+
+    var components: URLComponents? { return URLComponents(string: absoluteString) }
+
+    func settingQueryItems(_ queryItems: [URLQueryItem]) -> URL? {
+        guard var components = components else {
+            return nil
+        }
+        components.queryItems = queryItems
+        return components.url
+    }
+
 }

@@ -10,6 +10,7 @@
 		D80380AB23E9B6D2002606C7 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Client.swift */; };
 		D81DE20326E19F9200504703 /* Clibsodium in Frameworks */ = {isa = PBXBuildFile; productRef = D81DE20226E19F9200504703 /* Clibsodium */; };
 		D825A55D26F6811400B85206 /* DummyDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D825A55C26F6811400B85206 /* DummyDataSource.swift */; };
+		D8293A0C26F787D3008CE13B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8293A0B26F787D3008CE13B /* URL.swift */; };
 		D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */; };
 		D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */; };
 		D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D835EC972471D811003E402E /* NetworkExtension.framework */; };
@@ -70,6 +71,7 @@
 /* Begin PBXFileReference section */
 		D80380AA23E9B6D2002606C7 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		D825A55C26F6811400B85206 /* DummyDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyDataSource.swift; sourceTree = "<group>"; };
+		D8293A0B26F787D3008CE13B /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		D835EC972471D811003E402E /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
@@ -195,6 +197,8 @@
 			isa = PBXGroup;
 			children = (
 				D8DAED7626E3F3D40002F388 /* Bundle.swift */,
+				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
+				D8293A0B26F787D3008CE13B /* URL.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -241,7 +245,6 @@
 				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
 				DBC3B35F26F5FA4600BC5FF0 /* BitmapFontCache.swift */,
 				DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */,
-				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
 				D80380AA23E9B6D2002606C7 /* Client.swift */,
 				D89CAF1021ABDDA200B4B314 /* Config.swift */,
 				D8DAED7126E3F3320002F388 /* Configuration.swift */,
@@ -361,6 +364,7 @@
 				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
 				D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */,
 				DBFCBB7A24B8A55700E3B3D3 /* FontInfoController.swift in Sources */,
+				D8293A0C26F787D3008CE13B /* URL.swift in Sources */,
 				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
 				DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */,
 				DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */,

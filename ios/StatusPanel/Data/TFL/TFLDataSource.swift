@@ -59,22 +59,32 @@ class TFLDataSource: DataSource {
         self.configuration = configuration
     }
 
-    func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) -> URLSessionTask where T : Decodable {
-        let sep = what.contains("?") ? "&" : "?"
-        let url = URL(string: "https://api.tfl.gov.uk/" + what + sep + "app_id=\(configuration.tflApiId)&app_key=\(configuration.tflApiKey)")!
-        return JSONRequest.makeRequest(url: url, onCompletion: onCompletion)
-    }
-
     func fetchData(onCompletion: @escaping Callback) {
         task?.cancel()
         completion = onCompletion
-        let lines = Config().activeTFLLines.joined(separator: ",")
-        if lines == "" {
-            // Nothing to do
+
+        let activeLines = Config().activeTFLLines
+        guard !activeLines.isEmpty else {
             onCompletion(self, [], nil)
-        } else {
-            task = get("Line/\(lines)/Status?detail=false", onCompletion: gotLineData)
+            return
         }
+
+        let url = URL(string: "https://api.tfl.gov.uk")?
+            .appendingPathComponent("Line")
+            .appendingPathComponent(activeLines.joined(separator: ","))
+            .appendingPathComponent("Status")
+            .settingQueryItems([
+                URLQueryItem(name: "detail", value: "false"),
+                URLQueryItem(name: "app_id", value: configuration.tflApiId),
+                URLQueryItem(name: "app_key", value: configuration.tflApiKey),
+            ])
+
+        guard let safeUrl = url else {
+            onCompletion(self, [], StatusPanelError.invalidUrl)
+            return
+        }
+
+        task = JSONRequest.makeRequest(url: safeUrl, onCompletion: gotLineData)
     }
 
     func gotLineData(data: [LineStatus]?, err: Error?) {
