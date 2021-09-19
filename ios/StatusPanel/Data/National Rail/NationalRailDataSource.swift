@@ -25,6 +25,19 @@ class NationalRailDataSource : DataSource {
     // and https://lite.realtime.nationalrail.co.uk/OpenLDBWS/
     // As implemented by https://huxley.unop.uk/ because the raw national rail API is so bad
 
+    struct Delays: Decodable {
+        var delays: Bool
+        var totalTrainsDelayed: Int
+        var totalDelayMinutes: Int
+        var delayedTrains: [Delay]
+
+        struct Delay: Codable {
+            var std: String
+            var etd: String
+            var isCancelled: Bool
+        }
+    }
+
     let configuration: Configuration
 
     var targetCrs: String?
@@ -38,37 +51,35 @@ class NationalRailDataSource : DataSource {
         self.configuration = configuration
     }
 
-    func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) -> URLSessionTask where T : Decodable {
-        let sep = what.contains("?") ? "&" : "?"
-        let url = URL(string: "https://huxley.apphb.com/" + what + sep + "accessToken=\(configuration.nationalRailApiToken)")!
-        return JSONRequest.makeRequest(url: url, onCompletion: onCompletion)
-    }
-
     func fetchData(onCompletion: @escaping Callback) {
         task?.cancel()
         let route = Config().trainRoute
         sourceCrs = route.from
         targetCrs = route.to
 
-        if let sourceCrs = sourceCrs, let targetCrs = targetCrs {
-            completion = onCompletion
-            task = get("delays/\(sourceCrs)/to/\(targetCrs)/10", onCompletion: gotDelays)
-        } else {
+        guard let sourceCrs = sourceCrs,
+              let targetCrs = targetCrs else {
             onCompletion(self, [], nil)
+            return
         }
-    }
 
-    struct Delays: Decodable {
-        var delays: Bool
-        var totalTrainsDelayed: Int
-        var totalDelayMinutes: Int
-        var delayedTrains: [Delay]
+        let url = URL(string: "https://huxley.apphb.com")?
+            .appendingPathComponent("delays")
+            .appendingPathComponent(sourceCrs)
+            .appendingPathComponent("to")
+            .appendingPathComponent(targetCrs)
+            .appendingPathComponent("10")
+            .settingQueryItems([
+                URLQueryItem(name: "accessToken", value: configuration.nationalRailApiToken)
+            ])
 
-        struct Delay: Codable {
-            var std: String
-            var etd: String
-            var isCancelled: Bool
+        guard let safeUrl = url else {
+            onCompletion(self, [], StatusPanelError.invalidUrl)
+            return
         }
+
+        completion = onCompletion
+        task = JSONRequest.makeRequest(url: safeUrl, onCompletion: gotDelays)
     }
 
     func gotDelays(data: Delays?, err: Error?) {
@@ -107,4 +118,3 @@ class NationalRailDataSource : DataSource {
         completion?(self, dataItems, err)
     }
 }
-
