@@ -37,7 +37,7 @@ class TFLDataSource: DataSource {
     // Key is the line id in the API, value is the human-readable name
     static let lines = [
         "bakerloo": "Bakerloo Line",
-        "cirle": "Circle Line",
+        "circle": "Circle Line",
         "central": "Central Line",
         "district": "District Line",
         "hammersmith-city": "Hammersmith & City Line",
