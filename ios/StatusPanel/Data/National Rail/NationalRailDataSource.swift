@@ -102,7 +102,7 @@ class NationalRailDataSource : DataSource {
                     text += "Delayed"
                 }
             }
-            dataItems.append(DataItem(text, flags: [DataItemFlag.warning]))
+            dataItems.append(DataItem(text, flags: [.warning]))
         }
         completion?(self, dataItems, err)
     }

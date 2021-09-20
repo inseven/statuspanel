@@ -25,26 +25,30 @@ protocol DataSource : AnyObject {
     func fetchData(onCompletion:@escaping Callback)
 }
 
-enum DataItemFlag {
-    case warning
-    case header
+struct DataItemFlags: OptionSet {
+
+    let rawValue: Int
+
+    static let warning = DataItemFlags(rawValue: 1 << 0)
+    static let header = DataItemFlags(rawValue: 1 << 1)
+    static let prefersEmptyColumn = DataItemFlags(rawValue: 1 << 2)
 }
 
 protocol DataItemBase : AnyObject {
     func getPrefix() -> String
     func getText(checkFit: (String) -> Bool) -> String
     func getSubText() -> String?
-    func getFlags() -> Set<DataItemFlag>
+    func getFlags() -> DataItemFlags
 }
 
 class DataItem : Equatable, DataItemBase {
-    init(_ text: String, flags: Set<DataItemFlag> = Set()) {
+    init(_ text: String, flags: DataItemFlags = []) {
         self.text = text
         self.flags = flags
     }
 
     let text: String
-    let flags: Set<DataItemFlag>
+    let flags: DataItemFlags
 
     func getPrefix() -> String {
         return ""
@@ -54,7 +58,7 @@ class DataItem : Equatable, DataItemBase {
         return text
     }
 
-    func getFlags() -> Set<DataItemFlag> {
+    func getFlags() -> DataItemFlags {
         return flags
     }
 

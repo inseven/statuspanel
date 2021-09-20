@@ -47,7 +47,7 @@ class CalendarHeader : DataItemBase {
         return nil
     }
 
-    func getFlags() -> Set<DataItemFlag> {
+    func getFlags() -> DataItemFlags {
         return [.header]
     }
 
@@ -55,7 +55,7 @@ class CalendarHeader : DataItemBase {
 }
 
 class CalendarItem : DataItemBase {
-    init(time: String?, title: String, location: String?, flags: Set<DataItemFlag> = []) {
+    init(time: String?, title: String, location: String?, flags: DataItemFlags = []) {
         self.time = time
         self.title = title
         self.location = location
@@ -68,7 +68,7 @@ class CalendarItem : DataItemBase {
         self.flags = []
     }
 
-    func getFlags() -> Set<DataItemFlag> {
+    func getFlags() -> DataItemFlags {
         return flags
     }
 
@@ -87,7 +87,7 @@ class CalendarItem : DataItemBase {
     let time: String?
     let title: String
     let location: String?
-    let flags: Set<DataItemFlag>
+    let flags: DataItemFlags
 }
 
 class CalendarSource : DataSource {
