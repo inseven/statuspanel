@@ -23,8 +23,15 @@ import EventKit
 import Sodium
 
 class ViewController: UIViewController, SettingsViewControllerDelegate {
-    static let kPanelWidth = 640
-    static let kPanelHeight = 384
+
+    enum DividerStyle {
+        case vertical(originY: CGFloat)
+        case horizontal(originY: CGFloat)
+    }
+
+    static let panelWidth = 640.0
+    static let panelHeight = 384.0
+    static let panelStatusBarHeight = 20.0
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var redactButton: UIBarButtonItem!
@@ -165,7 +172,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     class func blankPanelImage() -> UIImage {
         let fmt = UIGraphicsImageRendererFormat()
         fmt.scale = 1.0
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: kPanelWidth, height: kPanelHeight), format: fmt)
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: panelWidth, height: panelHeight), format: fmt)
         let uiImage = renderer.image {(uictx: UIGraphicsImageRendererContext) in }
         return uiImage
     }
@@ -182,7 +189,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         guard let source = UIImage(contentsOfFile: path!.path), let cgImage = source.cgImage else {
             return blankPanelImage()
         }
-        let rect = CGRect(center: source.center, size: CGSize(width: kPanelWidth, height: kPanelHeight))
+        let rect = CGRect(center: source.center, size: CGSize(width: panelWidth, height: panelHeight))
         if let cgCrop = cgImage.cropping(to: rect) {
             return UIImage(cgImage: cgCrop)
         } else {
@@ -190,13 +197,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
     }
 
-    enum DividerStyle {
-        case vertical(originY: CGFloat)
-        case horizontal(originY: CGFloat)
-    }
-
     func renderToImage(data: [DataItemBase], shouldRedact: Bool) -> UIImage {
-        let contentView = UIView(frame: CGRect(x: 0, y: 0, width: ViewController.kPanelWidth, height: ViewController.kPanelHeight))
+        let contentView = UIView(frame: CGRect(x: 0, y: 0, width: Self.panelWidth, height: Self.panelHeight))
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
@@ -328,7 +330,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             switch divider {
             case .vertical(let originY):
                 context.move(to: CGPoint(x: midx, y: originY))
-                context.addLine(to: CGPoint(x: midx, y: rect.height - 20))
+                context.addLine(to: CGPoint(x: midx, y: rect.height - Self.panelStatusBarHeight))
             case .horizontal(let originY):
                 context.move(to: CGPoint(x: x, y: originY))
                 context.addLine(to: CGPoint(x: rect.width - x, y: originY))
