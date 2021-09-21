@@ -326,8 +326,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             context.beginPath()
 
             switch divider {
-            case .vertical(let originX):
-                context.move(to: CGPoint(x: midx, y: originX))
+            case .vertical(let originY):
+                context.move(to: CGPoint(x: midx, y: originY))
                 context.addLine(to: CGPoint(x: midx, y: rect.height - 20))
             case .horizontal(let originY):
                 context.move(to: CGPoint(x: x, y: originY))
