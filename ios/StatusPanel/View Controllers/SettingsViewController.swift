@@ -253,7 +253,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             let font = config.availableFonts[indexPath.row]
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
-            let label = ViewController.getLabel(frame:frame, font: font.configName)
+            let label = ViewController.getLabel(frame:frame, font: font.configName, style: .text)
             label.text = font.humanReadableName
             label.sizeToFit()
             label.frame = label.frame.offsetBy(dx: 30, dy: (frame.height - label.bounds.height) / 2)

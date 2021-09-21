@@ -85,7 +85,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
         if indexPath.row < 2 {
             let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
             let redactMode: RedactMode = (indexPath.row == 0) ? .redactLines : .redactWords
-            let label = ViewController.getLabel(frame: frame, font: Config().font, redactMode: redactMode)
+            let label = ViewController.getLabel(frame: frame, font: Config().font, style: .text, redactMode: redactMode)
             label.text = "Redact text good"
             label.sizeToFit()
             label.frame = label.frame.offsetBy(dx: 0, dy: (frame.height - label.bounds.height) / 2)
