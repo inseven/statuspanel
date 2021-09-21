@@ -23,8 +23,15 @@ import EventKit
 import Sodium
 
 class ViewController: UIViewController, SettingsViewControllerDelegate {
-    static let kPanelWidth = 640
-    static let kPanelHeight = 384
+
+    enum DividerStyle {
+        case vertical(originY: CGFloat)
+        case horizontal(originY: CGFloat)
+    }
+
+    static let panelWidth: CGFloat = 640.0
+    static let panelHeight: CGFloat = 384.0
+    static let panelStatusBarHeight: CGFloat = 20.0
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var redactButton: UIBarButtonItem!
@@ -165,7 +172,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     class func blankPanelImage() -> UIImage {
         let fmt = UIGraphicsImageRendererFormat()
         fmt.scale = 1.0
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: kPanelWidth, height: kPanelHeight), format: fmt)
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: panelWidth, height: panelHeight), format: fmt)
         let uiImage = renderer.image {(uictx: UIGraphicsImageRendererContext) in }
         return uiImage
     }
@@ -182,7 +189,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         guard let source = UIImage(contentsOfFile: path!.path), let cgImage = source.cgImage else {
             return blankPanelImage()
         }
-        let rect = CGRect(center: source.center, size: CGSize(width: kPanelWidth, height: kPanelHeight))
+        let rect = CGRect(center: source.center, size: CGSize(width: panelWidth, height: panelHeight))
         if let cgCrop = cgImage.cropping(to: rect) {
             return UIImage(cgImage: cgCrop)
         } else {
@@ -191,7 +198,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     func renderToImage(data: [DataItemBase], shouldRedact: Bool) -> UIImage {
-        let contentView = UIView(frame: CGRect(x: 0, y: 0, width: ViewController.kPanelWidth, height: ViewController.kPanelHeight))
+        let contentView = UIView(frame: CGRect(x: 0, y: 0, width: Self.panelWidth, height: Self.panelHeight))
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
@@ -210,10 +217,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let itemGap : CGFloat = 10
         var colStart = y
         var col = 1
-        var verticalBreak: CGFloat = 0
+        var divider: DividerStyle? = twoCols ? .vertical(originY: 0) : nil
         let redactMode: RedactMode = (shouldRedact ? (config.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
         for (i, item) in data.enumerated() {
-            // print(item)
             let flags = item.getFlags()
             let firstItemHeader = i == 0 && flags.contains(.header)
             let w = firstItemHeader ? rect.width : colWidth
@@ -285,12 +291,18 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 view.frame = CGRect(x: x, y: y, width: sz.width, height: sz.height)
             } else if (!twoCols && itemIsColBreak) {
                 // Leave some extra space and mark where to draw a line
-                verticalBreak = y
+                divider = .horizontal(originY: y)
                 let c = view.center
                 view.center = CGPoint(x: c.x, y: c.y + itemGap)
                 y += itemGap
             }
             contentView.addSubview(view)
+
+            // Update the divider to account for the height of the header.
+            if firstItemHeader {
+                divider = .vertical(originY: sz.height + itemGap)
+            }
+
             y = y + sz.height + itemGap
             if i == 0 && flags.contains(.header) {
                 colStart = y
@@ -309,17 +321,21 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         // layer.render() works when the device is locked, whereas drawHierarchy() doesn't
         contentView.layer.render(in: context)
 
-        // Draw the dividing line
-        context.setStrokeColor(foregroundColor.cgColor)
-        if twoCols {
+        // Draw the dividing line.
+        if let divider = divider {
+
+            context.setStrokeColor(foregroundColor.cgColor)
             context.beginPath()
-            context.move(to: CGPoint(x: midx, y: 40))
-            context.addLine(to: CGPoint(x: midx, y: rect.height - 20))
-            context.drawPath(using: .stroke)
-        } else if verticalBreak != 0 {
-            context.beginPath()
-            context.move(to: CGPoint(x: x, y: verticalBreak))
-            context.addLine(to: CGPoint(x: rect.width - x, y: verticalBreak))
+
+            switch divider {
+            case .vertical(let originY):
+                context.move(to: CGPoint(x: midx, y: originY))
+                context.addLine(to: CGPoint(x: midx, y: rect.height - Self.panelStatusBarHeight))
+            case .horizontal(let originY):
+                context.move(to: CGPoint(x: x, y: originY))
+                context.addLine(to: CGPoint(x: rect.width - x, y: originY))
+            }
+
             context.drawPath(using: .stroke)
         }
 
