@@ -158,8 +158,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 }
             case 1:
                 cell.textLabel?.text = "London Underground"
-                let lines = config.activeTFLLines
-                let lineNames = lines.compactMap { TFLDataSource.lines[$0] }
+                let lineNames = config.activeTFLLines.compactMap { TFLDataSource.lines[$0] }
                 if !lineNames.isEmpty {
                     cell.detailTextLabel?.text = lineNames.joined(separator: ", ")
                 } else {
