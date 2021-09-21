@@ -96,7 +96,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     enum LabelType {
-        case text, header, subText
+        case text
+        case header
+        case subText
     }
 
     static func getLabel(frame: CGRect, font fontName: String, type: LabelType = .text, redactMode: RedactMode = .none) -> UILabel {
@@ -221,8 +223,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let redactMode: RedactMode = (shouldRedact ? (config.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
         for (i, item) in data.enumerated() {
             let flags = item.getFlags()
-            let firstItemHeader = i == 0 && flags.contains(.header)
-            let w = firstItemHeader ? rect.width : colWidth
+            let isFirstItemAndHeader = i == 0 && flags.contains(.header)
+            let w = isFirstItemAndHeader ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
             let view = UIView(frame: frame)
             var prefix = item.getPrefix()
@@ -247,7 +249,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 }
             }
             let label = ViewController.getLabel(frame: textFrame, font: config.font,
-                                                type: firstItemHeader ? .header : .text,
+                                                type: isFirstItemAndHeader ? .header : .text,
                                                 redactMode: redactMode)
             label.numberOfLines = 1 // Temporarily while we're using it in checkFit
 
@@ -298,15 +300,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             }
             contentView.addSubview(view)
 
-            // Update the divider to account for the height of the header.
-            if firstItemHeader {
-                divider = .vertical(originY: sz.height + itemGap)
-            }
-
             y = y + sz.height + itemGap
-            if i == 0 && flags.contains(.header) {
+
+            // Update the verticial origin of the divider and the columns.
+            if isFirstItemAndHeader {
+                divider = .vertical(originY: y)
                 colStart = y
             }
+
         }
 
         // And render it into an image
