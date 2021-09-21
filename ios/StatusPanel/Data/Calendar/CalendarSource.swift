@@ -138,8 +138,8 @@ class CalendarSource : DataSource {
         let pred = eventStore.predicateForEvents(withStart: dayStart, end: dayEnd, calendars: calendars)
         let events = eventStore.events(matching: pred)
         var results = [DataItemBase]()
-        if (header != nil) {
-            results.append(DataItem(self.header!, flags: [.header]))
+        if let header = header {
+            results.append(DataItem(header, flags: [.prefersEmptyColumn]))
         }
 
         let config = Config()

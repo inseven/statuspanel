@@ -22,6 +22,18 @@ import UIKit
 import EventKit
 import Sodium
 
+
+extension DataItemFlags {
+
+    var style: ViewController.LabelStyle {
+        if contains(.header) {
+            return .header
+        }
+        return .text
+    }
+
+}
+
 class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     enum DividerStyle {
@@ -219,6 +231,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let itemGap : CGFloat = 10
         var colStart = y
         var col = 1
+        var columnItemCount = 0 // Number of items assigned to the current column
         var divider: DividerStyle? = twoCols ? .vertical(originY: 0) : nil
         let redactMode: RedactMode = (shouldRedact ? (config.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
 
@@ -235,7 +248,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             if prefix != "" {
                 let prefixLabel = ViewController.getLabel(frame: textFrame,
                                                           font: config.font,
-                                                          style: isFirstItemAndHeader ? .header : .text,
+                                                          style: flags.style,
                                                           redactMode: redactMode)
                 prefixLabel.textColor = foregroundColor
                 prefixLabel.numberOfLines = numPrefixLines
@@ -254,7 +267,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             }
             let label = ViewController.getLabel(frame: textFrame,
                                                 font: config.font,
-                                                style: isFirstItemAndHeader ? .header : .text,
+                                                style: flags.style,
                                                 redactMode: redactMode)
             label.numberOfLines = 1 // Temporarily while we're using it in checkFit
 
@@ -292,10 +305,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             }
             let sz = view.frame
             // Enough space for this item?
-            let itemIsColBreak = i != 0 && flags.contains(.header)
+            let itemIsColBreak = (columnItemCount > 0 && flags.contains(.prefersEmptyColumn))
             if (col == 1 && twoCols && (sz.height > maxy - y || itemIsColBreak)) {
                 // overflow to 2nd column
                 col += 1
+                columnItemCount = 0
                 x += midx + 5
                 y = colStart
                 view.frame = CGRect(x: x, y: y, width: sz.width, height: sz.height)
@@ -314,6 +328,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             if isFirstItemAndHeader {
                 divider = .vertical(originY: y)
                 colStart = y
+            }
+
+            // Track the number of items in the current column.
+            if !isFirstItemAndHeader {
+                columnItemCount += 1
             }
 
         }
