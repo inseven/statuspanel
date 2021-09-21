@@ -96,7 +96,7 @@ class TFLDataSource: DataSource {
             }
             let desc = line.lineStatuses[0].statusSeverityDescription
             let sev = line.lineStatuses[0].statusSeverity
-            var flags: Set<DataItemFlag> = []
+            var flags: DataItemFlags = []
             if sev < 10 {
                 flags.insert(.warning)
             }
