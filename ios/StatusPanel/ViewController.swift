@@ -190,6 +190,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
     }
 
+    enum DividerStyle {
+        case vertical(originY: CGFloat)
+        case horizontal(originY: CGFloat)
+    }
+
     func renderToImage(data: [DataItemBase], shouldRedact: Bool) -> UIImage {
         let contentView = UIView(frame: CGRect(x: 0, y: 0, width: ViewController.kPanelWidth, height: ViewController.kPanelHeight))
         contentView.contentScaleFactor = 1.0
@@ -210,10 +215,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let itemGap : CGFloat = 10
         var colStart = y
         var col = 1
-        var verticalBreak: CGFloat = 0
+        var divider: DividerStyle? = twoCols ? .vertical(originY: 0) : nil
         let redactMode: RedactMode = (shouldRedact ? (config.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
         for (i, item) in data.enumerated() {
-            // print(item)
             let flags = item.getFlags()
             let firstItemHeader = i == 0 && flags.contains(.header)
             let w = firstItemHeader ? rect.width : colWidth
@@ -285,12 +289,18 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 view.frame = CGRect(x: x, y: y, width: sz.width, height: sz.height)
             } else if (!twoCols && itemIsColBreak) {
                 // Leave some extra space and mark where to draw a line
-                verticalBreak = y
+                divider = .horizontal(originY: y)
                 let c = view.center
                 view.center = CGPoint(x: c.x, y: c.y + itemGap)
                 y += itemGap
             }
             contentView.addSubview(view)
+
+            // Update the divider to account for the height of the header.
+            if firstItemHeader {
+                divider = .vertical(originY: sz.height + itemGap)
+            }
+
             y = y + sz.height + itemGap
             if i == 0 && flags.contains(.header) {
                 colStart = y
@@ -309,17 +319,21 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         // layer.render() works when the device is locked, whereas drawHierarchy() doesn't
         contentView.layer.render(in: context)
 
-        // Draw the dividing line
-        context.setStrokeColor(foregroundColor.cgColor)
-        if twoCols {
+        // Draw the dividing line.
+        if let divider = divider {
+
+            context.setStrokeColor(foregroundColor.cgColor)
             context.beginPath()
-            context.move(to: CGPoint(x: midx, y: 40))
-            context.addLine(to: CGPoint(x: midx, y: rect.height - 20))
-            context.drawPath(using: .stroke)
-        } else if verticalBreak != 0 {
-            context.beginPath()
-            context.move(to: CGPoint(x: x, y: verticalBreak))
-            context.addLine(to: CGPoint(x: rect.width - x, y: verticalBreak))
+
+            switch divider {
+            case .vertical(let originX):
+                context.move(to: CGPoint(x: midx, y: originX))
+                context.addLine(to: CGPoint(x: midx, y: rect.height - 20))
+            case .horizontal(let originY):
+                context.move(to: CGPoint(x: x, y: originY))
+                context.addLine(to: CGPoint(x: rect.width - x, y: originY))
+            }
+
             context.drawPath(using: .stroke)
         }
 
