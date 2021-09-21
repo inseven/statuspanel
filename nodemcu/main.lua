@@ -8,9 +8,11 @@ local readFile, writeFile = network.readFile, network.writeFile
 
 LongPressTime = 2000 -- milliseconds
 unpairPressTimer = nil
-pendingNetworkTasks = {}
 
+-- We never check for unpair during operation (only at wake-from-sleep) so we
+-- can be sure there'll never be anything else going on at this point
 function unpairPressed()
+    assert(coroutine.running())
     local pressed = gpio.read(UnpairPin) == 1
     if not pressed then
         -- Already released
@@ -27,7 +29,7 @@ function timerExpired()
     unpairPressTimer = nil
     if unpairDownTime then
         unpairDownTime = nil
-        longPressUnpair()
+        costart(longPressUnpair)
     end
 end
 
@@ -41,15 +43,16 @@ function unpairReleased()
         local delta = node.uptime() - unpairDownTime
         unpairDownTime = nil
         if delta >= LongPressTime * 1000 then
-            longPressUnpair()
+            costart(longPressUnpair)
         else
-            shortPressUnpair()
+            costart(shortPressUnpair)
         end
     end
 end
 
 function shortPressUnpair()
     print("Short press on unpair")
+    assert(coroutine.running())
 
     local imageToShow
     local id = getCurrentDisplayIdentifier()
@@ -60,31 +63,36 @@ function shortPressUnpair()
     end
 
     if file.exists(imageToShow) then
-        showFile(imageToShow, imageToShow == "img_1", function()
-            -- This will take care of sleeping us appropriately
-            executeWithNetworking(fetch)
-        end)
+        showFile(imageToShow, imageToShow == "img_1")
+        -- Might as well just reboot here, seems easiest
+        node.restart()
     else
-        executeWithNetworking(fetch)
+        -- No current images? Treat like a generic wakeup then, I guess
+        node.restart()
     end
 end
 
 function longPressUnpair()
     print("Long press on unpair")
+    assert(coroutine.running())
     setStatusLed(1)
     resetDeviceState()
-    tmr.create():alarm(1000, tmr.ALARM_SINGLE, function()
-        node.restart()
-    end)
+    wait(1000)
+    node.restart()
 end
 
 function getDateAndSleep()
+    assert(coroutine.running())
     -- In lieu of an RTC or proper NTP, just grab the date header from a dumb http request
-    executeWithNetworking(function()
-        local _, _, headers = http.get("http://statuspanel.io/")
-        local date = headers.date
-        sleepFromDate(date)
-    end)
+    if ip or startNetworking() then
+        local status, _, headers = http.get("http://statuspanel.io/")
+        if status == 200 and headers and headers.date then
+            sleepFromDate(headers.date)
+            return
+        end
+    end
+    print("Uh-oh, problem getting date from HTTP, retrying in a minute")
+    sleepFor(60)
 end
 
 -- Returns the time since midnight, in seconds
@@ -154,31 +162,25 @@ end
 function rebootAndExecute(fn)
     print("rebootAndExecute "..fn)
     assert(#fn <= 32, "bootnext script too long")
-    local f = assert(file.open("boot_next", "w"))
-    f:write(fn)
-    f:close()
+    writeFile("boot_next", fn)
     wifi.stop()
     node.restart()
 end
 
-function executeWithNetworking(fn)
-    if ip then
-        fn()
-    else
-        if pendingNetworkTasks == nil then
-            pendingNetworkTasks = {}
-        end
-        table.insert(pendingNetworkTasks, fn)
-        if not connectStarted then
-            connectWifi()
-        end
-    end
+function runBootNext()
+    assert(coroutine.running())
+    local fn = assert(loadfile("boot_next"))
+    file.remove("boot_next") -- Do this before executing, don't wanna get stuck in a loop
+    fn()
 end
 
 local connectStarted = false
 local connectTimer
-function connectWifi(hotspotOnError)
-    if connectStarted then
+
+function startNetworking()
+    assert(coroutine.running())
+    assert(not connectStarted, "startNetworking has already been called (somehow)!")
+    if ip then
         return
     end
     connectStarted = true
@@ -189,64 +191,35 @@ function connectWifi(hotspotOnError)
             connectTimer:unregister()
             connectTimer = nil
         end
-        if provisioningSocket then
-            print("Huzzah, got creds!")
-            provisioningSocket:send("OK", function()
-                provisioningSocket:close()
-                provisioningSocket = nil
-                -- Give the phone time to provision an image
-                tmr.create():alarm(30 * 1000, tmr.ALARM_SINGLE, function()
-                    -- It appears more reliable to reboot here rather than
-                    -- attempt a direct fetch, although I'm not sure why. Maybe
-                    -- memory fragmentation? Or something to do with still being
-                    -- in stationap mode?
-                    node.restart()
-                end)
-            end)
-            -- Since we're going to reboot, any pending tasks get binned
-            pendingNetworkTasks = nil
-        end
         ip = event.ip
         gw = event.gw
-        if pendingNetworkTasks then
-            local tasks = pendingNetworkTasks
-            pendingNetworkTasks = nil
-            for _, fn in ipairs(tasks) do
-                fn()
-            end
+        if connectStarted then
+            connectStarted = false
+            coresume(true)
         end
     end)
     wifi.sta.on("disconnected", function(name, event)
         print("Disconnected", event.ssid, event.reason)
-        if provisioningSocket then
-            print("Bad creds")
-            provisioningSocket:send("NO", closeSocket)
-            provisioningSocket = nil
-            wifi.mode(wifi.SOFTAP, false)
-            return -- Already in hotspot mode, no need to retry
-        end
     end)
     wifi.start()
 
     local ok, err = pcall(wifi.sta.connect)
     if ok then
-        if hotspotOnError then
-            -- Start timer so that regardless of whatever confusing status events we
-            -- get back from the wifi stack, if we haven't got an IP address in 10
-            -- seconds we go into hotspot mode.
-            connectTimer = tmr.create()
-            connectTimer:alarm(10000, tmr.ALARM_SINGLE, function(timer)
-                print("Timed out waiting for an IP address, entering hotspot mode")
-                enterHotspotMode()
-            end)
-        end
+        -- Whatever state we end up in, if we don't get an IP address in 10 seconds it's an error
+        connectTimer = tmr.create()
+        connectTimer:alarm(10000, tmr.ALARM_SINGLE, function(timer)
+            print("Timed out waiting for an IP address")
+            if connectStarted then
+                connectStarted = false
+                coresume(false)
+            end
+        end)
+        -- Wait for either connectTimer or the got_ip event to coresume the yield
+        return yield()
     else
-        if hotspotOnError then
-            print("Wifi connect failed, entering setup mode")
-            enterHotspotMode()
-        else
-            print(err)
-        end
+        print("Wifi connect failed", err)
+        connectStarted = false
+        return false
     end
 end
 
@@ -263,10 +236,15 @@ function main()
         end
     end
 
-    if not autoMode then
-        print('To show enrollment QR code: enterHotspotMode()')
-        print('To fetch latest image: fetch()')
-        print('To display last-fetched image: showFile("img_1")')
+    local whatToDo
+    if file.exists("boot_next") then
+        whatToDo = runBootNext
+    elseif wokeByUnpair then
+        whatToDo = unpairPressed
+    elseif autoMode then
+        whatToDo = go
+    else
+        print("Auto mode off, call go() to get started.")
         if wokeByUsb then
             print("Woke up by UsbDetect (A3)")
         end
@@ -275,24 +253,8 @@ function main()
         end
     end
 
-    local shouldFetchImage = autoMode
-
-    if wokeByUnpair then
-        shouldFetchImage = false
-        unpairPressed()
-    end
-
-    if file.exists("boot_next") then
-        local fn = assert(loadfile("boot_next"))
-        file.remove("boot_next") -- Do this before executing, don't wanna get stuck in a loop
-        fn()
-        return
-    end
-
-    local shouldTimeoutToHotspotMode = shouldFetchImage
-    connectWifi(shouldTimeoutToHotspotMode)
-    if shouldFetchImage then
-        executeWithNetworking(fetch)
+    if whatToDo then
+        costart(whatToDo)
     end
 
     -- Despite EGC being disabled at this point (by init.lua), lua.c will reenable it once init.lua is finished!
@@ -302,21 +264,61 @@ function main()
     end)
 end
 
+-- As a convenience, we'll allow go() to be called not from within a coroutine
+function go()
+    if not coroutine.running() then
+        costart(go)
+        return
+    end
+    local ok = startNetworking()
+    if ok then
+        fetch()
+    else
+        enterHotspotMode()
+    end
+end
+
 function resetDeviceState()
     local files = {
         "deviceid",
         "pk",
         "sk",
+        "last_modified",
+        "img_1",
+        "img_1_hash",
+        "img_2",
+        "img_2_hash",
     }
     for _, name in ipairs(files) do
         file.remove(name)
     end
-    clearCache()
-    setDeviceId(nil)
+    setCurrentDisplayIdentifier(nil)
+    network.setDeviceId(nil)
+end
+
+provisioningSocket = nil
+statusLedFlashTimer = nil
+
+function flashStatusLed(interval)
+    if statusLedFlashTimer then
+        statusLedFlashTimer:unregister()
+        statusLedFlashTimer = nil
+    end
+    if interval then
+        statusLedFlashTimer = tmr:create()
+        setStatusLed(1) -- Turn it on immediately
+        local ledVal = false
+        statusLedFlashTimer:alarm(interval, tmr.ALARM_AUTO, function()
+            setStatusLed(ledVal and 1 or 0)
+            ledVal = not ledVal
+        end)
+    else
+        setStatusLed(0)
+    end
 end
 
 function enterHotspotMode()
-    pendingNetworkTasks = nil -- All planned work is cancelled
+    assert(coroutine.running())
     if wifi.getmode() == wifi.STATION then
         wifi.stop()
     end
@@ -347,7 +349,9 @@ function enterHotspotMode()
     wifi.start()
 
     local url = network.getQRCodeURL(true)
-    initAndDisplay(url, network.displayQRCode, url, function() print("Finished displayQRCode") end)
+    initAndDisplay(url, network.displayQRCode, url)
+    print("Finished displayQRCode")
+    flashStatusLed(1000)
 end
 
 function forgetWifiCredentials()
@@ -355,6 +359,34 @@ function forgetWifiCredentials()
     wifi.mode(wifi.STATION)
     wifi.sta.config({ssid="", auto=false}, true)
     node.restart()
+end
+
+local function connectToProvisionedCredsSucceeded(eventName, event)
+    assert(provisioningSocket, "Unexpected callback when provisioningSocket==nil")
+    print("Huzzah, got creds!")
+    flashStatusLed(nil)
+    setStatusLed(1)
+    provisioningSocket:send("OK", function()
+        provisioningSocket:close()
+        provisioningSocket = nil
+        -- Give the phone time to provision an image
+        tmr.create():alarm(30 * 1000, tmr.ALARM_SINGLE, function()
+            -- It appears more reliable to reboot here rather than
+            -- attempt a direct fetch, although I'm not sure why. Maybe
+            -- memory fragmentation? Or something to do with still being
+            -- in stationap mode?
+            node.restart()
+        end)
+    end)
+end
+
+local function connectToProvisionedCredsFailed(eventName, event)
+    assert(provisioningSocket, "Unexpected callback when provisioningSocket==nil")
+    print("Bad creds")
+    provisioningSocket:send("NO", closeSocket)
+    provisioningSocket = nil
+    wifi.mode(wifi.SOFTAP, false)
+    -- Already in hotspot mode, nothing more required
 end
 
 function listen()
@@ -376,7 +408,9 @@ function listen()
                 provisioningSocket = sock
                 wifi.mode(wifi.STATIONAP, false)
                 wifi.sta.config({ ssid=ssid, pwd=pass, auto=false }, true)
-                -- we should now get a got_ip or disconnected callback
+                wifi.sta.on("got_ip", connectToProvisionedCredsSucceeded)
+                wifi.sta.on("disconnected", connectToProvisionedCredsFailed)
+                -- we should now get a got_ip or disconnected callback (despite auto=false...)
             else
                 print("Payload not understood")
                 sock:send("NO", sendComplete)
@@ -403,32 +437,41 @@ function getImgHash()
 end
 
 function fetch()
+    assert(coroutine.running())
     print("Fetching image...")
 
-    network.getImages(function(result)
-        local status = result and result.status
-        local function retry()
-            -- Try again in 1 minute
-            sleepFor(60)
-        end
+    local result = network.getImages()
+    local status = result and result.status
+    local function retry()
+        -- Try again in 1 minute
+        sleepFor(60)
+    end
 
-        if status == 404 then
-            local url = network.getQRCodeURL(false)
-            initAndDisplay(url, network.displayQRCode, url, retry)
-        elseif status == 200 then
-            processRawImage(result.lastModified)
-        elseif status == 304 then
+    if status == 404 then
+        local url = network.getQRCodeURL(false)
+        initAndDisplay(url, network.displayQRCode, url)
+        retry()
+    elseif status == 200 then
+        processRawImage(result.lastModified)
+    elseif status == 304 then
+        if getCurrentDisplayIdentifier():match("^(img_%d+)") then
+            -- Nothing to do
             sleepFromDate(result.date)
         else
-            -- Some sort of error we weren't expecting (network?)
-            local errText = status and string.format("HTTP error %d", status) or "Unknown error (no network?)"
-            initAndDisplay(errText, displayErrLine, errText, retry)
+            -- We're currently displaying something else (eg a qrcode, or an error), so we need to fix that
+            showFile("img_1", true)
+            getDateAndSleep()
         end
-    end)
+    else
+        -- Some sort of error we weren't expecting (network?)
+        local errText = status and string.format("HTTP error %d", status) or "Unknown error (no network?)"
+        initAndDisplay(errText, displayErrLine, errText)
+        retry()
+    end
 end
 
 function getCurrentDisplayIdentifier()
-    return readFile("current_display_identifier", 64)
+    return readFile("current_display_identifier", 128)
 end
 
 function setCurrentDisplayIdentifier(id)
@@ -442,33 +485,17 @@ function setCurrentDisplayIdentifier(id)
 end
 
 function initAndDisplay(id, displayFn, ...)
-    -- Last arg is completion
-    local nargs = select("#", ...)
-    if nargs == 0 then
-        -- We can assume a nil completion in this case
-        nargs = 1
-    end
-    local args = { ... }
-    local completion = args[nargs]
-    if completion == nil then
-        completion = function() end
-    end
-    assert(type(completion) == "function", "Last argument to initAndDisplay must be nil or a completion function")
-
+    assert(coroutine.running())
     if id and id == getCurrentDisplayIdentifier() then
         print("Requested contents are already on screen, doing nothing")
-        completion()
         return
     else
         setCurrentDisplayIdentifier(nil)
     end
 
-    -- Set new completion function that wraps the passed-in one in order to call setCurrentDisplayIdentifier
-    args[nargs] = function(...)
-        setCurrentDisplayIdentifier(id)
-        completion(...)
-    end
-    panel.initp(function() displayFn(unpack(args, 1, nargs)) end)
+    panel.initp()
+    displayFn(...)
+    setCurrentDisplayIdentifier(id)
 end
 
 function processRawImage(lastModified)
@@ -481,6 +508,7 @@ function processRawImage(lastModified)
 end
 
 function decryptImage(index)
+    assert(coroutine.running())
     printf("Decrypting image number %d...", index)
     local pk = network.getPublicKey()
     local sk = network.getSecretKey()
@@ -520,12 +548,11 @@ function decryptImage(index)
         -- At the end of a decrypt we always want to display, while preserving the currently-selected image if any
         local current = getCurrentDisplayIdentifier()
         local imageToShow = current and current:match("^(img_%d+)") or "img_1"
-        local completion = nil
         local autoMode = gpio.read(AutoPin) == 1
+        showFile(imageToShow, imageToShow == "img_1")
         if autoMode then
-            completion = getDateAndSleep
+            getDateAndSleep()
         end
-        showFile(imageToShow, imageToShow == "img_1", completion)
     end
 end
 
@@ -596,26 +623,28 @@ function getDisplayStatusLineFn(customText, isErrText)
     end
     local err = batteryLow or isErrText
     local statusText = table.concat(statusTable, " | ")
-    local fg = BLACK
-    local bg = err and COLOURED or WHITE
+    local fg = panel.BLACK
+    local bg = err and panel.COLOURED or panel.WHITE
     return panel.getTextPixelFn(statusText, fg, bg)
 end
 
-function displayErrLine(line, completion)
+function displayErrLine(line)
+    assert(coroutine.running())
     local getTextPixel = getDisplayStatusLineFn(line, true)
     local charh = require("font").charh
     local starth = (panel.h - charh) / 2
     local endh = starth + charh
-    display(function(x, y)
+    panel.display(function(x, y)
         if y >= starth and y < endh then
             return getTextPixel(x, y - starth)
         else
-            return WHITE
+            return panel.WHITE
         end
-    end, completion)
+    end)
 end
 
-function displayLineFormatFile(filename, statusLine, completion)
+function displayLineFormatFile(filename, statusLine)
+    assert(coroutine.running())
     local f = assert(file.open(filename, "r"))
     local w = panel.w
     local statusLineFn, statusLineStart
@@ -636,13 +665,12 @@ function displayLineFormatFile(filename, statusLine, completion)
             return f:read(w / 2)
         end
     end
-    panel.displayLines(readLine, function()
-        f:close()
-        completion()
-    end)
+    panel.displayLines(readLine)
+    f:close()
 end
 
-function showFile(filename, statusLine, completion)
+function showFile(filename, statusLine)
+    assert(coroutine.running())
     local id = string.format("%s,%s", filename, readFile(filename.."_hash"))
-    initAndDisplay(id, displayLineFormatFile, filename, statusLine, completion)
+    initAndDisplay(id, displayLineFormatFile, filename, statusLine)
 end

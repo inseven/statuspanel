@@ -70,69 +70,46 @@ local function cmd(id, ...)
     end
 end
 
-local function doneFn()
-    print("Done!")
+function initp()
+    reset()
+    cmd(POWER_SETTING, 0x37, 0x00)
+    cmd(PANEL_SETTING, 0xCF, 0x08)
+    cmd(BOOSTER_SOFT_START, 0xC7, 0xCC, 0x28)
+    cmd(POWER_ON)
+    waitUntilIdle()
+    print("Powered on")
+    cmd(PLL_CONTROL, 0x3C)
+    cmd(TEMPERATURE_CALIBRATION, 0x00)
+    cmd(VCOM_AND_DATA_INTERVAL_SETTING, 0x77)
+    cmd(TCON_SETTING, 0x22)
+    cmd(TCON_RESOLUTION, 0x02, 0x80, 0x01, 0x80) -- 0x0280 = 640, 0x0180 = 384
+    cmd(VCM_DC_SETTING, 0x1E)
+    cmd(0xE5, 0x03) -- FLASH MODE
 end
 
-function initp(completion)
-    if not completion then completion = doneFn end
-    reset(function()
-        cmd(POWER_SETTING, 0x37, 0x00)
-        cmd(PANEL_SETTING, 0xCF, 0x08)
-        cmd(BOOSTER_SOFT_START, 0xC7, 0xCC, 0x28)
-        cmd(POWER_ON)
-        waitUntilIdle(function()
-            print("Powered on")
-            cmd(PLL_CONTROL, 0x3C)
-            cmd(TEMPERATURE_CALIBRATION, 0x00)
-            cmd(VCOM_AND_DATA_INTERVAL_SETTING, 0x77)
-            cmd(TCON_SETTING, 0x22)
-            cmd(TCON_RESOLUTION, 0x02, 0x80, 0x01, 0x80) -- 0x0280 = 640, 0x0180 = 384
-            cmd(VCM_DC_SETTING, 0x1E)
-            cmd(0xE5, 0x03) -- FLASH MODE
-            completion()
-        end)
-    end)
-end
-
-function reset(completion)
-    if not completion then completion = doneFn end
+function reset()
     gpio.write(Reset, 0)
-    tmr.create():alarm(200, tmr.ALARM_SINGLE, function()
-        gpio.write(Reset, 1)
-        tmr.create():alarm(200, tmr.ALARM_SINGLE, function()
-            node.task.post(completion)
-        end)
-    end)
+    wait(200)
+    gpio.write(Reset, 1)
+    wait(200)
 end
 
-function waitUntilIdle(completion)
-    if not completion then completion = doneFn end
+function waitUntilIdle()
     if gpio.read(Busy) == 1 then
         -- Already idle
-        node.task.post(completion)
         return
+    end    
+    print("waitUntilIdle...")
+    while gpio.read(Busy) == 0 do
+        wait(100)
     end
-    print("WaitUntilIdle...")
-
-    tmr.create():alarm(100, tmr.ALARM_SEMI, function(t)
-        if gpio.read(Busy) == 0 then
-            t:start()
-        else
-            print("Wait complete!")
-            t:unregister()
-            node.task.post(completion)
-        end
-    end)
+    print("Wait complete!")
 end
 
-function sleep(completion)
-    if not completion then completion = doneFn end
+function sleep()
     cmd(POWER_OFF)
-    waitUntilIdle(function()
-        cmd(DEEP_SLEEP, 0xA5)
-        node.task.post(completion)
-    end)
+    waitUntilIdle()
+    cmd(DEEP_SLEEP, 0xA5)
 end
 
 WHITE = 3
@@ -145,37 +122,26 @@ w, h = 640, 384
 
 -- The actual display code!
 
-function displayLines(lineFn, completion)
+function displayLines(lineFn)
     -- This overload assumes the caller already has the pixel data assembled into panel format
     setStatusLed(1)
     local t = uptime()
     cmd(DATA_START_TRANSMISSION_1)
-    local y = 0
     gpio_write(DC, DC_DATA)
 
-    local function drawLine()
-        if y == h then
-            cmd(DISPLAY_REFRESH)
-            waitUntilIdle(function()
-                local elapsed = math.floor((uptime() - t) / 1000000)
-                sleep(function()
-                    printf("Display complete, took %ds", elapsed)
-                    setStatusLed(0)
-                    if completion then
-                        completion()
-                    end
-                end)
-            end)
-            return
-        end
-
+    for y = 0, h - 1 do
+        -- print("Line", y)
         setStatusLed(y % 2)
         local data = lineFn(y)
         spidevice_transfer(spidevice, data)
-        y = y + 1
-        node.task.post(drawLine)
     end
-    node.task.post(drawLine)
+    -- print("Refreshing...")
+    cmd(DISPLAY_REFRESH)
+    waitUntilIdle()
+    local elapsed = math.floor((uptime() - t) / 1000000)
+    sleep()
+    printf("Display complete, took %ds", elapsed)
+    setStatusLed(0)
 end
 
 function pixelFnToLineFn(getPixelFn)
@@ -192,8 +158,8 @@ function pixelFnToLineFn(getPixelFn)
     return getLine
 end
 
-function display(getPixelFn, completion)
-    displayLines(pixelFnToLineFn(getPixelFn), completion)
+function display(getPixelFn)
+    displayLines(pixelFnToLineFn(getPixelFn))
 end
 
 local mod3 = { [0] = WHITE, [1] = COLOURED, [2] = BLACK }
@@ -203,14 +169,17 @@ function whiteColourBlack(x, y)
 end
 
 function white()
+    initp()
     display(function() return WHITE end)
 end
 
 function black()
+    initp()
     display(function() return BLACK end)
 end
 
 function dither()
+    initp()
     display(function(x, y)
         if x % 2 == 0 or y % 2 == 0 then
             return COLOURED
@@ -235,14 +204,6 @@ function getTextPixelFn(text, fg, bg)
         local chx = x % charw
         return font.getPixel(char, chx, y) and fg or bg
     end
-end
-
-function displayText()
-    local text = "Hello, World!"
-    local oldh = h
-    local getPixel = getTextPixelFn(text)
-    h = charh
-    display(getPixel, function() h = oldh end)
 end
 
 return _ENV -- Must be last

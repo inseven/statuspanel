@@ -1,18 +1,14 @@
 -- Network and stuff
 _ENV = module()
 
-function getImages(completion)
+function getImages()
     collectgarbage() -- Clear the decks...
-    if not completion then
-        completion = function() print("Done!") end
-    end
     local deviceId = getDeviceId()
 
     if gw then
         setStatusLed(1)
     else
         -- No internet connection?
-        node.task.post(function() completion(nil) end)
         return
     end
 
@@ -45,7 +41,7 @@ function getImages(completion)
         end
     end)
     conn:on("complete", function(status)
-        print("HTTP request complete")
+        printf("HTTP request complete status=%d", status)
         conn:close()
         conn = nil
         if f then
@@ -53,9 +49,11 @@ function getImages(completion)
         end
         setStatusLed(0)
         result.status = status
-        completion(result)
+        coresume(result)
     end)
     conn:request()
+    local result = yield()
+    return result
 end
 
 function readFile(name, maxSize)
@@ -81,11 +79,6 @@ end
 
 function getRootCert()
     return assert(readFile("root.pem", 2048))
-end
-
-function clearCache()
-    file.remove("last_modified")
-    setCurrentDisplayIdentifier(nil)
 end
 
 -- Avoid o, i, 0, 1
@@ -159,7 +152,8 @@ function getQRCodeURL(includeSsid)
     return result
 end
 
-function displayQRCode(url, completion)
+function displayQRCode(url)
+    assert(coroutine.running())
     local font = require("font")
     local BLACK, WHITE, w, h = panel.BLACK, panel.WHITE, panel.w, panel.h
     local urlWidth = #url * font.charw
@@ -183,7 +177,7 @@ function displayQRCode(url, completion)
             return WHITE
         end
     end
-    panel.display(getPixel, completion)
+    panel.display(getPixel)
 end
 
 function parseImgHeader(data)

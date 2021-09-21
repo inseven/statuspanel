@@ -145,6 +145,56 @@ function getBatteryVoltageStatus()
     return string.format("%d.%dV", v, dv), val < 34
 end
 
+local co = nil
+local coTimer = nil
+
+function coresume(...)
+    assert(co, "Cannot call coresume() when there's no active coroutine!")
+    local ok, ret, param = coroutine.resume(co, ...)
+    if not ok then
+        print("ERROR:", debug.traceback(co, ret))
+        co = nil
+        -- TODO something... deepsleep?
+    elseif ret == "wait" then
+        -- print("Waiting at", node.uptime())
+        coTimer:interval(param)
+        coTimer:start()
+    elseif ret == "yield" then
+        -- Callers responsibility to call coresume() at a later point
+    elseif coroutine.status(co) == "dead" then
+        -- coroutine has finished whatever it was doing
+        co = nil
+        coTimer = nil
+    else
+        print("Unknown yield command!", ret)
+    end
+    -- print("coresume complete")
+end
+
+function costart(fn, ...)
+    assert(co == nil, "Cannot nest coroutines!") -- Well you can, but we aren't supporting it...
+    co = coroutine.create(fn)
+    coTimer = tmr.create()
+    local function coTimerExpired()
+        -- print("Continuing at", node.uptime())
+        coresume("tmr")
+    end
+    coTimer:register(1000, tmr.ALARM_SEMI, coTimerExpired)
+    coresume(...)
+end
+
+function wait(ms)
+    assert(coroutine.running(), "Attempt to wait not from within costart()!")
+    local ret = coroutine.yield("wait", ms)
+    assert(ret == "tmr", "Resume was not from timer expiry! "..ret)
+end
+
+-- Manual yield, caller is responsible for calling coresume()
+function yield()
+    assert(coroutine.running(), "Attempt to yield not from within costart()!")
+    return coroutine.yield("yield")
+end
+
 local ok, err = pcall(init)
 if not ok then
     print(err)
