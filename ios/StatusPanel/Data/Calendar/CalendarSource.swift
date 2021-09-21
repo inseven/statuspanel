@@ -48,7 +48,7 @@ class CalendarHeader : DataItemBase {
     }
 
     func getFlags() -> DataItemFlags {
-        return [.header]
+        return [.header, .spansColumns]
     }
 
     let date: Date

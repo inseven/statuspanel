@@ -230,15 +230,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let colWidth = twoCols ? (rect.width / 2 - x * 2) : rect.width - x
         let itemGap : CGFloat = 10
         var colStart = y
-        var col = 1
+        var col = 0
         var columnItemCount = 0 // Number of items assigned to the current column
         var divider: DividerStyle? = twoCols ? .vertical(originY: 0) : nil
         let redactMode: RedactMode = (shouldRedact ? (config.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
 
-        for (i, item) in data.enumerated() {
+        for item in data {
             let flags = item.getFlags()
-            let isFirstItemAndHeader = i == 0 && flags.contains(.header)
-            let w = isFirstItemAndHeader ? rect.width : colWidth
+            let w = flags.contains(.spansColumns) ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
             let view = UIView(frame: frame)
             var prefix = item.getPrefix()
@@ -306,7 +305,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             let sz = view.frame
             // Enough space for this item?
             let itemIsColBreak = (columnItemCount > 0 && flags.contains(.prefersEmptyColumn))
-            if (col == 1 && twoCols && (sz.height > maxy - y || itemIsColBreak)) {
+            if (col == 0 && twoCols && (sz.height > maxy - y || itemIsColBreak)) {
                 // overflow to 2nd column
                 col += 1
                 columnItemCount = 0
@@ -324,14 +323,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
             y = y + sz.height + itemGap
 
-            // Update the verticial origin of the divider and the columns.
-            if isFirstItemAndHeader {
+            if flags.contains(.spansColumns) {
+                // Update the verticial origin of the divider and columns, and start at column 0 again.
                 divider = .vertical(originY: y)
                 colStart = y
-            }
-
-            // Track the number of items in the current column.
-            if !isFirstItemAndHeader {
+                columnItemCount = 0
+                col = 0
+            } else {
+                // Track the number of items in the current column.
                 columnItemCount += 1
             }
 

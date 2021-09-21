@@ -32,6 +32,7 @@ struct DataItemFlags: OptionSet {
     static let warning = DataItemFlags(rawValue: 1 << 0)
     static let header = DataItemFlags(rawValue: 1 << 1)
     static let prefersEmptyColumn = DataItemFlags(rawValue: 1 << 2)
+    static let spansColumns = DataItemFlags(rawValue: 1 << 3)
 }
 
 protocol DataItemBase : AnyObject {
