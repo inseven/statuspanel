@@ -29,9 +29,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         case horizontal(originY: CGFloat)
     }
 
-    static let panelWidth = 640.0
-    static let panelHeight = 384.0
-    static let panelStatusBarHeight = 20.0
+    static let panelWidth: CGFloat = 640.0
+    static let panelHeight: CGFloat = 384.0
+    static let panelStatusBarHeight: CGFloat = 20.0
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var redactButton: UIBarButtonItem!
