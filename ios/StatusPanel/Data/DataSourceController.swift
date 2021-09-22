@@ -51,8 +51,6 @@ class DataSourceController {
 
         let allCompleted = (completed.count == sources.count)
         var items = [DataItemBase]()
-        // We always want the calendar data source header as the first item
-        items.append(CalendarSource.getHeader())
 
         // Use the ordering of sources, not completedItems
         for source in sources {

@@ -21,39 +21,6 @@
 import Foundation
 import EventKit
 
-class CalendarHeader : DataItemBase {
-    init(for date: Date) {
-        self.date = date
-    }
-
-    func getPrefix() -> String {
-        return ""
-    }
-
-    func getText(checkFit: (String) -> Bool) -> String {
-        let df = DateFormatter()
-        df.setLocalizedDateFormatFromTemplate("yMMMMdEEEE")
-        let val = df.string(from: date)
-        if !checkFit(val) {
-            // Too long, shorten the day name
-            df.setLocalizedDateFormatFromTemplate("yMMMMdEEE")
-            return df.string(from: date)
-        } else {
-            return val
-        }
-    }
-
-    func getSubText() -> String? {
-        return nil
-    }
-
-    func getFlags() -> DataItemFlags {
-        return [.header, .spansColumns]
-    }
-
-    let date: Date
-}
-
 class CalendarItem : DataItemBase {
     init(time: String?, title: String, location: String?, flags: DataItemFlags = []) {
         self.time = time
@@ -233,11 +200,4 @@ class CalendarSource : DataSource {
         return result
     }
 
-    static func getHeader() -> DataItemBase {
-        // "Wednesday, 26 February 2020" is a nice long date
-        // let date = Calendar(identifier: .gregorian).date(from: DateComponents(year: 2020, month: 2, day: 26))!
-        let date = Date()
-        return CalendarHeader(for: date)
-    }
 }
-
