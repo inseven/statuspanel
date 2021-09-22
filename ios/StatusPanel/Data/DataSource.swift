@@ -36,35 +36,53 @@ struct DataItemFlags: OptionSet {
 }
 
 protocol DataItemBase : AnyObject {
-    func getPrefix() -> String
+
+    var icon: String? { get }
+    var prefix: String { get }
+    var flags: DataItemFlags { get }
+    var subText: String? { get }
+
     func getText(checkFit: (String) -> Bool) -> String
-    func getSubText() -> String?
-    func getFlags() -> DataItemFlags
+}
+
+extension DataItemBase {
+
+    var iconAndPrefix: String {
+        var elements: [String] = []
+        if let icon = self.icon {
+            elements.append(icon)
+        }
+        let prefix = self.prefix
+        if !prefix.isEmpty {
+            elements.append(prefix)
+        }
+        return elements.joined(separator: " ")
+    }
+
 }
 
 class DataItem : Equatable, DataItemBase {
-    init(_ text: String, flags: DataItemFlags = []) {
+
+    let icon: String?
+    let text: String
+    let flags: DataItemFlags
+
+    init(icon: String?, text: String, flags: DataItemFlags = []) {
+        self.icon = icon
         self.text = text
         self.flags = flags
     }
 
-    let text: String
-    let flags: DataItemFlags
-
-    func getPrefix() -> String {
-        return ""
+    convenience init(text: String, flags: DataItemFlags = []) {
+        self.init(icon: nil, text: text, flags: flags)
     }
+
+    var prefix: String { "" }
+
+    var subText: String? { nil }
 
     func getText(checkFit: (String) -> Bool) -> String {
         return text
-    }
-
-    func getFlags() -> DataItemFlags {
-        return flags
-    }
-
-    func getSubText() -> String? {
-        return nil
     }
 
     static func == (lhs: DataItem, rhs: DataItem) -> Bool {

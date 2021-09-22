@@ -36,6 +36,7 @@ class Fonts {
             self.minWidth = minWidth
         }
     }
+
     struct Font {
         let configName: String
         let humanReadableName: String
@@ -47,9 +48,17 @@ class Fonts {
         let headerSize: Int
         // Copyright etc
         let attribution: String
+        let supportsEmoji: Bool
 
         // UIFont constructor
-        init(configName: String, humanName: String, uifont: String, subTextSize: Int, textSize: Int, headerSize: Int, attribution: String) {
+        init(configName: String,
+             humanName: String,
+             uifont: String,
+             subTextSize: Int,
+             textSize: Int,
+             headerSize: Int,
+             attribution: String) {
+
             self.configName = configName
             self.humanReadableName = humanName
             self.uifontName = uifont
@@ -58,10 +67,18 @@ class Fonts {
             self.textSize = textSize
             self.headerSize = headerSize
             self.attribution = attribution
+            self.supportsEmoji = false
         }
 
         // Bitmap constructor
-        init(configName: String, humanName: String, bitmapInfo: BitmapInfo, subTextScale: Int, textScale: Int, headerScale: Int, attribution: String) {
+        init(configName: String,
+             humanName: String,
+             bitmapInfo: BitmapInfo,
+             subTextScale: Int,
+             textScale: Int,
+             headerScale: Int,
+             attribution: String) {
+            
             self.configName = configName
             self.humanReadableName = humanName
             self.uifontName = nil
@@ -70,6 +87,7 @@ class Fonts {
             self.textSize = textScale
             self.headerSize = headerScale
             self.attribution = attribution
+            self.supportsEmoji = true
         }
     }
 

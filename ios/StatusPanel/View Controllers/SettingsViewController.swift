@@ -36,7 +36,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     let BodyFontSection = 4
     let PairedDevicesSection = 5
 
-    let DisplaySettingsRowCount = 4
+    let DisplaySettingsRowCount = 5
 
     // These are the view controller storyboard IDs, in IndexPath order
     let DataSourceEditors = [
@@ -224,6 +224,12 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 control.addTarget(self, action:#selector(columSwitchChanged(sender:)), for: .valueChanged)
                 cell.accessoryView = control
             case 1:
+                cell.textLabel?.text = "Show icons"
+                let control = UISwitch()
+                control.isOn = config.showIcons
+                control.addTarget(self, action:#selector(showIconsChanged(sender:)), for: .valueChanged)
+                cell.accessoryView = control
+            case 2:
                 cell.textLabel?.text = "Dark mode"
                 switch config.darkMode {
                 case .off:
@@ -234,12 +240,12 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                     cell.detailTextLabel?.text = "Use system"
                 }
                 cell.accessoryType = .disclosureIndicator
-            case 2:
+            case 3:
                 cell.textLabel?.text = "Maximum lines per item"
                 let val = config.maxLines
                 cell.detailTextLabel?.text = val == 0 ? "Unlimited" : String(format: "%d", val)
                 cell.accessoryType = .disclosureIndicator
-            case 3:
+            case 4:
                 cell.textLabel?.text = "Privacy mode"
                 switch config.privacyMode {
                 case .redactLines:
@@ -291,6 +297,10 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     @objc func columSwitchChanged(sender: UISwitch) {
         Config().displayTwoColumns = sender.isOn
+    }
+
+    @objc func showIconsChanged(sender: UISwitch) {
+        Config().showIcons = sender.isOn
     }
 
 #if DEBUG
