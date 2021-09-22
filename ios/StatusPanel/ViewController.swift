@@ -116,14 +116,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     static func getLabel(frame: CGRect, font fontName: String, style: LabelStyle, redactMode: RedactMode = .none) -> UILabel {
         let font = Config().getFont(named: fontName)
         let size = (style == .header) ? font.headerSize : (style == .subText) ? font.subTextSize : font.textSize
-        if let bitmapInfo = font.bitmapInfo {
-            if (bitmapInfo.bitmapName == "font6x10" || font.configName == "unifont") && style == .header {
-                // Special case this, as neither guicons nor Unifont look good as a header font
-                let label = UILabel(frame: frame)
-                label.lineBreakMode = .byWordWrapping
-                label.font = UIFont(name: "Amiga Forever", size: 24)
-                return label
-            }
+        if font.bitmapInfo != nil {
             return BitmapFontLabel(frame: frame, font: font, scale: size, redactMode: redactMode)
         } else {
             let label = UILabel(frame: frame)
@@ -236,6 +229,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let redactMode: RedactMode = (shouldRedact ? (config.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
 
         for item in data {
+            
             let flags = item.getFlags()
             let w = flags.contains(.spansColumns) ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
@@ -244,9 +238,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             let numPrefixLines = prefix.split(separator: "\n").count
             var textFrame = CGRect(origin: CGPoint.zero, size: frame.size)
             var itemHeight: CGFloat = 0
+            let font = flags.contains(.header) ? config.titleFont : config.bodyFont
+
             if prefix != "" {
                 let prefixLabel = ViewController.getLabel(frame: textFrame,
-                                                          font: config.font,
+                                                          font: font,
                                                           style: flags.style,
                                                           redactMode: redactMode)
                 prefixLabel.textColor = foregroundColor
@@ -265,7 +261,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 }
             }
             let label = ViewController.getLabel(frame: textFrame,
-                                                font: config.font,
+                                                font: font,
                                                 style: flags.style,
                                                 redactMode: redactMode)
             label.numberOfLines = 1 // Temporarily while we're using it in checkFit
@@ -291,7 +287,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             view.addSubview(label)
             if let subText = item.getSubText() {
                 let subLabel = ViewController.getLabel(frame: textFrame,
-                                                       font: config.font,
+                                                       font: font,
                                                        style: .subText,
                                                        redactMode: redactMode)
                 subLabel.textColor = foregroundColor

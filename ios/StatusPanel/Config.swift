@@ -28,7 +28,8 @@ class Config {
         case darkMode = "darkMode"
         case displaySingleColumn = "displaySingleColumn"
         case dummyData = "dummyData"
-        case font = "font"
+        case titleFont = "titleFont"
+        case bodyFont = "font"
         case lastBackgroundUpdate = "lastBackgroundUpdate"
         case maxLines = "maxLines"
         case privacyMode = "privacyMode"
@@ -220,12 +221,21 @@ class Config {
         }
     }
 
-    var font: String {
+    var titleFont: String {
         get {
-            self.string(for: .font) ?? availableFonts[0].configName
+            self.string(for: .titleFont) ?? availableFonts[0].configName
         }
         set {
-            self.set(newValue, for: .font)
+            self.set(newValue, for: .titleFont)
+        }
+    }
+
+    var bodyFont: String {
+        get {
+            self.string(for: .bodyFont) ?? availableFonts[0].configName
+        }
+        set {
+            self.set(newValue, for: .bodyFont)
         }
     }
 
