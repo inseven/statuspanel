@@ -215,6 +215,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let foregroundColor = darkMode ? UIColor.white : UIColor.black
         let config = Config()
         let twoCols = config.displayTwoColumns
+        let showIcons = config.showIcons
         let rect = contentView.frame
         let maxy = rect.height - 10 // Leave space for status line
         let midx = rect.width / 2
@@ -230,17 +231,18 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
         for item in data {
             
-            let flags = item.getFlags()
+            let flags = item.flags
+            let font = flags.contains(.header) ? config.titleFont : config.bodyFont
+            let fontDetails = Config().getFont(named: font)
             let w = flags.contains(.spansColumns) ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
             let view = UIView(frame: frame)
-            var prefix = item.getPrefix()
+            var prefix = fontDetails.supportsEmoji && showIcons ? item.iconAndPrefix : item.prefix
             let numPrefixLines = prefix.split(separator: "\n").count
             var textFrame = CGRect(origin: CGPoint.zero, size: frame.size)
             var itemHeight: CGFloat = 0
-            let font = flags.contains(.header) ? config.titleFont : config.bodyFont
 
-            if prefix != "" {
+            if !prefix.isEmpty {
                 let prefixLabel = ViewController.getLabel(frame: textFrame,
                                                           font: font,
                                                           style: flags.style,
@@ -285,7 +287,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             label.frame = CGRect(x: label.frame.minX, y: label.frame.minY, width: textFrame.width, height: label.frame.height)
             view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: itemHeight))
             view.addSubview(label)
-            if let subText = item.getSubText() {
+            if let subText = item.subText {
                 let subLabel = ViewController.getLabel(frame: textFrame,
                                                        font: font,
                                                        style: .subText,

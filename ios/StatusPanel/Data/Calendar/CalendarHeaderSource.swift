@@ -41,7 +41,11 @@ class CalendarHeaderSource : DataSource {
             self.flags = flags
         }
 
-        func getPrefix() -> String { "" }
+        var icon: String? { nil }
+
+        var prefix: String { "" }
+
+        var subText: String? { nil }
 
         var shortFormat: String {
             switch format {
@@ -73,10 +77,6 @@ class CalendarHeaderSource : DataSource {
                 return val
             }
         }
-
-        func getSubText() -> String? { nil }
-
-        func getFlags() -> DataItemFlags { flags }
 
     }
 

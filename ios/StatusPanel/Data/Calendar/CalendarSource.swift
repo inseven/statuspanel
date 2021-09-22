@@ -22,39 +22,39 @@ import Foundation
 import EventKit
 
 class CalendarItem : DataItemBase {
-    init(time: String?, title: String, location: String?, flags: DataItemFlags = []) {
+
+    let time: String?
+    let icon: String?
+    let title: String
+    let location: String?
+    let flags: DataItemFlags
+
+    init(time: String?, icon: String?, title: String, location: String?, flags: DataItemFlags = []) {
         self.time = time
+        self.icon = icon
         self.title = title
         self.location = location
         self.flags = flags
     }
-    init(title: String, location: String?) {
-        self.time = nil
-        self.title = title
-        self.location = location
-        self.flags = []
+
+    convenience init(time: String?, title: String, location: String?) {
+        self.init(time: time, icon: nil, title: title, location: location, flags: [])
     }
 
-    func getFlags() -> DataItemFlags {
-        return flags
+    convenience init(icon: String?, title: String, location: String?) {
+        self.init(time: nil, icon: icon, title: title, location: location, flags: [])
     }
 
-    func getPrefix() -> String {
-        return time ?? ""
-    }
+
+
+    var prefix: String { time ?? "" }
+
+    var subText: String? { nil }
 
     func getText(checkFit: (String) -> Bool) -> String {
         return title
     }
 
-    func getSubText() -> String? {
-        return location
-    }
-
-    let time: String?
-    let title: String
-    let location: String?
-    let flags: DataItemFlags
 }
 
 class CalendarSource : DataSource {
@@ -106,7 +106,7 @@ class CalendarSource : DataSource {
         let events = eventStore.events(matching: pred)
         var results = [DataItemBase]()
         if let header = header {
-            results.append(DataItem(header, flags: [.prefersEmptyColumn]))
+            results.append(DataItem(text: header, flags: [.prefersEmptyColumn]))
         }
 
         let config = Config()
@@ -150,11 +150,6 @@ class CalendarSource : DataSource {
                 continue
             }
 
-            // Prefix birthday calendars with a present.
-            if event.calendar.type == .birthday {
-                title = "🎁 \(title)"
-            }
-
             var location = showLocations ? event.location : nil
             if location != nil && shouldRedactUrls {
                 location = redactUrls(location!)
@@ -162,7 +157,9 @@ class CalendarSource : DataSource {
 
             let allDay = event.isAllDay || (event.startDate <= dayStart && event.endDate >= dayEnd)
             if allDay {
-                results.append(CalendarItem(title: title, location: location))
+                results.append(CalendarItem(icon: event.calendar.type == .birthday ? "🎁" : "🗓",
+                                            title: title,
+                                            location: location))
             } else {
                 var relevantTime: Date = event.startDate
                 var timeStr = df.string(from: relevantTime)

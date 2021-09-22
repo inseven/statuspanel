@@ -106,7 +106,7 @@ class TFLDataSource: DataSource {
                 return
             }
 
-            dataItems.append(DataItem("\(name): \(desc)", flags: flags))
+            dataItems.append(DataItem(icon: "🚇", text: "\(name): \(desc)", flags: flags))
         }
         completion?(self, dataItems, err)
     }

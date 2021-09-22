@@ -37,6 +37,7 @@ class Config {
         case showUrlsInCalendarLocations = "showUrlsInCalendarLocations"
         case trainRoutes = "trainRoutes"
         case updateTime = "updateTime"
+        case showIcons = "showIcons"
     }
 
     struct TrainRoute {
@@ -70,8 +71,11 @@ class Config {
         return self.userDefaults.integer(forKey: key.rawValue)
     }
 
-    private func bool(for key: Key) -> Bool {
-        return self.userDefaults.bool(forKey: key.rawValue)
+    private func bool(for key: Key, default defaultValue: Bool = false) -> Bool {
+        guard let value = self.userDefaults.object(forKey: key.rawValue) as? Bool else {
+            return defaultValue
+        }
+        return value
     }
 
     private func set(_ value: Any?, for key: Key) {
@@ -111,6 +115,15 @@ class Config {
         }
         set {
             self.set(newValue, for: .updateTime)
+        }
+    }
+
+    var showIcons: Bool {
+        get {
+            self.bool(for: .showIcons, default: true)
+        }
+        set {
+            self.set(newValue, for: .showIcons)
         }
     }
 

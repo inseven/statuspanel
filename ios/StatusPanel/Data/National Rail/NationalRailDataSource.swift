@@ -91,7 +91,7 @@ class NationalRailDataSource : DataSource {
         }
 
         if data.delayedTrains.count == 0 {
-            dataItems.append(DataItem("\(sourceCrs!) to \(targetCrs!) trains: Good Service"))
+            dataItems.append(DataItem(icon: "🚊", text: "\(sourceCrs!) to \(targetCrs!) trains: Good Service"))
         }
 
         for delay in data.delayedTrains {
@@ -113,7 +113,7 @@ class NationalRailDataSource : DataSource {
                     text += "Delayed"
                 }
             }
-            dataItems.append(DataItem(text, flags: [.warning]))
+            dataItems.append(DataItem(icon: "🚊", text: text, flags: [.warning]))
         }
         completion?(self, dataItems, err)
     }
