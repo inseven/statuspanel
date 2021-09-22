@@ -45,11 +45,9 @@ class CalendarItem : DataItemBase {
         self.init(time: nil, icon: icon, title: title, location: location, flags: [])
     }
 
-
-
     var prefix: String { time ?? "" }
 
-    var subText: String? { nil }
+    var subText: String? { location }
 
     func getText(checkFit: (String) -> Bool) -> String {
         return title
