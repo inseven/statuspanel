@@ -96,7 +96,7 @@ class Fonts {
     static let availableFonts = [
         Font(configName: "font6x10_2", humanName: "Guicons Font", bitmapInfo: guiConsFont, subTextScale: 1, textScale: 2, headerScale: 2,
              attribution: "Guicons font taken from https://sourceforge.net/p/fshell/code/ci/default/tree/plugins/consoles/guicons/data/font_6x10.PNG licensed under the EPL. Original author uncertain."),
-        Font(configName: "unifont", humanName: "Unifont 16pt", bitmapInfo: unifont, subTextScale: 1, textScale: 1, headerScale: 2, attribution: unifontAttribution),
+        Font(configName: "unifont", humanName: "Unifont 16pt", bitmapInfo: unifont, subTextScale: 1, textScale: 1, headerScale: 1, attribution: unifontAttribution),
         Font(configName: "unifont_2", humanName: "Unifont 32pt", bitmapInfo: unifont, subTextScale: 1, textScale: 2, headerScale: 2, attribution: unifontAttribution),
         Font(configName: "amiga4ever", humanName: "Amiga Forever", uifont: "Amiga Forever", subTextSize: 8, textSize: 16, headerSize: 24, attribution: """
             "Amiga 4ever" Truetype Font

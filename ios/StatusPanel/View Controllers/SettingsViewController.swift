@@ -28,12 +28,15 @@ protocol SettingsViewControllerDelegate: AnyObject {
 }
 
 class SettingsViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
+
     let DataSourcesSection = 0
     let UpdateTimeSection = 1
-    let DisplaySection = 2
-    let NumDisplaySettings = 4
-    let FontSection = 3
-    let DeviceIdSection = 4
+    let DisplaySettingsSection = 2
+    let TitleFontSection = 3
+    let BodyFontSection = 4
+    let PairedDevicesSection = 5
+
+    let DisplaySettingsRowCount = 4
 
     // These are the view controller storyboard IDs, in IndexPath order
     let DataSourceEditors = [
@@ -78,7 +81,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 5
+        return 6
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -90,11 +93,13 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 return 3
             #endif
         case UpdateTimeSection: return 1
-        case DisplaySection:
-            return NumDisplaySettings
-        case FontSection:
+        case DisplaySettingsSection:
+            return DisplaySettingsRowCount
+        case TitleFontSection:
             return Config().availableFonts.count
-        case DeviceIdSection:
+        case BodyFontSection:
+            return Config().availableFonts.count
+        case PairedDevicesSection:
             var n = devices.count
             if n == 0 {
                 n += 1 // For "No devices configured"
@@ -112,16 +117,17 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         switch section {
         case DataSourcesSection: return "Data Sources"
         case UpdateTimeSection: return "Update Time"
-        case DisplaySection: return "Display Settings"
-        case FontSection: return "Font"
-        case DeviceIdSection: return "Paired Devices"
+        case DisplaySettingsSection: return "Display Settings"
+        case TitleFontSection: return "Title Font"
+        case BodyFontSection: return "Body Font"
+        case PairedDevicesSection: return "Paired Devices"
         default: return nil
         }
     }
 
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         switch section {
-        case DeviceIdSection:
+        case PairedDevicesSection:
             guard let lastBackgroundUpdate = Config().lastBackgroundUpdate else {
                 return nil
             }
@@ -196,7 +202,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             cell.textLabel?.text = timeStr
             cell.accessoryType = .disclosureIndicator
             return cell
-        case DeviceIdSection:
+        case PairedDevicesSection:
             let cell = UITableViewCell(style: .default, reuseIdentifier: "DeviceCell")
             if devices.count == 0 && indexPath.row == 0 {
                 cell.textLabel?.text = "No devices configured"
@@ -207,7 +213,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.textLabel?.text = device.0
             }
             return cell
-        case DisplaySection:
+        case DisplaySettingsSection:
             let row = indexPath.row
             let cell = UITableViewCell(style: row == 1 || row == 2  || row == 3 ? .value1 : .default, reuseIdentifier: nil)
             switch row {
@@ -248,7 +254,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 break
             }
             return cell
-        case FontSection:
+        case TitleFontSection:
             let config = Config()
             let font = config.availableFonts[indexPath.row]
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
@@ -257,7 +263,22 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             label.text = font.humanReadableName
             label.sizeToFit()
             label.frame = label.frame.offsetBy(dx: 30, dy: (frame.height - label.bounds.height) / 2)
-            if font.configName == config.font {
+            if font.configName == config.titleFont {
+                cell.imageView?.image = UIImage(systemName: "checkmark")
+            }
+            cell.contentView.addSubview(label)
+            cell.accessoryType = .detailButton
+            return cell
+        case BodyFontSection:
+            let config = Config()
+            let font = config.availableFonts[indexPath.row]
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
+            let label = ViewController.getLabel(frame:frame, font: font.configName, style: .text)
+            label.text = font.humanReadableName
+            label.sizeToFit()
+            label.frame = label.frame.offsetBy(dx: 30, dy: (frame.height - label.bounds.height) / 2)
+            if font.configName == config.bodyFont {
                 cell.imageView?.image = UIImage(systemName: "checkmark")
             }
             cell.contentView.addSubview(label)
@@ -279,12 +300,12 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 #endif
 
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.section == DeviceIdSection {
+        if indexPath.section == PairedDevicesSection {
             if indexPath.row == (devices.count == 0 ? 1 : devices.count) {
                 return true // The debug add button
             }
             return false
-        } else if indexPath.section == DisplaySection {
+        } else if indexPath.section == DisplaySettingsSection {
             return indexPath.row > 0
         } else if indexPath.section == DataSourcesSection && indexPath.row >= DataSourceEditors.count {
             return false
@@ -301,7 +322,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             vcid = DataSourceEditors[indexPath.row]
         case UpdateTimeSection:
             vcid = "UpdateTimeEditor"
-        case DeviceIdSection:
+        case PairedDevicesSection:
             let prevCount = devices.count
             if indexPath.row == (prevCount == 0 ? 1 : prevCount) {
                 devices.append(("DummyDevice\(indexPath.row)", ""))
@@ -309,15 +330,15 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 tableView.performBatchUpdates({
                     tableView.deselectRow(at: indexPath, animated: true)
                     if (prevCount == 0) {
-                        tableView.deleteRows(at: [IndexPath(row: prevCount, section: DeviceIdSection)], with: .fade)
+                        tableView.deleteRows(at: [IndexPath(row: prevCount, section: PairedDevicesSection)], with: .fade)
                     }
-                    tableView.insertRows(at: [IndexPath(row: prevCount, section: DeviceIdSection)], with: .fade)
+                    tableView.insertRows(at: [IndexPath(row: prevCount, section: PairedDevicesSection)], with: .fade)
                 }, completion: nil)
                 vcid = "WifiProvisionerController"
             } else {
                 return
             }
-        case DisplaySection:
+        case DisplaySettingsSection:
             if indexPath.row == 1 {
                 vcid = "DarkModeEditor"
             } else if indexPath.row == 2 {
@@ -325,13 +346,25 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             } else if indexPath.row == 3 {
                 vcid = "PrivacyModeEditor"
             }
-        case FontSection:
+        case TitleFontSection:
             let config = Config()
-            config.font = config.availableFonts[indexPath.row].configName
+            config.titleFont = config.availableFonts[indexPath.row].configName
             tableView.performBatchUpdates({
                 var paths: [IndexPath] = []
                 for i in 0 ..< config.availableFonts.count {
-                    paths.append(IndexPath(row: i, section: FontSection))
+                    paths.append(IndexPath(row: i, section: TitleFontSection))
+                }
+                tableView.deselectRow(at: indexPath, animated: true)
+                tableView.reloadRows(at: paths, with: .automatic)
+            }, completion: nil)
+            return
+        case BodyFontSection:
+            let config = Config()
+            config.bodyFont = config.availableFonts[indexPath.row].configName
+            tableView.performBatchUpdates({
+                var paths: [IndexPath] = []
+                for i in 0 ..< config.availableFonts.count {
+                    paths.append(IndexPath(row: i, section: BodyFontSection))
                 }
                 tableView.deselectRow(at: indexPath, animated: true)
                 tableView.reloadRows(at: paths, with: .automatic)
@@ -357,7 +390,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if indexPath.section != DeviceIdSection || indexPath.row >= devices.count {
+        if indexPath.section != PairedDevicesSection || indexPath.row >= devices.count {
             return nil
         }
         let action = UIContextualAction(style: .destructive, title: "Delete") { (_, _, completion) in
@@ -365,7 +398,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             tableView.performBatchUpdates({
                 tableView.deleteRows(at: [indexPath], with: .automatic)
                 if self.devices.count == 0 {
-                    tableView.insertRows(at: [IndexPath(row: 0, section: self.DeviceIdSection)], with: .automatic)
+                    tableView.insertRows(at: [IndexPath(row: 0, section: self.PairedDevicesSection)], with: .automatic)
                 }
             }, completion: nil)
             let config = Config()
@@ -378,7 +411,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        if indexPath.section == FontSection {
+        if indexPath.section == BodyFontSection {
+            let vc = storyboard?.instantiateViewController(withIdentifier: "FontInfo") as! FontInfoController
+            vc.font = Config().availableFonts[indexPath.row]
+            navigationController?.pushViewController(vc, animated: true)
+        } else if indexPath.section == TitleFontSection {
             let vc = storyboard?.instantiateViewController(withIdentifier: "FontInfo") as! FontInfoController
             vc.font = Config().availableFonts[indexPath.row]
             navigationController?.pushViewController(vc, animated: true)
