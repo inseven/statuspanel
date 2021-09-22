@@ -186,7 +186,7 @@ class CalendarSource : DataSource {
         var result = value
         for urlString in urls {
             if let url = URL(string: urlString), let scheme = url.scheme, let host = url.host {
-                let newUrl = "\(scheme)://\(host)/▒▒▒▒▒▒▒▒▒▒▒▒▒"
+                let newUrl = "\(scheme)://\(host)/…"
                 result = result.replacingOccurrences(of: urlString, with: newUrl)
             } else {
                 result = result.replacingOccurrences(of: urlString, with: "▒▒▒▒▒▒▒▒▒▒▒▒▒")
