@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# TODO: Use local installs of Python and Ruby #170
+#       https://github.com/inseven/statuspanel/issues/170
 export PATH="/opt/homebrew/bin":$PATH
 export PATH="/opt/homebrew/opt/ruby/bin":$PATH
 
