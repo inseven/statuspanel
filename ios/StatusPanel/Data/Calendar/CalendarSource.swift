@@ -157,7 +157,7 @@ class CalendarSource : DataSource {
             let allDay = event.isAllDay || (event.startDate <= dayStart && event.endDate >= dayEnd)
             if allDay {
                 var icon: String?
-                if displayContext.shouldShowIcons(isHeader: false) {
+                if displayContext.showBodyIcons {
                     icon = event.calendar.type == .birthday ? "🎁" : "🗓"
                 }
                 results.append(CalendarItem(icon: icon,

@@ -92,7 +92,7 @@ class TFLDataSource: DataSource {
     func gotLineData(data: [LineStatus]?, err: Error?) {
         task = nil
         dataItems = []
-        let showIcons = displayContext?.shouldShowIcons(isHeader: false) ?? false
+        let showIcons = displayContext?.showBodyIcons ?? false
         let prefix = showIcons ? "🚇" : ""
         for line in data ?? [] {
             if line.lineStatuses.count < 1 {

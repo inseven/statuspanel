@@ -92,7 +92,7 @@ class NationalRailDataSource : DataSource {
             return
         }
 
-        let showIcons = (displayContext?.shouldShowIcons(isHeader: false) ?? false)
+        let showIcons = (displayContext?.showBodyIcons ?? false)
         let prefix = showIcons ? "🚊" : ""
         if data.delayedTrains.count == 0 {
             let text: String

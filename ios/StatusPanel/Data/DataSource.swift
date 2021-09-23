@@ -26,12 +26,8 @@ struct DisplayContext {
         self.showHeaderIcons = showHeaderIcons
     }
 
-    func shouldShowIcons(isHeader: Bool) -> Bool {
-        return isHeader ? showHeaderIcons : showBodyIcons
-    }
-
-    private let showBodyIcons: Bool
-    private let showHeaderIcons: Bool
+    let showBodyIcons: Bool
+    let showHeaderIcons: Bool
 }
 
 protocol DataSource : AnyObject {
