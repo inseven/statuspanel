@@ -215,7 +215,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let foregroundColor = darkMode ? UIColor.white : UIColor.black
         let config = Config()
         let twoCols = config.displayTwoColumns
-        let showIcons = config.showIcons
         let rect = contentView.frame
         let maxy = rect.height - 10 // Leave space for status line
         let midx = rect.width / 2
@@ -233,11 +232,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             
             let flags = item.flags
             let font = flags.contains(.header) ? config.titleFont : config.bodyFont
-            let fontDetails = Config().getFont(named: font)
             let w = flags.contains(.spansColumns) ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
             let view = UIView(frame: frame)
-            var prefix = fontDetails.supportsEmoji && showIcons ? item.iconAndPrefix : item.prefix
+            var prefix = item.prefix
             let numPrefixLines = prefix.split(separator: "\n").count
             var textFrame = CGRect(origin: CGPoint.zero, size: frame.size)
             var itemHeight: CGFloat = 0

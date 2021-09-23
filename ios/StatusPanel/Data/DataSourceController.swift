@@ -37,9 +37,13 @@ class DataSourceController {
 
     func fetch() {
         print("Fetching")
+        let config = Config()
+        let showBodyIcons = config.showIcons && config.getFont(named: config.bodyFont).supportsEmoji
+        let showHeaderIcons = config.showIcons && config.getFont(named: config.titleFont).supportsEmoji
+        let displayContext = DisplayContext(showBodyIcons: showBodyIcons, showHeaderIcons: showHeaderIcons)
         completed.removeAll()
         for source in sources {
-            source.fetchData(onCompletion: gotData)
+            source.fetchData(displayContext: displayContext, onCompletion: gotData)
         }
     }
 

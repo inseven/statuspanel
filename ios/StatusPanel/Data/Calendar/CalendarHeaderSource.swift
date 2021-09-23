@@ -92,7 +92,7 @@ class CalendarHeaderSource : DataSource {
         self.offset = offset
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    func fetchData(displayContext: DisplayContext, onCompletion: @escaping Callback) {
 
         guard let date = Calendar.current.date(byAdding: component, value: offset, to: Date()) else {
             onCompletion(self, [], StatusPanelError.invalidDate)

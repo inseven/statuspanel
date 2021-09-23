@@ -44,6 +44,7 @@ class NationalRailDataSource : DataSource {
     var sourceCrs: String?
 
     var dataItems = [DataItem]()
+    var displayContext: DisplayContext?
     var completion: DataSource.Callback?
     var task: URLSessionTask?
 
@@ -51,7 +52,7 @@ class NationalRailDataSource : DataSource {
         self.configuration = configuration
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    func fetchData(displayContext: DisplayContext, onCompletion: @escaping Callback) {
         task?.cancel()
         let route = Config().trainRoute
         sourceCrs = route.from
@@ -78,6 +79,7 @@ class NationalRailDataSource : DataSource {
             return
         }
 
+        self.displayContext = displayContext
         completion = onCompletion
         task = JSONRequest.makeRequest(url: safeUrl, onCompletion: gotDelays)
     }
@@ -90,8 +92,16 @@ class NationalRailDataSource : DataSource {
             return
         }
 
+        let showIcons = (displayContext?.shouldShowIcons(isHeader: false) ?? false)
+        let prefix = showIcons ? "🚊" : ""
         if data.delayedTrains.count == 0 {
-            dataItems.append(DataItem(icon: "🚊", text: "\(sourceCrs!) to \(targetCrs!) trains: Good Service"))
+            let text: String
+            if showIcons {
+                text = "\(sourceCrs!) to \(targetCrs!): Good Service"
+            } else {
+                text = "\(sourceCrs!) to \(targetCrs!) trains: Good Service"
+            }
+            dataItems.append(DataItem(prefix: prefix, text: text))
         }
 
         for delay in data.delayedTrains {
@@ -113,7 +123,7 @@ class NationalRailDataSource : DataSource {
                     text += "Delayed"
                 }
             }
-            dataItems.append(DataItem(icon: "🚊", text: text, flags: [.warning]))
+            dataItems.append(DataItem(prefix: prefix, text: text, flags: [.warning]))
         }
         completion?(self, dataItems, err)
     }

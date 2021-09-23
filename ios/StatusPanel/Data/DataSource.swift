@@ -20,9 +20,23 @@
 
 import Foundation
 
+struct DisplayContext {
+    init(showBodyIcons: Bool, showHeaderIcons: Bool) {
+        self.showBodyIcons = showBodyIcons
+        self.showHeaderIcons = showHeaderIcons
+    }
+
+    func shouldShowIcons(isHeader: Bool) -> Bool {
+        return isHeader ? showHeaderIcons : showBodyIcons
+    }
+
+    private let showBodyIcons: Bool
+    private let showHeaderIcons: Bool
+}
+
 protocol DataSource : AnyObject {
     typealias Callback = (DataSource, [DataItemBase], Error?) -> Void
-    func fetchData(onCompletion:@escaping Callback)
+    func fetchData(displayContext: DisplayContext, onCompletion:@escaping Callback)
 }
 
 struct DataItemFlags: OptionSet {
@@ -37,7 +51,6 @@ struct DataItemFlags: OptionSet {
 
 protocol DataItemBase : AnyObject {
 
-    var icon: String? { get }
     var prefix: String { get }
     var flags: DataItemFlags { get }
     var subText: String? { get }
@@ -45,39 +58,21 @@ protocol DataItemBase : AnyObject {
     func getText(checkFit: (String) -> Bool) -> String
 }
 
-extension DataItemBase {
-
-    var iconAndPrefix: String {
-        var elements: [String] = []
-        if let icon = self.icon {
-            elements.append(icon)
-        }
-        let prefix = self.prefix
-        if !prefix.isEmpty {
-            elements.append(prefix)
-        }
-        return elements.joined(separator: " ")
-    }
-
-}
-
 class DataItem : Equatable, DataItemBase {
 
-    let icon: String?
-    let text: String
+    let prefix: String
+    private let text: String
     let flags: DataItemFlags
 
-    init(icon: String?, text: String, flags: DataItemFlags = []) {
-        self.icon = icon
+    init(prefix: String, text: String, flags: DataItemFlags = []) {
+        self.prefix = prefix
         self.text = text
         self.flags = flags
     }
 
     convenience init(text: String, flags: DataItemFlags = []) {
-        self.init(icon: nil, text: text, flags: flags)
+        self.init(prefix: "", text: text, flags: flags)
     }
-
-    var prefix: String { "" }
 
     var subText: String? { nil }
 
@@ -86,6 +81,6 @@ class DataItem : Equatable, DataItemBase {
     }
 
     static func == (lhs: DataItem, rhs: DataItem) -> Bool {
-        return lhs.text == rhs.text && lhs.flags == rhs.flags
+        return lhs.prefix == rhs.prefix && lhs.text == rhs.text && lhs.flags == rhs.flags
     }
 }

@@ -22,7 +22,7 @@ import Foundation
 
 class DummyDataSource : DataSource {
 
-    func fetchData(onCompletion:@escaping Callback) {
+    func fetchData(displayContext: DisplayContext, onCompletion:@escaping Callback) {
         var data: [DataItemBase] = []
         #if DEBUG
         if Config().showDummyData {

@@ -52,6 +52,7 @@ class TFLDataSource: DataSource {
     let configuration: Configuration
 
     var dataItems = [DataItem]()
+    var displayContext: DisplayContext?
     var completion: DataSource.Callback?
     var task: URLSessionTask?
 
@@ -59,8 +60,9 @@ class TFLDataSource: DataSource {
         self.configuration = configuration
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    func fetchData(displayContext: DisplayContext, onCompletion: @escaping Callback) {
         task?.cancel()
+        self.displayContext = displayContext
         completion = onCompletion
 
         let activeLines = Config().activeTFLLines
@@ -90,6 +92,8 @@ class TFLDataSource: DataSource {
     func gotLineData(data: [LineStatus]?, err: Error?) {
         task = nil
         dataItems = []
+        let showIcons = displayContext?.shouldShowIcons(isHeader: false) ?? false
+        let prefix = showIcons ? "🚇" : ""
         for line in data ?? [] {
             if line.lineStatuses.count < 1 {
                 continue
@@ -106,7 +110,7 @@ class TFLDataSource: DataSource {
                 return
             }
 
-            dataItems.append(DataItem(icon: "🚇", text: "\(name): \(desc)", flags: flags))
+            dataItems.append(DataItem(prefix: prefix, text: "\(name): \(desc)", flags: flags))
         }
         completion?(self, dataItems, err)
     }

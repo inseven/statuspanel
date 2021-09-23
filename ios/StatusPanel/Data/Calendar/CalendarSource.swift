@@ -30,6 +30,7 @@ class CalendarItem : DataItemBase {
     let flags: DataItemFlags
 
     init(time: String?, icon: String?, title: String, location: String?, flags: DataItemFlags = []) {
+        assert((time == nil) || (icon == nil), "Cannot specify both time and icon")
         self.time = time
         self.icon = icon
         self.title = title
@@ -45,7 +46,7 @@ class CalendarItem : DataItemBase {
         self.init(time: nil, icon: icon, title: title, location: location, flags: [])
     }
 
-    var prefix: String { time ?? "" }
+    var prefix: String { time ?? icon ?? "" }
 
     var subText: String? { location }
 
@@ -66,10 +67,10 @@ class CalendarSource : DataSource {
         self.dayOffset = dayOffset
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    func fetchData(displayContext: DisplayContext, onCompletion: @escaping Callback) {
         eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
             if (granted) {
-                self.getData(callback: onCompletion)
+                self.getData(displayContext: displayContext, callback: onCompletion)
             } else {
                 onCompletion(self, [], err)
             }
@@ -77,7 +78,7 @@ class CalendarSource : DataSource {
         }
     }
 
-    func getData(callback: Callback) {
+    func getData(displayContext: DisplayContext, callback: Callback) {
         let df = DateFormatter()
         df.timeStyle = DateFormatter.Style.short
         let timeZoneFormatter = DateFormatter()
@@ -155,7 +156,11 @@ class CalendarSource : DataSource {
 
             let allDay = event.isAllDay || (event.startDate <= dayStart && event.endDate >= dayEnd)
             if allDay {
-                results.append(CalendarItem(icon: event.calendar.type == .birthday ? "🎁" : "🗓",
+                var icon: String?
+                if displayContext.shouldShowIcons(isHeader: false) {
+                    icon = event.calendar.type == .birthday ? "🎁" : "🗓"
+                }
+                results.append(CalendarItem(icon: icon,
                                             title: title,
                                             location: location))
             } else {
