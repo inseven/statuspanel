@@ -335,39 +335,29 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
 
         // And render it into an image
-        UIGraphicsBeginImageContextWithOptions(rect.size, true, 1.0)
-        let context = UIGraphicsGetCurrentContext()!
-        context.setShouldAntialias(false)
-        context.setShouldSubpixelQuantizeFonts(false)
-        context.setShouldSubpixelPositionFonts(false)
-        context.setShouldSmoothFonts(false)
-        context.interpolationQuality = .none
+        let result = UIImage.New(rect.size, flipped: false) { context in
+            // layer.render() works when the device is locked, whereas drawHierarchy() doesn't
+            contentView.layer.render(in: context)
 
-        // layer.render() works when the device is locked, whereas drawHierarchy() doesn't
-        contentView.layer.render(in: context)
+            // Draw the dividing line.
+            if let divider = divider {
 
-        // Draw the dividing line.
-        if let divider = divider {
+                context.setStrokeColor(foregroundColor.cgColor)
+                context.beginPath()
 
-            context.setStrokeColor(foregroundColor.cgColor)
-            context.beginPath()
+                switch divider {
+                case .vertical(let originY):
+                    context.move(to: CGPoint(x: midx, y: originY))
+                    context.addLine(to: CGPoint(x: midx, y: rect.height - Self.panelStatusBarHeight))
+                case .horizontal(let originY):
+                    context.move(to: CGPoint(x: x, y: originY))
+                    context.addLine(to: CGPoint(x: rect.width - x, y: originY))
+                }
 
-            switch divider {
-            case .vertical(let originY):
-                context.move(to: CGPoint(x: midx, y: originY))
-                context.addLine(to: CGPoint(x: midx, y: rect.height - Self.panelStatusBarHeight))
-            case .horizontal(let originY):
-                context.move(to: CGPoint(x: x, y: originY))
-                context.addLine(to: CGPoint(x: rect.width - x, y: originY))
+                context.drawPath(using: .stroke)
             }
-
-            context.drawPath(using: .stroke)
         }
-
-        let img = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        // I don't think this can realistically ever be nil
-        return img!
+        return result
     }
 
     func uploadImages(_ images: [Data], completion: @escaping (Bool) -> Void) {

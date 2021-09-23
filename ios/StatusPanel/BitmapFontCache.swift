@@ -107,22 +107,17 @@ class BitmapFontCache {
         }
 
         // Must be an easier way than this...
-        // Note this effectively also does a flip, thanks to rendering a CGImage in a context
+        // Note this effectively also does a flip, thanks to rendering a CGImage in an unflipped context
         static func scaleUp(image unscaledCGImage: CGImage, factor: Int) -> CGImage {
-            let fmt = UIGraphicsImageRendererFormat()
-            fmt.scale = 1.0
             let scaleFactor = CGFloat(factor)
             let unscaledWidth = CGFloat(unscaledCGImage.width)
             let unscaledHeight = CGFloat(unscaledCGImage.height)
-            let renderer = UIGraphicsImageRenderer(size: CGSize(width: unscaledWidth * scaleFactor, height: unscaledHeight * scaleFactor), format: fmt)
-            let uiImage = renderer.image { (uictx: UIGraphicsImageRendererContext) in
-                let ctx = uictx.cgContext
-                ctx.setAllowsAntialiasing(false)
-                ctx.interpolationQuality = .none
+            let scaledSize = CGSize(width: unscaledWidth * scaleFactor, height: unscaledHeight * scaleFactor)
+            let img = CGImage.New(scaledSize, flipped: false) { ctx in
                 ctx.scaleBy(x: scaleFactor, y: scaleFactor)
                 ctx.draw(unscaledCGImage, in: CGRect(x: 0, y: 0, width: unscaledWidth, height: unscaledHeight))
             }
-            return uiImage.cgImage!
+            return img
         }
 
         static func getCharName(_ ch: Character) -> String {
@@ -170,10 +165,10 @@ class BitmapFontCache {
                         cgImage = cgImage.cropping(to: CGRect(x: 0, y: 0, width: w, height: charh))!
                     }
                 }
-                return ImagesDict.scaleUp(image: cgImage, factor: style.scale)
+                return Self.scaleUp(image: cgImage, factor: style.scale)
             } else {
                 // See if we have an individual image for it
-                let charName = ImagesDict.getCharName(ch)
+                let charName = Self.getCharName(ch)
                 var scaleForImage = 1
                 var uiImage = UIImage(named: "fonts/\(fontName)/\(charName)@\(style.scale)")
                 if uiImage == nil {
@@ -188,7 +183,7 @@ class BitmapFontCache {
                         ciImage = ciImage.applyingFilter("CIColorInvert")
                     }
                     let cgImage = CIContext().createCGImage(ciImage, from: ciImage.extent)!
-                    return ImagesDict.scaleUp(image: cgImage, factor: scaleForImage)
+                    return Self.scaleUp(image: cgImage, factor: scaleForImage)
                 } else {
                     return nil
                 }
@@ -249,15 +244,7 @@ class BitmapFontCache {
         let textWidth = getTextWidth(charName, forStyle: replacementStyle)
         let h = style.font.charh * style.scale
         let w = textWidth + 8
-        let fmt = UIGraphicsImageRendererFormat()
-        fmt.scale = 1.0
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: w, height: h), format: fmt)
-        let uiImage = renderer.image { (uictx: UIGraphicsImageRendererContext) in
-            let ctx = uictx.cgContext
-            ctx.setAllowsAntialiasing(false)
-            ctx.interpolationQuality = .none
-            ctx.scaleBy(x: 1.0, y: -1.0)
-            ctx.translateBy(x: 0, y: CGFloat(-h))
+        return CGImage.New(CGSize(width: w, height: h), flipped: true) { ctx in
             var x = 4
             let y = (h - replacementStyle.font.charh) / 2
             ctx.setLineWidth(CGFloat(style.scale))
@@ -270,7 +257,6 @@ class BitmapFontCache {
                 x += img.width
             }
         }
-        return uiImage.cgImage!
     }
 
     func getTextWidth<T>(_ text: T, forStyle style: Style) -> Int where T : StringProtocol {
