@@ -102,6 +102,9 @@ cd "$APP_DIRECTORY"
 # Create the configuration file.
 echo $APP_CONFIGURATION > "${APP_DIRECTORY}/StatusPanel/configuration.json"
 
+# Select the correct Xcode.
+sudo xcode-select --switch /Applications/Xcode.app
+
 # List the available schemes.
 xcode_project -list
 
