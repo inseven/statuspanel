@@ -103,6 +103,10 @@ cd "$APP_DIRECTORY"
 echo $APP_CONFIGURATION > "${APP_DIRECTORY}/StatusPanel/configuration.json"
 
 # Select the correct Xcode.
+IOS_XCODE_PATH=${IOS_XCODE_PATH:-CHEESE}
+echo "******************"
+echo $IOS_XCODE_PATH
+echo "******************"
 sudo xcode-select --switch /Applications/Xcode.app
 
 # List the available schemes.
