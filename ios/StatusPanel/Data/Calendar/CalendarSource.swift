@@ -246,10 +246,3 @@ final class CalendarSource : DataSource {
     }
 
 }
-
-
-extension UIStoryboard {
-
-    static var main: UIStoryboard { UIStoryboard(name: "Main", bundle: nil) }
-
-}
