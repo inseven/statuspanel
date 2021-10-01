@@ -20,6 +20,23 @@
 
 import Foundation
 
+struct SourceManifestation: Identifiable {
+
+    let id = UUID()
+    let source: GenericDataSource
+
+}
+
+enum SourceType {
+
+    case calendar
+    case dummy
+    case nationalRail
+    case calendarHeader
+    case transportForLondon
+
+}
+
 protocol DataSourceControllerDelegate: AnyObject {
     // Always called in context of main thread
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase])
@@ -28,10 +45,19 @@ protocol DataSourceControllerDelegate: AnyObject {
 class DataSourceController {
     weak var delegate: DataSourceControllerDelegate?
     var sources: [GenericDataSource] = []
-    var completed: [ObjectIdentifier: [DataItemBase]] = [:]
-    var lock = NSLock()
+    var completed: [ObjectIdentifier: [DataItemBase]] = [:]  // TODO: Simplify this.
+    var lock = NSLock()  // TODO: This shouldn't be necessary if we use combine.
+
+    var factories: [SourceType: GenericDataSource] = [:]
 
     init() {
+
+        factories = [
+            .calendar: CalendarHeaderSource(identifier: .local(uuid: UUID()),
+                                            defaults: CalendarHeaderSource.Settings(),
+                                            flags: []).wrapped()
+        ]
+
         let configuration = try! Bundle.main.configuration()
         add(dataSource: CalendarHeaderSource(identifier: .local(uuid: UUID()),
                                              defaults: CalendarHeaderSource.Settings(format: .variable(long: "yMMMMdEEE",
@@ -58,7 +84,6 @@ class DataSourceController {
         print("Fetching")
         completed.removeAll()
         for source in sources {
-//            source.fetchData(onCompletion: gotData)
             source.fetch(completion: gotData)
         }
     }

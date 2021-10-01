@@ -49,7 +49,7 @@ final class CalendarHeaderSource : DataSource {
         var offset: Int
         var component: Calendar.Component
 
-        init(format: DateFormat,
+        init(format: DateFormat = .fixed(format: "YYYY"),
              offset: Int = 0,
              component: Calendar.Component = .day) {
             self.format = format
