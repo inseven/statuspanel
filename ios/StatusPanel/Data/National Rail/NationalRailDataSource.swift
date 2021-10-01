@@ -151,15 +151,12 @@ final class NationalRailDataSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        guard let route = settings.routes.first else {
+        guard let route = settings.routes.first,
+              let from = route.from,
+              let to = route.to else {
             return "Not configured"
         }
-        // TODO: Extension on the route?
-        if let from = route.from, let to = route.to {
-            return "\(from) to \(to)"
-        } else {
-            return "Not configured" // THIS IS MESSY
-        }
+        return "\(from) to \(to)"
     }
 
     func settingsViewController(settings: Settings, store: Store) -> UIViewController? {
