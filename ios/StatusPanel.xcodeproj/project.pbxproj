@@ -17,6 +17,7 @@
 		D83CC5202707532400260DC1 /* DataSourceWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC51F2707532400260DC1 /* DataSourceWrapper.swift */; };
 		D83CC5222707543E00260DC1 /* UIStoryboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC5212707543E00260DC1 /* UIStoryboard.swift */; };
 		D89104852707B9A00020A2CF /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104842707B99F0020A2CF /* UIViewController.swift */; };
+		D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104862707BAD50020A2CF /* DataSourceInstance.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
@@ -82,6 +83,7 @@
 		D83CC51F2707532400260DC1 /* DataSourceWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceWrapper.swift; sourceTree = "<group>"; };
 		D83CC5212707543E00260DC1 /* UIStoryboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStoryboard.swift; sourceTree = "<group>"; };
 		D89104842707B99F0020A2CF /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
+		D89104862707BAD50020A2CF /* DataSourceInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceInstance.swift; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderSource.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
@@ -182,6 +184,7 @@
 			children = (
 				DBCA98B42144421F0084B710 /* DataSource.swift */,
 				DBCA98B6214518EF0084B710 /* DataSourceController.swift */,
+				D89104862707BAD50020A2CF /* DataSourceInstance.swift */,
 				D83CC51F2707532400260DC1 /* DataSourceWrapper.swift */,
 				D825A55C26F6811400B85206 /* DummyDataSource.swift */,
 				D842A3FC265BE81F009C1156 /* Calendar */,
@@ -407,6 +410,7 @@
 				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,
 				DB62F333224F89C200CA5E64 /* StationPickerController.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
+				D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
