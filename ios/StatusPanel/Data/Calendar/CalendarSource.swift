@@ -199,7 +199,7 @@ final class CalendarSource : DataSource {
     }
 
     func summary(settings: CalendarSettings) -> String? {
-        let calendarIds = Config().activeCalendars
+        let calendarIds = settings.calendars
         let eventStore = EKEventStore()
         var calendarNames: [String] = []
         for calendarId in calendarIds {
@@ -217,7 +217,12 @@ final class CalendarSource : DataSource {
     }
 
     func settingsViewController(settings: CalendarSettings, store: SettingsWrapper<CalendarSettings>) -> UIViewController? {
-        UIStoryboard.main.instantiateViewController(withIdentifier: "CalendarsEditor")
+        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "CalendarsEditor") as? CalendarViewController else {
+            return nil
+        }
+        viewController.store = store
+        viewController.settings = settings
+        return viewController
     }
 
     func settingsView(settings: CalendarSettings, store: SettingsWrapper<CalendarSettings>) -> EmptyView {
