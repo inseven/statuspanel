@@ -21,7 +21,7 @@
 import Combine
 import Foundation
 
-struct SourceManifestation: Identifiable {
+struct DataSourceInstance: Identifiable {
 
     let id = UUID()
     let dataSource: DataSourceWrapper
@@ -53,7 +53,7 @@ class DataSourceController {
     var cancellable: Cancellable?
 
     weak var delegate: DataSourceControllerDelegate?
-    var sources: [SourceManifestation] = []
+    var sources: [DataSourceInstance] = []
 
     var factories: [SourceType: DataSourceWrapper] = [:]
 
@@ -81,7 +81,7 @@ class DataSourceController {
     }
 
     fileprivate func add<T: DataSource>(dataSource: T) {
-        sources.append(SourceManifestation(dataSource))
+        sources.append(DataSourceInstance(dataSource))
     }
 
     func fetch() {
@@ -110,7 +110,7 @@ class DataSourceController {
     }
 }
 
-extension SourceManifestation {
+extension DataSourceInstance {
 
     func fetch() -> Future<[DataItemBase], Error> {
         Future { promise in
