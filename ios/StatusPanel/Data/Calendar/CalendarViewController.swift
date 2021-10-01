@@ -28,8 +28,8 @@ class CalendarViewController: UITableViewController {
     private var sources: [EKSource]!
     private var activeCalendars: Set<String>!
 
-    var store: SettingsWrapper<CalendarSettings>!
-    var settings: CalendarSettings!
+    var store: SettingsWrapper<CalendarSource.Settings>!
+    var settings: CalendarSource.Settings!
 
     override func viewDidLoad() {
         super.viewDidLoad()

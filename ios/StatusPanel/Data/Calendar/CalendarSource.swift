@@ -59,6 +59,22 @@ class CalendarItem : DataItemBase {
 
 final class CalendarSource : DataSource {
 
+    struct Settings: SettingsProtocol {
+
+        var calendars: [String]
+        var showLocations: Bool
+        var showUrls: Bool
+
+        init(calendars: [String] = [],
+             showLocations: Bool = false,
+             showUrls: Bool = false) {
+            self.calendars = calendars
+            self.showLocations = showLocations
+            self.showUrls = showUrls
+        }
+
+    }
+
     let name = "Calendars"
     let configurable = true
 
@@ -66,7 +82,7 @@ final class CalendarSource : DataSource {
     let dayOffset: Int
     let eventStore: EKEventStore
 
-    var defaults: CalendarSettings { CalendarSettings() }
+    var defaults: Settings { Settings() }
 
     // TODO: offset with components? Maybe this is a class?
     init(dayOffset: Int = 0, header: String? = nil) {
@@ -75,7 +91,7 @@ final class CalendarSource : DataSource {
         eventStore = EKEventStore()
     }
 
-    func data(settings: CalendarSettings, completion: @escaping (CalendarSource, [DataItemBase], Error?) -> Void) {
+    func data(settings: Settings, completion: @escaping (CalendarSource, [DataItemBase], Error?) -> Void) {
         eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
             if (granted) {
                 self.getData(settings: settings, callback: completion)
@@ -85,7 +101,7 @@ final class CalendarSource : DataSource {
         }
     }
 
-    func getData(settings: CalendarSettings, callback: Callback) {
+    func getData(settings: Settings, callback: Callback) {
         let df = DateFormatter()
         df.timeStyle = DateFormatter.Style.short
         let timeZoneFormatter = DateFormatter()
@@ -198,7 +214,7 @@ final class CalendarSource : DataSource {
         return result
     }
 
-    func summary(settings: CalendarSettings) -> String? {
+    func summary(settings: Settings) -> String? {
         let calendarIds = settings.calendars
         let eventStore = EKEventStore()
         var calendarNames: [String] = []
@@ -216,7 +232,7 @@ final class CalendarSource : DataSource {
         }
     }
 
-    func settingsViewController(settings: CalendarSettings, store: SettingsWrapper<CalendarSettings>) -> UIViewController? {
+    func settingsViewController(settings: Settings, store: SettingsWrapper<Settings>) -> UIViewController? {
         guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "CalendarsEditor") as? CalendarViewController else {
             return nil
         }
@@ -225,7 +241,7 @@ final class CalendarSource : DataSource {
         return viewController
     }
 
-    func settingsView(settings: CalendarSettings, store: SettingsWrapper<CalendarSettings>) -> EmptyView {
+    func settingsView(settings: Settings, store: SettingsWrapper<Settings>) -> EmptyView {
         EmptyView()
     }
 

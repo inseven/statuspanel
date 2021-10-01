@@ -25,22 +25,6 @@ protocol SettingsProtocol: Codable {
 
 }
 
-struct CalendarSettings: SettingsProtocol {
-
-    var calendars: [String]
-    var showLocations: Bool
-    var showUrls: Bool
-
-    init(calendars: [String] = [],
-         showLocations: Bool = false,
-         showUrls: Bool = false) {
-        self.calendars = calendars
-        self.showLocations = showLocations
-        self.showUrls = showUrls
-    }
-
-}
-
 struct NationalRailSettings: SettingsProtocol {
 
     var routes: [Config.TrainRoute]
