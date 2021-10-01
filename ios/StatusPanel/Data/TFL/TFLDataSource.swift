@@ -138,7 +138,7 @@ final class TFLDataSource: DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        let lineNames = Config().activeTFLLines.compactMap { TFLDataSource.lines[$0] }
+        let lineNames = settings.lines.compactMap { TFLDataSource.lines[$0] }
         guard !lineNames.isEmpty else {
             return "None"
         }
@@ -146,7 +146,12 @@ final class TFLDataSource: DataSource {
     }
 
     func settingsViewController(settings: Settings, store: Store) -> UIViewController? {
-        UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor")
+        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor") as? TFLSettingsController else {
+            return nil
+        }
+        viewController.store = store
+        viewController.settings = settings
+        return viewController
     }
 
     func settingsView(settings: Settings, store: Store) -> EmptyView {

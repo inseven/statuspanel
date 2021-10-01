@@ -22,6 +22,9 @@ import UIKit
 
 class TFLSettingsController: UITableViewController {
 
+    var store: SettingsStore<TFLDataSource.Settings>!
+    var settings: TFLDataSource.Settings!
+
     var sortedLines: [String]!
     var activeLines = Set<String>()
 
@@ -32,7 +35,7 @@ class TFLSettingsController: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        activeLines = Set(Config().activeTFLLines)
+        activeLines = Set(settings.lines)
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -60,6 +63,7 @@ class TFLSettingsController: UITableViewController {
         }
         tableView.deselectRow(at: indexPath, animated: true)
         tableView.reloadRows(at: [indexPath], with: .fade)
-        Config().activeTFLLines = activeLines.sorted()
+        settings.lines = activeLines.sorted()
+        try! store.save(settings: settings)
     }
 }
