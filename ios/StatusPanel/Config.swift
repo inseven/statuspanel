@@ -19,6 +19,68 @@
 // SOFTWARE.
 
 import Foundation
+import Network
+
+enum Source {
+
+    case calendar
+    case nationalRail
+    case transportForLondon
+
+}
+
+
+// TODO: Rename this to source identifier.
+enum SourceInstance: Equatable {
+
+    case global(source: Source)
+    case local(uuid: UUID)
+
+}
+
+protocol SettingsProtocol: Codable {
+
+}
+
+struct CalendarSettings: SettingsProtocol {
+
+    var calendars: [String]
+    var showLocations: Bool
+    var showUrls: Bool
+
+    init(calendars: [String] = [],
+         showLocations: Bool = false,
+         showUrls: Bool = false) {
+        self.calendars = calendars
+        self.showLocations = showLocations
+        self.showUrls = showUrls
+    }
+
+}
+
+struct NationalRailSettings: SettingsProtocol {
+
+    var routes: [Config.TrainRoute]
+
+    init(routes: [Config.TrainRoute] = []) {
+        self.routes = routes
+    }
+
+}
+
+struct TransportForLondonSettings: SettingsProtocol {
+
+    var lines: [String]
+
+    init(lines: [String]) {
+        self.lines = lines
+    }
+
+    init() {
+        self.init(lines: [])
+    }
+
+}
 
 class Config {
 
@@ -40,7 +102,8 @@ class Config {
         case showIcons = "showIcons"
     }
 
-    struct TrainRoute {
+    // TODO: Move this into NationalRailSettings
+    struct TrainRoute: Codable {
         var from: String?
         var to: String?
         init(from: String?, to: String?) {
@@ -160,7 +223,7 @@ class Config {
             if routes.count > 0 {
                 return routes[0]
             } else {
-                return TrainRoute(from: nil, to: nil)
+                return TrainRoute(from: nil, to: nil)  // TODO: This shouldn't be nil!
             }
         }
         set {
@@ -357,5 +420,43 @@ class Config {
         set {
             self.set(newValue, for: .lastBackgroundUpdate)
         }
+    }
+
+    // TODO: This shouldn't require a default constructor.
+    func settings<T: SettingsProtocol>(uuid: UUID) throws -> T? {
+        guard let data = userDefaults.object(forKey: "Settings-\(uuid.uuidString)") as? NSData else {
+            throw StatusPanelError.noSettings
+        }
+        return try JSONDecoder().decode(T.self, from: data as Data)
+    }
+
+    // TODO: Maybe this could throw and then it will work?
+    func settings<T: SettingsProtocol>(instance: SourceInstance) throws -> T? {
+
+        switch instance {
+        case .global(let source):
+            switch source {
+            case .calendar:
+                guard let settings = CalendarSettings(calendars: activeCalendars,
+                                                      showLocations: showCalendarLocations,
+                                                      showUrls: showUrlsInCalendarLocations) as? T else {
+                    throw StatusPanelError.corruptSettings
+                }
+                return settings
+            case .nationalRail:
+                guard let settings = NationalRailSettings(routes: trainRoutes) as? T else {
+                    throw StatusPanelError.corruptSettings
+                }
+                return settings
+            case .transportForLondon:
+                guard let settings = TransportForLondonSettings(lines: activeTFLLines) as? T else {
+                    throw StatusPanelError.corruptSettings
+                }
+                return settings
+            }
+        case .local(let uuid):
+            return try settings(uuid: uuid)
+        }
+
     }
 }

@@ -27,27 +27,49 @@ protocol DataSourceControllerDelegate: AnyObject {
 
 class DataSourceController {
     weak var delegate: DataSourceControllerDelegate?
-    var sources: [DataSource] = []
+    var sources: [GenericDataSource] = []
     var completed: [ObjectIdentifier: [DataItemBase]] = [:]
     var lock = NSLock()
 
-    func add(dataSource: DataSource) {
-        sources.append(dataSource)
+    init() {
+        let configuration = try! Bundle.main.configuration()
+        add(dataSource: CalendarHeaderSource(identifier: .local(uuid: UUID()),
+                                             defaults: CalendarHeaderSource.Settings(format: .variable(long: "yMMMMdEEE",
+                                                                                                       short: "yMMMMdEEEE")),
+                                             flags: [.header, .spansColumns]))
+        add(dataSource: TFLDataSource(configuration: configuration, identifier: .global(source: .transportForLondon)))
+        add(dataSource: NationalRailDataSource(configuration: configuration,
+                                               identifier: .global(source: .nationalRail)))
+        add(dataSource: CalendarSource(identifier: .global(source: .calendar)))
+#if DEBUG
+        add(dataSource: DummyDataSource())
+#endif
+        add(dataSource: CalendarSource(identifier: .global(source: .calendar), dayOffset: 1, header: "Tomorrow:"))
+#if DEBUG
+        add(dataSource: DummyDataSource())
+#endif
+    }
+
+    fileprivate func add<T: DataSource>(dataSource: T) {
+        sources.append(dataSource.wrapped())
     }
 
     func fetch() {
         print("Fetching")
         completed.removeAll()
         for source in sources {
-            source.fetchData(onCompletion: gotData)
+//            source.fetchData(onCompletion: gotData)
+            source.fetch(completion: gotData)
         }
     }
 
-    func gotData(source: DataSource, data:[DataItemBase], error: Error?) {
+    func gotData(source: GenericDataSource, data: [DataItemBase]?, error: Error?) {
         let obj = ObjectIdentifier(source)
         lock.lock()
         completed[obj] = data
         // TODO something with error
+
+        // TODO: Handle the nullable results?
 
         let allCompleted = (completed.count == sources.count)
         var items = [DataItemBase]()

@@ -20,6 +20,8 @@
 
 import Foundation
 import EventKit
+import SwiftUI
+import UIKit
 
 class CalendarItem : DataItemBase {
 
@@ -55,36 +57,42 @@ class CalendarItem : DataItemBase {
 
 }
 
-class CalendarSource : DataSource {
-    let eventStore: EKEventStore
+final class CalendarSource : DataSource {
+    
+    let name = "Calendars"
+    let configurable = true
+
+    let identifier: SourceInstance
     let header : String?
     let dayOffset: Int
+    let eventStore: EKEventStore
 
-    init(forDayOffset dayOffset: Int = 0, header: String? = nil) {
-        eventStore = EKEventStore()
+    var defaults: CalendarSettings { CalendarSettings() }
+
+    init(identifier: SourceInstance, dayOffset: Int = 0, header: String? = nil) {
+        self.identifier = identifier
         self.header = header
         self.dayOffset = dayOffset
+        eventStore = EKEventStore()
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    func data(settings: CalendarSettings, completion: @escaping (CalendarSource, [DataItemBase], Error?) -> Void) {
         eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
             if (granted) {
-                self.getData(callback: onCompletion)
+                self.getData(settings: settings, callback: completion)
             } else {
-                onCompletion(self, [], err)
+                completion(self, [], err)
             }
-            // print("Granted EKEventStore access \(granted) err \(String(describing: err))")
         }
     }
 
-    func getData(callback: Callback) {
+    func getData(settings: CalendarSettings, callback: Callback) {
         let df = DateFormatter()
         df.timeStyle = DateFormatter.Style.short
         let timeZoneFormatter = DateFormatter()
         timeZoneFormatter.dateFormat = "z"
 
-        let activeCalendars = Config().activeCalendars
-        let calendars = eventStore.calendars(for: .event).filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
+        let calendars = eventStore.calendars(for: .event).filter({ settings.calendars.firstIndex(of: $0.calendarIdentifier) != nil })
         if calendars.count == 0 {
             // predicateForEvents treats calendars:[] the same as calendars:nil
             // which matches against _all_ calendars, which we definitely don't
@@ -106,10 +114,6 @@ class CalendarSource : DataSource {
         if let header = header {
             results.append(DataItem(text: header, flags: [.prefersEmptyColumn]))
         }
-
-        let config = Config()
-        let showLocations = config.showCalendarLocations
-        let shouldRedactUrls = !config.showUrlsInCalendarLocations
 
         for event in events {
 
@@ -148,8 +152,8 @@ class CalendarSource : DataSource {
                 continue
             }
 
-            var location = showLocations ? event.location : nil
-            if location != nil && shouldRedactUrls {
+            var location = settings.showLocations ? event.location : nil
+            if location != nil && !settings.showUrls {
                 location = redactUrls(location!)
             }
 
@@ -194,5 +198,38 @@ class CalendarSource : DataSource {
         }
         return result
     }
+
+    func summary() -> String? {
+        let calendarIds = Config().activeCalendars
+        let eventStore = EKEventStore()
+        var calendarNames: [String] = []
+        for calendarId in calendarIds {
+            guard let cal = eventStore.calendar(withIdentifier: calendarId) else {
+                // Calendar has been deleted?
+                continue
+            }
+            calendarNames.append(cal.title)
+        }
+        if calendarNames.count > 0 {
+            return calendarNames.joined(separator: ", ")
+        } else {
+            return "None"
+        }
+    }
+
+    func settingsViewController() -> UIViewController? {
+        UIStoryboard.main.instantiateViewController(withIdentifier: "CalendarsEditor")
+    }
+
+    func settingsView() -> EmptyView {
+        EmptyView()
+    }
+
+}
+
+
+extension UIStoryboard {
+
+    static var main: UIStoryboard { UIStoryboard(name: "Main", bundle: nil) }
 
 }

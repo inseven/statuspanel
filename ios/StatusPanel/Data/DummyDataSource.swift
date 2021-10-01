@@ -19,12 +19,28 @@
 // SOFTWARE.
 
 import Foundation
+import SwiftUI
+import UIKit
 
-class DummyDataSource : DataSource {
+struct EmptySettings: SettingsProtocol {
 
-    func fetchData(onCompletion:@escaping Callback) {
+    init() {
+
+    }
+
+}
+
+final class DummyDataSource : DataSource {
+
+    let name = "Dummy Data"
+    let configurable = true
+
+    let identifier: SourceInstance = .local(uuid: UUID())
+
+    var defaults: EmptySettings { EmptySettings() }
+
+    func data(settings: EmptySettings, completion: @escaping (DummyDataSource, [DataItemBase], Error?) -> Void) {
         var data: [DataItemBase] = []
-        #if DEBUG
         if Config().showDummyData {
             var specialChars: [String] = []
             let images = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: "fonts/font6x10") ?? []
@@ -59,8 +75,33 @@ class DummyDataSource : DataSource {
             ]
             data.append(contentsOf: dummyData)
         }
-        #endif
-        onCompletion(self, data, nil)
+        completion(self, data, nil)
+    }
+
+    func summary() -> String? {
+        Config().showDummyData ? "Enabled" : "Disabled"
+    }
+
+    func settingsViewController() -> UIViewController? { nil }
+
+    func settingsView() -> some View {
+        DummyDataSettingsView()
+    }
+
+}
+
+struct DummyDataSettingsView: View {
+
+    var enabled: Binding<Bool> = Binding {
+        Config().showDummyData
+    } set: { enabled in
+        Config().showDummyData = enabled
+    }
+
+    var body: some View {
+        Form {
+            Toggle("Enabled", isOn: enabled)
+        }
     }
 
 }

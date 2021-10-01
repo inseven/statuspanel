@@ -19,13 +19,43 @@
 // SOFTWARE.
 
 import Foundation
+import SwiftUI
+import UIKit
 
-class CalendarHeaderSource : DataSource {
+extension Calendar.Component: Codable {
 
-    enum DateFormat {
+    public func encode(to encoder: Encoder) throws {
+        throw StatusPanelError.noSettings
+    }
+
+    public init(from decoder: Decoder) throws {
+        self = .day
+    }
+
+}
+
+final class CalendarHeaderSource : DataSource {
+
+    enum DateFormat: Codable {
 
         case fixed(format: String)
         case variable(long: String, short: String)
+
+    }
+
+    struct Settings: SettingsProtocol {
+
+        var format: DateFormat
+        var offset: Int
+        var component: Calendar.Component
+
+        init(format: DateFormat,
+             offset: Int = 0,
+             component: Calendar.Component = .day) {
+            self.format = format
+            self.offset = offset
+            self.component = component
+        }
 
     }
 
@@ -80,27 +110,42 @@ class CalendarHeaderSource : DataSource {
 
     }
 
-    let format: DateFormat
-    let offset: Int
-    let component: Calendar.Component
-    let flags: DataItemFlags
+    let name = "Calendar Header"
+    let configurable = false
 
-    init(format: DateFormat, flags: DataItemFlags, offset: Int = 0, component: Calendar.Component = .day) {
-        self.format = format
+    let identifier: SourceInstance
+    let flags: DataItemFlags
+    let defaults: Settings
+
+    init(identifier: SourceInstance,
+         defaults: Settings,
+         flags: DataItemFlags,
+         offset: Int = 0,
+         component: Calendar.Component = .day) {
+        self.identifier = identifier
+        self.defaults = defaults
         self.flags = flags
-        self.component = component
-        self.offset = offset
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    func data(settings: Settings, completion: @escaping (CalendarHeaderSource, [DataItemBase], Error?) -> Void) {
 
-        guard let date = Calendar.current.date(byAdding: component, value: offset, to: Date()) else {
-            onCompletion(self, [], StatusPanelError.invalidDate)
+        guard let date = Calendar.current.date(byAdding: settings.component, value: settings.offset, to: Date()) else {
+            completion(self, [], StatusPanelError.invalidDate)
             return
         }
         
-        let data = [CalendarHeaderItem(for: date, format: format, flags: flags)]
-        onCompletion(self, data, nil)
+        let data = [CalendarHeaderItem(for: date, format: settings.format, flags: flags)]
+        completion(self, data, nil)
+    }
+
+    func summary() -> String? { nil }
+
+    func settingsViewController() -> UIViewController? {
+        UIViewController()
+    }
+
+    func settingsView() -> EmptyView {
+        EmptyView()
     }
 
 }

@@ -19,10 +19,116 @@
 // SOFTWARE.
 
 import Foundation
+import SwiftUI
+import UIKit
 
-protocol DataSource : AnyObject {
-    typealias Callback = (DataSource, [DataItemBase], Error?) -> Void
-    func fetchData(onCompletion:@escaping Callback)
+// TODO: Any Protocol?
+
+// TODO: The identifier shouldn't be used for equality at render time?
+
+// TODO: This should expose an identifier?
+protocol DataSource: AnyObject {
+
+    var name: String { get }
+    var configurable: Bool { get }
+
+    associatedtype Settings: SettingsProtocol
+    associatedtype SettingsView: View = EmptyView
+
+    typealias Callback = (Self, [DataItemBase], Error?) -> Void
+
+    var identifier: SourceInstance { get }
+
+    var defaults: Settings { get }
+
+    func data(settings: Settings, completion: @escaping Callback)
+
+    // Perhaps an instance name as well?
+
+    // TODO: Inject the settings
+    func summary() -> String?
+
+    // TODO: Inject the settings
+    // TODO: Nullable?
+    func settingsViewController() -> UIViewController?
+
+    func settingsView() -> SettingsView
+
+}
+
+extension DataSource {
+
+    func wrapped() -> GenericDataSource {
+        GenericDataSource(self)
+    }
+
+}
+
+// TODO: Does this actually need to be a DataSource?
+// TODO: Does this need to be Equatable?
+// TODO: DataSourceWrapper / DataSourceProxy?
+class GenericDataSource: Equatable {
+
+    let id = UUID()
+
+    fileprivate var nameProxy: (() -> String)! = nil
+    fileprivate var configurableProxy: (() -> Bool)! = nil
+    fileprivate var identifierProxy: (() -> SourceInstance)! = nil
+    fileprivate var fetchProxy: ((@escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) -> Void)! = nil
+    fileprivate var summaryProxy: (() -> String?)! = nil
+    fileprivate var settingsViewControllerProxy: (() -> UIViewController?)! = nil
+    fileprivate var settingsViewProxy: (() -> UIViewController)! = nil
+
+    var name: String { nameProxy() }
+    var configurable: Bool { configurableProxy() }
+    var identifier: SourceInstance { identifierProxy() } // TODO: Do I even need this?
+    func fetch(completion: @escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) { fetchProxy(completion) }
+    func summary() -> String? { summaryProxy() }
+    func settingsViewController() -> UIViewController? { settingsViewControllerProxy() }
+    func settingsView() -> UIViewController { settingsViewProxy() }
+
+    // TODO: This is probably wrong.
+    static func == (lhs: GenericDataSource, rhs: GenericDataSource) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    init<T: DataSource>(_ dataSource: T) {
+        identifierProxy = { dataSource.identifier }
+        configurableProxy = { dataSource.configurable }
+        fetchProxy = { completion in
+
+            // Load the settings.
+            // TODO: Do we need to check what thread this runs on?
+            var settings: T.Settings!
+            do {
+                settings = try Config().settings(instance: dataSource.identifier)
+            } catch StatusPanelError.noSettings {
+                settings = dataSource.defaults
+            } catch {
+                completion(self, [], error)
+                return
+            }
+
+            dataSource.data(settings: settings) { _, data, error in
+
+                if let error = error {
+                    completion(self, nil, error)
+                    return
+                }
+                completion(self, data, nil)
+            }
+        }
+        nameProxy = { dataSource.name }
+        summaryProxy = dataSource.summary
+        settingsViewControllerProxy = dataSource.settingsViewController
+        settingsViewProxy = {
+            let viewController = UIHostingController(rootView: dataSource.settingsView())
+            viewController.navigationItem.title = dataSource.name
+            return viewController
+        }
+
+    }
+
 }
 
 struct DataItemFlags: OptionSet {

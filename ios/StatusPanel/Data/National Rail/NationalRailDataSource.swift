@@ -19,8 +19,10 @@
 // SOFTWARE.
 
 import Foundation
+import SwiftUI
+import UIKit
 
-class NationalRailDataSource : DataSource {
+final class NationalRailDataSource : DataSource {
     // See https://wiki.openraildata.com/index.php/NRE_Darwin_Web_Service_(Public)
     // and https://lite.realtime.nationalrail.co.uk/OpenLDBWS/
     // As implemented by https://huxley.unop.uk/ because the raw national rail API is so bad
@@ -38,28 +40,41 @@ class NationalRailDataSource : DataSource {
         }
     }
 
+    let name = "National Rail"
+    let configurable = true
+
     let configuration: Configuration
+    let identifier: SourceInstance
 
     var targetCrs: String?
     var sourceCrs: String?
 
     var dataItems = [DataItem]()
-    var completion: DataSource.Callback?
+    var completion: ((NationalRailDataSource, [DataItemBase], Error?) -> Void)?
     var task: URLSessionTask?
 
-    init(configuration: Configuration) {
+    var defaults: NationalRailSettings { NationalRailSettings() }
+
+    init(configuration: Configuration, identifier: SourceInstance) {
         self.configuration = configuration
+        self.identifier = identifier
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    func data(settings: NationalRailSettings,
+              completion: @escaping (NationalRailDataSource, [DataItemBase], Error?) -> Void) {
         task?.cancel()
-        let route = Config().trainRoute
+
+        guard let route = settings.routes.first else {
+            completion(self, [], nil)
+            return
+        }
+
         sourceCrs = route.from
         targetCrs = route.to
 
         guard let sourceCrs = sourceCrs,
               let targetCrs = targetCrs else {
-            onCompletion(self, [], nil)
+                  completion(self, [], nil)
             return
         }
 
@@ -74,11 +89,11 @@ class NationalRailDataSource : DataSource {
             ])
 
         guard let safeUrl = url else {
-            onCompletion(self, [], StatusPanelError.invalidUrl)
+            completion(self, [], StatusPanelError.invalidUrl)
             return
         }
 
-        completion = onCompletion
+        self.completion = completion
         task = JSONRequest.makeRequest(url: safeUrl, onCompletion: gotDelays)
     }
 
@@ -116,5 +131,22 @@ class NationalRailDataSource : DataSource {
             dataItems.append(DataItem(icon: "🚊", text: text, flags: [.warning]))
         }
         completion?(self, dataItems, err)
+    }
+
+    func summary() -> String? {
+        let route = Config().trainRoute
+        if let from = route.from, let to = route.to {
+            return "\(from) to \(to)"
+        } else {
+            return "Not configured" // THIS IS MESSY
+        }
+    }
+
+    func settingsViewController() -> UIViewController? {
+        UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
+    }
+
+    func settingsView() -> EmptyView {
+        EmptyView()
     }
 }

@@ -26,5 +26,7 @@ enum StatusPanelError: Error {
     case invalidResponse(String)
     case invalidUrl
     case invalidDate
-    
+    case corruptSettings
+    case noSettings
+
 }

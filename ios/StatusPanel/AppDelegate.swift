@@ -20,6 +20,10 @@
 
 import UIKit
 
+// TODO: Calendars are magic and special as they share a common setting? but this can't be used for comparison?
+
+// Settings domain getter _and_ per settings IDs and if the settings domain doesn't exist?
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     private var background = false
@@ -34,20 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         client = Client(baseUrl: "https://api.statuspanel.io/")
-
-        let configuration = try! Bundle.main.configuration()
-        sourceController.add(dataSource: CalendarHeaderSource(format: .variable(long: "yMMMMdEEE", short: "yMMMMdEEEE"),
-                                                              flags: [.header, .spansColumns]))
-        sourceController.add(dataSource: TFLDataSource(configuration: configuration))
-        sourceController.add(dataSource: NationalRailDataSource(configuration: configuration))
-        sourceController.add(dataSource: CalendarSource())
-        #if DEBUG
-            sourceController.add(dataSource: DummyDataSource())
-        #endif
-        sourceController.add(dataSource: CalendarSource(forDayOffset: 1, header: "Tomorrow:"))
-        #if DEBUG
-            sourceController.add(dataSource: DummyDataSource())
-        #endif
 
         application.registerForRemoteNotifications()
 

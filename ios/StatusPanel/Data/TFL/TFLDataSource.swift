@@ -19,9 +19,12 @@
 // SOFTWARE.
 
 import Foundation
+import SwiftUI
+import UIKit
 
 // See https://api-portal.tfl.gov.uk/admin/applications/1409617922524
-class TFLDataSource: DataSource {
+// TODO: Don't bother to return self?
+final class TFLDataSource: DataSource {
 
     struct LineStatus: Decodable {
         var id: String
@@ -49,29 +52,37 @@ class TFLDataSource: DataSource {
         "waterloo-city": "Waterloo & City Line",
     ]
 
+    let name = "London Underground"
+    let configurable = true
+
     let configuration: Configuration
+    let identifier: SourceInstance
 
     var dataItems = [DataItem]()
-    var completion: DataSource.Callback?
+    var completion: ((TFLDataSource, [DataItemBase], Error?) -> Void)?
     var task: URLSessionTask?
 
-    init(configuration: Configuration) {
+    var defaults: TransportForLondonSettings { TransportForLondonSettings() }
+
+    init(configuration: Configuration, identifier: SourceInstance) {
         self.configuration = configuration
+        self.identifier = identifier
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    func data(settings: TransportForLondonSettings, completion: @escaping (TFLDataSource, [DataItemBase], Error?) -> Void) {
         task?.cancel()
-        completion = onCompletion
+        self.completion = completion
 
-        let activeLines = Config().activeTFLLines
-        guard !activeLines.isEmpty else {
-            onCompletion(self, [], nil)
+        guard !settings.lines.isEmpty else {
+            completion(self, [], nil)
+            self.completion = nil
             return
         }
 
+        // TODO: This URL construction could be an extension on the settings?
         let url = URL(string: "https://api.tfl.gov.uk")?
             .appendingPathComponent("Line")
-            .appendingPathComponent(activeLines.joined(separator: ","))
+            .appendingPathComponent(settings.lines.joined(separator: ","))
             .appendingPathComponent("Status")
             .settingQueryItems([
                 URLQueryItem(name: "detail", value: "false"),
@@ -80,7 +91,8 @@ class TFLDataSource: DataSource {
             ])
 
         guard let safeUrl = url else {
-            onCompletion(self, [], StatusPanelError.invalidUrl)
+            completion(self, [], StatusPanelError.invalidUrl)
+            self.completion = nil
             return
         }
 
@@ -109,5 +121,21 @@ class TFLDataSource: DataSource {
             dataItems.append(DataItem(icon: "🚇", text: "\(name): \(desc)", flags: flags))
         }
         completion?(self, dataItems, err)
+    }
+
+    func summary() -> String? {
+        let lineNames = Config().activeTFLLines.compactMap { TFLDataSource.lines[$0] }
+        guard !lineNames.isEmpty else {
+            return "None"
+        }
+        return lineNames.joined(separator: ", ")
+    }
+
+    func settingsViewController() -> UIViewController? {
+        UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor")
+    }
+
+    func settingsView() -> EmptyView {
+        EmptyView()
     }
 }
