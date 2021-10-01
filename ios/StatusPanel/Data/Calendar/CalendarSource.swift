@@ -58,7 +58,7 @@ class CalendarItem : DataItemBase {
 }
 
 final class CalendarSource : DataSource {
-    
+
     let name = "Calendars"
     let configurable = true
 
@@ -221,7 +221,7 @@ final class CalendarSource : DataSource {
         UIStoryboard.main.instantiateViewController(withIdentifier: "CalendarsEditor")
     }
 
-    func settingsView() -> EmptyView {
+    func settingsView(settings: CalendarSettings, store: CalendarSource.Store) -> EmptyView {
         EmptyView()
     }
 

@@ -22,26 +22,24 @@ import Foundation
 import SwiftUI
 import UIKit
 
-struct EmptySettings: SettingsProtocol {
+final class DummyDataSource : DataSource {
 
-    init() {
+    struct Settings: SettingsProtocol {
+
+        var enabled: Bool = false
 
     }
-
-}
-
-final class DummyDataSource : DataSource {
 
     let name = "Dummy Data"
     let configurable = true
 
     let identifier: SourceInstance = .local(uuid: UUID())
 
-    var defaults: EmptySettings { EmptySettings() }
+    var defaults: Settings { Settings() }
 
-    func data(settings: EmptySettings, completion: @escaping (DummyDataSource, [DataItemBase], Error?) -> Void) {
+    func data(settings: Settings, completion: @escaping (DummyDataSource, [DataItemBase], Error?) -> Void) {
         var data: [DataItemBase] = []
-        if Config().showDummyData {
+        if settings.enabled {
             var specialChars: [String] = []
             let images = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: "fonts/font6x10") ?? []
             for imgName in images.map({$0.lastPathComponent}).sorted() {
@@ -84,23 +82,29 @@ final class DummyDataSource : DataSource {
 
     func settingsViewController() -> UIViewController? { nil }
 
-    func settingsView() -> some View {
-        DummyDataSettingsView()
+    func settingsView(settings: Settings, store: @escaping DummyDataSource.Store) -> some View {
+        DummyDataSettingsView(settings: settings, store: store)
     }
 
 }
 
 struct DummyDataSettingsView: View {
 
-    var enabled: Binding<Bool> = Binding {
-        Config().showDummyData
-    } set: { enabled in
-        Config().showDummyData = enabled
+    @State var settings: DummyDataSource.Settings
+    var store: DummyDataSource.Store
+
+    func enabled() -> Binding<Bool> {
+        Binding {
+            settings.enabled
+        } set: { enabled in
+            settings.enabled = enabled
+            store(settings)
+        }
     }
 
     var body: some View {
         Form {
-            Toggle("Enabled", isOn: enabled)
+            Toggle("Enabled", isOn: enabled())
         }
     }
 

@@ -36,8 +36,9 @@ protocol DataSource: AnyObject {
     associatedtype SettingsView: View = EmptyView
 
     typealias Callback = (Self, [DataItemBase], Error?) -> Void
+    typealias Store = (Settings) -> Void
 
-    var identifier: SourceInstance { get }
+//    var identifier: SourceInstance { get }
 
     var defaults: Settings { get }
 
@@ -52,7 +53,7 @@ protocol DataSource: AnyObject {
     // TODO: Nullable?
     func settingsViewController() -> UIViewController?
 
-    func settingsView() -> SettingsView
+    func settingsView(settings: Settings, store: @escaping Store) -> SettingsView
 
 }
 
@@ -64,65 +65,65 @@ extension DataSource {
 
 }
 
-// TODO: Does this actually need to be a DataSource?
-// TODO: Does this need to be Equatable?
+extension DataSource {
+
+    // TODO: Check the thread safety (in the settings themselves?)
+    func settings(uuid: UUID) throws -> Settings {
+        var settings: Settings!
+        do {
+            settings = try Config().settings(instance: .local(uuid: uuid))
+        } catch StatusPanelError.noSettings {
+            settings = defaults
+        }
+        return settings
+    }
+
+}
+
 // TODO: DataSourceWrapper / DataSourceProxy?
-class GenericDataSource: Equatable {
+class GenericDataSource {
 
     let id = UUID()
 
     fileprivate var nameProxy: (() -> String)! = nil
     fileprivate var configurableProxy: (() -> Bool)! = nil
-    fileprivate var identifierProxy: (() -> SourceInstance)! = nil
-    fileprivate var fetchProxy: ((@escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) -> Void)! = nil
+    fileprivate var fetchProxy: ((UUID, @escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) -> Void)! = nil
     fileprivate var summaryProxy: (() -> String?)! = nil
     fileprivate var settingsViewControllerProxy: (() -> UIViewController?)! = nil
-    fileprivate var settingsViewProxy: (() -> UIViewController)! = nil
+    fileprivate var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
 
     var name: String { nameProxy() }
     var configurable: Bool { configurableProxy() }
-    var identifier: SourceInstance { identifierProxy() } // TODO: Do I even need this?
-    func fetch(completion: @escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) { fetchProxy(completion) }
+    func fetch(uuid: UUID, completion: @escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) { fetchProxy(uuid, completion) }
     func summary() -> String? { summaryProxy() }
     func settingsViewController() -> UIViewController? { settingsViewControllerProxy() }
-    func settingsView() -> UIViewController { settingsViewProxy() }
-
-    // TODO: This is probably wrong.
-    static func == (lhs: GenericDataSource, rhs: GenericDataSource) -> Bool {
-        lhs.id == rhs.id
-    }
+    func settingsView(uuid: UUID) throws -> UIViewController { try settingsViewProxy(uuid) }
 
     init<T: DataSource>(_ dataSource: T) {
-        identifierProxy = { dataSource.identifier }
         configurableProxy = { dataSource.configurable }
-        fetchProxy = { completion in
-
-            // Load the settings.
-            // TODO: Do we need to check what thread this runs on?
-            var settings: T.Settings!
+        fetchProxy = { uuid, completion in
             do {
-                settings = try Config().settings(instance: dataSource.identifier)
-            } catch StatusPanelError.noSettings {
-                settings = dataSource.defaults
+                let settings = try dataSource.settings(uuid: uuid)
+                dataSource.data(settings: settings) { _, data, error in
+                    if let error = error {
+                        completion(self, nil, error)
+                        return
+                    }
+                    completion(self, data, nil)
+                }
             } catch {
                 completion(self, [], error)
                 return
-            }
-
-            dataSource.data(settings: settings) { _, data, error in
-
-                if let error = error {
-                    completion(self, nil, error)
-                    return
-                }
-                completion(self, data, nil)
             }
         }
         nameProxy = { dataSource.name }
         summaryProxy = dataSource.summary
         settingsViewControllerProxy = dataSource.settingsViewController
-        settingsViewProxy = {
-            let viewController = UIHostingController(rootView: dataSource.settingsView())
+        settingsViewProxy = { uuid in
+            let settings = try dataSource.settings(uuid: uuid)
+            let viewController = UIHostingController(rootView: dataSource.settingsView(settings: settings, store: { settings in
+                try! Config().save(settings: settings, uuid: uuid)
+            }))
             viewController.navigationItem.title = dataSource.name
             return viewController
         }

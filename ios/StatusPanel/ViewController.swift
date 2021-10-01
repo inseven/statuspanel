@@ -654,6 +654,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 }
 
 extension ViewController: DataSourceControllerDelegate {
+
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase]) {
         self.renderAndUpload(data: data, completion: { (changes: Bool) -> Void in
                 DispatchQueue.main.async {
@@ -661,5 +662,11 @@ extension ViewController: DataSourceControllerDelegate {
                     appDelegate.fetchCompleted(hasChanged: changes)
                 }
             })
+    }
+
+    func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error) {
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(.init(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true)
     }
 }

@@ -146,7 +146,7 @@ final class NationalRailDataSource : DataSource {
         UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
     }
 
-    func settingsView() -> EmptyView {
+    func settingsView(settings: NationalRailSettings, store: NationalRailDataSource.Store) -> EmptyView {
         EmptyView()
     }
 }

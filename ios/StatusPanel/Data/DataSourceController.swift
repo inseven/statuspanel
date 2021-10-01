@@ -18,12 +18,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import Combine
 import Foundation
 
 struct SourceManifestation: Identifiable {
 
     let id = UUID()
-    let source: GenericDataSource
+    let source: GenericDataSource // TODO: Rename to dataSource
+
+    init<T: DataSource>(_ source: T) {
+        self.source = source.wrapped()
+    }
 
 }
 
@@ -40,13 +45,15 @@ enum SourceType {
 protocol DataSourceControllerDelegate: AnyObject {
     // Always called in context of main thread
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase])
+    func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error)
 }
 
 class DataSourceController {
+
+    var cancellable: Cancellable?
+
     weak var delegate: DataSourceControllerDelegate?
-    var sources: [GenericDataSource] = []
-    var completed: [ObjectIdentifier: [DataItemBase]] = [:]  // TODO: Simplify this.
-    var lock = NSLock()  // TODO: This shouldn't be necessary if we use combine.
+    var sources: [SourceManifestation] = []
 
     var factories: [SourceType: GenericDataSource] = [:]
 
@@ -77,39 +84,48 @@ class DataSourceController {
     }
 
     fileprivate func add<T: DataSource>(dataSource: T) {
-        sources.append(dataSource.wrapped())
+        sources.append(SourceManifestation(dataSource))
     }
 
     func fetch() {
-        print("Fetching")
-        completed.removeAll()
-        for source in sources {
-            source.fetch(completion: gotData)
+        let promises = sources.map { $0.fetch() }
+        let zip = promises.dropFirst().reduce(into: AnyPublisher(promises[0].map { [$0] }) ) {
+            res, just in
+            res = res.zip(just) {
+                i1, i2 -> [[DataItemBase]] in
+                return i1 + [i2]
+            }.eraseToAnyPublisher()
         }
-    }
-
-    func gotData(source: GenericDataSource, data: [DataItemBase]?, error: Error?) {
-        let obj = ObjectIdentifier(source)
-        lock.lock()
-        completed[obj] = data
-        // TODO something with error
-
-        // TODO: Handle the nullable results?
-
-        let allCompleted = (completed.count == sources.count)
-        var items = [DataItemBase]()
-
-        // Use the ordering of sources, not completedItems
-        for source in sources {
-            let completedItems = completed[ObjectIdentifier(source)]
-            items += completedItems ?? []
-        }
-        lock.unlock()
-
-        if (allCompleted) {
-            DispatchQueue.main.async {
+        cancellable = zip
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("complete")
+                case .failure(let error):
+                    self.delegate?.dataSourceController(self, didFailWithError: error)
+                }
+            } receiveValue: { result in
+                print("result = \(result)")
+                let items = result.reduce([], +)
                 self.delegate?.dataSourceController(self, didUpdateData: items)
+            }
+    }
+}
+
+extension SourceManifestation {
+
+    func fetch() -> Future<[DataItemBase], Error> {
+        Future { promise in
+            DispatchQueue.global().async {
+                self.source.fetch(uuid: id) { _, items, error in
+                    if let error = error {
+                        promise(.failure(error))
+                    }
+                    promise(.success(items ?? []))
+                }
             }
         }
     }
+
 }

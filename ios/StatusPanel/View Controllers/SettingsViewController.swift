@@ -30,8 +30,15 @@ protocol SettingsViewControllerDelegate: AnyObject {
 
 struct AddDataSourceView: View {
 
+    var sourceController: DataSourceController
+
     var body: some View {
-        EmptyView()
+        NavigationView {
+            List {
+                Text("Hi")
+            }
+            .navigationBarTitle("Add...", displayMode: .inline)
+        }
     }
 
 }
@@ -69,26 +76,36 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         tableView.performBatchUpdates {
             self.isEditing = true
             tableView.deleteSections([1, 2, 3, 4, 5], with: .fade)
-            tableView.insertRows(at: [IndexPath(row: dataSourceController.sources.count, section: 0)], with: .fade)
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
+                                                                    target: self,
+                                                                    action: #selector(addTapped(_:)))
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                      target: self,
                                                                      action: #selector(endEditingTapped(_:)))
-            self.navigationItem.leftBarButtonItem?.isEnabled = false
             self.navigationItem.rightBarButtonItem?.isEnabled = false
         } completion: { completion in
             self.navigationItem.rightBarButtonItem?.isEnabled = true
         }
     }
 
+    @objc func addTapped(_ sender: Any) {
+        let viewController = UIHostingController(rootView: AddDataSourceView(sourceController: dataSourceController))
+        navigationController?.present(viewController, animated: true, completion: nil)
+    }
+
     @objc func endEditingTapped(_ sender: Any) {
         tableView.performBatchUpdates {
             self.isEditing = false
             tableView.insertSections([1, 2, 3, 4, 5], with: .fade)
-            tableView.deleteRows(at: [IndexPath(row: dataSourceController.sources.count, section: 0)], with: .fade)
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
+                                                                    target: self,
+                                                                    action: #selector(self.cancelTapped(_:)))
+            self.navigationItem.leftBarButtonItem?.isEnabled = false
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit,
                                                                      target: self,
                                                                      action: #selector(editTapped(_:)))
             self.navigationItem.rightBarButtonItem?.isEnabled = false
+
         } completion: { completion in
             self.navigationItem.leftBarButtonItem?.isEnabled = true
             self.navigationItem.rightBarButtonItem?.isEnabled = true
@@ -130,7 +147,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case DataSourcesSection:
-            return isEditing ? dataSourceController.sources.count + 1 : dataSourceController.sources.count
+            return dataSourceController.sources.count
         case UpdateTimeSection:
             return 1
         case DisplaySettingsSection:
@@ -184,15 +201,10 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         switch indexPath.section {
         case DataSourcesSection:
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DataSourceCell")
-            guard indexPath.row < dataSourceController.sources.count else {
-                cell.textLabel?.text = "Add..."
-                cell.detailTextLabel?.text = nil
-                return cell
-            }
             let source = dataSourceController.sources[indexPath.row]
-            cell.textLabel?.text = source.name
-            cell.detailTextLabel?.text = source.summary()
-            cell.accessoryType = source.configurable ? .disclosureIndicator : .none
+            cell.textLabel?.text = source.source.name
+            cell.detailTextLabel?.text = source.source.summary()
+            cell.accessoryType = source.source.configurable ? .disclosureIndicator : .none
             cell.showsReorderControl = true
             return cell
         case UpdateTimeSection:
@@ -321,10 +333,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         } else if indexPath.section == DisplaySettingsSection {
             return indexPath.row > 0
         } else if indexPath.section == DataSourcesSection {
-            guard indexPath.row < dataSourceController.sources.count else {
-                return true
-            }
-            return dataSourceController.sources[indexPath.row].configurable
+            return dataSourceController.sources[indexPath.row].source.configurable
         } else {
             // All others are highlightable
             return true
@@ -332,8 +341,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        guard indexPath.section == DataSourcesSection,
-              indexPath.row < dataSourceController.sources.count else {
+        guard indexPath.section == DataSourcesSection else {
             return false
         }
         return true
@@ -347,8 +355,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     override func tableView(_ tableView: UITableView,
                             canEditRowAt indexPath: IndexPath) -> Bool {
-        guard indexPath.section == DataSourcesSection,
-              indexPath.row < dataSourceController.sources.count else {
+        guard indexPath.section == DataSourcesSection else {
             return false
         }
         return true
@@ -358,8 +365,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                             canPerformAction action: Selector,
                             forRowAt indexPath: IndexPath,
                             withSender sender: Any?) -> Bool {
-        guard indexPath.section == DataSourcesSection,
-              indexPath.row < dataSourceController.sources.count else {
+        guard indexPath.section == DataSourcesSection else {
             return false
         }
         return true
@@ -370,11 +376,12 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         switch indexPath.section {
         case DataSourcesSection:
             let source = dataSourceController.sources[indexPath.row]
-            if let uikitViewController = source.settingsViewController() {
+            if let uikitViewController = source.source.settingsViewController() {
                 navigationController?.pushViewController(uikitViewController, animated: true)
                 return
             }
-            let viewController = source.settingsView()
+            // TODO: Common code for presenting an error?
+            let viewController = try! source.source.settingsView(uuid: source.id)  // TODO: Handle the throwing
             navigationController?.pushViewController(viewController, animated: true)
             return
         case UpdateTimeSection:

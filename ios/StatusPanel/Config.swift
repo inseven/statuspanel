@@ -430,6 +430,11 @@ class Config {
         return try JSONDecoder().decode(T.self, from: data as Data)
     }
 
+    func save<T: SettingsProtocol>(settings: T, uuid: UUID) throws {
+        let data = try JSONEncoder().encode(settings)
+        userDefaults.set(data, forKey: "Settings-\(uuid.uuidString)")
+    }
+
     // TODO: Maybe this could throw and then it will work?
     func settings<T: SettingsProtocol>(instance: SourceInstance) throws -> T? {
 

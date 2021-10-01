@@ -73,7 +73,9 @@ final class TFLDataSource: DataSource {
         task?.cancel()
         self.completion = completion
 
-        guard !settings.lines.isEmpty else {
+        let lines = settings.lines.filter({ Self.lines[$0] != nil })
+
+        guard !lines.isEmpty else {
             completion(self, [], nil)
             self.completion = nil
             return
@@ -82,7 +84,7 @@ final class TFLDataSource: DataSource {
         // TODO: This URL construction could be an extension on the settings?
         let url = URL(string: "https://api.tfl.gov.uk")?
             .appendingPathComponent("Line")
-            .appendingPathComponent(settings.lines.joined(separator: ","))
+            .appendingPathComponent(lines.joined(separator: ","))
             .appendingPathComponent("Status")
             .settingQueryItems([
                 URLQueryItem(name: "detail", value: "false"),
@@ -135,7 +137,7 @@ final class TFLDataSource: DataSource {
         UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor")
     }
 
-    func settingsView() -> EmptyView {
+    func settingsView(settings: TransportForLondonSettings, store: TFLDataSource.Store) -> EmptyView {
         EmptyView()
     }
 }
