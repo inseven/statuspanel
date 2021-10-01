@@ -136,7 +136,7 @@ final class TFLDataSource: DataSource {
     }
 
     // TODO: Move transportforlondonsettings class into separate place
-    func settingsView(settings: TransportForLondonSettings, store: TFLDataSource.Store) -> EmptyView {
+    func settingsView(settings: TransportForLondonSettings, store: SettingsWrapper<TransportForLondonSettings>) -> EmptyView {
         EmptyView()
     }
 }

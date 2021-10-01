@@ -51,7 +51,7 @@ protocol DataSource: AnyObject {
     // TODO: Inject the settings
     func settingsViewController() -> UIViewController?
 
-    func settingsView(settings: Settings, store: @escaping Store) -> SettingsView
+    func settingsView(settings: Settings, store: SettingsWrapper<Settings>) -> SettingsView
 
 }
 
@@ -74,6 +74,20 @@ extension DataSource {
             settings = defaults
         }
         return settings
+    }
+
+}
+
+class SettingsWrapper<T: SettingsProtocol> {
+
+    var uuid: UUID
+
+    init(uuid: UUID) {
+        self.uuid = uuid
+    }
+
+    func save(settings: T) throws {
+        try Config().save(settings: settings, uuid: uuid)
     }
 
 }
@@ -122,9 +136,8 @@ class GenericDataSource {
         settingsViewControllerProxy = dataSource.settingsViewController
         settingsViewProxy = { uuid in
             let settings = try dataSource.settings(uuid: uuid)
-            let viewController = UIHostingController(rootView: dataSource.settingsView(settings: settings, store: { settings in
-                try! Config().save(settings: settings, uuid: uuid)
-            }))
+            let wrapper = SettingsWrapper<T.Settings>(uuid: uuid)
+            let viewController = UIHostingController(rootView: dataSource.settingsView(settings: settings, store: wrapper))
             viewController.navigationItem.title = dataSource.name
             return viewController
         }

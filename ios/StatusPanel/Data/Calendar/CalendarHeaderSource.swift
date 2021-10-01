@@ -141,7 +141,7 @@ final class CalendarHeaderSource : DataSource {
         UIViewController()
     }
 
-    func settingsView(settings: Settings, store: Store) -> EmptyView {
+    func settingsView(settings: Settings, store: SettingsWrapper<Settings>) -> EmptyView {
         EmptyView()
     }
 

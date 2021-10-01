@@ -145,7 +145,7 @@ final class NationalRailDataSource : DataSource {
     }
 
     // TODO: Move settings into class
-    func settingsView(settings: NationalRailSettings, store: NationalRailDataSource.Store) -> EmptyView {
+    func settingsView(settings: NationalRailSettings, store: SettingsWrapper<NationalRailSettings>) -> EmptyView {
         EmptyView()
     }
 }
