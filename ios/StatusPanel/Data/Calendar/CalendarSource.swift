@@ -216,7 +216,7 @@ final class CalendarSource : DataSource {
         }
     }
 
-    func settingsViewController() -> UIViewController? {
+    func settingsViewController(settings: CalendarSettings, store: SettingsWrapper<CalendarSettings>) -> UIViewController? {
         UIStoryboard.main.instantiateViewController(withIdentifier: "CalendarsEditor")
     }
 

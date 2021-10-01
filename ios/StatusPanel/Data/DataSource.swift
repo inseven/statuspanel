@@ -49,7 +49,7 @@ protocol DataSource: AnyObject {
     func summary(settings: Settings) -> String?
 
     // TODO: Inject the settings
-    func settingsViewController() -> UIViewController?
+    func settingsViewController(settings: Settings, store: SettingsWrapper<Settings>) -> UIViewController?
 
     func settingsView(settings: Settings, store: SettingsWrapper<Settings>) -> SettingsView
 
@@ -95,8 +95,6 @@ class SettingsWrapper<T: SettingsProtocol> {
 // TODO: DataSourceWrapper / DataSourceProxy?
 class GenericDataSource {
 
-    // TODO: Move the UUID onto here?
-
     fileprivate var nameProxy: (() -> String)! = nil
     fileprivate var configurableProxy: (() -> Bool)! = nil
     fileprivate var fetchProxy: ((UUID, @escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) -> Void)! = nil
@@ -133,7 +131,7 @@ class GenericDataSource {
             let settings = try dataSource.settings(uuid: uuid)
             return dataSource.summary(settings: settings)
         }
-        settingsViewControllerProxy = dataSource.settingsViewController
+//        settingsViewControllerProxy = dataSource.settingsViewController
         settingsViewProxy = { uuid in
             let settings = try dataSource.settings(uuid: uuid)
             let wrapper = SettingsWrapper<T.Settings>(uuid: uuid)

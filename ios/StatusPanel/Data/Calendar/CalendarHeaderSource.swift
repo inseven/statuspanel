@@ -137,7 +137,7 @@ final class CalendarHeaderSource : DataSource {
 
     func summary(settings: Settings) -> String? { nil }
 
-    func settingsViewController() -> UIViewController? {
+    func settingsViewController(settings: Settings, store: SettingsWrapper<Settings>) -> UIViewController? {
         UIViewController()
     }
 

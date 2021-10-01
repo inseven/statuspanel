@@ -140,7 +140,7 @@ final class NationalRailDataSource : DataSource {
         }
     }
 
-    func settingsViewController() -> UIViewController? {
+    func settingsViewController(settings: NationalRailSettings, store: SettingsWrapper<NationalRailSettings>) -> UIViewController? {
         UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
     }
 
