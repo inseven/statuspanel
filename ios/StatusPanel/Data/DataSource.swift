@@ -82,63 +82,6 @@ class SettingsStore<T: DataSourceSettings> {
 
 }
 
-/// Type erasing wrapper for `DataSource`
-class DataSourceWrapper {
-
-    fileprivate var nameProxy: (() -> String)! = nil
-    fileprivate var configurableProxy: (() -> Bool)! = nil
-    fileprivate var fetchProxy: ((UUID, @escaping (DataSourceWrapper, [DataItemBase]?, Error?) -> Void) -> Void)! = nil
-    fileprivate var summaryProxy: ((UUID) throws -> String?)! = nil
-    fileprivate var settingsViewControllerProxy: ((UUID) throws -> UIViewController?)! = nil
-    fileprivate var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
-
-    var name: String { nameProxy() }
-    var configurable: Bool { configurableProxy() }
-    func fetch(uuid: UUID, completion: @escaping (DataSourceWrapper, [DataItemBase]?, Error?) -> Void) { fetchProxy(uuid, completion) }
-    func summary(uuid: UUID) throws -> String? { try summaryProxy(uuid) }
-    func settingsViewController(uuid: UUID) throws -> UIViewController? { try settingsViewControllerProxy(uuid) }
-    func settingsView(uuid: UUID) throws -> UIViewController { try settingsViewProxy(uuid) }
-
-    init<T: DataSource>(_ dataSource: T) {
-        configurableProxy = { dataSource.configurable }
-        fetchProxy = { uuid, completion in
-            do {
-                let settings = try dataSource.settings(uuid: uuid)
-                dataSource.data(settings: settings) { _, data, error in
-                    if let error = error {
-                        completion(self, nil, error)
-                        return
-                    }
-                    completion(self, data, nil)
-                }
-            } catch {
-                completion(self, [], error)
-                return
-            }
-        }
-        nameProxy = { dataSource.name }
-        summaryProxy = { uuid in
-            let settings = try dataSource.settings(uuid: uuid)
-            return dataSource.summary(settings: settings)
-        }
-        settingsViewControllerProxy = { uuid in
-            let settings = try dataSource.settings(uuid: uuid)
-            let wrapper = SettingsStore<T.Settings>(uuid: uuid)
-            let viewController = dataSource.settingsViewController(settings: settings, store: wrapper)
-            return viewController
-        }
-        settingsViewProxy = { uuid in
-            let settings = try dataSource.settings(uuid: uuid)
-            let wrapper = SettingsStore<T.Settings>(uuid: uuid)
-            let viewController = UIHostingController(rootView: dataSource.settingsView(settings: settings, store: wrapper))
-            viewController.navigationItem.title = dataSource.name
-            return viewController
-        }
-
-    }
-
-}
-
 struct DataItemFlags: OptionSet {
 
     let rawValue: Int

@@ -14,6 +14,7 @@
 		D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */; };
 		D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */; };
 		D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D835EC972471D811003E402E /* NetworkExtension.framework */; };
+		D83CC5202707532400260DC1 /* DataSourceWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC51F2707532400260DC1 /* DataSourceWrapper.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
@@ -76,6 +77,7 @@
 		D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		D835EC972471D811003E402E /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		D83CC51F2707532400260DC1 /* DataSourceWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceWrapper.swift; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderSource.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
@@ -174,12 +176,13 @@
 		D842A400265BE8C1009C1156 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				DBCA98B42144421F0084B710 /* DataSource.swift */,
+				DBCA98B6214518EF0084B710 /* DataSourceController.swift */,
+				D83CC51F2707532400260DC1 /* DataSourceWrapper.swift */,
+				D825A55C26F6811400B85206 /* DummyDataSource.swift */,
 				D842A3FC265BE81F009C1156 /* Calendar */,
 				D842A3FE265BE878009C1156 /* National Rail */,
 				D842A3FF265BE8A2009C1156 /* TFL */,
-				DBCA98B42144421F0084B710 /* DataSource.swift */,
-				DBCA98B6214518EF0084B710 /* DataSourceController.swift */,
-				D825A55C26F6811400B85206 /* DummyDataSource.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 				DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */,
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */,
+				D83CC5202707532400260DC1 /* DataSourceWrapper.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */,
 				DB5E9DA1241562ED009F3807 /* StringUtils.swift in Sources */,
 				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,
