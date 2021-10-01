@@ -24,10 +24,10 @@ import Foundation
 struct SourceManifestation: Identifiable {
 
     let id = UUID()
-    let source: GenericDataSource // TODO: Rename to dataSource
+    let dataSource: GenericDataSource
 
     init<T: DataSource>(_ source: T) {
-        self.source = source.wrapped()
+        self.dataSource = source.wrapped()
     }
 
 }
@@ -115,7 +115,7 @@ extension SourceManifestation {
     func fetch() -> Future<[DataItemBase], Error> {
         Future { promise in
             DispatchQueue.global().async {
-                self.source.fetch(uuid: id) { _, items, error in
+                self.dataSource.fetch(uuid: id) { _, items, error in
                     if let error = error {
                         promise(.failure(error))
                     }

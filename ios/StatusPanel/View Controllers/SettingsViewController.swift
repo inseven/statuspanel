@@ -202,10 +202,10 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DataSourcesSection:
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DataSourceCell")
             let source = dataSourceController.sources[indexPath.row]
-            cell.textLabel?.text = source.source.name
-            cell.detailTextLabel?.text = try? source.source.summary(uuid: source.id) // TODO: make more elegant
+            cell.textLabel?.text = source.dataSource.name
+            cell.detailTextLabel?.text = try? source.dataSource.summary(uuid: source.id) // TODO: make more elegant
             // TODO: Handle error!
-            cell.accessoryType = source.source.configurable ? .disclosureIndicator : .none
+            cell.accessoryType = source.dataSource.configurable ? .disclosureIndicator : .none
             cell.showsReorderControl = true
             return cell
         case UpdateTimeSection:
@@ -334,7 +334,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         } else if indexPath.section == DisplaySettingsSection {
             return indexPath.row > 0
         } else if indexPath.section == DataSourcesSection {
-            return dataSourceController.sources[indexPath.row].source.configurable
+            return dataSourceController.sources[indexPath.row].dataSource.configurable
         } else {
             // All others are highlightable
             return true
@@ -377,13 +377,13 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         switch indexPath.section {
         case DataSourcesSection:
             let source = dataSourceController.sources[indexPath.row]
-            let uikitViewController = try! source.source.settingsViewController(uuid: source.id)
+            let uikitViewController = try! source.dataSource.settingsViewController(uuid: source.id)
             if let safeViewController = uikitViewController {
                 navigationController?.pushViewController(safeViewController, animated: true)
                 return
             }
             // TODO: Common code for presenting an error?
-            let viewController = try! source.source.settingsView(uuid: source.id)  // TODO: Handle the throwing
+            let viewController = try! source.dataSource.settingsView(uuid: source.id)  // TODO: Handle the throwing
             navigationController?.pushViewController(viewController, animated: true)
             return
         case UpdateTimeSection:
