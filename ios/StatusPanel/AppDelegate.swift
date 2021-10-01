@@ -20,10 +20,6 @@
 
 import UIKit
 
-// TODO: Calendars are magic and special as they share a common setting? but this can't be used for comparison?
-
-// Settings domain getter _and_ per settings IDs and if the settings domain doesn't exist?
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     private var background = false
