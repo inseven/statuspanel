@@ -110,7 +110,7 @@ final class CalendarHeaderSource : DataSource {
 
     }
 
-    let name = "Calendar Header"
+    let name = "Header"
     let configurable = false
 
     let flags: DataItemFlags
