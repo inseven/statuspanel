@@ -81,7 +81,8 @@ class NationalRailSettingsController : UITableViewController {
             return
         }
         if !enabledSwitch.isOn {
-            Config().trainRoute = Config.TrainRoute(from: nil, to: nil)
+            settings.routes = []
+            try! store.save(settings: settings)
             update()
         }
     }
