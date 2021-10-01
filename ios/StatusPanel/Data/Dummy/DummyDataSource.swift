@@ -84,25 +84,3 @@ final class DummyDataSource : DataSource {
     }
 
 }
-
-struct DummyDataSettingsView: View {
-
-    @State var settings: DummyDataSource.Settings
-    var store: SettingsStore<DummyDataSource.Settings>
-
-    func enabled() -> Binding<Bool> {
-        Binding {
-            settings.enabled
-        } set: { enabled in
-            settings.enabled = enabled
-            try! store.save(settings: settings)
-        }
-    }
-
-    var body: some View {
-        Form {
-            Toggle("Enabled", isOn: enabled())
-        }
-    }
-
-}
