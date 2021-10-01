@@ -38,17 +38,12 @@ protocol DataSource: AnyObject {
     typealias Callback = (Self, [DataItemBase], Error?) -> Void
     typealias Store = (Settings) -> Void
 
-//    var identifier: SourceInstance { get }
-
     var defaults: Settings { get }
 
     func data(settings: Settings, completion: @escaping Callback)
 
-    // Perhaps an instance name as well?
-
     func summary(settings: Settings) -> String?
 
-    // TODO: Inject the settings
     func settingsViewController(settings: Settings, store: SettingsWrapper<Settings>) -> UIViewController?
 
     func settingsView(settings: Settings, store: SettingsWrapper<Settings>) -> SettingsView
