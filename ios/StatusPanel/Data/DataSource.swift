@@ -22,11 +22,6 @@ import Foundation
 import SwiftUI
 import UIKit
 
-// TODO: Any Protocol?
-
-// TODO: The identifier shouldn't be used for equality at render time?
-
-// TODO: This should expose an identifier?
 protocol DataSource: AnyObject {
 
     var name: String { get }
