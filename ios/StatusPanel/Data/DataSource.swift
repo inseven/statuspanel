@@ -51,10 +51,6 @@ protocol DataSource: AnyObject {
 
 extension DataSource {
 
-    func wrapped() -> DataSourceWrapper {
-        DataSourceWrapper(self)
-    }
-
     // TODO: Check the thread safety (in the settings themselves?)
     func settings(uuid: UUID) throws -> Settings {
         var settings: Settings!

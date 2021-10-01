@@ -79,3 +79,11 @@ class DataSourceWrapper {
     }
 
 }
+
+extension DataSource {
+
+    func wrapped() -> DataSourceWrapper {
+        DataSourceWrapper(self)
+    }
+
+}
