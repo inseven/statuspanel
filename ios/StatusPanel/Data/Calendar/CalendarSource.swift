@@ -199,7 +199,7 @@ final class CalendarSource : DataSource {
         return result
     }
 
-    func summary() -> String? {
+    func summary(settings: CalendarSettings) -> String? {
         let calendarIds = Config().activeCalendars
         let eventStore = EKEventStore()
         var calendarNames: [String] = []

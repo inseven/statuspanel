@@ -46,11 +46,9 @@ protocol DataSource: AnyObject {
 
     // Perhaps an instance name as well?
 
-    // TODO: Inject the settings
-    func summary() -> String?
+    func summary(settings: Settings) -> String?
 
     // TODO: Inject the settings
-    // TODO: Nullable?
     func settingsViewController() -> UIViewController?
 
     func settingsView(settings: Settings, store: @escaping Store) -> SettingsView
@@ -83,19 +81,19 @@ extension DataSource {
 // TODO: DataSourceWrapper / DataSourceProxy?
 class GenericDataSource {
 
-    let id = UUID()
+    // TODO: Move the UUID onto here?
 
     fileprivate var nameProxy: (() -> String)! = nil
     fileprivate var configurableProxy: (() -> Bool)! = nil
     fileprivate var fetchProxy: ((UUID, @escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) -> Void)! = nil
-    fileprivate var summaryProxy: (() -> String?)! = nil
+    fileprivate var summaryProxy: ((UUID) throws -> String?)! = nil
     fileprivate var settingsViewControllerProxy: (() -> UIViewController?)! = nil
     fileprivate var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
 
     var name: String { nameProxy() }
     var configurable: Bool { configurableProxy() }
     func fetch(uuid: UUID, completion: @escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) { fetchProxy(uuid, completion) }
-    func summary() -> String? { summaryProxy() }
+    func summary(uuid: UUID) throws -> String? { try summaryProxy(uuid) }
     func settingsViewController() -> UIViewController? { settingsViewControllerProxy() }
     func settingsView(uuid: UUID) throws -> UIViewController { try settingsViewProxy(uuid) }
 
@@ -117,7 +115,10 @@ class GenericDataSource {
             }
         }
         nameProxy = { dataSource.name }
-        summaryProxy = dataSource.summary
+        summaryProxy = { uuid in
+            let settings = try dataSource.settings(uuid: uuid)
+            return dataSource.summary(settings: settings)
+        }
         settingsViewControllerProxy = dataSource.settingsViewController
         settingsViewProxy = { uuid in
             let settings = try dataSource.settings(uuid: uuid)

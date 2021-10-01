@@ -125,7 +125,7 @@ final class TFLDataSource: DataSource {
         completion?(self, dataItems, err)
     }
 
-    func summary() -> String? {
+    func summary(settings: TransportForLondonSettings) -> String? {
         let lineNames = Config().activeTFLLines.compactMap { TFLDataSource.lines[$0] }
         guard !lineNames.isEmpty else {
             return "None"
@@ -137,6 +137,7 @@ final class TFLDataSource: DataSource {
         UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor")
     }
 
+    // TODO: Move transportforlondonsettings class into separate place
     func settingsView(settings: TransportForLondonSettings, store: TFLDataSource.Store) -> EmptyView {
         EmptyView()
     }

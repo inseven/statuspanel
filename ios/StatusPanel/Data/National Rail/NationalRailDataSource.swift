@@ -133,7 +133,7 @@ final class NationalRailDataSource : DataSource {
         completion?(self, dataItems, err)
     }
 
-    func summary() -> String? {
+    func summary(settings: NationalRailSettings) -> String? {
         let route = Config().trainRoute
         if let from = route.from, let to = route.to {
             return "\(from) to \(to)"
@@ -146,6 +146,7 @@ final class NationalRailDataSource : DataSource {
         UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
     }
 
+    // TODO: Move settings into class
     func settingsView(settings: NationalRailSettings, store: NationalRailDataSource.Store) -> EmptyView {
         EmptyView()
     }

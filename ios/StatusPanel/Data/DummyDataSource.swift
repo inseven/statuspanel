@@ -76,8 +76,8 @@ final class DummyDataSource : DataSource {
         completion(self, data, nil)
     }
 
-    func summary() -> String? {
-        Config().showDummyData ? "Enabled" : "Disabled"
+    func summary(settings: Settings) -> String? {
+        settings.enabled ? "Enabled" : "Disabled"
     }
 
     func settingsViewController() -> UIViewController? { nil }
