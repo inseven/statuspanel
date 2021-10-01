@@ -41,16 +41,6 @@ class Config {
         case showIcons = "showIcons"
     }
 
-    // TODO: Move this into NationalRailSettings
-    struct TrainRoute: Codable {
-        var from: String?
-        var to: String?
-        init(from: String?, to: String?) {
-            self.from = from
-            self.to = to
-        }
-    }
-
     let userDefaults = UserDefaults.standard
 
     private func object(for key: Key) -> Any? {
@@ -129,14 +119,14 @@ class Config {
         }
     }
 
-    var trainRoutes: [TrainRoute] {
+    var trainRoutes: [NationalRailDataSource.TrainRoute] {
         get {
             guard let val = self.array(for: .trainRoutes) as? [Dictionary<String,String>] else {
                 return []
             }
-            var result: [TrainRoute] = []
+            var result: [NationalRailDataSource.TrainRoute] = []
             for dict in val {
-                result.append(TrainRoute(from: dict["from"], to: dict["to"]))
+                result.append(NationalRailDataSource.TrainRoute(from: dict["from"], to: dict["to"]))
             }
             return result
         }
@@ -156,13 +146,13 @@ class Config {
         }
     }
 
-    var trainRoute: TrainRoute {
+    var trainRoute: NationalRailDataSource.TrainRoute {
         get {
             let routes = trainRoutes
             if routes.count > 0 {
                 return routes[0]
             } else {
-                return TrainRoute(from: nil, to: nil)  // TODO: This shouldn't be nil!
+                return NationalRailDataSource.TrainRoute(from: nil, to: nil)  // TODO: This shouldn't be nil!
             }
         }
         set {

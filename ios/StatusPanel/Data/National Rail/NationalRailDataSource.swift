@@ -27,11 +27,20 @@ final class NationalRailDataSource : DataSource {
     // and https://lite.realtime.nationalrail.co.uk/OpenLDBWS/
     // As implemented by https://huxley.unop.uk/ because the raw national rail API is so bad
 
+    struct TrainRoute: Codable {
+        var from: String?
+        var to: String?
+        init(from: String?, to: String?) {
+            self.from = from
+            self.to = to
+        }
+    }
+
     struct Settings: DataSourceSettings {
 
-        var routes: [Config.TrainRoute]
+        var routes: [TrainRoute]
 
-        init(routes: [Config.TrainRoute] = []) {
+        init(routes: [TrainRoute] = []) {
             self.routes = routes
         }
 

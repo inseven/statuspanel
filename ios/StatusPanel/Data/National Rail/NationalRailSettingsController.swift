@@ -32,7 +32,7 @@ class NationalRailSettingsController : UITableViewController {
     var pickingDest = false
 
     func update() {
-        let route = settings.routes.first ?? Config.TrainRoute(from: nil, to: nil)
+        let route = settings.routes.first ?? NationalRailDataSource.TrainRoute(from: nil, to: nil)
         var from = "Select a starting station"
         var to = "Select a destination"
         if let fromStation = StationsList.lookup(code: route.from) {
@@ -64,7 +64,7 @@ class NationalRailSettingsController : UITableViewController {
                 // User might not have made a selection
                 return
             }
-            var route = settings.routes.first ?? Config.TrainRoute(from: nil, to: nil)
+            var route = settings.routes.first ?? NationalRailDataSource.TrainRoute(from: nil, to: nil)
             if pickingDest {
                 route.to = station.code
             } else {
