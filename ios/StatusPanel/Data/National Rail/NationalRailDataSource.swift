@@ -81,16 +81,9 @@ final class NationalRailDataSource : DataSource {
               completion: @escaping (NationalRailDataSource, [DataItemBase], Error?) -> Void) {
         task?.cancel()
 
-        guard let route = settings.routes.first else {
-            completion(self, [], nil)
-            return
-        }
-
-        sourceCrs = route.from
-        targetCrs = route.to
-
-        guard let sourceCrs = sourceCrs,
-              let targetCrs = targetCrs else {
+        guard let route = settings.routes.first,
+              let sourceCrs = route.from,
+              let targetCrs = route.to else {
                   completion(self, [], nil)
             return
         }
