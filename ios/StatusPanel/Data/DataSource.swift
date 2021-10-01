@@ -51,8 +51,8 @@ protocol DataSource: AnyObject {
 
 extension DataSource {
 
-    func wrapped() -> GenericDataSource {
-        GenericDataSource(self)
+    func wrapped() -> DataSourceWrapper {
+        DataSourceWrapper(self)
     }
 
     // TODO: Check the thread safety (in the settings themselves?)
@@ -82,19 +82,18 @@ class SettingsStore<T: DataSourceSettings> {
 
 }
 
-// TODO: DataSourceWrapper / DataSourceProxy?
-class GenericDataSource {
+class DataSourceWrapper {
 
     fileprivate var nameProxy: (() -> String)! = nil
     fileprivate var configurableProxy: (() -> Bool)! = nil
-    fileprivate var fetchProxy: ((UUID, @escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) -> Void)! = nil
+    fileprivate var fetchProxy: ((UUID, @escaping (DataSourceWrapper, [DataItemBase]?, Error?) -> Void) -> Void)! = nil
     fileprivate var summaryProxy: ((UUID) throws -> String?)! = nil
     fileprivate var settingsViewControllerProxy: ((UUID) throws -> UIViewController?)! = nil
     fileprivate var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
 
     var name: String { nameProxy() }
     var configurable: Bool { configurableProxy() }
-    func fetch(uuid: UUID, completion: @escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) { fetchProxy(uuid, completion) }
+    func fetch(uuid: UUID, completion: @escaping (DataSourceWrapper, [DataItemBase]?, Error?) -> Void) { fetchProxy(uuid, completion) }
     func summary(uuid: UUID) throws -> String? { try summaryProxy(uuid) }
     func settingsViewController(uuid: UUID) throws -> UIViewController? { try settingsViewControllerProxy(uuid) }
     func settingsView(uuid: UUID) throws -> UIViewController { try settingsViewProxy(uuid) }

@@ -24,7 +24,7 @@ import Foundation
 struct SourceManifestation: Identifiable {
 
     let id = UUID()
-    let dataSource: GenericDataSource
+    let dataSource: DataSourceWrapper
 
     init<T: DataSource>(_ source: T) {
         self.dataSource = source.wrapped()
@@ -55,7 +55,7 @@ class DataSourceController {
     weak var delegate: DataSourceControllerDelegate?
     var sources: [SourceManifestation] = []
 
-    var factories: [SourceType: GenericDataSource] = [:]
+    var factories: [SourceType: DataSourceWrapper] = [:]
 
     init() {
 
