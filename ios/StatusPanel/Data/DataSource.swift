@@ -82,6 +82,7 @@ class SettingsStore<T: DataSourceSettings> {
 
 }
 
+/// Type erasing wrapper for `DataSource`
 class DataSourceWrapper {
 
     fileprivate var nameProxy: (() -> String)! = nil
