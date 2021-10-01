@@ -61,10 +61,6 @@ extension DataSource {
         GenericDataSource(self)
     }
 
-}
-
-extension DataSource {
-
     // TODO: Check the thread safety (in the settings themselves?)
     func settings(uuid: UUID) throws -> Settings {
         var settings: Settings!
