@@ -24,7 +24,7 @@ import UIKit
 
 final class DummyDataSource : DataSource {
 
-    struct Settings: DataSourceSettings {
+    struct Settings: DataSourceSettings, Equatable {
 
         var enabled: Bool = false
 
