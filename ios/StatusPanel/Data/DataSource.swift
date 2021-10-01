@@ -131,7 +131,6 @@ class GenericDataSource {
             let settings = try dataSource.settings(uuid: uuid)
             return dataSource.summary(settings: settings)
         }
-//        settingsViewControllerProxy = dataSource.settingsViewController
         settingsViewControllerProxy = { uuid in
             let settings = try dataSource.settings(uuid: uuid)
             let wrapper = SettingsWrapper<T.Settings>(uuid: uuid)
