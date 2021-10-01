@@ -23,13 +23,13 @@ import UIKit
 
 class CalendarViewController: UITableViewController {
 
+    var store: SettingsStore<CalendarSource.Settings>!
+    var settings: CalendarSource.Settings!
+
     private var eventStore: EKEventStore!
     private var calendars: [[EKCalendar]]!
     private var sources: [EKSource]!
     private var activeCalendars: Set<String>!
-
-    var store: SettingsStore<CalendarSource.Settings>!
-    var settings: CalendarSource.Settings!
 
     override func viewDidLoad() {
         super.viewDidLoad()

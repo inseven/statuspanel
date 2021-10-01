@@ -142,7 +142,10 @@ final class NationalRailDataSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        let route = Config().trainRoute
+        guard let route = settings.routes.first else {
+            return "Not configured"
+        }
+        // TODO: Extension on the route?
         if let from = route.from, let to = route.to {
             return "\(from) to \(to)"
         } else {
@@ -151,7 +154,12 @@ final class NationalRailDataSource : DataSource {
     }
 
     func settingsViewController(settings: Settings, store: Store) -> UIViewController? {
-        UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
+        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor") as? NationalRailSettingsController else {
+            return nil
+        }
+        viewController.store = store
+        viewController.settings = settings
+        return viewController
     }
 
     func settingsView(settings: Settings, store: Store) -> EmptyView {

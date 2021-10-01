@@ -22,6 +22,9 @@ import UIKit
 
 class NationalRailSettingsController : UITableViewController {
 
+    var store: SettingsStore<NationalRailDataSource.Settings>!
+    var settings: NationalRailDataSource.Settings!
+
     @IBOutlet weak var fromStationCell: UITableViewCell!
     @IBOutlet weak var toStationCell: UITableViewCell!
     @IBOutlet weak var enabledCell: UITableViewCell!
@@ -29,7 +32,7 @@ class NationalRailSettingsController : UITableViewController {
     var pickingDest = false
 
     func update() {
-        let route = Config().trainRoute
+        let route = settings.routes.first ?? Config.TrainRoute(from: nil, to: nil)
         var from = "Select a starting station"
         var to = "Select a destination"
         if let fromStation = StationsList.lookup(code: route.from) {
@@ -57,18 +60,18 @@ class NationalRailSettingsController : UITableViewController {
         super.viewWillAppear(animated)
         if let stationPicker = stationPickerShowing {
             stationPickerShowing = nil
-            let config = Config()
             guard let station = stationPicker.selectedStation else {
                 // User might not have made a selection
                 return
             }
-            var route = config.trainRoute
+            var route = settings.routes.first ?? Config.TrainRoute(from: nil, to: nil)
             if pickingDest {
                 route.to = station.code
             } else {
                 route.from = station.code
             }
-            config.trainRoute = route
+            settings.routes = [route]
+            try! store.save(settings: settings)
         }
         update()
     }
