@@ -25,9 +25,7 @@ import UIKit
 final class DummyDataSource : DataSource {
 
     struct Settings: DataSourceSettings, Equatable {
-
         var enabled: Bool = false
-
     }
 
     let name = "Dummy Data"
@@ -41,7 +39,8 @@ final class DummyDataSource : DataSource {
             var specialChars: [String] = []
             let images = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: "fonts/font6x10") ?? []
             for imgName in images.map({$0.lastPathComponent}).sorted() {
-                let parts = StringUtils.regex(imgName, pattern: #"U\+([0-9A-Fa-f]+)(?:_U\+([0-9A-Fa-f]+))*(?:@[2-4])?\.png"#)
+                let parts = StringUtils.regex(imgName,
+                                              pattern: #"U\+([0-9A-Fa-f]+)(?:_U\+([0-9A-Fa-f]+))*(?:@[2-4])?\.png"#)
                 if parts.count == 0 {
                     continue
                 }
