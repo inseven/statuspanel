@@ -22,12 +22,16 @@ import Foundation
 import SwiftUI
 import UIKit
 
+protocol DataSourceSettings: Codable {
+
+}
+
 protocol DataSource: AnyObject {
 
     var name: String { get }
     var configurable: Bool { get }
 
-    associatedtype Settings: SettingsProtocol
+    associatedtype Settings: DataSourceSettings
     associatedtype SettingsView: View = EmptyView
 
     typealias Callback = (Self, [DataItemBase], Error?) -> Void
@@ -64,7 +68,7 @@ extension DataSource {
 
 }
 
-class SettingsWrapper<T: SettingsProtocol> {
+class SettingsWrapper<T: DataSourceSettings> {
 
     var uuid: UUID
 

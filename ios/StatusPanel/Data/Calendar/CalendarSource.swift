@@ -59,7 +59,7 @@ class CalendarItem : DataItemBase {
 
 final class CalendarSource : DataSource {
 
-    struct Settings: SettingsProtocol {
+    struct Settings: DataSourceSettings {
 
         var calendars: [String]
         var showLocations: Bool

@@ -24,7 +24,7 @@ import UIKit
 
 final class DummyDataSource : DataSource {
 
-    struct Settings: SettingsProtocol {
+    struct Settings: DataSourceSettings {
 
         var enabled: Bool = false
 

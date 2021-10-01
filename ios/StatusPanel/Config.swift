@@ -21,21 +21,7 @@
 import Foundation
 import Network
 
-protocol SettingsProtocol: Codable {
-
-}
-
-struct NationalRailSettings: SettingsProtocol {
-
-    var routes: [Config.TrainRoute]
-
-    init(routes: [Config.TrainRoute] = []) {
-        self.routes = routes
-    }
-
-}
-
-struct TransportForLondonSettings: SettingsProtocol {
+struct TransportForLondonSettings: DataSourceSettings {
 
     var lines: [String]
 
@@ -389,14 +375,14 @@ class Config {
         }
     }
 
-    func settings<T: SettingsProtocol>(uuid: UUID) throws -> T? {
+    func settings<T: DataSourceSettings>(uuid: UUID) throws -> T? {
         guard let data = userDefaults.object(forKey: "Settings-\(uuid.uuidString)") as? NSData else {
             throw StatusPanelError.noSettings
         }
         return try JSONDecoder().decode(T.self, from: data as Data)
     }
 
-    func save<T: SettingsProtocol>(settings: T, uuid: UUID) throws {
+    func save<T: DataSourceSettings>(settings: T, uuid: UUID) throws {
         let data = try JSONEncoder().encode(settings)
         userDefaults.set(data, forKey: "Settings-\(uuid.uuidString)")
     }

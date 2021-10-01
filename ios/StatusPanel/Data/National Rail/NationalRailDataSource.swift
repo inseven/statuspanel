@@ -27,6 +27,16 @@ final class NationalRailDataSource : DataSource {
     // and https://lite.realtime.nationalrail.co.uk/OpenLDBWS/
     // As implemented by https://huxley.unop.uk/ because the raw national rail API is so bad
 
+    struct Settings: DataSourceSettings {
+
+        var routes: [Config.TrainRoute]
+
+        init(routes: [Config.TrainRoute] = []) {
+            self.routes = routes
+        }
+
+    }
+
     struct Delays: Decodable {
         var delays: Bool
         var totalTrainsDelayed: Int
@@ -52,13 +62,13 @@ final class NationalRailDataSource : DataSource {
     var completion: ((NationalRailDataSource, [DataItemBase], Error?) -> Void)?
     var task: URLSessionTask?
 
-    var defaults: NationalRailSettings { NationalRailSettings() }
+    var defaults: Settings { Settings() }
 
     init(configuration: Configuration) {
         self.configuration = configuration
     }
 
-    func data(settings: NationalRailSettings,
+    func data(settings: Settings,
               completion: @escaping (NationalRailDataSource, [DataItemBase], Error?) -> Void) {
         task?.cancel()
 
@@ -131,7 +141,7 @@ final class NationalRailDataSource : DataSource {
         completion?(self, dataItems, err)
     }
 
-    func summary(settings: NationalRailSettings) -> String? {
+    func summary(settings: Settings) -> String? {
         let route = Config().trainRoute
         if let from = route.from, let to = route.to {
             return "\(from) to \(to)"
@@ -140,12 +150,11 @@ final class NationalRailDataSource : DataSource {
         }
     }
 
-    func settingsViewController(settings: NationalRailSettings, store: SettingsWrapper<NationalRailSettings>) -> UIViewController? {
+    func settingsViewController(settings: Settings, store: SettingsWrapper<Settings>) -> UIViewController? {
         UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
     }
 
-    // TODO: Move settings into class
-    func settingsView(settings: NationalRailSettings, store: SettingsWrapper<NationalRailSettings>) -> EmptyView {
+    func settingsView(settings: Settings, store: SettingsWrapper<Settings>) -> EmptyView {
         EmptyView()
     }
 }

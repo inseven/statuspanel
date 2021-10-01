@@ -43,7 +43,7 @@ final class CalendarHeaderSource : DataSource {
 
     }
 
-    struct Settings: SettingsProtocol {
+    struct Settings: DataSourceSettings {
 
         var format: DateFormat
         var offset: Int
