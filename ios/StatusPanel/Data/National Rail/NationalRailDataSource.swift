@@ -160,7 +160,8 @@ final class NationalRailDataSource : DataSource {
     }
 
     func settingsViewController(settings: Settings, store: Store) -> UIViewController? {
-        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor") as? NationalRailSettingsController else {
+        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
+                as? NationalRailSettingsController else {
             return nil
         }
         viewController.store = store
