@@ -69,7 +69,7 @@ extension DataSource {
     func settings(uuid: UUID) throws -> Settings {
         var settings: Settings!
         do {
-            settings = try Config().settings(instance: .local(uuid: uuid))
+            settings = try Config().settings(uuid: uuid)
         } catch StatusPanelError.noSettings {
             settings = defaults
         }

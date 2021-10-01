@@ -56,7 +56,6 @@ final class TFLDataSource: DataSource {
     let configurable = true
 
     let configuration: Configuration
-    let identifier: SourceInstance
 
     var dataItems = [DataItem]()
     var completion: ((TFLDataSource, [DataItemBase], Error?) -> Void)?
@@ -64,9 +63,8 @@ final class TFLDataSource: DataSource {
 
     var defaults: TransportForLondonSettings { TransportForLondonSettings() }
 
-    init(configuration: Configuration, identifier: SourceInstance) {
+    init(configuration: Configuration) {
         self.configuration = configuration
-        self.identifier = identifier
     }
 
     func data(settings: TransportForLondonSettings, completion: @escaping (TFLDataSource, [DataItemBase], Error?) -> Void) {

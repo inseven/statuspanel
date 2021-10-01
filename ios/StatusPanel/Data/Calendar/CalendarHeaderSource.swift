@@ -113,16 +113,13 @@ final class CalendarHeaderSource : DataSource {
     let name = "Calendar Header"
     let configurable = false
 
-    let identifier: SourceInstance
     let flags: DataItemFlags
     let defaults: Settings
 
-    init(identifier: SourceInstance,
-         defaults: Settings,
+    init(defaults: Settings,
          flags: DataItemFlags,
          offset: Int = 0,
          component: Calendar.Component = .day) {
-        self.identifier = identifier
         self.defaults = defaults
         self.flags = flags
     }

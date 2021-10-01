@@ -44,7 +44,6 @@ final class NationalRailDataSource : DataSource {
     let configurable = true
 
     let configuration: Configuration
-    let identifier: SourceInstance
 
     var targetCrs: String?
     var sourceCrs: String?
@@ -55,9 +54,8 @@ final class NationalRailDataSource : DataSource {
 
     var defaults: NationalRailSettings { NationalRailSettings() }
 
-    init(configuration: Configuration, identifier: SourceInstance) {
+    init(configuration: Configuration) {
         self.configuration = configuration
-        self.identifier = identifier
     }
 
     func data(settings: NationalRailSettings,

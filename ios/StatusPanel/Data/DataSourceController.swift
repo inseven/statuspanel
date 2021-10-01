@@ -60,24 +60,21 @@ class DataSourceController {
     init() {
 
         factories = [
-            .calendar: CalendarHeaderSource(identifier: .local(uuid: UUID()),
-                                            defaults: CalendarHeaderSource.Settings(),
+            .calendar: CalendarHeaderSource(defaults: CalendarHeaderSource.Settings(),
                                             flags: []).wrapped()
         ]
 
         let configuration = try! Bundle.main.configuration()
-        add(dataSource: CalendarHeaderSource(identifier: .local(uuid: UUID()),
-                                             defaults: CalendarHeaderSource.Settings(format: .variable(long: "yMMMMdEEE",
+        add(dataSource: CalendarHeaderSource(defaults: CalendarHeaderSource.Settings(format: .variable(long: "yMMMMdEEE",
                                                                                                        short: "yMMMMdEEEE")),
                                              flags: [.header, .spansColumns]))
-        add(dataSource: TFLDataSource(configuration: configuration, identifier: .global(source: .transportForLondon)))
-        add(dataSource: NationalRailDataSource(configuration: configuration,
-                                               identifier: .global(source: .nationalRail)))
-        add(dataSource: CalendarSource(identifier: .global(source: .calendar)))
+        add(dataSource: TFLDataSource(configuration: configuration))
+        add(dataSource: NationalRailDataSource(configuration: configuration))
+        add(dataSource: CalendarSource())
 #if DEBUG
         add(dataSource: DummyDataSource())
 #endif
-        add(dataSource: CalendarSource(identifier: .global(source: .calendar), dayOffset: 1, header: "Tomorrow:"))
+        add(dataSource: CalendarSource(dayOffset: 1, header: "Tomorrow:"))
 #if DEBUG
         add(dataSource: DummyDataSource())
 #endif

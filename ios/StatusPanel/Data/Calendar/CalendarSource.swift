@@ -62,15 +62,14 @@ final class CalendarSource : DataSource {
     let name = "Calendars"
     let configurable = true
 
-    let identifier: SourceInstance
     let header : String?
     let dayOffset: Int
     let eventStore: EKEventStore
 
     var defaults: CalendarSettings { CalendarSettings() }
 
-    init(identifier: SourceInstance, dayOffset: Int = 0, header: String? = nil) {
-        self.identifier = identifier
+    // TODO: offset with components? Maybe this is a class?
+    init(dayOffset: Int = 0, header: String? = nil) {
         self.header = header
         self.dayOffset = dayOffset
         eventStore = EKEventStore()

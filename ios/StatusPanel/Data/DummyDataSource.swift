@@ -33,8 +33,6 @@ final class DummyDataSource : DataSource {
     let name = "Dummy Data"
     let configurable = true
 
-    let identifier: SourceInstance = .local(uuid: UUID())
-
     var defaults: Settings { Settings() }
 
     func data(settings: Settings, completion: @escaping (DummyDataSource, [DataItemBase], Error?) -> Void) {

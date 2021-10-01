@@ -21,23 +21,6 @@
 import Foundation
 import Network
 
-enum Source {
-
-    case calendar
-    case nationalRail
-    case transportForLondon
-
-}
-
-
-// TODO: Rename this to source identifier.
-enum SourceInstance: Equatable {
-
-    case global(source: Source)
-    case local(uuid: UUID)
-
-}
-
 protocol SettingsProtocol: Codable {
 
 }
@@ -422,7 +405,6 @@ class Config {
         }
     }
 
-    // TODO: This shouldn't require a default constructor.
     func settings<T: SettingsProtocol>(uuid: UUID) throws -> T? {
         guard let data = userDefaults.object(forKey: "Settings-\(uuid.uuidString)") as? NSData else {
             throw StatusPanelError.noSettings
@@ -435,33 +417,4 @@ class Config {
         userDefaults.set(data, forKey: "Settings-\(uuid.uuidString)")
     }
 
-    // TODO: Maybe this could throw and then it will work?
-    func settings<T: SettingsProtocol>(instance: SourceInstance) throws -> T? {
-
-        switch instance {
-        case .global(let source):
-            switch source {
-            case .calendar:
-                guard let settings = CalendarSettings(calendars: activeCalendars,
-                                                      showLocations: showCalendarLocations,
-                                                      showUrls: showUrlsInCalendarLocations) as? T else {
-                    throw StatusPanelError.corruptSettings
-                }
-                return settings
-            case .nationalRail:
-                guard let settings = NationalRailSettings(routes: trainRoutes) as? T else {
-                    throw StatusPanelError.corruptSettings
-                }
-                return settings
-            case .transportForLondon:
-                guard let settings = TransportForLondonSettings(lines: activeTFLLines) as? T else {
-                    throw StatusPanelError.corruptSettings
-                }
-                return settings
-            }
-        case .local(let uuid):
-            return try settings(uuid: uuid)
-        }
-
-    }
 }
