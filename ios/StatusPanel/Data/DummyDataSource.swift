@@ -78,9 +78,9 @@ final class DummyDataSource : DataSource {
         settings.enabled ? "Enabled" : "Disabled"
     }
 
-    func settingsViewController(settings: Settings, store: SettingsWrapper<Settings>) -> UIViewController? { nil }
+    func settingsViewController(settings: Settings, store: Store) -> UIViewController? { nil }
 
-    func settingsView(settings: Settings, store: SettingsWrapper<Settings>) -> some View {
+    func settingsView(settings: Settings, store: Store) -> some View {
         DummyDataSettingsView(settings: settings, store: store)
     }
 
@@ -89,7 +89,7 @@ final class DummyDataSource : DataSource {
 struct DummyDataSettingsView: View {
 
     @State var settings: DummyDataSource.Settings
-    var store: SettingsWrapper<DummyDataSource.Settings>
+    var store: SettingsStore<DummyDataSource.Settings>
 
     func enabled() -> Binding<Bool> {
         Binding {

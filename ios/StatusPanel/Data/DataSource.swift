@@ -35,7 +35,7 @@ protocol DataSource: AnyObject {
     associatedtype SettingsView: View = EmptyView
 
     typealias Callback = (Self, [DataItemBase], Error?) -> Void
-    typealias Store = (Settings) -> Void
+    typealias Store = SettingsStore<Settings>
 
     var defaults: Settings { get }
 
@@ -43,9 +43,9 @@ protocol DataSource: AnyObject {
 
     func summary(settings: Settings) -> String?
 
-    func settingsViewController(settings: Settings, store: SettingsWrapper<Settings>) -> UIViewController?
+    func settingsViewController(settings: Settings, store: Store) -> UIViewController?
 
-    func settingsView(settings: Settings, store: SettingsWrapper<Settings>) -> SettingsView
+    func settingsView(settings: Settings, store: Store) -> SettingsView
 
 }
 
@@ -68,7 +68,7 @@ extension DataSource {
 
 }
 
-class SettingsWrapper<T: DataSourceSettings> {
+class SettingsStore<T: DataSourceSettings> {
 
     var uuid: UUID
 
@@ -123,13 +123,13 @@ class GenericDataSource {
         }
         settingsViewControllerProxy = { uuid in
             let settings = try dataSource.settings(uuid: uuid)
-            let wrapper = SettingsWrapper<T.Settings>(uuid: uuid)
+            let wrapper = SettingsStore<T.Settings>(uuid: uuid)
             let viewController = dataSource.settingsViewController(settings: settings, store: wrapper)
             return viewController
         }
         settingsViewProxy = { uuid in
             let settings = try dataSource.settings(uuid: uuid)
-            let wrapper = SettingsWrapper<T.Settings>(uuid: uuid)
+            let wrapper = SettingsStore<T.Settings>(uuid: uuid)
             let viewController = UIHostingController(rootView: dataSource.settingsView(settings: settings, store: wrapper))
             viewController.navigationItem.title = dataSource.name
             return viewController

@@ -131,12 +131,12 @@ final class TFLDataSource: DataSource {
         return lineNames.joined(separator: ", ")
     }
 
-    func settingsViewController(settings: TransportForLondonSettings, store: SettingsWrapper<TransportForLondonSettings>) -> UIViewController? {
+    func settingsViewController(settings: TransportForLondonSettings, store: SettingsStore<TransportForLondonSettings>) -> UIViewController? {
         UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor")
     }
 
     // TODO: Move transportforlondonsettings class into separate place
-    func settingsView(settings: TransportForLondonSettings, store: SettingsWrapper<TransportForLondonSettings>) -> EmptyView {
+    func settingsView(settings: TransportForLondonSettings, store: SettingsStore<TransportForLondonSettings>) -> EmptyView {
         EmptyView()
     }
 }

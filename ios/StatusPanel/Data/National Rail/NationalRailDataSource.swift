@@ -150,11 +150,11 @@ final class NationalRailDataSource : DataSource {
         }
     }
 
-    func settingsViewController(settings: Settings, store: SettingsWrapper<Settings>) -> UIViewController? {
+    func settingsViewController(settings: Settings, store: Store) -> UIViewController? {
         UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
     }
 
-    func settingsView(settings: Settings, store: SettingsWrapper<Settings>) -> EmptyView {
+    func settingsView(settings: Settings, store: Store) -> EmptyView {
         EmptyView()
     }
 }

@@ -232,7 +232,7 @@ final class CalendarSource : DataSource {
         }
     }
 
-    func settingsViewController(settings: Settings, store: SettingsWrapper<Settings>) -> UIViewController? {
+    func settingsViewController(settings: Settings, store: Store) -> UIViewController? {
         guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "CalendarsEditor") as? CalendarViewController else {
             return nil
         }
@@ -241,7 +241,7 @@ final class CalendarSource : DataSource {
         return viewController
     }
 
-    func settingsView(settings: Settings, store: SettingsWrapper<Settings>) -> EmptyView {
+    func settingsView(settings: Settings, store: Store) -> EmptyView {
         EmptyView()
     }
 
