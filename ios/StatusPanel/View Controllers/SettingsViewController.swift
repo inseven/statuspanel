@@ -377,8 +377,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         switch indexPath.section {
         case DataSourcesSection:
             let source = dataSourceController.sources[indexPath.row]
-            if let uikitViewController = source.source.settingsViewController() {
-                navigationController?.pushViewController(uikitViewController, animated: true)
+            let uikitViewController = try! source.source.settingsViewController(uuid: source.id)
+            if let safeViewController = uikitViewController {
+                navigationController?.pushViewController(safeViewController, animated: true)
                 return
             }
             // TODO: Common code for presenting an error?

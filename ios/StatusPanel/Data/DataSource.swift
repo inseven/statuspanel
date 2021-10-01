@@ -99,14 +99,14 @@ class GenericDataSource {
     fileprivate var configurableProxy: (() -> Bool)! = nil
     fileprivate var fetchProxy: ((UUID, @escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) -> Void)! = nil
     fileprivate var summaryProxy: ((UUID) throws -> String?)! = nil
-    fileprivate var settingsViewControllerProxy: (() -> UIViewController?)! = nil
+    fileprivate var settingsViewControllerProxy: ((UUID) throws -> UIViewController?)! = nil
     fileprivate var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
 
     var name: String { nameProxy() }
     var configurable: Bool { configurableProxy() }
     func fetch(uuid: UUID, completion: @escaping (GenericDataSource, [DataItemBase]?, Error?) -> Void) { fetchProxy(uuid, completion) }
     func summary(uuid: UUID) throws -> String? { try summaryProxy(uuid) }
-    func settingsViewController() -> UIViewController? { settingsViewControllerProxy() }
+    func settingsViewController(uuid: UUID) throws -> UIViewController? { try settingsViewControllerProxy(uuid) }
     func settingsView(uuid: UUID) throws -> UIViewController { try settingsViewProxy(uuid) }
 
     init<T: DataSource>(_ dataSource: T) {
@@ -132,6 +132,12 @@ class GenericDataSource {
             return dataSource.summary(settings: settings)
         }
 //        settingsViewControllerProxy = dataSource.settingsViewController
+        settingsViewControllerProxy = { uuid in
+            let settings = try dataSource.settings(uuid: uuid)
+            let wrapper = SettingsWrapper<T.Settings>(uuid: uuid)
+            let viewController = dataSource.settingsViewController(settings: settings, store: wrapper)
+            return viewController
+        }
         settingsViewProxy = { uuid in
             let settings = try dataSource.settings(uuid: uuid)
             let wrapper = SettingsWrapper<T.Settings>(uuid: uuid)
