@@ -21,20 +21,6 @@
 import Foundation
 import Network
 
-struct TransportForLondonSettings: DataSourceSettings {
-
-    var lines: [String]
-
-    init(lines: [String]) {
-        self.lines = lines
-    }
-
-    init() {
-        self.init(lines: [])
-    }
-
-}
-
 class Config {
 
     private enum Key: String {

@@ -26,6 +26,20 @@ import UIKit
 // TODO: Don't bother to return self?
 final class TFLDataSource: DataSource {
 
+    struct Settings: DataSourceSettings {
+
+        var lines: [String]
+
+        init(lines: [String]) {
+            self.lines = lines
+        }
+
+        init() {
+            self.init(lines: [])
+        }
+
+    }
+
     struct LineStatus: Decodable {
         var id: String
         var name: String
@@ -61,13 +75,13 @@ final class TFLDataSource: DataSource {
     var completion: ((TFLDataSource, [DataItemBase], Error?) -> Void)?
     var task: URLSessionTask?
 
-    var defaults: TransportForLondonSettings { TransportForLondonSettings() }
+    var defaults: Settings { Settings() }
 
     init(configuration: Configuration) {
         self.configuration = configuration
     }
 
-    func data(settings: TransportForLondonSettings, completion: @escaping (TFLDataSource, [DataItemBase], Error?) -> Void) {
+    func data(settings: Settings, completion: @escaping (TFLDataSource, [DataItemBase], Error?) -> Void) {
         task?.cancel()
         self.completion = completion
 
@@ -123,7 +137,7 @@ final class TFLDataSource: DataSource {
         completion?(self, dataItems, err)
     }
 
-    func summary(settings: TransportForLondonSettings) -> String? {
+    func summary(settings: Settings) -> String? {
         let lineNames = Config().activeTFLLines.compactMap { TFLDataSource.lines[$0] }
         guard !lineNames.isEmpty else {
             return "None"
@@ -131,12 +145,11 @@ final class TFLDataSource: DataSource {
         return lineNames.joined(separator: ", ")
     }
 
-    func settingsViewController(settings: TransportForLondonSettings, store: SettingsStore<TransportForLondonSettings>) -> UIViewController? {
+    func settingsViewController(settings: Settings, store: Store) -> UIViewController? {
         UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor")
     }
 
-    // TODO: Move transportforlondonsettings class into separate place
-    func settingsView(settings: TransportForLondonSettings, store: SettingsStore<TransportForLondonSettings>) -> EmptyView {
+    func settingsView(settings: Settings, store: Store) -> EmptyView {
         EmptyView()
     }
 }
