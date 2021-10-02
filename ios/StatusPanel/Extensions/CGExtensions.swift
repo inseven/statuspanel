@@ -69,9 +69,35 @@ extension CGRect {
 }
 
 extension UIImage {
+    static func New(_ size: CGSize, flipped: Bool, actions: (CGContext) -> Void) -> UIImage {
+        let fmt = UIGraphicsImageRendererFormat()
+        fmt.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: size, format: fmt)
+        let uiImage = renderer.image { (uictx: UIGraphicsImageRendererContext) in
+            let ctx = uictx.cgContext
+            ctx.setAllowsAntialiasing(false)
+            ctx.setShouldSubpixelQuantizeFonts(false)
+            ctx.setShouldSubpixelPositionFonts(false)
+            ctx.setShouldSmoothFonts(false)
+            ctx.interpolationQuality = .none
+            if flipped {
+                ctx.scaleBy(x: 1.0, y: -1.0)
+                ctx.translateBy(x: 0, y: -size.height)
+            }
+            actions(ctx)
+        }
+        return uiImage
+    }
+
     var center: CGPoint {
         get {
             return CGRect(origin: CGPoint(), size: self.size).center
         }
+    }
+}
+
+extension CGImage {
+    static func New(_ size: CGSize, flipped: Bool, actions: (CGContext) -> Void) -> CGImage {
+        return UIImage.New(size, flipped: flipped, actions: actions).cgImage!
     }
 }
