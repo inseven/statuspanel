@@ -89,15 +89,14 @@ class BitmapFontCache {
             // did that.
             var scalars = char.unicodeScalars
             while scalars.count > 1 {
-                let lastScalar = scalars.last?.value ?? 0
-                if lastScalar >= 0xFE00 && lastScalar <= 0xFE0F {
+                if scalars.lastInRange(.VariationSelectorStart, .VariationSelectorEnd) {
                     // Variation selector, particularly U+FE0E and U+FE0F for text-only style and emoji-style.
                     scalars.removeLast()
-                } else if lastScalar >= 0x1F3FB && lastScalar <= 0x1F3FF {
+                } else if scalars.lastInRange(.SkinToneStart, .SkinToneEnd) {
                     // Skin tone modifier (EMOJI MODIFIER FITZPATRICK TYPE)
                     scalars.removeLast()
-                } else if scalars.count > 2 && scalars[scalars.index(scalars.endIndex, offsetBy: -2)].value == 0x200D &&
-                        (lastScalar == 0x2640 || lastScalar == 0x2642) {
+                } else if scalars.count > 2 && scalars.scalarAt(index: -2, equals: .ZeroWidthJoiner) &&
+                            (scalars.lastIs(.FemaleSign) || scalars.lastIs(.MaleSign)) {
                     // Zero-width joiner plus female/male sign
                     scalars.removeLast(2)
                 } else {
