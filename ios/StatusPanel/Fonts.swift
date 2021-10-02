@@ -25,15 +25,23 @@ class Fonts {
         let bitmapName: String
         let startIndex: Unicode.Scalar
         let charw: Int
-        let charh: Int
+        let charh: Int // aka ascent + descent, same as the "point size" of a TTF font
+        let descent: Int
+        let capHeight: Int
         let minWidth: Int? // If set, empty space on the right hand side of the image will be shrunk down to, at a minimum, this size
 
-        init(bitmap: String, charWidth: Int, charHeight: Int, startIndex: Unicode.Scalar, minWidth: Int? = nil) {
+        init(bitmap: String, charWidth: Int, charHeight: Int, capHeight: Int, descent: Int, startIndex: Unicode.Scalar, minWidth: Int? = nil) {
             self.bitmapName = bitmap
             self.charw = charWidth
             self.charh = charHeight
+            self.capHeight = capHeight
+            self.descent = descent
             self.startIndex = startIndex
             self.minWidth = minWidth
+        }
+
+        var ascent: Int {
+            return charh - descent
         }
     }
 
@@ -108,8 +116,8 @@ class Fonts {
         License: SIL Open Font License version 1.1
         """
 
-    static let guiConsFont = BitmapInfo(bitmap: "font6x10", charWidth: 6, charHeight: 10, startIndex: " ")
-    static let unifont = BitmapInfo(bitmap: "unifont-13.0.06", charWidth: 16, charHeight: 16, startIndex: "\0", minWidth: 7)
+    static let guiConsFont = BitmapInfo(bitmap: "font6x10", charWidth: 6, charHeight: 10, capHeight: 7, descent: 2, startIndex: " ")
+    static let unifont = BitmapInfo(bitmap: "unifont-13.0.06", charWidth: 16, charHeight: 16, capHeight: 10, descent: 2, startIndex: "\0", minWidth: 7)
 
     static let availableFonts = [
         Font(configName: "font6x10_2", humanName: "Guicons Font", bitmapInfo: guiConsFont, subTextScale: 1, textScale: 2, headerScale: 2,

@@ -23,7 +23,7 @@ import CoreImage
 
 class BitmapFontCache {
 
-    // Contains all the info required to render a character: the font bitmap to use, the scale, and the dark mode
+    // Contains all the info required to render and cache a character: the font bitmap to use, the scale, and the dark mode
     struct Style {
         let font: Fonts.BitmapInfo
         let scale: Int
@@ -36,6 +36,22 @@ class BitmapFontCache {
         func toString() -> String {
             let theme = (darkMode ? "dark" : "light")
             return "\(font.bitmapName)_\(scale)_\(theme)"
+        }
+
+        var scaledHeight : Int {
+            return self.font.charh * self.scale
+        }
+        var scaledWidth : Int {
+            return self.font.charw * self.scale
+        }
+        var scaledAscent : Int {
+            return self.font.ascent * self.scale
+        }
+        var scaledDescent : Int {
+            return self.font.descent * self.scale
+        }
+        var scaledCapHeight : Int {
+            return self.font.capHeight * self.scale
         }
     }
 
@@ -66,10 +82,11 @@ class BitmapFontCache {
                    "Image size \(imagew)x\(imageh) must be a multiple of the char width \(charw) and the char height \(charh)")
         }
 
-        func getImageForChar(_ char: Character) -> CGImage? {
+        static func stripChar(_ char: Character) -> Character {
             // First try and remove any modifiers from the character which we can't represent and don't care about.
             // We deliberately don't just chop the char off at the first code point, because I want to be able to
-            // identify sequences we don't currently handle.
+            // identify sequences we don't currently handle. Also things like flag sequences would be mangled if we
+            // did that.
             var scalars = char.unicodeScalars
             while scalars.count > 1 {
                 let lastScalar = scalars.last?.value ?? 0
@@ -87,27 +104,31 @@ class BitmapFontCache {
                     break
                 }
             }
-            let ch = Character(String(scalars))
+            return Character(String(scalars))
+        }
 
-            if let img = charMap[ch] {
+        func getImageForChar(_ char: Character) -> CGImage? {
+            let strippedChar = Self.stripChar(char)
+            if let img = charMap[strippedChar] {
                 return img
             }
-            if let img = createImageForChar(ch) {
-                setImageForChar(ch, image: img)
+            if let img = createImageForChar(strippedChar) {
+                charMap[strippedChar] = img
                 return img
             }
             return nil
         }
 
         func setImageForChar(_ ch: Character, image: CGImage) {
-            charMap[ch] = image
+            charMap[Self.stripChar(ch)] = image
         }
 
         func charInImage(_ char: Character) -> Bool {
-            if char.unicodeScalars.count != 1 {
+            let strippedChar = Self.stripChar(char)
+            if strippedChar.unicodeScalars.count != 1 {
                 return false
             }
-            let scalarValue = char.unicodeScalars.first!.value
+            let scalarValue = strippedChar.unicodeScalars.first!.value
             let maxValue = font.startIndex.value + UInt32(self.charsPerRow * self.numRows)
             return scalarValue >= font.startIndex.value && scalarValue < maxValue
         }
@@ -130,6 +151,7 @@ class BitmapFontCache {
             return ch.unicodeScalars.map({ String(format:"U+%04X", $0.value) }).joined(separator: "_")
         }
 
+        // Note, ch must have been already stripped of extraneous modifiers
         func createImageForChar(_ ch: Character) -> CGImage? {
             if charInImage(ch) {
                 // Get from main image
@@ -172,6 +194,7 @@ class BitmapFontCache {
                     }
                 }
                 return Self.scaleUp(image: cgImage, factor: style.scale)
+                // return addOutlineBaselineToImage(Self.scaleUp(image: cgImage, factor: style.scale))
             } else {
                 // See if we have an individual image for it
                 let charName = Self.getCharName(ch)
@@ -196,6 +219,18 @@ class BitmapFontCache {
             }
         }
 
+        func addOutlineBaselineToImage(_ image: CGImage) -> CGImage {
+            return CGImage.New(CGSize(width: image.width, height: image.height), flipped: true) { ctx in
+                ctx.setStrokeColor(UIColor.yellow.cgColor)
+                ctx.setLineWidth(1)
+                let y = CGFloat(style.scaledAscent) + 0.5
+                ctx.move(to: CGPoint(x: 0, y: y))
+                ctx.addLine(to: CGPoint(x: CGFloat(image.width), y: y))
+                ctx.addRect(CGRect(x: 0.5, y: 0.5, width: CGFloat(image.width) - 1, height: CGFloat(image.height) - 1))
+                ctx.strokePath()
+                ctx.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
+            }
+        }
     }
 
     private init() {}
@@ -218,13 +253,16 @@ class BitmapFontCache {
         let charName = ImagesDict.getCharName(ch)
         print("No font data for character \(charName)")
 
-        let lineHeight = style.font.charh * style.scale
+        let lineHeight = style.scaledHeight
         if style.font.bitmapName != Fonts.unifont.bitmapName && lineHeight >= Fonts.unifont.charh {
             // See if unifont has what we need (which it obviously will for any single-code-point character, but
-            // we may still need to fall back to drawing a replacement image/char for composites
-            let unifontDict = getImageDict(Style(font: Fonts.unifont, scale: 1, darkMode: style.darkMode))
+            // we may still need to fall back to drawing a replacement image/char for composites)
+            let unifontStyle = Style(font: Fonts.unifont, scale: 1, darkMode: style.darkMode)
+            let unifontDict = getImageDict(unifontStyle)
             if let img = unifontDict.getImageForChar(ch) {
-                imgDict.setImageForChar(ch, image: img)
+                // Potentially need to adjust the image height to match ours, taking into account where the baselines are
+                let adjustedImage = Self.adjustImage(img, fromStyle: unifontStyle, toStyle: style)
+                imgDict.setImageForChar(ch, image: adjustedImage)
                 return img
             }
         }
@@ -248,7 +286,7 @@ class BitmapFontCache {
         let replacementStyle = BitmapFontCache.Style(font: Fonts.guiConsFont, scale: 1, darkMode: style.darkMode)
 
         let textWidth = getTextWidth(charName, forStyle: replacementStyle)
-        let h = style.font.charh * style.scale
+        let h = style.scaledHeight
         let w = textWidth + 8
         return CGImage.New(CGSize(width: w, height: h), flipped: true) { ctx in
             var x = 4
@@ -262,6 +300,20 @@ class BitmapFontCache {
                 ctx.draw(img, in: CGRect(x: x, y: y, width: img.width, height: img.height))
                 x += img.width
             }
+        }
+    }
+
+    static func adjustImage(_ img: CGImage, fromStyle: Style, toStyle: Style) -> CGImage {
+        let fromHeight = fromStyle.scaledHeight
+        let toHeight = toStyle.scaledHeight
+        let adjustedY = max(0, toStyle.scaledAscent - fromStyle.scaledAscent)
+        if adjustedY + fromHeight <= toHeight {
+            // Line up the baselines
+            return CGImage.New(CGSize(width: img.width, height: toHeight), flipped: true) { ctx in
+                ctx.draw(img, in: CGRect(x: 0, y: adjustedY, width: img.width, height: img.height))
+            }
+        } else {
+            return img
         }
     }
 
