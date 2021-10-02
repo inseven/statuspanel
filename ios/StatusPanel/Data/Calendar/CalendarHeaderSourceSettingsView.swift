@@ -157,7 +157,19 @@ struct CalendarHeaderSourceSettingsView: View {
             if case .custom = format {
                 Section {
                     TextField("Long", text: $long)
+                        .transition(.opacity)
+                } header: {
+                    Text("Long Format")
+                } footer: {
+                    Text("Preferred format specifier.")
+                }
+                Section {
                     TextField(long.isEmpty ? "Short" : long, text: $short)
+                        .transition(.opacity)
+                } header: {
+                    Text("Short Format")
+                } footer: {
+                    Text("Used if the result of the long format specifier is too long to fit on the screen.")
                 }
                 .autocapitalization(.none)
             }
