@@ -36,7 +36,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         client = Client(baseUrl: "https://api.statuspanel.io/")
 
         let configuration = try! Bundle.main.configuration()
-        sourceController.add(dataSource: CalendarHeaderSource(format: .variable(long: "yMMMMdEEE", short: "yMMMMdEEEE"),
+        sourceController.add(dataSource: CalendarHeaderSource(longFormat: "yMMMMdEEE",
+                                                              shortFormat: "yMMMMdEEEE",
                                                               flags: [.header, .spansColumns]))
         sourceController.add(dataSource: TFLDataSource(configuration: configuration))
         sourceController.add(dataSource: NationalRailDataSource(configuration: configuration))
