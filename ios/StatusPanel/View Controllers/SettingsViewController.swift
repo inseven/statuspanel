@@ -351,7 +351,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     override func tableView(_ tableView: UITableView,
                             moveRowAt sourceIndexPath: IndexPath,
                             to destinationIndexPath: IndexPath) {
-        dataSourceController.sources.move(fromOffsets: [sourceIndexPath.row], toOffset: destinationIndexPath.row)
+        let dataSource = dataSourceController.sources.remove(at: sourceIndexPath.row)
+        dataSourceController.sources.insert(dataSource, at: destinationIndexPath.row)
     }
 
     override func tableView(_ tableView: UITableView,
@@ -370,6 +371,14 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return false
         }
         return true
+    }
+
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        .none
+    }
+
+    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        false
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
