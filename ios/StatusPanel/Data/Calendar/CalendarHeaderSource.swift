@@ -22,22 +22,19 @@ import Foundation
 
 class CalendarHeaderSource : DataSource {
 
-    enum DateFormat {
-
-        case fixed(format: String)
-        case variable(long: String, short: String)
-
-    }
-
     class CalendarHeaderItem : DataItemBase {
 
         let date: Date
-        let format: DateFormat
+
+        let longFormat: String
+        let shortFormat: String
+
         let flags: DataItemFlags
 
-        init(for date: Date, format: DateFormat, flags: DataItemFlags) {
+        init(for date: Date, longFormat: String, shortFormat: String, flags: DataItemFlags) {
             self.date = date
-            self.format = format
+            self.longFormat = longFormat
+            self.shortFormat = shortFormat
             self.flags = flags
         }
 
@@ -46,24 +43,6 @@ class CalendarHeaderSource : DataSource {
         var prefix: String { "" }
 
         var subText: String? { nil }
-
-        var shortFormat: String {
-            switch format {
-            case .fixed(let format):
-                return format
-            case .variable(long: _, short: let short):
-                return short
-            }
-        }
-
-        var longFormat: String {
-            switch format {
-            case .fixed(let format):
-                return format
-            case .variable(long: let long, short: _):
-                return long
-            }
-        }
 
         func getText(checkFit: (String) -> Bool) -> String {
             let df = DateFormatter()
@@ -80,13 +59,19 @@ class CalendarHeaderSource : DataSource {
 
     }
 
-    let format: DateFormat
+    let longFormat: String
+    let shortFormat: String
     let offset: Int
     let component: Calendar.Component
     let flags: DataItemFlags
 
-    init(format: DateFormat, flags: DataItemFlags, offset: Int = 0, component: Calendar.Component = .day) {
-        self.format = format
+    init(longFormat: String,
+         shortFormat: String,
+         flags: DataItemFlags,
+         offset: Int = 0,
+         component: Calendar.Component = .day) {
+        self.longFormat = longFormat
+        self.shortFormat = shortFormat
         self.flags = flags
         self.component = component
         self.offset = offset
@@ -99,7 +84,7 @@ class CalendarHeaderSource : DataSource {
             return
         }
         
-        let data = [CalendarHeaderItem(for: date, format: format, flags: flags)]
+        let data = [CalendarHeaderItem(for: date, longFormat: longFormat, shortFormat: shortFormat, flags: flags)]
         onCompletion(self, data, nil)
     }
 
