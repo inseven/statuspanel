@@ -91,7 +91,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
             label.frame = label.frame.offsetBy(dx: 0, dy: (frame.height - label.bounds.height) / 2)
             cell.contentView.addSubview(label)
         } else if (indexPath.row == 2) {
-            cell.textLabel?.text = "Use custom image"
+            cell.textLabel?.text = "Custom Image"
         } else if (indexPath.row == 3) {
             cell.contentView.bounds = cell.contentView.bounds.rectWithDifferentHeight(kImageRowHeight)
             cell.accessoryType = .disclosureIndicator
