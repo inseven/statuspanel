@@ -75,6 +75,11 @@ struct CalendarHeaderSourceSettingsView: View {
         }
     }
 
+    func update() {
+        settings.format = .variable(long: long, short: short)
+        try! store.save(settings: settings)
+    }
+
     var date: Date {
         Calendar.current.date(byAdding: settings.component, value: settings.offset, to: Date())!
     }
@@ -102,6 +107,7 @@ struct CalendarHeaderSourceSettingsView: View {
                     format = .year
                     long = "y"
                     short = "y"
+                    update()
                 } label: {
                     HStack {
                         Text("Year")
@@ -115,6 +121,7 @@ struct CalendarHeaderSourceSettingsView: View {
                     format = .dayMonth
                     long = "MMMMd"
                     short = "MMMMd"
+                    update()
                 } label: {
                     HStack {
                         Text("Day, Month")
@@ -128,6 +135,7 @@ struct CalendarHeaderSourceSettingsView: View {
                     format = .dayMonthYear
                     long = "yMMMMdEEEE"
                     short = "yMMMMdEEE"
+                    update()
                 } label: {
                     HStack {
                         Text("Day, Month, Year")
@@ -140,6 +148,7 @@ struct CalendarHeaderSourceSettingsView: View {
                 }
                 Button {
                     format = .custom
+                    update()
                 } label: {
                     HStack {
                         Text("Custom")
