@@ -27,8 +27,33 @@ struct CalendarHeaderSourceSettingsView: View {
         case tomorrow
     }
 
+    enum Format {
+        case year
+        case dayMonth
+        case dayMonthYear
+        case custom
+    }
+
     var store: SettingsStore<CalendarHeaderSource.Settings>
     @State var settings: CalendarHeaderSource.Settings
+    @State var format: Format = .custom
+    @State var long: String
+    @State var short: String
+
+    init(store: SettingsStore<CalendarHeaderSource.Settings>, settings: CalendarHeaderSource.Settings) {
+        self.store = store
+        var settings = settings
+        if case .variable(let long, let short) = settings.format {
+            _long = State(initialValue: long)
+            _short = State(initialValue: short)
+        } else {
+            // TODO: Common accessor for the defaults?
+            settings.format = .variable(long: "yMMMMdEEEE", short: "yMMMMdEEE")
+            _long = State(initialValue: "yMMMMdEEEE")
+            _short = State(initialValue: "yMMMMdEEE")
+        }
+        _settings = State(initialValue: settings)
+    }
 
     func offset() -> Binding<Offset> {
         Binding {
@@ -50,13 +75,104 @@ struct CalendarHeaderSourceSettingsView: View {
         }
     }
 
+    var date: Date {
+        Calendar.current.date(byAdding: settings.component, value: settings.offset, to: Date())!
+    }
+
+    func preview(format: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.setLocalizedDateFormatFromTemplate(format)
+        return dateFormatter.string(from: date)
+    }
+
     var body: some View {
         Form {
+            Section {
+                Text(preview(format: long))
+                    .frame(maxWidth: .infinity)
+            }
             Section {
                 Picker("Date", selection: offset()) {
                     Text("Today").tag(Offset.today)
                     Text("Tomorrow").tag(Offset.tomorrow)
                 }
+            }
+            Section {
+                Button {
+                    format = .year
+                    long = "y"
+                    short = "y"
+                } label: {
+                    HStack {
+                        Text("Year")
+                            .foregroundColor(.primary)
+                        Spacer()
+                        Text(preview(format: "y"))
+                            .foregroundColor(.secondary)
+                        if format == .year {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+                Button {
+                    format = .dayMonth
+                    long = "MMMMd"
+                    short = "MMMMd"
+                } label: {
+                    HStack {
+                        Text("Day, Month")
+                            .foregroundColor(.primary)
+                        Spacer()
+                        Text(preview(format: "MMMMd"))
+                            .foregroundColor(.secondary)
+                        if format == .dayMonth {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+                Button {
+                    format = .dayMonthYear
+                    long = "yMMMMdEEEE"
+                    short = "yMMMMdEEE"
+                } label: {
+                    HStack {
+                        Text("Day, Month, Year")
+                            .foregroundColor(.primary)
+                            .layoutPriority(1)
+                        Spacer()
+                        Text(preview(format: "yMMMMdEEE"))
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.trailing)
+                        if format == .dayMonthYear {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+                Button {
+                    format = .custom
+                } label: {
+                    HStack {
+                        Text("Custom")
+                            .foregroundColor(.primary)
+                        Spacer()
+                        if format == .custom {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+            } header: {
+                Text("Format")
+            }
+            if case .custom = format {
+                Section {
+                    TextField("Long", text: $long)
+                    TextField(long.isEmpty ? "Short" : long, text: $short)
+                }
+                .autocapitalization(.none)
             }
         }
     }
