@@ -316,7 +316,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             }
             return false
         } else if indexPath.section == DisplaySettingsSection {
-            return indexPath.row > 0
+            return indexPath.row > 1
         } else if indexPath.section == DataSourcesSection && indexPath.row >= DataSourceEditors.count {
             return false
         } else {
@@ -349,11 +349,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 return
             }
         case DisplaySettingsSection:
-            if indexPath.row == 1 {
+            if indexPath.row == 2 {
                 vcid = "DarkModeEditor"
-            } else if indexPath.row == 2 {
-                vcid = "MaxLinesEditor"
             } else if indexPath.row == 3 {
+                vcid = "MaxLinesEditor"
+            } else if indexPath.row == 4 {
                 vcid = "PrivacyModeEditor"
             }
         case TitleFontSection:
