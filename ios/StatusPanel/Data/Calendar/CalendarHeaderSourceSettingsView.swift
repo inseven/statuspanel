@@ -107,12 +107,8 @@ struct CalendarHeaderSourceSettingsView: View {
                         Text("Year")
                             .foregroundColor(.primary)
                         Spacer()
-                        Text(preview(format: "y"))
-                            .foregroundColor(.secondary)
-                        if format == .year {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.accentColor)
-                        }
+                        Image(systemName: "checkmark")
+                            .foregroundColor(format == .year ? .accentColor : .clear)
                     }
                 }
                 Button {
@@ -124,12 +120,8 @@ struct CalendarHeaderSourceSettingsView: View {
                         Text("Day, Month")
                             .foregroundColor(.primary)
                         Spacer()
-                        Text(preview(format: "MMMMd"))
-                            .foregroundColor(.secondary)
-                        if format == .dayMonth {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.accentColor)
-                        }
+                        Image(systemName: "checkmark")
+                            .foregroundColor(format == .dayMonth ? .accentColor : .clear)
                     }
                 }
                 Button {
@@ -142,13 +134,8 @@ struct CalendarHeaderSourceSettingsView: View {
                             .foregroundColor(.primary)
                             .layoutPriority(1)
                         Spacer()
-                        Text(preview(format: "yMMMMdEEE"))
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.trailing)
-                        if format == .dayMonthYear {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.accentColor)
-                        }
+                        Image(systemName: "checkmark")
+                            .foregroundColor(format == .dayMonthYear ? .accentColor : .clear)
                     }
                 }
                 Button {
