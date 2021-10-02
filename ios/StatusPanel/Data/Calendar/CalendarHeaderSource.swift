@@ -22,35 +22,6 @@ import Foundation
 import SwiftUI
 import UIKit
 
-extension Calendar.Component: Codable {
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        switch self {
-        case .day:
-            try container.encode("day")
-        case .month:
-            try container.encode("month")
-        default:
-            throw StatusPanelError.noSettings
-        }
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let component = try container.decode(String.self)
-        switch component {
-        case "day":
-            self = .day
-        case "month":
-            self = .month
-        default:
-            throw StatusPanelError.noSettings
-        }
-    }
-
-}
-
 final class CalendarHeaderSource : DataSource {
 
     enum DateFormat: Codable {

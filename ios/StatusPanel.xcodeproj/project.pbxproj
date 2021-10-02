@@ -20,6 +20,7 @@
 		D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104862707BAD50020A2CF /* DataSourceInstance.swift */; };
 		D891048A2707BB6D0020A2CF /* DummyDataSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104892707BB6D0020A2CF /* DummyDataSettingsView.swift */; };
 		D891048C2707BDB20020A2CF /* CalendarHeaderSourceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D891048B2707BDB20020A2CF /* CalendarHeaderSourceSettingsView.swift */; };
+		D891048E2707E4B70020A2CF /* Calendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D891048D2707E4B70020A2CF /* Calendar.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
@@ -88,6 +89,7 @@
 		D89104862707BAD50020A2CF /* DataSourceInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceInstance.swift; sourceTree = "<group>"; };
 		D89104892707BB6D0020A2CF /* DummyDataSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyDataSettingsView.swift; sourceTree = "<group>"; };
 		D891048B2707BDB20020A2CF /* CalendarHeaderSourceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderSourceSettingsView.swift; sourceTree = "<group>"; };
+		D891048D2707E4B70020A2CF /* Calendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calendar.swift; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderSource.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
@@ -228,6 +230,7 @@
 				D8293A0B26F787D3008CE13B /* URL.swift */,
 				D83CC5212707543E00260DC1 /* UIStoryboard.swift */,
 				D89104842707B99F0020A2CF /* UIViewController.swift */,
+				D891048D2707E4B70020A2CF /* Calendar.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -399,6 +402,7 @@
 				DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */,
 				DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */,
 				D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */,
+				D891048E2707E4B70020A2CF /* Calendar.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
 				DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */,
 				D8DAED7226E3F3320002F388 /* Configuration.swift in Sources */,
