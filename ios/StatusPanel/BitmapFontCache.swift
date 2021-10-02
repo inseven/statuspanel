@@ -265,6 +265,13 @@ class BitmapFontCache {
                 return img
             }
         }
+        if let flagString = ch.flagString() {
+            if lineHeight >= Fonts.guiConsFont.charh + 6 {
+                let img = makeFlagImage(forString: flagString, style: style)
+                imgDict.setImageForChar(ch, image: img)
+                return img
+            }
+        }
         if lineHeight >= Fonts.guiConsFont.charh + 4 {
             // Then we have enough space to draw our replacement image box thing
             let img = makeReplacementImage(forCharName: charName, style: style)
@@ -290,14 +297,39 @@ class BitmapFontCache {
         return CGImage.New(CGSize(width: w, height: h), flipped: true) { ctx in
             var x = 4
             let y = (h - replacementStyle.font.charh) / 2
-            ctx.setLineWidth(CGFloat(style.scale))
             let col: CGFloat = style.darkMode ? 1 : 0
             ctx.setStrokeColor(red: col, green: col, blue: col, alpha: 1)
-            ctx.stroke(CGRect(x: 0, y: 0, width: w, height: h))
+            ctx.stroke(CGRect(x: 0.5, y: 0.5, width: CGFloat(w) - 1, height: CGFloat(h) - 1))
             for ch in charName {
                 let img = getImage(ch, forStyle: replacementStyle)
                 ctx.draw(img, in: CGRect(x: x, y: y, width: img.width, height: img.height))
                 x += img.width
+            }
+        }
+    }
+
+    func makeFlagImage(forString string: String, style: Style) -> CGImage {
+        let replacementStyle = BitmapFontCache.Style(font: Fonts.guiConsFont, scale: 1, darkMode: style.darkMode)
+        let textWidth = getTextWidth(string, forStyle: replacementStyle)
+        let h = style.scaledHeight
+        let w = textWidth + 6
+        return CGImage.New(CGSize(width: w, height: h), flipped: true) { ctx in
+            let col: CGFloat = style.darkMode ? 1 : 0
+            ctx.setStrokeColor(red: col, green: col, blue: col, alpha: 1)
+            let flagHeight = replacementStyle.scaledHeight + 4
+            let flagPlusPoleHeight = (flagHeight * 3) / 2 // This is only if we actually have enough space for the whole pole
+            let top = CGFloat(max(0, (h - flagPlusPoleHeight) / 2))
+            let topLeft = CGPoint(x: 0.5, y: 0.5 + top)
+            ctx.stroke(CGRect(origin: topLeft, size: CGSize(width: textWidth + 4, height: flagHeight - 1))) // flag box
+            ctx.stroke(CGRect(origin: topLeft, size: CGSize(width: 0, height: flagPlusPoleHeight - 1))) // flag pole (may be truncated)
+            var x: CGFloat = 2.0
+            let y = top + 2.0
+            for ch in string {
+                let img = getImage(ch, forStyle: replacementStyle)
+                let imgWidth = CGFloat(img.width)
+                let imgHeight = CGFloat(img.height)
+                ctx.draw(img, in: CGRect(x: x, y: y, width: imgWidth, height: imgHeight))
+                x += imgWidth
             }
         }
     }

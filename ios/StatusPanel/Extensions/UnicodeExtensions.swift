@@ -91,3 +91,36 @@ public extension String.UnicodeScalarView {
         return scalarAt(index: -1, equals: value)
     }
 }
+
+public extension Character {
+    func flagString() -> String? {
+        let scalars = self.unicodeScalars
+        if scalars.count == 2 && scalars.firstInRange(.RegionalIndicatorStart, .RegionalIndicatorEnd) &&
+                scalars.inRange(index: 1, .RegionalIndicatorStart, .RegionalIndicatorEnd) {
+            // Emoji regional indicator style flag
+            let A = UnicodeScalarEnum.A.rawValue
+            let regionalStart = UnicodeScalarEnum.RegionalIndicatorStart.rawValue
+            let ch1 = Character(Unicode.Scalar(A + (scalars.get(0)!.value - regionalStart))!)
+            let ch2 = Character(Unicode.Scalar(A + (scalars.get(1)!.value - regionalStart))!)
+            return "\(ch1)\(ch2)"
+        }
+
+        if scalars.firstIs(.BlackFlag) && scalars.lastIs(.CancelTag) {
+            // Emoji tag sequence style flag
+            let a = UnicodeScalarEnum.a.rawValue
+            let tag_a = UnicodeScalarEnum.Tag_a.rawValue
+            var chars: [String] = []
+            for i in 1 ..< scalars.count - 1 {
+                let scalar = scalars.get(i)!
+                if !scalar.inRange(.Tag_a, .Tag_z) {
+                    // Shouldn't happen in a valid flag sequence
+                    return nil
+                }
+                chars.append(String(Unicode.Scalar(a + (scalar.value - tag_a))!))
+            }
+            return chars.joined()
+        }
+
+        return nil
+    }
+}
