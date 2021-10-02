@@ -67,16 +67,22 @@ class BitmapFontCache {
         }
 
         func getImageForChar(_ char: Character) -> CGImage? {
-            // First try and remove any modifiers from the character which we can't represent and don't care about
+            // First try and remove any modifiers from the character which we can't represent and don't care about.
+            // We deliberately don't just chop the char off at the first code point, because I want to be able to
+            // identify sequences we don't currently handle.
             var scalars = char.unicodeScalars
             while scalars.count > 1 {
                 let lastScalar = scalars.last?.value ?? 0
                 if lastScalar >= 0xFE00 && lastScalar <= 0xFE0F {
-                    // Variation selector, particularly U+FE0E and U+FE0F for emoji-style and text-only style.
+                    // Variation selector, particularly U+FE0E and U+FE0F for text-only style and emoji-style.
                     scalars.removeLast()
                 } else if lastScalar >= 0x1F3FB && lastScalar <= 0x1F3FF {
-                    // Skin tone modifier
+                    // Skin tone modifier (EMOJI MODIFIER FITZPATRICK TYPE)
                     scalars.removeLast()
+                } else if scalars.count > 2 && scalars[scalars.index(scalars.endIndex, offsetBy: -2)].value == 0x200D &&
+                        (lastScalar == 0x2640 || lastScalar == 0x2642) {
+                    // Zero-width joiner plus female/male sign
+                    scalars.removeLast(2)
                 } else {
                     break
                 }
