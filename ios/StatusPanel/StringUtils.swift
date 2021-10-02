@@ -58,7 +58,7 @@ struct StringUtils {
                     var remainder = ""
                     for ch in word {
                         let chlen = widthFn(String(ch))
-                        if lineWidth + chlen <= maxWidth {
+                        if lineWidth == 0 || lineWidth + chlen <= maxWidth {
                             addToLine(String(ch), chlen)
                         } else {
                             remainder.append(ch)
