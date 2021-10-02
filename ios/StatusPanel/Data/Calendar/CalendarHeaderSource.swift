@@ -25,11 +25,28 @@ import UIKit
 extension Calendar.Component: Codable {
 
     public func encode(to encoder: Encoder) throws {
-        throw StatusPanelError.noSettings
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .day:
+            try container.encode("day")
+        case .month:
+            try container.encode("month")
+        default:
+            throw StatusPanelError.noSettings
+        }
     }
 
     public init(from decoder: Decoder) throws {
-        self = .day
+        let container = try decoder.singleValueContainer()
+        let component = try container.decode(String.self)
+        switch component {
+        case "day":
+            self = .day
+        case "month":
+            self = .month
+        default:
+            throw StatusPanelError.noSettings
+        }
     }
 
 }
@@ -110,8 +127,8 @@ final class CalendarHeaderSource : DataSource {
 
     }
 
-    let name = "Header"
-    let configurable = false
+    let name = "Date Header"
+    let configurable = true
 
     let flags: DataItemFlags
     let defaults: Settings
@@ -137,12 +154,10 @@ final class CalendarHeaderSource : DataSource {
 
     func summary(settings: Settings) -> String? { nil }
 
-    func settingsViewController(settings: Settings, store: Store) -> UIViewController? {
-        UIViewController()
-    }
+    func settingsViewController(settings: Settings, store: Store) -> UIViewController? { nil }
 
-    func settingsView(settings: Settings, store: Store) -> EmptyView {
-        EmptyView()
+    func settingsView(settings: Settings, store: Store) -> some View {
+        CalendarHeaderSourceSettingsView(store: store, settings: settings)
     }
 
 }

@@ -75,7 +75,7 @@ final class CalendarSource : DataSource {
 
     }
 
-    let name = "Calendars"
+    let name = "Events"
     let configurable = true
 
     let header : String?
