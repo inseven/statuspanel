@@ -27,9 +27,11 @@ struct LicenseView: View {
 
     var body: some View {
         ScrollView {
-            Text(license)
-                .frame(maxWidth: .infinity)
-                .padding()
+            HStack {
+                Text(license)
+                Spacer()
+            }
+            .padding()
         }
         .navigationBarTitle(name, displayMode: .inline)
     }
