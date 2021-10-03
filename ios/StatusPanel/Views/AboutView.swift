@@ -87,6 +87,7 @@ struct AboutView: View {
                     .fontWeight(.regular)
             })
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 
 }
