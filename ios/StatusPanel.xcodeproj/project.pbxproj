@@ -46,6 +46,7 @@
 		DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */; };
 		DB87810C223D67B2005AEBD8 /* UpdateTimeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */; };
 		DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */; };
+		DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB981489270887590029BA0A /* UnicodeExtensions.swift */; };
 		DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B35F26F5FA4600BC5FF0 /* BitmapFontCache.swift */; };
 		DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987C2143E2920084B710 /* AppDelegate.swift */; };
 		DBCA987F2143E2920084B710 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987E2143E2920084B710 /* ViewController.swift */; };
@@ -117,6 +118,7 @@
 		DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapFontLabel.swift; sourceTree = "<group>"; };
 		DB87810B223D67B2005AEBD8 /* UpdateTimeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateTimeController.swift; sourceTree = "<group>"; };
 		DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyModeController.swift; sourceTree = "<group>"; };
+		DB981489270887590029BA0A /* UnicodeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnicodeExtensions.swift; sourceTree = "<group>"; };
 		DBC3B35F26F5FA4600BC5FF0 /* BitmapFontCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapFontCache.swift; sourceTree = "<group>"; };
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA987C2143E2920084B710 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
 				D8293A0B26F787D3008CE13B /* URL.swift */,
 				D83CC5212707543E00260DC1 /* UIStoryboard.swift */,
+				DB981489270887590029BA0A /* UnicodeExtensions.swift */,
 				D89104842707B99F0020A2CF /* UIViewController.swift */,
 				D891048D2707E4B70020A2CF /* Calendar.swift */,
 			);
@@ -423,6 +426,7 @@
 				DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */,
 				D83CC5222707543E00260DC1 /* UIStoryboard.swift in Sources */,
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
+				DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */,
 				DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */,
 				D83CC5202707532400260DC1 /* DataSourceWrapper.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */,

@@ -42,16 +42,8 @@ struct CalendarHeaderSourceSettingsView: View {
 
     init(store: SettingsStore<CalendarHeaderSource.Settings>, settings: CalendarHeaderSource.Settings) {
         self.store = store
-        var settings = settings
-        if case .variable(let long, let short) = settings.format {
-            _long = State(initialValue: long)
-            _short = State(initialValue: short)
-        } else {
-            // TODO: Common accessor for the defaults?
-            settings.format = .variable(long: "yMMMMdEEEE", short: "yMMMMdEEE")
-            _long = State(initialValue: "yMMMMdEEEE")
-            _short = State(initialValue: "yMMMMdEEE")
-        }
+        _long = State(initialValue: settings.longFormat)
+        _short = State(initialValue: settings.shortFormat)
         _settings = State(initialValue: settings)
     }
 
@@ -76,7 +68,8 @@ struct CalendarHeaderSourceSettingsView: View {
     }
 
     func update() {
-        settings.format = .variable(long: long, short: short)
+        settings.longFormat = long
+        settings.shortFormat = short
         try! store.save(settings: settings)
     }
 

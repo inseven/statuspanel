@@ -231,45 +231,45 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return cell
         case DisplaySettingsSection:
             let row = indexPath.row
-            let cell = UITableViewCell(style: row == 1 || row == 2  || row == 3 ? .value1 : .default, reuseIdentifier: nil)
+            let cell = UITableViewCell(style: row == 2 || row == 3  || row == 4 ? .value1 : .default, reuseIdentifier: nil)
             switch row {
             case 0:
-                cell.textLabel?.text = "Use two columns"
+                cell.textLabel?.text = "Use Two Columns"
                 let control = UISwitch()
                 control.isOn = config.displayTwoColumns
                 control.addTarget(self, action:#selector(columSwitchChanged(sender:)), for: .valueChanged)
                 cell.accessoryView = control
             case 1:
-                cell.textLabel?.text = "Show icons"
+                cell.textLabel?.text = "Show Icons"
                 let control = UISwitch()
                 control.isOn = config.showIcons
                 control.addTarget(self, action:#selector(showIconsChanged(sender:)), for: .valueChanged)
                 cell.accessoryView = control
             case 2:
-                cell.textLabel?.text = "Dark mode"
+                cell.textLabel?.text = "Dark Mode"
                 switch config.darkMode {
                 case .off:
                     cell.detailTextLabel?.text = "Off"
                 case .on:
                     cell.detailTextLabel?.text = "On"
                 case .system:
-                    cell.detailTextLabel?.text = "Use system"
+                    cell.detailTextLabel?.text = "Use System"
                 }
                 cell.accessoryType = .disclosureIndicator
             case 3:
-                cell.textLabel?.text = "Maximum lines per item"
+                cell.textLabel?.text = "Maximum Lines per Item"
                 let val = config.maxLines
                 cell.detailTextLabel?.text = val == 0 ? "Unlimited" : String(format: "%d", val)
                 cell.accessoryType = .disclosureIndicator
             case 4:
-                cell.textLabel?.text = "Privacy mode"
+                cell.textLabel?.text = "Privacy Mode"
                 switch config.privacyMode {
                 case .redactLines:
-                    cell.detailTextLabel?.text = "Redact lines"
+                    cell.detailTextLabel?.text = "Redact Lines"
                 case .redactWords:
-                    cell.detailTextLabel?.text = "Redact words"
+                    cell.detailTextLabel?.text = "Redact Words"
                 case .customImage:
-                    cell.detailTextLabel?.text = "Custom image"
+                    cell.detailTextLabel?.text = "Custom Image"
                 }
                 cell.accessoryType = .disclosureIndicator
             default:
@@ -332,7 +332,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             }
             return false
         } else if indexPath.section == DisplaySettingsSection {
-            return indexPath.row > 0
+            return indexPath.row > 1
         } else if indexPath.section == DataSourcesSection {
             return dataSourceController.sources[indexPath.row].dataSource.configurable
         } else {
@@ -414,11 +414,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 return
             }
         case DisplaySettingsSection:
-            if indexPath.row == 1 {
+            if indexPath.row == 2 {
                 vcid = "DarkModeEditor"
-            } else if indexPath.row == 2 {
-                vcid = "MaxLinesEditor"
             } else if indexPath.row == 3 {
+                vcid = "MaxLinesEditor"
+            } else if indexPath.row == 4 {
                 vcid = "PrivacyModeEditor"
             }
         case TitleFontSection:

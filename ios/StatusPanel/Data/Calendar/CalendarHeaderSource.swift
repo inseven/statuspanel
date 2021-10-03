@@ -24,23 +24,20 @@ import UIKit
 
 final class CalendarHeaderSource : DataSource {
 
-    enum DateFormat: Codable {
-
-        case fixed(format: String)
-        case variable(long: String, short: String)
-
-    }
-
     struct Settings: DataSourceSettings {
 
-        var format: DateFormat
+        var longFormat: String
+        var shortFormat: String
+
         var offset: Int
         var component: Calendar.Component
 
-        init(format: DateFormat = .fixed(format: "YYYY"),
+        init(longFormat: String = "yMMMMdEEEE",
+             shortFormat: String = "yMMMMdEEE",
              offset: Int = 0,
              component: Calendar.Component = .day) {
-            self.format = format
+            self.longFormat = longFormat
+            self.shortFormat = shortFormat
             self.offset = offset
             self.component = component
         }
@@ -50,12 +47,16 @@ final class CalendarHeaderSource : DataSource {
     class CalendarHeaderItem : DataItemBase {
 
         let date: Date
-        let format: DateFormat
+
+        let longFormat: String
+        let shortFormat: String
+
         let flags: DataItemFlags
 
-        init(for date: Date, format: DateFormat, flags: DataItemFlags) {
+        init(for date: Date, longFormat: String, shortFormat: String, flags: DataItemFlags) {
             self.date = date
-            self.format = format
+            self.longFormat = longFormat
+            self.shortFormat = shortFormat
             self.flags = flags
         }
 
@@ -64,24 +65,6 @@ final class CalendarHeaderSource : DataSource {
         var prefix: String { "" }
 
         var subText: String? { nil }
-
-        var shortFormat: String {
-            switch format {
-            case .fixed(let format):
-                return format
-            case .variable(long: _, short: let short):
-                return short
-            }
-        }
-
-        var longFormat: String {
-            switch format {
-            case .fixed(let format):
-                return format
-            case .variable(long: let long, short: _):
-                return long
-            }
-        }
 
         func getText(checkFit: (String) -> Bool) -> String {
             let df = DateFormatter()
@@ -100,16 +83,19 @@ final class CalendarHeaderSource : DataSource {
 
     let name = "Date Header"
     let configurable = true
-
+    
     let flags: DataItemFlags
-    let defaults: Settings
+    let offset: Int
+    let component: Calendar.Component
 
-    init(defaults: Settings,
-         flags: DataItemFlags,
+    var defaults: Settings { CalendarHeaderSource.Settings() }
+
+    init(flags: DataItemFlags,
          offset: Int = 0,
          component: Calendar.Component = .day) {
-        self.defaults = defaults
         self.flags = flags
+        self.offset = offset
+        self.component = component
     }
 
     func data(settings: Settings, completion: @escaping (CalendarHeaderSource, [DataItemBase], Error?) -> Void) {
@@ -119,7 +105,7 @@ final class CalendarHeaderSource : DataSource {
             return
         }
         
-        let data = [CalendarHeaderItem(for: date, format: settings.format, flags: flags)]
+        let data = [CalendarHeaderItem(for: date, longFormat: settings.longFormat, shortFormat: settings.shortFormat, flags: flags)]
         completion(self, data, nil)
     }
 

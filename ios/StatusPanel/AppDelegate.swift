@@ -34,7 +34,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         client = Client(baseUrl: "https://api.statuspanel.io/")
-
         application.registerForRemoteNotifications()
 
         window?.tintColor = UIColor(named: "TintColor")

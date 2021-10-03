@@ -49,14 +49,11 @@ class DataSourceController {
     init() {
 
         factories = [
-            .calendar: CalendarHeaderSource(defaults: CalendarHeaderSource.Settings(),
-                                            flags: []).wrapped()
+            .calendar: CalendarHeaderSource(flags: []).wrapped()
         ]
 
         let configuration = try! Bundle.main.configuration()
-        add(dataSource: CalendarHeaderSource(defaults: CalendarHeaderSource.Settings(format: .variable(long: "yMMMMdEEE",
-                                                                                                       short: "yMMMMdEEEE")),
-                                             flags: [.header, .spansColumns]))
+        add(dataSource: CalendarHeaderSource(flags: [.header, .spansColumns]))
         add(dataSource: TFLDataSource(configuration: configuration))
         add(dataSource: NationalRailDataSource(configuration: configuration))
         add(dataSource: CalendarSource())
