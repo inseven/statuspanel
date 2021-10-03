@@ -157,7 +157,10 @@ class BitmapFontLabel: UILabel {
                 if redactMode == .redactLines || (redactMode == .redactWords && !ch.isWhitespace) {
                     ctx.addRect(rect)
                 } else {
-                    ctx.draw(chImg, in: rect)
+                    ctx.saveGState()
+                    ctx.clip(to: rect, mask: chImg)
+                    ctx.fill(rect)
+                    ctx.restoreGState()
                 }
                 x = x + chImg.width
             }
