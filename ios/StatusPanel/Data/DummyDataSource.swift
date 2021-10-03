@@ -48,8 +48,8 @@ class DummyDataSource : DataSource {
                 specialChars.append(str)
             }
             let specialCharsStr = specialChars.joined(separator: "")
+            let specialCharsItem = CalendarItem(icon: "🗓", title: specialCharsStr, location: specialCharsStr)
             let dummyData: [DataItemBase] = [
-                CalendarItem(icon: "🗓", title: specialCharsStr, location: specialCharsStr),
                 CalendarItem(time: "06:00",
                              title: "Something that has really long text that needs to wrap. Like, really really long!",
                              location: "A place that is also really really lengthy"),
@@ -58,6 +58,9 @@ class DummyDataSource : DataSource {
                 CalendarItem(time: "09:40", title: "Some text wot is multiline", location: nil),
             ]
             data.append(contentsOf: dummyData)
+            if Config().showIcons {
+                data.append(specialCharsItem)
+            }
         }
         #endif
         onCompletion(self, data, nil)

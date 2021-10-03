@@ -100,6 +100,16 @@ class Fonts {
             self.attribution = attribution
             self.supportsEmoji = true
         }
+
+        var textHeight: Int {
+            if let bitmapInfo = self.bitmapInfo {
+                // Bitmap font, textSize is scale factor
+                return bitmapInfo.charh * textSize
+            } else {
+                // UIFont, textSize is the font size
+                return textSize
+            }
+        }
     }
 
     private static let castpixelAttribution = """
