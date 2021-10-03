@@ -274,17 +274,18 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             let fontLabel = ViewController.getLabel(frame: .zero, font: font.configName, style: .text)
             fontLabel.text = font.humanReadableName
             fontLabel.translatesAutoresizingMaskIntoConstraints = false
+            fontLabel.textColor = .secondaryLabel
             cell.contentView.addSubview(fontLabel)
 
             NSLayoutConstraint.activate([
+
                 textLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
                 textLabel.leadingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.leadingAnchor),
-            ])
 
-            NSLayoutConstraint.activate([
                 fontLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
                 fontLabel.leadingAnchor.constraint(equalTo: textLabel.trailingAnchor),
                 fontLabel.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
+
             ])
 
             switch indexPath.row {
