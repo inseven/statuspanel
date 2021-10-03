@@ -65,7 +65,7 @@ final class DummyDataSource : DataSource {
                              title: "Something that has really long text that needs to wrap. Like, really really long!",
                              location: "A place that is also really really lengthy"),
                 DataItem(text: "Northern line: part suspended", flags: [.warning]),
-                DataItem(text: "07:44 to CBG:\u{2028}Cancelled", flags: [.warning]),
+                DataItem(text: "07:44 to CBG: Cancelled", flags: [.warning]),
                 CalendarItem(time: "09:40", title: "Some text wot is multiline", location: nil),
             ]
             data.append(contentsOf: dummyData)
