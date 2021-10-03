@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 import EventKit
+import SwiftUI
 import UIKit
 
 protocol SettingsViewControllerDelegate: AnyObject {
@@ -35,6 +36,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     let TitleFontSection = 3
     let BodyFontSection = 4
     let PairedDevicesSection = 5
+    let AboutSection = 6
 
     let DisplaySettingsRowCount = 5
 
@@ -81,7 +83,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 6
+        return 7
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -108,6 +110,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 n += 1 // For "Add dummy device"
             #endif
             return n
+        case AboutSection:
+            return 1
         default:
             return 0
         }
@@ -261,34 +265,57 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             }
             return cell
         case TitleFontSection:
-            let config = Config()
-            let font = config.availableFonts[indexPath.row]
+
+            let font = Config().availableFonts[indexPath.row]
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
-            let label = ViewController.getLabel(frame:frame, font: font.configName, style: .text)
+            let label = ViewController.getLabel(frame: .zero, font: font.configName, style: .text)
             label.text = font.humanReadableName
-            label.sizeToFit()
-            label.frame = label.frame.offsetBy(dx: 30, dy: (frame.height - label.bounds.height) / 2)
+            label.translatesAutoresizingMaskIntoConstraints = false
+
+            cell.contentView.addSubview(label)
+            let constraints = [
+                label.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                label.leadingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.leadingAnchor),
+                label.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
+            ]
+            NSLayoutConstraint.activate(constraints)
+
             if font.configName == config.titleFont {
-                cell.imageView?.image = UIImage(systemName: "checkmark")
+                cell.accessoryType = .checkmark
+            } else {
+                cell.accessoryType = .none
             }
-            cell.contentView.addSubview(label)
-            cell.accessoryType = .detailButton
+
             return cell
+
         case BodyFontSection:
-            let config = Config()
-            let font = config.availableFonts[indexPath.row]
+
+            let font = Config().availableFonts[indexPath.row]
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
-            let label = ViewController.getLabel(frame:frame, font: font.configName, style: .text)
+            let label = ViewController.getLabel(frame: cell.contentView.frame, font: font.configName, style: .text)
             label.text = font.humanReadableName
-            label.sizeToFit()
-            label.frame = label.frame.offsetBy(dx: 30, dy: (frame.height - label.bounds.height) / 2)
-            if font.configName == config.bodyFont {
-                cell.imageView?.image = UIImage(systemName: "checkmark")
-            }
+            label.translatesAutoresizingMaskIntoConstraints = false
+
             cell.contentView.addSubview(label)
-            cell.accessoryType = .detailButton
+            let constraints = [
+                label.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                label.leadingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.leadingAnchor),
+                label.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
+            ]
+            NSLayoutConstraint.activate(constraints)
+
+            if font.configName == config.bodyFont {
+                cell.accessoryType = .checkmark
+            } else {
+                cell.accessoryType = .none
+            }
+
+            return cell
+
+        case AboutSection:
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            cell.textLabel?.text = "About StatusPanel"
+            cell.textLabel?.textColor = UIColor(named: "TintColor")
             return cell
         default:
             return UITableViewCell(style: .default, reuseIdentifier: nil)
@@ -380,6 +407,10 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 tableView.reloadRows(at: paths, with: .automatic)
             }, completion: nil)
             return
+        case AboutSection:
+            let view = UIHostingController(rootView: AboutView())
+            present(view, animated: true, completion: nil)
+            tableView.deselectRow(at: indexPath, animated: true)
         default:
             break
         }
@@ -418,18 +449,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         }
         let actions = UISwipeActionsConfiguration(actions: [action])
         return actions
-    }
-
-    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        if indexPath.section == BodyFontSection {
-            let vc = storyboard?.instantiateViewController(withIdentifier: "FontInfo") as! FontInfoController
-            vc.font = Config().availableFonts[indexPath.row]
-            navigationController?.pushViewController(vc, animated: true)
-        } else if indexPath.section == TitleFontSection {
-            let vc = storyboard?.instantiateViewController(withIdentifier: "FontInfo") as! FontInfoController
-            vc.font = Config().availableFonts[indexPath.row]
-            navigationController?.pushViewController(vc, animated: true)
-        }
     }
 
 }

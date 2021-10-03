@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		D80380AB23E9B6D2002606C7 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Client.swift */; };
+		D812523627093C4500C9D80A /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523527093C4500C9D80A /* AboutView.swift */; };
+		D81252382709400E00C9D80A /* LicenseRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81252372709400E00C9D80A /* LicenseRow.swift */; };
+		D812523A2709403C00C9D80A /* LicenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81252392709403C00C9D80A /* LicenseView.swift */; };
 		D81DE20326E19F9200504703 /* Clibsodium in Frameworks */ = {isa = PBXBuildFile; productRef = D81DE20226E19F9200504703 /* Clibsodium */; };
 		D825A55D26F6811400B85206 /* DummyDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D825A55C26F6811400B85206 /* DummyDataSource.swift */; };
 		D8293A0C26F787D3008CE13B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8293A0B26F787D3008CE13B /* URL.swift */; };
@@ -72,6 +75,9 @@
 
 /* Begin PBXFileReference section */
 		D80380AA23E9B6D2002606C7 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		D812523527093C4500C9D80A /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		D81252372709400E00C9D80A /* LicenseRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseRow.swift; sourceTree = "<group>"; };
+		D81252392709403C00C9D80A /* LicenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseView.swift; sourceTree = "<group>"; };
 		D825A55C26F6811400B85206 /* DummyDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyDataSource.swift; sourceTree = "<group>"; };
 		D8293A0B26F787D3008CE13B /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -141,6 +147,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D812523427093BAB00C9D80A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D812523527093C4500C9D80A /* AboutView.swift */,
+				D81252372709400E00C9D80A /* LicenseRow.swift */,
+				D81252392709403C00C9D80A /* LicenseView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		D842A3FC265BE81F009C1156 /* Calendar */ = {
 			isa = PBXGroup;
 			children = (
@@ -269,6 +285,7 @@
 				DBCA98802143E2920084B710 /* Main.storyboard */,
 				DBCA987A2143E2920084B710 /* Products */,
 				D842A401265BE916009C1156 /* View Controllers */,
+				D812523427093BAB00C9D80A /* Views */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
@@ -369,6 +386,7 @@
 				DB62F335224FB47A00CA5E64 /* Station.swift in Sources */,
 				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
 				D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */,
+				D81252382709400E00C9D80A /* LicenseRow.swift in Sources */,
 				DBFCBB7A24B8A55700E3B3D3 /* FontInfoController.swift in Sources */,
 				D8293A0C26F787D3008CE13B /* URL.swift in Sources */,
 				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
@@ -387,9 +405,11 @@
 				D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */,
 				D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */,
 				D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */,
+				D812523A2709403C00C9D80A /* LicenseView.swift in Sources */,
 				DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */,
 				DBF15BC72471A61E004AA972 /* WifiProvisionerController.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
+				D812523627093C4500C9D80A /* AboutView.swift in Sources */,
 				DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */,
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */,
@@ -476,7 +496,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -531,7 +551,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -551,7 +571,6 @@
 				CURRENT_PROJECT_VERSION = $BUILD_NUMBER;
 				DEVELOPMENT_TEAM = S4WXAUZQEV;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -578,7 +597,6 @@
 				CURRENT_PROJECT_VERSION = $BUILD_NUMBER;
 				DEVELOPMENT_TEAM = S4WXAUZQEV;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

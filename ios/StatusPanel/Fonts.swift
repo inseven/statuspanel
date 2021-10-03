@@ -45,7 +45,10 @@ class Fonts {
         }
     }
 
-    struct Font {
+    struct Font: Identifiable {
+
+        var id: String { configName }
+
         let configName: String
         let humanReadableName: String
         let uifontName: String? // nil if a bitmap font
