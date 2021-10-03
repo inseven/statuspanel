@@ -21,43 +21,6 @@
 import SwiftUI
 
 
-extension ViewController.LabelStyle {
-
-    var font: String {
-        switch self {
-        case .text:
-            return Config().bodyFont
-        case .header:
-            return Config().titleFont
-        case .subText:
-            return Config().bodyFont
-        }
-    }
-
-}
-
-
-struct Preview: UIViewRepresentable {
-
-    var text: String
-    var style: ViewController.LabelStyle
-
-    init(_ text: String, style: ViewController.LabelStyle = .text) {
-        self.text = text
-        self.style = style
-    }
-
-    func makeUIView(context: Context) -> UILabel {
-        let label = ViewController.getLabel(frame: .zero, font: style.font, style: .text)
-        label.text = text
-        return label
-    }
-
-    func updateUIView(_ uiView: UILabel, context: Context) {
-        uiView.text = text
-    }
-}
-
 struct CalendarHeaderSourceSettingsView: View {
 
     enum Offset {
@@ -115,17 +78,8 @@ struct CalendarHeaderSourceSettingsView: View {
         Calendar.current.date(byAdding: settings.component, value: settings.offset, to: Date())!
     }
 
-    func preview(format: String) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.setLocalizedDateFormatFromTemplate(format)
-        return dateFormatter.string(from: date)
-    }
-
     var body: some View {
         Form {
-            Section {
-                Preview(preview(format: long), style: .header)
-            }
             Section {
                 Picker("Date", selection: offset()) {
                     Text("Today").tag(Offset.today)
