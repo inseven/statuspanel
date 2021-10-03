@@ -48,10 +48,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     let DataSourcesSection = 0
     let UpdateTimeSection = 1
     let DisplaySettingsSection = 2
-    let TitleFontSection = 3
-    let BodyFontSection = 4
-    let PairedDevicesSection = 5
-    let AboutSection = 6
+    let FontsSection = 3
+    let PairedDevicesSection = 4
+    let AboutSection = 5
 
     let DisplaySettingsRowCount = 5
 
@@ -76,7 +75,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     @objc func editTapped(_ sender: Any) {
         tableView.performBatchUpdates {
             self.isEditing = true
-            tableView.deleteSections([1, 2, 3, 4, 5, 6], with: .fade)
+            tableView.deleteSections([1, 2, 3, 4, 5], with: .fade)
             self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
                                                                     target: self,
                                                                     action: #selector(addTapped(_:)))
@@ -97,7 +96,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     @objc func endEditingTapped(_ sender: Any) {
         tableView.performBatchUpdates {
             self.isEditing = false
-            tableView.insertSections([1, 2, 3, 4, 5, 6], with: .fade)
+            tableView.insertSections([1, 2, 3, 4, 5], with: .fade)
             self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                     target: self,
                                                                     action: #selector(self.cancelTapped(_:)))
@@ -136,7 +135,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         if isEditing {
             return 1
         } else {
-            return 7
+            return 6
         }
     }
 
@@ -153,10 +152,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return 1
         case DisplaySettingsSection:
             return DisplaySettingsRowCount
-        case TitleFontSection:
-            return Config().availableFonts.count
-        case BodyFontSection:
-            return Config().availableFonts.count
+        case FontsSection:
+            return 2
         case PairedDevicesSection:
             var n = devices.count
             if n == 0 {
@@ -178,8 +175,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DataSourcesSection: return "Layout"
         case UpdateTimeSection: return "Update Time"
         case DisplaySettingsSection: return "Display Settings"
-        case TitleFontSection: return "Title Font"
-        case BodyFontSection: return "Body Font"
+        case FontsSection: return "Fonts"
         case PairedDevicesSection: return "Paired Devices"
         default: return nil
         }
@@ -279,51 +275,43 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 break
             }
             return cell
-        case TitleFontSection:
+        case FontsSection:
 
-            let font = Config().availableFonts[indexPath.row]
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let label = ViewController.getLabel(frame: .zero, font: font.configName, style: .text)
-            label.text = font.humanReadableName
-            label.translatesAutoresizingMaskIntoConstraints = false
 
-            cell.contentView.addSubview(label)
-            let constraints = [
-                label.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-                label.leadingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.leadingAnchor),
-                label.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
-            ]
-            NSLayoutConstraint.activate(constraints)
+            let textLabel = UILabel()
+            textLabel.translatesAutoresizingMaskIntoConstraints = false
+            cell.contentView.addSubview(textLabel)
 
-            if font.configName == config.titleFont {
-                cell.accessoryType = .checkmark
-            } else {
-                cell.accessoryType = .none
+            let config = Config()
+            let fontName = indexPath.row == 0 ? config.titleFont : config.bodyFont
+            let font = config.getFont(named: fontName)
+            let fontLabel = ViewController.getLabel(frame: .zero, font: font.configName, style: .text)
+            fontLabel.text = font.humanReadableName
+            fontLabel.translatesAutoresizingMaskIntoConstraints = false
+            cell.contentView.addSubview(fontLabel)
+
+            NSLayoutConstraint.activate([
+                textLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                textLabel.leadingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.leadingAnchor),
+            ])
+
+            NSLayoutConstraint.activate([
+                fontLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                fontLabel.leadingAnchor.constraint(equalTo: textLabel.trailingAnchor),
+                fontLabel.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
+            ])
+
+            switch indexPath.row {
+            case 0:
+                textLabel.text = "Title"
+            case 1:
+                textLabel.text = "Body"
+            default:
+                break
             }
 
-            return cell
-
-        case BodyFontSection:
-
-            let font = Config().availableFonts[indexPath.row]
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let label = ViewController.getLabel(frame: cell.contentView.frame, font: font.configName, style: .text)
-            label.text = font.humanReadableName
-            label.translatesAutoresizingMaskIntoConstraints = false
-
-            cell.contentView.addSubview(label)
-            let constraints = [
-                label.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-                label.leadingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.leadingAnchor),
-                label.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
-            ]
-            NSLayoutConstraint.activate(constraints)
-
-            if font.configName == config.bodyFont {
-                cell.accessoryType = .checkmark
-            } else {
-                cell.accessoryType = .none
-            }
+            cell.accessoryType = .disclosureIndicator
 
             return cell
 
@@ -447,29 +435,25 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             } else if indexPath.row == 4 {
                 vcid = "PrivacyModeEditor"
             }
-        case TitleFontSection:
-            let config = Config()
-            config.titleFont = config.availableFonts[indexPath.row].configName
-            tableView.performBatchUpdates({
-                var paths: [IndexPath] = []
-                for i in 0 ..< config.availableFonts.count {
-                    paths.append(IndexPath(row: i, section: TitleFontSection))
-                }
-                tableView.deselectRow(at: indexPath, animated: true)
-                tableView.reloadRows(at: paths, with: .automatic)
-            }, completion: nil)
-            return
-        case BodyFontSection:
-            let config = Config()
-            config.bodyFont = config.availableFonts[indexPath.row].configName
-            tableView.performBatchUpdates({
-                var paths: [IndexPath] = []
-                for i in 0 ..< config.availableFonts.count {
-                    paths.append(IndexPath(row: i, section: BodyFontSection))
-                }
-                tableView.deselectRow(at: indexPath, animated: true)
-                tableView.reloadRows(at: paths, with: .automatic)
-            }, completion: nil)
+        case FontsSection:
+            switch indexPath.row {
+            case 0:
+                let viewController = FontPickerViewController("Title Font", font: Binding {
+                    Config().titleFont
+                } set: { font in
+                    Config().titleFont = font
+                })
+                navigationController?.pushViewController(viewController, animated: true)
+            case 1:
+                let viewController = FontPickerViewController("Body Font", font: Binding {
+                    Config().bodyFont
+                } set: { font in
+                    Config().bodyFont = font
+                })
+                navigationController?.pushViewController(viewController, animated: true)
+            default:
+                break
+            }
             return
         case AboutSection:
             let view = UIHostingController(rootView: AboutView())

@@ -11,6 +11,7 @@
 		D812523627093C4500C9D80A /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523527093C4500C9D80A /* AboutView.swift */; };
 		D81252382709400E00C9D80A /* LicenseRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81252372709400E00C9D80A /* LicenseRow.swift */; };
 		D812523A2709403C00C9D80A /* LicenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81252392709403C00C9D80A /* LicenseView.swift */; };
+		D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523B2709875600C9D80A /* FontPickerViewController.swift */; };
 		D81DE20326E19F9200504703 /* Clibsodium in Frameworks */ = {isa = PBXBuildFile; productRef = D81DE20226E19F9200504703 /* Clibsodium */; };
 		D825A55D26F6811400B85206 /* DummyDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D825A55C26F6811400B85206 /* DummyDataSource.swift */; };
 		D8293A0C26F787D3008CE13B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8293A0B26F787D3008CE13B /* URL.swift */; };
@@ -63,7 +64,6 @@
 		DBF15BC72471A61E004AA972 /* WifiProvisionerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */; };
 		DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */; };
 		DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF1C553223D519C0080CADE /* TFLSettingsController.swift */; };
-		DBFCBB7A24B8A55700E3B3D3 /* FontInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFCBB7924B8A55700E3B3D3 /* FontInfoController.swift */; };
 		DBFCBB7C24B8B6AD00E3B3D3 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */; };
 /* End PBXBuildFile section */
 
@@ -85,6 +85,7 @@
 		D812523527093C4500C9D80A /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		D81252372709400E00C9D80A /* LicenseRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseRow.swift; sourceTree = "<group>"; };
 		D81252392709403C00C9D80A /* LicenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseView.swift; sourceTree = "<group>"; };
+		D812523B2709875600C9D80A /* FontPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPickerViewController.swift; sourceTree = "<group>"; };
 		D825A55C26F6811400B85206 /* DummyDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyDataSource.swift; sourceTree = "<group>"; };
 		D8293A0B26F787D3008CE13B /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -142,7 +143,6 @@
 		DBF15BC82471CAB7004AA972 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalRailDataSource.swift; sourceTree = "<group>"; };
 		DBF1C553223D519C0080CADE /* TFLSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLSettingsController.swift; sourceTree = "<group>"; };
-		DBFCBB7924B8A55700E3B3D3 /* FontInfoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontInfoController.swift; sourceTree = "<group>"; };
 		DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -222,7 +222,7 @@
 		D842A401265BE916009C1156 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				DBFCBB7924B8A55700E3B3D3 /* FontInfoController.swift */,
+				D812523B2709875600C9D80A /* FontPickerViewController.swift */,
 				DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */,
 				DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */,
 				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
@@ -414,9 +414,9 @@
 				DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */,
 				DB62F335224FB47A00CA5E64 /* Station.swift in Sources */,
 				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
+				D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */,
 				D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */,
 				D81252382709400E00C9D80A /* LicenseRow.swift in Sources */,
-				DBFCBB7A24B8A55700E3B3D3 /* FontInfoController.swift in Sources */,
 				D8293A0C26F787D3008CE13B /* URL.swift in Sources */,
 				D891048A2707BB6D0020A2CF /* DummyDataSettingsView.swift in Sources */,
 				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
