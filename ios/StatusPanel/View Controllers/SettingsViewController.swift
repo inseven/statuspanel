@@ -268,11 +268,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             let config = Config()
             let font = config.availableFonts[indexPath.row]
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
+            let frame = cell.contentView.bounds.insetBy(dx: 0, dy: 0)
             let label = ViewController.getLabel(frame:frame, font: font.configName, style: .text)
             label.text = font.humanReadableName
             label.sizeToFit()
-            label.frame = label.frame.offsetBy(dx: 30, dy: (frame.height - label.bounds.height) / 2)
+            label.frame = label.frame.offsetBy(dx: 20, dy: (frame.height - label.bounds.height) / 2)
             if font.configName == config.titleFont {
                 cell.accessoryType = .checkmark
             } else {
@@ -284,11 +284,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             let config = Config()
             let font = config.availableFonts[indexPath.row]
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
+            let frame = cell.contentView.bounds.insetBy(dx: 0, dy: 0)
             let label = ViewController.getLabel(frame:frame, font: font.configName, style: .text)
             label.text = font.humanReadableName
             label.sizeToFit()
-            label.frame = label.frame.offsetBy(dx: 30, dy: (frame.height - label.bounds.height) / 2)
+            label.frame = label.frame.offsetBy(dx: 20, dy: (frame.height - label.bounds.height) / 2)
             if font.configName == config.bodyFont {
                 cell.accessoryType = .checkmark
             } else {
