@@ -101,6 +101,10 @@ class BitmapFontLabel: UILabel {
         return CGSize(width: longest, height: h)
     }
 
+    override var intrinsicContentSize: CGSize {
+        sizeThatFits(.zero)
+    }
+
     private func shouldUseDarkMode() -> Bool {
         return (textColor == UIColor.label && traitCollection.userInterfaceStyle == .dark)
         || textColor == UIColor.lightText || textColor == UIColor.white

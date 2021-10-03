@@ -265,37 +265,53 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             }
             return cell
         case TitleFontSection:
-            let config = Config()
-            let font = config.availableFonts[indexPath.row]
+
+            let font = Config().availableFonts[indexPath.row]
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left * UIScreen.main.scale, dy: 0)
-            let label = ViewController.getLabel(frame:frame, font: font.configName, style: .text)
+            let label = ViewController.getLabel(frame: .zero, font: font.configName, style: .text)
             label.text = font.humanReadableName
-            label.sizeToFit()
-            label.frame = label.frame.offsetBy(dx: 0, dy: (frame.height - label.bounds.height) / 2)
+            label.translatesAutoresizingMaskIntoConstraints = false
+
+            cell.contentView.addSubview(label)
+            let constraints = [
+                label.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                label.leadingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.leadingAnchor),
+                label.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
+            ]
+            NSLayoutConstraint.activate(constraints)
+
             if font.configName == config.titleFont {
                 cell.accessoryType = .checkmark
             } else {
                 cell.accessoryType = .none
             }
-            cell.contentView.addSubview(label)
+
             return cell
+
         case BodyFontSection:
-            let config = Config()
-            let font = config.availableFonts[indexPath.row]
+
+            let font = Config().availableFonts[indexPath.row]
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left * UIScreen.main.scale, dy: 0)
-            let label = ViewController.getLabel(frame:frame, font: font.configName, style: .text)
+            let label = ViewController.getLabel(frame: cell.contentView.frame, font: font.configName, style: .text)
             label.text = font.humanReadableName
-            label.sizeToFit()
-            label.frame = label.frame.offsetBy(dx: 0, dy: (frame.height - label.bounds.height) / 2)
+            label.translatesAutoresizingMaskIntoConstraints = false
+
+            cell.contentView.addSubview(label)
+            let constraints = [
+                label.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                label.leadingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.leadingAnchor),
+                label.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
+            ]
+            NSLayoutConstraint.activate(constraints)
+
             if font.configName == config.bodyFont {
                 cell.accessoryType = .checkmark
             } else {
                 cell.accessoryType = .none
             }
-            cell.contentView.addSubview(label)
+
             return cell
+
         case AboutSection:
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = "About StatusPanel"
