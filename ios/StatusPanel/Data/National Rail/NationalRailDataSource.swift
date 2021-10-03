@@ -95,10 +95,7 @@ class NationalRailDataSource : DataSource {
         }
 
         for delay in data.delayedTrains {
-            // If we don't force a line break here, UILabel breaks the line after the "to"
-            // which makes the resulting text look a bit unbalanced. But it only does this
-            // when using the Amiga Forever font in non-editing mode (!?)
-            var text = "\(delay.std) \(sourceCrs!) to \(targetCrs!):\u{2028}"
+            var text = "\(delay.std) \(sourceCrs!) to \(targetCrs!): "
             if delay.isCancelled {
                 text += "Cancelled"
             } else {
