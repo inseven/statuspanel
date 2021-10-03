@@ -155,7 +155,7 @@ class BitmapFontLabel: UILabel {
                 let chY = y + line * lineHeight * scale + (scaledCharHeight - chImg.height) / 2
                 let rect = CGRect(x: x, y: chY, width: chImg.width, height: chImg.height)
                 if redactMode == .redactLines || (redactMode == .redactWords && !ch.isWhitespace) {
-                    ctx.addRect(rect)
+                    ctx.fill(rect)
                 } else {
                     ctx.saveGState()
                     ctx.clip(to: rect, mask: chImg)
