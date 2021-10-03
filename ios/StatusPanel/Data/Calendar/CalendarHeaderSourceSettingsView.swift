@@ -86,7 +86,7 @@ struct CalendarHeaderSourceSettingsView: View {
                     Text("Tomorrow").tag(Offset.tomorrow)
                 }
             }
-            Section {
+            Section(header: Text("Format")) {
                 Button {
                     format = .year
                     long = "y"
@@ -144,25 +144,17 @@ struct CalendarHeaderSourceSettingsView: View {
                         }
                     }
                 }
-            } header: {
-                Text("Format")
             }
             if case .custom = format {
-                Section {
+                Section(header: Text("Long Format"),
+                        footer: Text("Preferred format specifier.")) {
                     TextField("Long", text: $long)
                         .transition(.opacity)
-                } header: {
-                    Text("Long Format")
-                } footer: {
-                    Text("Preferred format specifier.")
                 }
-                Section {
+                Section(header: Text("Short Format"),
+                        footer: Text("Used if the result of the long format specifier is too long to fit on the screen.")) {
                     TextField(long.isEmpty ? "Short" : long, text: $short)
                         .transition(.opacity)
-                } header: {
-                    Text("Short Format")
-                } footer: {
-                    Text("Used if the result of the long format specifier is too long to fit on the screen.")
                 }
                 .autocapitalization(.none)
             }
