@@ -76,7 +76,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     @objc func editTapped(_ sender: Any) {
         tableView.performBatchUpdates {
             self.isEditing = true
-            tableView.deleteSections([1, 2, 3, 4, 5], with: .fade)
+            tableView.deleteSections([1, 2, 3, 4, 5, 6], with: .fade)
             self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
                                                                     target: self,
                                                                     action: #selector(addTapped(_:)))
@@ -97,7 +97,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     @objc func endEditingTapped(_ sender: Any) {
         tableView.performBatchUpdates {
             self.isEditing = false
-            tableView.insertSections([1, 2, 3, 4, 5], with: .fade)
+            tableView.insertSections([1, 2, 3, 4, 5, 6], with: .fade)
             self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done,
                                                                     target: self,
                                                                     action: #selector(self.cancelTapped(_:)))
