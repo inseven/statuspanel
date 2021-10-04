@@ -107,27 +107,68 @@ class BitmapFontCache {
         }
 
         func getImageForChar(_ char: Character) -> CGImage? {
+            // First, see if we have a cache entry for this exact char
+            if let img = charMap[char] {
+                return img
+            }
+
+            // Next, do we have an image for this exact char? ie is it either a
+            // single scalar within the image, or a (potentially composite) that
+            // we have a custom png for?
+            if let img = createImageForChar(char) {
+                setImageForChar(char, image: img)
+                return img
+            }
+
+            // Next, try stripping the char of extraneous modifiers
             let strippedChar = Self.stripChar(char)
             if let img = charMap[strippedChar] {
                 return img
             }
             if let img = createImageForChar(strippedChar) {
-                charMap[strippedChar] = img
+                setImageForChar(char, image: img)
+                setImageForChar(strippedChar, image: img)
                 return img
+            }
+
+            // Finally, see if it decomposes into multiple ZWJ sequences that we
+            // can represent separately
+            let chars = char.splitZeroWidthJoiners()
+            if chars.count > 1 {
+                var imgs: [CGImage] = []
+                var width: Int = 0
+                for ch in chars {
+                    if let img = getImageForChar(ch) {
+                        imgs.append(img)
+                        width = width + img.width
+                    } else {
+                        // If any part of the sequence cannot be represented, we
+                        // abandon the entire attempt
+                        return nil
+                    }
+                }
+                let composite = CGImage.New(CGSize(width: width, height: charh), flipped: true) { ctx in
+                    var x = 0
+                    for img in imgs {
+                        ctx.draw(img, in: CGRect(x: x, y: 0, width: img.width, height: img.height))
+                        x = x + img.width
+                    }
+                }
+                setImageForChar(char, image: composite)
+                return composite
             }
             return nil
         }
 
         func setImageForChar(_ ch: Character, image: CGImage) {
-            charMap[Self.stripChar(ch)] = image
+            charMap[ch] = image
         }
 
         func charInImage(_ char: Character) -> Bool {
-            let strippedChar = Self.stripChar(char)
-            if strippedChar.unicodeScalars.count != 1 {
+            if char.unicodeScalars.count != 1 {
                 return false
             }
-            let scalarValue = strippedChar.unicodeScalars.first!.value
+            let scalarValue = char.unicodeScalars.first!.value
             let maxValue = font.startIndex.value + UInt32(self.charsPerRow * self.numRows)
             return scalarValue >= font.startIndex.value && scalarValue < maxValue
         }
@@ -150,8 +191,7 @@ class BitmapFontCache {
             return ch.unicodeScalars.map({ String(format:"U+%04X", $0.value) }).joined(separator: "_")
         }
 
-        // Note, ch must have been already stripped of extraneous modifiers
-        func createImageForChar(_ ch: Character) -> CGImage? {
+        private func createImageForChar(_ ch: Character) -> CGImage? {
             if charInImage(ch) {
                 // Get from main image
                 let charIdx = ch.unicodeScalars.first!.value - font.startIndex.value
