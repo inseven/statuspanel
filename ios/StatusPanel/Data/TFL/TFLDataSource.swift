@@ -66,6 +66,7 @@ final class TFLDataSource: DataSource {
         "waterloo-city": "Waterloo & City Line",
     ]
 
+    let id: DataSourceType = .transportForLondon
     let name = "London Underground"
     let configurable = true
 

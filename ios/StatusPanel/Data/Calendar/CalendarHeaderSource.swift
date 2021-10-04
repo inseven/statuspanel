@@ -89,6 +89,7 @@ final class CalendarHeaderSource : DataSource {
 
     }
 
+    let id: DataSourceType = .calendarHeader
     let name = "Date Header"
     let configurable = true
 
@@ -111,7 +112,16 @@ final class CalendarHeaderSource : DataSource {
         completion(self, data, nil)
     }
 
-    func summary(settings: Settings) -> String? { nil }
+    func summary(settings: Settings) -> String? {
+        switch settings.offset {
+        case 0:
+            return "Today"
+        case 1:
+            return "Tomorrow"
+        default:
+            return nil
+        }
+    }
 
     func settingsViewController(settings: Settings, store: Store) -> UIViewController? { nil }
 

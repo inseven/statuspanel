@@ -28,6 +28,7 @@ final class DummyDataSource : DataSource {
         var enabled: Bool = false
     }
 
+    let id: DataSourceType = .dummy
     let name = "Dummy Data"
     let configurable = true
 

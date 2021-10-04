@@ -23,8 +23,9 @@ import SwiftUI
 import UIKit
 
 /// Type erasing wrapper for `DataSource`
-class DataSourceWrapper {
+class DataSourceWrapper: Identifiable {
 
+    fileprivate var idProxy: (() -> DataSourceType)! = nil
     fileprivate var nameProxy: (() -> String)! = nil
     fileprivate var configurableProxy: (() -> Bool)! = nil
     fileprivate var fetchProxy: ((UUID, @escaping (DataSourceWrapper, [DataItemBase]?, Error?) -> Void) -> Void)! = nil
@@ -33,6 +34,7 @@ class DataSourceWrapper {
     fileprivate var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
     fileprivate var validateSettingsProxy: ((DataSourceSettings) -> Bool)! = nil
 
+    var id: DataSourceType { idProxy() }
     var name: String { nameProxy() }
     var configurable: Bool { configurableProxy() }
     func fetch(uuid: UUID, completion: @escaping (DataSourceWrapper, [DataItemBase]?, Error?) -> Void) { fetchProxy(uuid, completion) }
@@ -42,6 +44,7 @@ class DataSourceWrapper {
     func validate(settings: DataSourceSettings) -> Bool { validateSettingsProxy(settings) }
 
     init<T: DataSource>(_ dataSource: T) {
+        idProxy = { dataSource.id }
         configurableProxy = { dataSource.configurable }
         fetchProxy = { uuid, completion in
             do {

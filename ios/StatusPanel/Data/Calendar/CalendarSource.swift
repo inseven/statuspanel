@@ -75,6 +75,7 @@ final class CalendarSource : DataSource {
 
     }
 
+    let id: DataSourceType = .calendar
     let name = "Events"
     let configurable = true
 

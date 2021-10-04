@@ -59,6 +59,7 @@ final class NationalRailDataSource : DataSource {
         }
     }
 
+    let id: DataSourceType = .nationalRail
     let name = "National Rail"
     let configurable = true
 

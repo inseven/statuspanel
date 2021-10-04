@@ -30,14 +30,26 @@ protocol SettingsViewControllerDelegate: AnyObject {
 
 struct AddDataSourceView: View {
 
-    var sourceController: DataSourceController
+    @Environment(\.presentationMode) var presentationMode
+
+    var sourceController: DataSourceController  // TODO: Environment?
+
+    var completion: (DataSourceWrapper?) -> Void
 
     var body: some View {
         NavigationView {
             List {
-                Text("Hi")
+                ForEach(sourceController.dataSources) { factory in
+                    Button {
+                        completion(factory)
+                        presentationMode.wrappedValue.dismiss()
+                    } label: {
+                        Text(factory.name)
+                            .foregroundColor(.primary)
+                    }
+                }
             }
-            .navigationBarTitle("Add...", displayMode: .inline)
+            .navigationBarTitle("Add Data Source", displayMode: .inline)
         }
     }
 
@@ -53,7 +65,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     let AboutSection = 5
 
     let DisplaySettingsRowCount = 5
-
 
     weak var delegate: SettingsViewControllerDelegate?
 
@@ -89,7 +100,16 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     @objc func addTapped(_ sender: Any) {
-        let viewController = UIHostingController(rootView: AddDataSourceView(sourceController: dataSourceController))
+        let viewController = UIHostingController(rootView: AddDataSourceView(sourceController: dataSourceController) { dataSource in
+            guard let dataSource = dataSource else {
+                return
+            }
+            // TODO: This should take the factory as an option too.
+            // TODO: THis should be fileprivate
+            self.dataSourceController.add(type: dataSource.id)
+            let indexPath = IndexPath(row: self.dataSourceController.sources.count - 1, section: 0)
+            self.tableView.insertRows(at: [indexPath], with: .none)
+        })
         navigationController?.present(viewController, animated: true, completion: nil)
     }
 

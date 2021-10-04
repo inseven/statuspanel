@@ -26,7 +26,9 @@ protocol DataSourceSettings: Codable {
 
 }
 
-protocol DataSource: AnyObject {
+protocol DataSource: AnyObject, Identifiable {
+
+    var id: DataSourceType { get }
 
     var name: String { get }
     var configurable: Bool { get }

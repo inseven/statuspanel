@@ -42,6 +42,9 @@ protocol DataSourceControllerDelegate: AnyObject {
     // Always called in context of main thread
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase])
     func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error)
+
+    // TODO: Consder doing it this way?
+//    func dataSourceController(_ dataSourceController: DataSourceController, didAddSourceAtIndex index: Int)
 }
 
 class DataSourceController {
@@ -52,17 +55,18 @@ class DataSourceController {
     var sources: [DataSourceInstance] = []
 
     var factories: [DataSourceType: DataSourceWrapper] = [:]
+    var dataSources: [DataSourceWrapper] { Array(factories.values) }
 
     init() {
 
-        // TODO: Ensure this is thread safe.
+        // TODO: Ensure this is thread safe (aka always called on the main thread?)
 
         let configuration = try! Bundle.main.configuration()
         factories = [
             .calendar: CalendarSource().wrapped(),
             .dummy: DummyDataSource().wrapped(),
             .nationalRail: NationalRailDataSource(configuration: configuration).wrapped(),
-            .calendarHeader: CalendarHeaderSource().wrapped(),  // TODO: Remove flags.
+            .calendarHeader: CalendarHeaderSource().wrapped(),
             .transportForLondon: TFLDataSource(configuration: configuration).wrapped(),
         ]
 
