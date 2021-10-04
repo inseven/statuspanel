@@ -22,11 +22,7 @@ import Foundation
 
 struct DataSourceInstance: Identifiable {
 
-    let id = UUID()
+    let id: UUID
     let dataSource: DataSourceWrapper
-
-    init<T: DataSource>(_ source: T) {
-        self.dataSource = source.wrapped()
-    }
 
 }

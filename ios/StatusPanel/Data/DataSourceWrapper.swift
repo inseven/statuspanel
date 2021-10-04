@@ -31,6 +31,7 @@ class DataSourceWrapper {
     fileprivate var summaryProxy: ((UUID) throws -> String?)! = nil
     fileprivate var settingsViewControllerProxy: ((UUID) throws -> UIViewController?)! = nil
     fileprivate var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
+    fileprivate var validateSettingsProxy: ((DataSourceSettings) -> Bool)! = nil
 
     var name: String { nameProxy() }
     var configurable: Bool { configurableProxy() }
@@ -38,6 +39,7 @@ class DataSourceWrapper {
     func summary(uuid: UUID) throws -> String? { try summaryProxy(uuid) }
     func settingsViewController(uuid: UUID) throws -> UIViewController? { try settingsViewControllerProxy(uuid) }
     func settingsView(uuid: UUID) throws -> UIViewController { try settingsViewProxy(uuid) }
+    func validate(settings: DataSourceSettings) -> Bool { validateSettingsProxy(settings) }
 
     init<T: DataSource>(_ dataSource: T) {
         configurableProxy = { dataSource.configurable }
@@ -74,6 +76,9 @@ class DataSourceWrapper {
                                                                                        store: wrapper))
             viewController.navigationItem.title = dataSource.name
             return viewController
+        }
+        validateSettingsProxy = { settings in
+            type(of: settings) == type(of: dataSource).Settings
         }
 
     }

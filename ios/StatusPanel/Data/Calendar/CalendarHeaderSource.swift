@@ -22,6 +22,10 @@ import Foundation
 import SwiftUI
 import UIKit
 
+extension DataItemFlags: Codable {
+
+}
+
 final class CalendarHeaderSource : DataSource {
 
     struct Settings: DataSourceSettings {
@@ -29,15 +33,19 @@ final class CalendarHeaderSource : DataSource {
         var longFormat: String
         var shortFormat: String
 
+        var flags: DataItemFlags
+
         var offset: Int
         var component: Calendar.Component
 
         init(longFormat: String = "yMMMMdEEEE",
              shortFormat: String = "yMMMMdEEE",
+             flags: DataItemFlags = [],
              offset: Int = 0,
              component: Calendar.Component = .day) {
             self.longFormat = longFormat
             self.shortFormat = shortFormat
+            self.flags = flags
             self.offset = offset
             self.component = component
         }
@@ -83,8 +91,7 @@ final class CalendarHeaderSource : DataSource {
 
     let name = "Date Header"
     let configurable = true
-    
-    let flags: DataItemFlags
+
     let offset: Int
     let component: Calendar.Component
 
@@ -93,7 +100,6 @@ final class CalendarHeaderSource : DataSource {
     init(flags: DataItemFlags,
          offset: Int = 0,
          component: Calendar.Component = .day) {
-        self.flags = flags
         self.offset = offset
         self.component = component
     }
@@ -104,8 +110,8 @@ final class CalendarHeaderSource : DataSource {
             completion(self, [], StatusPanelError.invalidDate)
             return
         }
-        
-        let data = [CalendarHeaderItem(for: date, longFormat: settings.longFormat, shortFormat: settings.shortFormat, flags: flags)]
+
+        let data = [CalendarHeaderItem(for: date, longFormat: settings.longFormat, shortFormat: settings.shortFormat, flags: settings.flags)]
         completion(self, data, nil)
     }
 

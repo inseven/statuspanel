@@ -88,6 +88,9 @@ final class NationalRailDataSource : DataSource {
             return
         }
 
+        self.sourceCrs = sourceCrs
+        self.targetCrs = targetCrs
+
         let url = URL(string: "https://huxley.apphb.com")?
             .appendingPathComponent("delays")
             .appendingPathComponent(sourceCrs)

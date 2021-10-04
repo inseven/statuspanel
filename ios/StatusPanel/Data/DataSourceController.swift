@@ -21,13 +21,20 @@
 import Combine
 import Foundation
 
-enum SourceType {
+enum DataSourceType: String, Codable {
 
-    case calendar
-    case dummy
-    case nationalRail
-    case calendarHeader
-    case transportForLondon
+    case calendar = "io.statuspanel.source.calendar"
+    case dummy = "io.statuspanel.source.dummy"
+    case nationalRail = "io.statuspanel.source.national-rail"
+    case calendarHeader = "io.statuspanel.source.calendar-header"
+    case transportForLondon = "io.statuspanel.source.transport-for-london"
+
+}
+
+struct DataSourceTuple: Codable {
+
+    var type: DataSourceType
+    var identifier: UUID
 
 }
 
@@ -44,31 +51,84 @@ class DataSourceController {
     weak var delegate: DataSourceControllerDelegate?
     var sources: [DataSourceInstance] = []
 
-    var factories: [SourceType: DataSourceWrapper] = [:]
+    var factories: [DataSourceType: DataSourceWrapper] = [:]
 
     init() {
 
-        factories = [
-            .calendar: CalendarHeaderSource(flags: []).wrapped()
-        ]
+        // TODO: Ensure this is thread safe.
 
         let configuration = try! Bundle.main.configuration()
-        add(dataSource: CalendarHeaderSource(flags: [.header, .spansColumns]))
-        add(dataSource: TFLDataSource(configuration: configuration))
-        add(dataSource: NationalRailDataSource(configuration: configuration))
-        add(dataSource: CalendarSource())
-#if DEBUG
-        add(dataSource: DummyDataSource())
-#endif
-        add(dataSource: CalendarSource(dayOffset: 1, header: "Tomorrow:"))
-#if DEBUG
-        add(dataSource: DummyDataSource())
-#endif
+        factories = [
+            .calendar: CalendarSource().wrapped(),
+            .dummy: DummyDataSource().wrapped(),
+            .nationalRail: NationalRailDataSource(configuration: configuration).wrapped(),
+            .calendarHeader: CalendarHeaderSource(flags: [.header, .spansColumns]).wrapped(),  // TODO: Remove flags.
+            .transportForLondon: TFLDataSource(configuration: configuration).wrapped(),
+        ]
+
+        let config = Config()
+        add(type: .calendarHeader,
+            settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                                    shortFormat: "yMMMMdEEE",
+                                                    flags: [.header, .spansColumns],
+                                                    offset: 0,
+                                                    component: .day))
+        add(type: .transportForLondon,
+            settings: TFLDataSource.Settings(lines: config.activeTFLLines))
+        add(type: .nationalRail,
+            settings: NationalRailDataSource.Settings(routes: config.trainRoutes))
+        add(type: .calendar,
+            settings: CalendarSource.Settings(calendars: config.activeCalendars,
+                                              showLocations: config.showCalendarLocations,
+                                              showUrls: config.showUrlsInCalendarLocations))
+        add(type: .dummy,
+            settings: DummyDataSource.Settings(enabled: config.showDummyData))
+        add(type: .calendarHeader,
+            settings: CalendarHeaderSource.Settings(longFormat: "MMMMdEEEE",
+                                                    shortFormat: "MMMMdEEEE",
+                                                    flags: [.prefersEmptyColumn],
+                                                    offset: 1,
+                                                    component: .day))
+        add(type: .calendar,
+            settings: CalendarSource.Settings(calendars: config.activeCalendars,
+                                              showLocations: config.showCalendarLocations,
+                                              showUrls: config.showUrlsInCalendarLocations))
+        add(type: .dummy,
+            settings: DummyDataSource.Settings(enabled: config.showDummyData))
     }
 
-    fileprivate func add<T: DataSource>(dataSource: T) {
-        sources.append(DataSourceInstance(dataSource))
+    // TODO: This can fail and we should probably handle an error during this initialization.
+    // TODO: We probably don't need this method?
+    func add(type: DataSourceType) {
+        guard let dataSource = factories[type] else {
+            print("Failed to instantiate data source with type '\(type.rawValue)'.")
+            return
+        }
+        sources.append(DataSourceInstance(id: UUID(), dataSource: dataSource))
     }
+
+    // TODO: Can we make this safe by somehow associating the type with the enum?
+    func add<T: DataSourceSettings>(type: DataSourceType, settings: T) {
+        guard let dataSource = factories[type] else {
+            // TODO: Handle failure.
+            print("Failed to instantiate data source with type '\(type.rawValue)'.")
+            return
+        }
+        // TODO: Validate the settings type.
+        assert(dataSource.validate(settings: settings))
+        let uuid = UUID()
+        try! Config().save(settings: settings, uuid: uuid)
+        let instance = DataSourceInstance(id: uuid, dataSource: dataSource)
+        sources.append(instance)
+    }
+
+    func save() {
+        
+    }
+
+//    fileprivate func add<T: DataSource>(dataSource: T) {
+//        sources.append(DataSourceInstance(dataSource))
+//    }
 
     func fetch() {
         let promises = sources.map { $0.fetch() }

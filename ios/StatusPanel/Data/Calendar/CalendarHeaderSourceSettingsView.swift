@@ -20,6 +20,17 @@
 
 import SwiftUI
 
+extension CalendarHeaderSource.Settings: Equatable {
+
+    static func == (lhs: CalendarHeaderSource.Settings, rhs: CalendarHeaderSource.Settings) -> Bool {
+        return (lhs.longFormat == rhs.longFormat &&
+                lhs.shortFormat == rhs.shortFormat &&
+                lhs.flags == rhs.flags &&
+                lhs.offset == rhs.offset &&
+                lhs.component == rhs.component)
+    }
+
+}
 
 struct CalendarHeaderSourceSettingsView: View {
 
@@ -48,43 +59,73 @@ struct CalendarHeaderSourceSettingsView: View {
         _settings = State(initialValue: settings)
     }
 
-    func offset() -> Binding<Offset> {
-        Binding {
-            if settings.offset == 0 {
-                return .today
-            } else {
-                return .tomorrow
-            }
-        } set: { offset in
-            switch offset {
-            case .today:
-                settings.offset = 0
-                settings.component = .day
-            case .tomorrow:
-                settings.offset = 1
-                settings.component = .day
-            }
-            try! store.save(settings: settings)
-        }
-    }
-
     func update() {
         settings.longFormat = long
         settings.shortFormat = short
         try! store.save(settings: settings)
     }
 
-    var date: Date {
-        Calendar.current.date(byAdding: settings.component, value: settings.offset, to: Date())!
+    enum Style {
+        case title
+        case body
     }
+
+    func style() -> Binding<Style> {
+        Binding {
+            if settings.flags.contains(.header) {
+                return .title
+            }
+            return .body
+        } set: { newValue in
+            switch newValue {
+            case .title:
+                settings.flags.insert(.header)
+            case .body:
+                settings.flags.remove(.header)
+            }
+        }
+    }
+
+    func prefersEmptyColumn() -> Binding<Bool> {
+        Binding {
+            settings.flags.contains(.prefersEmptyColumn)
+        } set: { newValue in
+            if newValue == true {
+                settings.flags.insert(.prefersEmptyColumn)
+            } else {
+                settings.flags.remove(.prefersEmptyColumn)
+            }
+        }
+    }
+
+    func spansColumns() -> Binding<Bool> {
+        Binding {
+            settings.flags.contains(.spansColumns)
+        } set: { newValue in
+            if newValue == true {
+                settings.flags.insert(.spansColumns)
+            } else {
+                settings.flags.remove(.spansColumns)
+            }
+        }
+    }
+
 
     var body: some View {
         Form {
             Section {
-                Picker("Date", selection: offset()) {
-                    Text("Today").tag(Offset.today)
-                    Text("Tomorrow").tag(Offset.tomorrow)
+                Picker("Date", selection: $settings.offset) {
+                    Text("Today").tag(0)
+                    Text("Tomorrow").tag(1)
                 }
+            }
+            Section(header: Text("Display")) {
+                Picker("Style", selection: style()) {
+                    Text("Title").tag(Style.title)
+                    Text("Body").tag(Style.body)
+                }
+                Toggle("Prefers Empty Column", isOn: prefersEmptyColumn())
+                Toggle("Spans Columns", isOn: spansColumns())
             }
             Section(header: Text("Format")) {
                 Button {
@@ -158,6 +199,9 @@ struct CalendarHeaderSourceSettingsView: View {
                 }
                 .autocapitalization(.none)
             }
+        }
+        .onChange(of: settings) { newSettings in
+            try! store.save(settings: newSettings)
         }
     }
 

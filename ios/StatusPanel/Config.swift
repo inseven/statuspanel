@@ -39,6 +39,7 @@ class Config {
         case trainRoutes = "trainRoutes"
         case updateTime = "updateTime"
         case showIcons = "showIcons"
+        case dataSources = "dataSources"
     }
 
     let userDefaults = UserDefaults.standard
@@ -70,6 +71,13 @@ class Config {
         return value
     }
 
+    private func codable<T: Codable>(for key: Key) throws -> T? {
+        guard let data = self.userDefaults.object(forKey: key.rawValue) as? Data else {
+            return nil
+        }
+        return try JSONDecoder().decode(T.self, from: data)
+    }
+
     private func set(_ value: Any?, for key: Key) {
         self.userDefaults.set(value, forKey: key.rawValue)
     }
@@ -80,6 +88,11 @@ class Config {
 
     private func set(_ value: Bool, for key: Key) {
         self.userDefaults.set(value, forKey: key.rawValue)
+    }
+
+    private func set<T: Codable>(codable: T, for key: Key) throws {
+        let data = try JSONEncoder().encode(codable)
+        self.userDefaults.set(data, forKey: key.rawValue)
     }
 
     var activeCalendars: [String] {
@@ -351,8 +364,19 @@ class Config {
         }
     }
 
+    // TODO: Handle errors
+    var dataSources: [DataSourceTuple]? {
+        get {
+            return try? self.codable(for: .dataSources)
+        }
+        set {
+            try? self.set(codable: newValue, for: .dataSources)
+        }
+    }
+
     func settings<T: DataSourceSettings>(uuid: UUID) throws -> T? {
         guard let data = userDefaults.object(forKey: "Settings-\(uuid.uuidString)") as? NSData else {
+            // TODO: I think this might be wrong; it's technically not an error.
             throw StatusPanelError.noSettings
         }
         return try JSONDecoder().decode(T.self, from: data as Data)
