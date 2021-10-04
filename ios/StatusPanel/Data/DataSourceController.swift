@@ -62,7 +62,7 @@ class DataSourceController {
             .calendar: CalendarSource().wrapped(),
             .dummy: DummyDataSource().wrapped(),
             .nationalRail: NationalRailDataSource(configuration: configuration).wrapped(),
-            .calendarHeader: CalendarHeaderSource(flags: [.header, .spansColumns]).wrapped(),  // TODO: Remove flags.
+            .calendarHeader: CalendarHeaderSource().wrapped(),  // TODO: Remove flags.
             .transportForLondon: TFLDataSource(configuration: configuration).wrapped(),
         ]
 

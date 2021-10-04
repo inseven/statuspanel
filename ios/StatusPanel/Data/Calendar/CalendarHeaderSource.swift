@@ -92,15 +92,11 @@ final class CalendarHeaderSource : DataSource {
     let name = "Date Header"
     let configurable = true
 
-    let offset: Int
     let component: Calendar.Component
 
     var defaults: Settings { CalendarHeaderSource.Settings() }
 
-    init(flags: DataItemFlags,
-         offset: Int = 0,
-         component: Calendar.Component = .day) {
-        self.offset = offset
+    init(component: Calendar.Component = .day) {
         self.component = component
     }
 
