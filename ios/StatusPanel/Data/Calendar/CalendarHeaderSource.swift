@@ -123,9 +123,9 @@ final class CalendarHeaderSource : DataSource {
         }
     }
 
-    func settingsViewController(settings: Settings, store: Store) -> UIViewController? { nil }
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController? { nil }
 
-    func settingsView(settings: Settings, store: Store) -> some View {
+    func settingsView(store: Store, settings: Settings) -> some View {
         CalendarHeaderSourceSettingsView(store: store, settings: settings)
     }
 

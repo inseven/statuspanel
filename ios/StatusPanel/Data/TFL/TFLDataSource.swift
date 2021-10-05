@@ -146,7 +146,7 @@ final class TFLDataSource: DataSource {
         return lineNames.joined(separator: ", ")
     }
 
-    func settingsViewController(settings: Settings, store: Store) -> UIViewController? {
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
         guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor") as? TFLSettingsController else {
             return nil
         }
@@ -155,7 +155,7 @@ final class TFLDataSource: DataSource {
         return viewController
     }
 
-    func settingsView(settings: Settings, store: Store) -> EmptyView {
+    func settingsView(store: Store, settings: Settings) -> EmptyView {
         EmptyView()
     }
 }

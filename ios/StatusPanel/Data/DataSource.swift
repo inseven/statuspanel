@@ -46,9 +46,9 @@ protocol DataSource: AnyObject, Identifiable {
 
     func summary(settings: Settings) -> String?
 
-    func settingsViewController(settings: Settings, store: Store) -> UIViewController?
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController?
 
-    func settingsView(settings: Settings, store: Store) -> SettingsView
+    func settingsView(store: Store, settings: Settings) -> SettingsView
 
 }
 

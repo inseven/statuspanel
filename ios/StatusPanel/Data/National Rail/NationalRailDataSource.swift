@@ -153,7 +153,7 @@ final class NationalRailDataSource : DataSource {
         return "\(from) to \(to)"
     }
 
-    func settingsViewController(settings: Settings, store: Store) -> UIViewController? {
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
         guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
                 as? NationalRailSettingsController else {
             return nil
@@ -163,7 +163,7 @@ final class NationalRailDataSource : DataSource {
         return viewController
     }
 
-    func settingsView(settings: Settings, store: Store) -> EmptyView {
+    func settingsView(store: Store, settings: Settings) -> EmptyView {
         EmptyView()
     }
 }
