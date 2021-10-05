@@ -32,13 +32,12 @@ struct AddDataSourceView: View {
 
     @Environment(\.presentationMode) var presentationMode
 
-    var sourceController: DataSourceController  // TODO: Environment?
-
+    var sourceController: DataSourceController
     var completion: (DataSourceWrapper?) -> Void
 
     var body: some View {
         NavigationView {
-            List {
+            Form {
                 ForEach(sourceController.dataSources) { factory in
                     Button {
                         completion(factory)
@@ -50,6 +49,11 @@ struct AddDataSourceView: View {
                 }
             }
             .navigationBarTitle("Add Data Source", displayMode: .inline)
+            .navigationBarItems(leading: Button {
+                presentationMode.wrappedValue.dismiss()
+            } label: {
+                Text("Cancel")
+            })
         }
     }
 
