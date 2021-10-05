@@ -93,7 +93,8 @@ class DataSourceController {
         add(type: .calendar,
             settings: CalendarSource.Settings(calendars: config.activeCalendars,
                                               showLocations: config.showCalendarLocations,
-                                              showUrls: config.showUrlsInCalendarLocations))
+                                              showUrls: config.showUrlsInCalendarLocations,
+                                              offset: 1))
     }
 
     // TODO: This can fail and we should probably handle an error during this initialization.

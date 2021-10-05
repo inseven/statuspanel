@@ -64,13 +64,16 @@ final class CalendarSource : DataSource {
         var calendars: [String]
         var showLocations: Bool
         var showUrls: Bool
+        var offset: Int
 
         init(calendars: [String] = [],
              showLocations: Bool = false,
-             showUrls: Bool = false) {
+             showUrls: Bool = false,
+             offset: Int = 0) {
             self.calendars = calendars
             self.showLocations = showLocations
             self.showUrls = showUrls
+            self.offset = offset
         }
 
     }
