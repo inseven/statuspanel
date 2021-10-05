@@ -82,16 +82,11 @@ final class CalendarSource : DataSource {
     let name = "Events"
     let configurable = true
 
-    let header : String?
-    let dayOffset: Int
     let eventStore: EKEventStore
 
     var defaults: Settings { Settings() }
 
-    // TODO: offset with components? Maybe this is a class?
-    init(dayOffset: Int = 0, header: String? = nil) {
-        self.header = header
-        self.dayOffset = dayOffset
+    init() {
         eventStore = EKEventStore()
     }
 
@@ -124,15 +119,12 @@ final class CalendarSource : DataSource {
         let cal = Calendar.current
         let dayComponents = cal.dateComponents([.year, .month, .day], from: now)
         let todayStart = cal.date(from: dayComponents)!
-        let dayStart = cal.date(byAdding: DateComponents(day: dayOffset), to: todayStart)!
+        let dayStart = cal.date(byAdding: DateComponents(day: settings.offset), to: todayStart)!
         let tz = cal.timeZone
         let dayEnd = cal.date(byAdding: DateComponents(day: 1, second: -1), to: dayStart)!
         let pred = eventStore.predicateForEvents(withStart: dayStart, end: dayEnd, calendars: calendars)
         let events = eventStore.events(matching: pred)
         var results = [DataItemBase]()
-        if let header = header {
-            results.append(DataItem(text: header, flags: [.prefersEmptyColumn]))
-        }
 
         for event in events {
 
