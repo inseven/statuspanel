@@ -23,6 +23,7 @@ import SwiftUI
 final class TextDataSource: DataSource {
 
     struct Settings: DataSourceSettings & Equatable {
+        var flags: DataItemFlags
         var text: String
     }
 
@@ -33,7 +34,10 @@ final class TextDataSource: DataSource {
 
         var body: some View {
             Form {
-                TextField("Text", text: $settings.text)
+                Section {
+                    TextField("Text", text: $settings.text)
+                }
+                FlagsSection(flags: $settings.flags)
             }
             .onChange(of: settings) { newValue in
                 try! store.save(settings: settings)
@@ -45,10 +49,10 @@ final class TextDataSource: DataSource {
     let id: DataSourceType = .text
     let name = "Text"
     let configurable = true
-    let defaults = Settings(text: "")
+    let defaults = Settings(flags: [], text: "")
 
     func data(settings: Settings, completion: @escaping Callback) {
-        completion(self, [DataItem(text: settings.text)], nil)
+        completion(self, [DataItem(text: settings.text, flags: settings.flags)], nil)
     }
 
     func summary(settings: Settings) -> String? {

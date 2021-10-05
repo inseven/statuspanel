@@ -32,6 +32,68 @@ extension CalendarHeaderSource.Settings: Equatable {
 
 }
 
+struct FlagsSection: View {
+
+    @Binding var flags: DataItemFlags
+
+    enum Style {
+        case title
+        case body
+    }
+
+    func style() -> Binding<Style> {
+        Binding {
+            if flags.contains(.header) {
+                return .title
+            }
+            return .body
+        } set: { newValue in
+            switch newValue {
+            case .title:
+                flags.insert(.header)
+            case .body:
+                flags.remove(.header)
+            }
+        }
+    }
+
+    func prefersEmptyColumn() -> Binding<Bool> {
+        Binding {
+            flags.contains(.prefersEmptyColumn)
+        } set: { newValue in
+            if newValue == true {
+                flags.insert(.prefersEmptyColumn)
+            } else {
+                flags.remove(.prefersEmptyColumn)
+            }
+        }
+    }
+
+    func spansColumns() -> Binding<Bool> {
+        Binding {
+            flags.contains(.spansColumns)
+        } set: { newValue in
+            if newValue == true {
+                flags.insert(.spansColumns)
+            } else {
+                flags.remove(.spansColumns)
+            }
+        }
+    }
+
+    var body: some View {
+        Section(header: Text("Display")) {
+            Picker("Style", selection: style()) {
+                Text("Title").tag(Style.title)
+                Text("Body").tag(Style.body)
+            }
+            Toggle("Prefers Empty Column", isOn: prefersEmptyColumn())
+            Toggle("Spans Columns", isOn: spansColumns())
+        }
+    }
+
+}
+
 struct CalendarHeaderSourceSettingsView: View {
 
     enum Offset {
@@ -65,52 +127,6 @@ struct CalendarHeaderSourceSettingsView: View {
         try! store.save(settings: settings)
     }
 
-    enum Style {
-        case title
-        case body
-    }
-
-    func style() -> Binding<Style> {
-        Binding {
-            if settings.flags.contains(.header) {
-                return .title
-            }
-            return .body
-        } set: { newValue in
-            switch newValue {
-            case .title:
-                settings.flags.insert(.header)
-            case .body:
-                settings.flags.remove(.header)
-            }
-        }
-    }
-
-    func prefersEmptyColumn() -> Binding<Bool> {
-        Binding {
-            settings.flags.contains(.prefersEmptyColumn)
-        } set: { newValue in
-            if newValue == true {
-                settings.flags.insert(.prefersEmptyColumn)
-            } else {
-                settings.flags.remove(.prefersEmptyColumn)
-            }
-        }
-    }
-
-    func spansColumns() -> Binding<Bool> {
-        Binding {
-            settings.flags.contains(.spansColumns)
-        } set: { newValue in
-            if newValue == true {
-                settings.flags.insert(.spansColumns)
-            } else {
-                settings.flags.remove(.spansColumns)
-            }
-        }
-    }
-
-
     var body: some View {
         Form {
             Section {
@@ -119,14 +135,7 @@ struct CalendarHeaderSourceSettingsView: View {
                     Text("Tomorrow").tag(1)
                 }
             }
-            Section(header: Text("Display")) {
-                Picker("Style", selection: style()) {
-                    Text("Title").tag(Style.title)
-                    Text("Body").tag(Style.body)
-                }
-                Toggle("Prefers Empty Column", isOn: prefersEmptyColumn())
-                Toggle("Spans Columns", isOn: spansColumns())
-            }
+            FlagsSection(flags: $settings.flags)
             Section(header: Text("Format")) {
                 Button {
                     format = .year

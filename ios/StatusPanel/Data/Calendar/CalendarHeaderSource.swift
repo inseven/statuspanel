@@ -90,7 +90,7 @@ final class CalendarHeaderSource : DataSource {
     }
 
     let id: DataSourceType = .calendarHeader
-    let name = "Date Header"
+    let name = "Date"
     let configurable = true
 
     let component: Calendar.Component

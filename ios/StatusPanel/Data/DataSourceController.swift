@@ -87,12 +87,9 @@ class DataSourceController {
             settings: CalendarSource.Settings(calendars: config.activeCalendars,
                                               showLocations: config.showCalendarLocations,
                                               showUrls: config.showUrlsInCalendarLocations))
-        add(type: .calendarHeader,
-            settings: CalendarHeaderSource.Settings(longFormat: "MMMMdEEEE",
-                                                    shortFormat: "MMMMdEEEE",
-                                                    flags: [.prefersEmptyColumn],
-                                                    offset: 1,
-                                                    component: .day))
+        add(type: .text,
+            settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
+                                              text: "Tomorrow:"))
         add(type: .calendar,
             settings: CalendarSource.Settings(calendars: config.activeCalendars,
                                               showLocations: config.showCalendarLocations,
