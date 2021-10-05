@@ -19,7 +19,45 @@
 // SOFTWARE.
 
 import EventKit
+import SwiftUI
 import UIKit
+
+struct DayPicker: View {
+
+    @State var offset: Int
+    var completion: (Int) -> Void
+
+    var body: some View {
+        Form {
+            Button {
+                offset = 0
+            } label: {
+                HStack {
+                    Text("Today")
+                    Spacer()
+                    if offset == 0 {
+                        Image(systemName: "checkmark")
+                    }
+                }
+            }
+            Button {
+                offset = 1
+            } label: {
+                HStack {
+                    Text("Tomorrow")
+                    Spacer()
+                    if offset == 1 {
+                        Image(systemName: "checkmark")
+                    }
+                }
+            }
+        }
+        .onChange(of: offset) { newValue in
+            completion(newValue)
+        }
+    }
+
+}
 
 class CalendarViewController: UITableViewController {
 
@@ -58,7 +96,7 @@ class CalendarViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == calendars.count {
-            return 1 + (settings.showLocations ? 1 : 0)
+            return 2 + (settings.showLocations ? 1 : 0)
         }
         return calendars[section].count
     }
@@ -72,24 +110,33 @@ class CalendarViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == calendars.count {
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             switch indexPath.row {
             case 0:
+                let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
+                cell.textLabel?.text = "Date"
+                cell.detailTextLabel?.text = settings.offset == 0 ? "Today" : "Tomorrow"
+                cell.accessoryType = .disclosureIndicator
+                return cell
+            case 1:
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Show locations"
                 let control = UISwitch()
                 control.isOn = settings.showLocations
                 control.addTarget(self, action:#selector(showCalendarLocationsSwitchChanged(sender:)), for: .valueChanged)
                 cell.accessoryView = control
-            case 1:
+                return cell
+            case 2:
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Show full URLs in locations"
                 let control = UISwitch()
                 control.isOn = settings.showUrls
                 control.addTarget(self, action:#selector(showUrlsInCalendarLocationsSwitchChanged(sender:)), for: .valueChanged)
                 cell.accessoryView = control
+                return cell
             default:
                 break
             }
-            return cell
+            assert(false)
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let calendar = calendars[indexPath.section][indexPath.row]
@@ -103,27 +150,41 @@ class CalendarViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section < calendars.count
+        if indexPath.section >= calendars.count {
+            return indexPath.row == 0
+        }
+        return true
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let calendar = calendars[indexPath.section][indexPath.row]
-        if activeCalendars.contains(calendar.calendarIdentifier) {
-            activeCalendars.remove(calendar.calendarIdentifier)
+        if indexPath.section >= calendars.count {
+            if indexPath.row == 0 {
+                let viewController = UIHostingController(rootView: DayPicker(offset: settings.offset, completion: { offset in
+                    self.settings.offset = offset
+                    try! self.store.save(settings: self.settings)
+                    self.navigationController?.popToViewController(self, animated: true)
+                    self.tableView.reloadRows(at: [indexPath], with: .automatic)
+                }))
+                navigationController?.pushViewController(viewController, animated: true)
+            }
         } else {
-            activeCalendars.insert(calendar.calendarIdentifier)
+            let calendar = calendars[indexPath.section][indexPath.row]
+            if activeCalendars.contains(calendar.calendarIdentifier) {
+                activeCalendars.remove(calendar.calendarIdentifier)
+            } else {
+                activeCalendars.insert(calendar.calendarIdentifier)
+            }
+            tableView.deselectRow(at: indexPath, animated: true)
+            tableView.reloadRows(at: [indexPath], with: .fade)
+            Config().activeCalendars = activeCalendars.sorted()
         }
-        tableView.deselectRow(at: indexPath, animated: true)
-        tableView.reloadRows(at: [indexPath], with: .fade)
-        Config().activeCalendars = activeCalendars.sorted()
-        try! store.save(settings: settings)
     }
 
     @objc func showCalendarLocationsSwitchChanged(sender: UISwitch) {
         settings.showLocations = sender.isOn
         try! store.save(settings: settings)
         tableView.performBatchUpdates({
-            let redactUrlsIndexPath = IndexPath(row: 1, section: calendars.count)
+            let redactUrlsIndexPath = IndexPath(row: 2, section: calendars.count)
             if settings.showLocations {
                 tableView.insertRows(at: [redactUrlsIndexPath], with: .automatic)
             } else {
