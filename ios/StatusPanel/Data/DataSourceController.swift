@@ -125,7 +125,6 @@ class DataSourceController {
         self.add(type: dataSource.id)
     }
 
-    // TODO: Equality on instances?
     func remove(instance: DataSourceInstance) {
         self.sources.removeAll { $0 == instance }
     }
