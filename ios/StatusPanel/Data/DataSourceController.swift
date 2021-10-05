@@ -134,10 +134,6 @@ class DataSourceController {
         
     }
 
-//    fileprivate func add<T: DataSource>(dataSource: T) {
-//        sources.append(DataSourceInstance(dataSource))
-//    }
-
     func fetch() {
         let promises = sources.map { $0.fetch() }
         let zip = promises.dropFirst().reduce(into: AnyPublisher(promises[0].map { [$0] }) ) {
