@@ -20,7 +20,11 @@
 
 import Foundation
 
-struct DataSourceInstance: Identifiable {
+struct DataSourceInstance: Identifiable, Equatable {
+
+    static func == (lhs: DataSourceInstance, rhs: DataSourceInstance) -> Bool {
+        lhs.id == rhs.id
+    }
 
     let id: UUID
     let dataSource: DataSourceWrapper
