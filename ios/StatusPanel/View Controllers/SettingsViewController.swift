@@ -84,6 +84,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     @objc func editTapped(_ sender: Any) {
+        // TODO: editButtonItem
         tableView.performBatchUpdates {
             self.isEditing = true
             tableView.deleteSections([1, 2, 3, 4, 5], with: .fade)
@@ -104,9 +105,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             guard let dataSource = dataSource else {
                 return
             }
-            // TODO: This should take the factory as an option too.
-            // TODO: THis should be fileprivate
-            self.dataSourceController.add(type: dataSource.id)
+            self.dataSourceController.add(dataSource)
             let indexPath = IndexPath(row: self.dataSourceController.sources.count - 1, section: 0)
             self.tableView.insertRows(at: [indexPath], with: .none)
         })
@@ -354,12 +353,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         Config().showIcons = sender.isOn
     }
 
-#if DEBUG
-    @objc func dummyDataSwitchChanged(sender: UISwitch) {
-        Config().showDummyData = sender.isOn
-    }
-#endif
-
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == PairedDevicesSection {
             if indexPath.row == (devices.count == 0 ? 1 : devices.count) {
@@ -399,21 +392,21 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func tableView(_ tableView: UITableView,
-                            canPerformAction action: Selector,
-                            forRowAt indexPath: IndexPath,
-                            withSender sender: Any?) -> Bool {
-        guard indexPath.section == DataSourcesSection else {
-            return false
-        }
-        return true
+                            commit editingStyle: UITableViewCell.EditingStyle,
+                            forRowAt indexPath: IndexPath) {
+        let dataSource = dataSourceController.sources[indexPath.row]
+        dataSourceController.remove(instance: dataSource)
+        tableView.deleteRows(at: [indexPath], with: .automatic)
     }
 
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        .none
+    // Overridden to prevent swipe gestures setting isEditing.
+    override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+
     }
 
-    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-        false
+    // Overridden to prevent swipe gestures setting isEditing.
+    override func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
+
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

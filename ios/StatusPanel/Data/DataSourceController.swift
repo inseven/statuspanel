@@ -103,7 +103,7 @@ class DataSourceController {
 
     // TODO: This can fail and we should probably handle an error during this initialization.
     // TODO: We probably don't need this method?
-    func add(type: DataSourceType) {
+    fileprivate func add(type: DataSourceType) {
         guard let dataSource = factories[type] else {
             print("Failed to instantiate data source with type '\(type.rawValue)'.")
             return
@@ -112,7 +112,7 @@ class DataSourceController {
     }
 
     // TODO: Can we make this safe by somehow associating the type with the enum?
-    func add<T: DataSourceSettings>(type: DataSourceType, settings: T) {
+    fileprivate func add<T: DataSourceSettings>(type: DataSourceType, settings: T) {
         guard let dataSource = factories[type] else {
             // TODO: Handle failure.
             print("Failed to instantiate data source with type '\(type.rawValue)'.")
@@ -124,6 +124,15 @@ class DataSourceController {
         try! Config().save(settings: settings, uuid: uuid)
         let instance = DataSourceInstance(id: uuid, dataSource: dataSource)
         sources.append(instance)
+    }
+
+    func add(_ dataSource: DataSourceWrapper) {
+        self.add(type: dataSource.id)
+    }
+
+    // TODO: Equality on instances?
+    func remove(instance: DataSourceInstance) {
+        self.sources.removeAll(where: { $0.id == instance.id })
     }
 
     func save() {
