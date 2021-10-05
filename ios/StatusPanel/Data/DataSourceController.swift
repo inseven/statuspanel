@@ -24,9 +24,10 @@ import Foundation
 enum DataSourceType: String, Codable {
 
     case calendar = "io.statuspanel.source.calendar"
+    case calendarHeader = "io.statuspanel.source.calendar-header"
     case dummy = "io.statuspanel.source.dummy"
     case nationalRail = "io.statuspanel.source.national-rail"
-    case calendarHeader = "io.statuspanel.source.calendar-header"
+    case text = "io.statuspanel.source.text"
     case transportForLondon = "io.statuspanel.source.transport-for-london"
 
 }
@@ -64,9 +65,10 @@ class DataSourceController {
         let configuration = try! Bundle.main.configuration()
         factories = [
             .calendar: CalendarSource().wrapped(),
+            .calendarHeader: CalendarHeaderSource().wrapped(),
             .dummy: DummyDataSource().wrapped(),
             .nationalRail: NationalRailDataSource(configuration: configuration).wrapped(),
-            .calendarHeader: CalendarHeaderSource().wrapped(),
+            .text: TextDataSource().wrapped(),
             .transportForLondon: TFLDataSource(configuration: configuration).wrapped(),
         ]
 
@@ -85,8 +87,6 @@ class DataSourceController {
             settings: CalendarSource.Settings(calendars: config.activeCalendars,
                                               showLocations: config.showCalendarLocations,
                                               showUrls: config.showUrlsInCalendarLocations))
-        add(type: .dummy,
-            settings: DummyDataSource.Settings(enabled: config.showDummyData))
         add(type: .calendarHeader,
             settings: CalendarHeaderSource.Settings(longFormat: "MMMMdEEEE",
                                                     shortFormat: "MMMMdEEEE",
@@ -97,8 +97,6 @@ class DataSourceController {
             settings: CalendarSource.Settings(calendars: config.activeCalendars,
                                               showLocations: config.showCalendarLocations,
                                               showUrls: config.showUrlsInCalendarLocations))
-        add(type: .dummy,
-            settings: DummyDataSource.Settings(enabled: config.showDummyData))
     }
 
     // TODO: This can fail and we should probably handle an error during this initialization.

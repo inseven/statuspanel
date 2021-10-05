@@ -284,16 +284,14 @@ class Config {
         }
     }
 
-    #if DEBUG
-        var showDummyData: Bool {
-            get {
-                self.bool(for: .dummyData)
-            }
-            set {
-                self.set(newValue, for: .dummyData)
-            }
+    var showDummyData: Bool {
+        get {
+            self.bool(for: .dummyData)
         }
-    #endif
+        set {
+            self.set(newValue, for: .dummyData)
+        }
+    }
 
     var showCalendarLocations: Bool {
         get {

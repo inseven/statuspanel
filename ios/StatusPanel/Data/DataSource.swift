@@ -28,16 +28,17 @@ protocol DataSourceSettings: Codable {
 
 protocol DataSource: AnyObject, Identifiable {
 
-    var id: DataSourceType { get }
-
-    var name: String { get }
-    var configurable: Bool { get }
+    // TODO: Remove self
+    typealias Callback = (Self, [DataItemBase], Error?) -> Void // TODO: Move this inline.
+    typealias Store = SettingsStore<Settings>
 
     associatedtype Settings: DataSourceSettings
     associatedtype SettingsView: View = EmptyView
 
-    typealias Callback = (Self, [DataItemBase], Error?) -> Void
-    typealias Store = SettingsStore<Settings>
+    var id: DataSourceType { get }
+
+    var name: String { get }
+    var configurable: Bool { get }
 
     var defaults: Settings { get }
 
