@@ -147,7 +147,7 @@ class BitmapFontCache {
                         return nil
                     }
                 }
-                let composite = CGImage.New(CGSize(width: width, height: charh), flipped: true) { ctx in
+                let composite = CGImage.New(width: width, height: charh, flipped: true) { ctx in
                     var x = 0
                     for img in imgs {
                         ctx.draw(img, in: CGRect(x: x, y: 0, width: img.width, height: img.height))
@@ -259,7 +259,7 @@ class BitmapFontCache {
         }
 
         func addOutlineBaselineToImage(_ image: CGImage) -> CGImage {
-            return CGImage.New(CGSize(width: image.width, height: image.height), flipped: true) { ctx in
+            return CGImage.New(width: image.width, height: image.height, flipped: true) { ctx in
                 ctx.setStrokeColor(UIColor.yellow.cgColor)
                 ctx.setLineWidth(1)
                 let y = CGFloat(style.scaledAscent) + 0.5
@@ -334,7 +334,7 @@ class BitmapFontCache {
         let textWidth = getTextWidth(charName, forStyle: replacementStyle)
         let h = style.scaledHeight
         let w = textWidth + 8
-        return CGImage.New(CGSize(width: w, height: h), flipped: true) { ctx in
+        return CGImage.New(width: w, height: h, flipped: true) { ctx in
             var x = 4
             let y = (h - replacementStyle.font.charh) / 2
             let col: CGFloat = style.darkMode ? 1 : 0
@@ -353,7 +353,7 @@ class BitmapFontCache {
         let textWidth = getTextWidth(string, forStyle: replacementStyle)
         let h = style.scaledHeight
         let w = textWidth + 6
-        return CGImage.New(CGSize(width: w, height: h), flipped: true) { ctx in
+        return CGImage.New(width: w, height: h, flipped: true) { ctx in
             let col: CGFloat = style.darkMode ? 1 : 0
             ctx.setStrokeColor(red: col, green: col, blue: col, alpha: 1)
             let flagHeight = replacementStyle.scaledHeight + 4
@@ -380,7 +380,7 @@ class BitmapFontCache {
         let adjustedY = max(0, toStyle.scaledAscent - fromStyle.scaledAscent)
         if adjustedY + fromHeight <= toHeight {
             // Line up the baselines
-            return CGImage.New(CGSize(width: img.width, height: toHeight), flipped: true) { ctx in
+            return CGImage.New(width: img.width, height: toHeight, flipped: true) { ctx in
                 ctx.draw(img, in: CGRect(x: 0, y: adjustedY, width: img.width, height: img.height))
             }
         } else {

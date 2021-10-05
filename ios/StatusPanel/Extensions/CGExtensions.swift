@@ -97,6 +97,10 @@ extension UIImage {
 }
 
 extension CGImage {
+    static func New(width: Int, height:Int, flipped: Bool, actions: (CGContext) -> Void) -> CGImage {
+        return New(CGSize(width: width, height: height), flipped: flipped, actions: actions)
+    }
+
     static func New(_ size: CGSize, flipped: Bool, actions: (CGContext) -> Void) -> CGImage {
         return UIImage.New(size, flipped: flipped, actions: actions).cgImage!
     }
