@@ -84,15 +84,13 @@ class DataSourceController {
         add(type: .nationalRail,
             settings: NationalRailDataSource.Settings(routes: config.trainRoutes))
         add(type: .calendar,
-            settings: CalendarSource.Settings(calendars: config.activeCalendars,
-                                              showLocations: config.showCalendarLocations,
+            settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
                                               showUrls: config.showUrlsInCalendarLocations))
         add(type: .text,
             settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
                                               text: "Tomorrow:"))
         add(type: .calendar,
-            settings: CalendarSource.Settings(calendars: config.activeCalendars,
-                                              showLocations: config.showCalendarLocations,
+            settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
                                               showUrls: config.showUrlsInCalendarLocations,
                                               offset: 1))
     }

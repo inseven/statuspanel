@@ -61,16 +61,13 @@ final class CalendarSource : DataSource {
 
     struct Settings: DataSourceSettings {
 
-        var calendars: [String]
         var showLocations: Bool
         var showUrls: Bool
         var offset: Int
 
-        init(calendars: [String] = [],
-             showLocations: Bool = false,
+        init(showLocations: Bool = false,
              showUrls: Bool = false,
              offset: Int = 0) {
-            self.calendars = calendars
             self.showLocations = showLocations
             self.showUrls = showUrls
             self.offset = offset
@@ -106,7 +103,8 @@ final class CalendarSource : DataSource {
         let timeZoneFormatter = DateFormatter()
         timeZoneFormatter.dateFormat = "z"
 
-        let calendars = eventStore.calendars(for: .event).filter({ settings.calendars.firstIndex(of: $0.calendarIdentifier) != nil })
+        let activeCalendars = Config().activeCalendars
+        let calendars = eventStore.calendars(for: .event).filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
         if calendars.count == 0 {
             // predicateForEvents treats calendars:[] the same as calendars:nil
             // which matches against _all_ calendars, which we definitely don't
@@ -211,7 +209,7 @@ final class CalendarSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        let calendarIds = settings.calendars
+        let calendarIds = Config().activeCalendars
         let eventStore = EKEventStore()
         var calendarNames: [String] = []
         for calendarId in calendarIds {

@@ -48,7 +48,7 @@ class CalendarViewController: UITableViewController {
             }
 
         }
-        activeCalendars = Set(settings.calendars)
+        activeCalendars = Set(Config().activeCalendars)
         super.viewWillAppear(animated)
     }
 
@@ -115,7 +115,7 @@ class CalendarViewController: UITableViewController {
         }
         tableView.deselectRow(at: indexPath, animated: true)
         tableView.reloadRows(at: [indexPath], with: .fade)
-        settings.calendars = activeCalendars.sorted()
+        Config().activeCalendars = activeCalendars.sorted()
         try! store.save(settings: settings)
     }
 
