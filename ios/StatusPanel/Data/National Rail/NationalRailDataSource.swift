@@ -27,22 +27,10 @@ final class NationalRailDataSource : DataSource {
     // and https://lite.realtime.nationalrail.co.uk/OpenLDBWS/
     // As implemented by https://huxley.unop.uk/ because the raw national rail API is so bad
 
-    struct TrainRoute: Codable {
-        var from: String?
-        var to: String?
-        init(from: String?, to: String?) {
-            self.from = from
-            self.to = to
-        }
-    }
-
     struct Settings: DataSourceSettings {
 
-        var routes: [TrainRoute]
-
-        init(routes: [TrainRoute] = []) {
-            self.routes = routes
-        }
+        var from: String?
+        var to: String?
 
     }
 
@@ -74,9 +62,8 @@ final class NationalRailDataSource : DataSource {
     func data(settings: Settings,
               completion: @escaping (NationalRailDataSource, [DataItemBase], Error?) -> Void) {
 
-        guard let route = settings.routes.first,
-              let sourceCrs = route.from,
-              let targetCrs = route.to else {
+        guard let sourceCrs = settings.from,
+              let targetCrs = settings.to else {
                   completion(self, [], nil)
             return
         }
@@ -135,9 +122,8 @@ final class NationalRailDataSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        guard let route = settings.routes.first,
-              let from = route.from,
-              let to = route.to else {
+        guard let from = settings.from,
+              let to = settings.to else {
             return "Not configured"
         }
         return "\(from) to \(to)"

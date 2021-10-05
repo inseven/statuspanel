@@ -82,7 +82,7 @@ class DataSourceController {
         add(type: .transportForLondon,
             settings: TFLDataSource.Settings(lines: config.activeTFLLines))
         add(type: .nationalRail,
-            settings: NationalRailDataSource.Settings(routes: config.trainRoutes))
+            settings: NationalRailDataSource.Settings(from: config.trainRoute.from, to: config.trainRoute.to))
         add(type: .calendar,
             settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
                                               showUrls: config.showUrlsInCalendarLocations))

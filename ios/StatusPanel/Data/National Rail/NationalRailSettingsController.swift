@@ -31,13 +31,12 @@ class NationalRailSettingsController : UITableViewController {
     var pickingDest = false
 
     func update() {
-        let route = settings.routes.first ?? NationalRailDataSource.TrainRoute(from: nil, to: nil)
         var from = "Select a starting station"
         var to = "Select a destination"
-        if let fromStation = StationsList.lookup(code: route.from) {
+        if let fromStation = StationsList.lookup(code: settings.from) {
             from = fromStation.nameAndCode
         }
-        if let toStation = StationsList.lookup(code: route.to) {
+        if let toStation = StationsList.lookup(code: settings.to) {
             to = toStation.nameAndCode
         }
         fromStationCell.textLabel?.text = from
@@ -52,13 +51,11 @@ class NationalRailSettingsController : UITableViewController {
                 // User might not have made a selection
                 return
             }
-            var route = settings.routes.first ?? NationalRailDataSource.TrainRoute(from: nil, to: nil)
             if pickingDest {
-                route.to = station.code
+                settings.to = station.code
             } else {
-                route.from = station.code
+                settings.from = station.code
             }
-            settings.routes = [route]
             try! store.save(settings: settings)
         }
         update()

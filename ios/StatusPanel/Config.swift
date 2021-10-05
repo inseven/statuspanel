@@ -42,6 +42,15 @@ class Config {
         case dataSources = "dataSources"
     }
 
+    struct TrainRoute: Codable {
+        var from: String?
+        var to: String?
+        init(from: String?, to: String?) {
+            self.from = from
+            self.to = to
+        }
+    }
+
     let userDefaults = UserDefaults.standard
 
     private func object(for key: Key) -> Any? {
@@ -132,14 +141,14 @@ class Config {
         }
     }
 
-    var trainRoutes: [NationalRailDataSource.TrainRoute] {
+    var trainRoutes: [TrainRoute] {
         get {
             guard let val = self.array(for: .trainRoutes) as? [Dictionary<String,String>] else {
                 return []
             }
-            var result: [NationalRailDataSource.TrainRoute] = []
+            var result: [TrainRoute] = []
             for dict in val {
-                result.append(NationalRailDataSource.TrainRoute(from: dict["from"], to: dict["to"]))
+                result.append(TrainRoute(from: dict["from"], to: dict["to"]))
             }
             return result
         }
@@ -159,13 +168,13 @@ class Config {
         }
     }
 
-    var trainRoute: NationalRailDataSource.TrainRoute {
+    var trainRoute: TrainRoute {
         get {
             let routes = trainRoutes
             if routes.count > 0 {
                 return routes[0]
             } else {
-                return NationalRailDataSource.TrainRoute(from: nil, to: nil)  // TODO: This shouldn't be nil!
+                return TrainRoute(from: nil, to: nil)
             }
         }
         set {
