@@ -73,6 +73,19 @@ final class CalendarSource : DataSource {
             self.offset = offset
         }
 
+        var localizedOffset: String {
+            self.offset == 0 ? "Today" : "Tomorrow"
+        }
+
+        var calendarNames: String {
+            let eventStore = EKEventStore()
+            let calendarNames = Config().activeCalendars.compactMap { eventStore.calendar(withIdentifier:$0)?.title }
+            guard calendarNames.count > 0 else {
+                return "No Calendars Selected"
+            }
+            return calendarNames.joined(separator: ", ")
+        }
+
     }
 
     let id: DataSourceType = .calendar
@@ -209,21 +222,7 @@ final class CalendarSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        let calendarIds = Config().activeCalendars
-        let eventStore = EKEventStore()
-        var calendarNames: [String] = []
-        for calendarId in calendarIds {
-            guard let cal = eventStore.calendar(withIdentifier: calendarId) else {
-                // Calendar has been deleted?
-                continue
-            }
-            calendarNames.append(cal.title)
-        }
-        if calendarNames.count > 0 {
-            return calendarNames.joined(separator: ", ")
-        } else {
-            return "None"
-        }
+        "\(settings.localizedOffset): \(settings.calendarNames)"
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
