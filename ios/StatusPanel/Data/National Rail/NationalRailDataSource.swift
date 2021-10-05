@@ -65,13 +65,6 @@ final class NationalRailDataSource : DataSource {
 
     let configuration: Configuration
 
-    var targetCrs: String?
-    var sourceCrs: String?
-
-    var dataItems = [DataItem]()
-    var completion: ((NationalRailDataSource, [DataItemBase], Error?) -> Void)?
-    var task: URLSessionTask?
-
     var defaults: Settings { Settings() }
 
     init(configuration: Configuration) {
@@ -80,7 +73,6 @@ final class NationalRailDataSource : DataSource {
 
     func data(settings: Settings,
               completion: @escaping (NationalRailDataSource, [DataItemBase], Error?) -> Void) {
-        task?.cancel()
 
         guard let route = settings.routes.first,
               let sourceCrs = route.from,
@@ -88,9 +80,6 @@ final class NationalRailDataSource : DataSource {
                   completion(self, [], nil)
             return
         }
-
-        self.sourceCrs = sourceCrs
-        self.targetCrs = targetCrs
 
         let url = URL(string: "https://huxley.apphb.com")?
             .appendingPathComponent("delays")
@@ -107,41 +96,42 @@ final class NationalRailDataSource : DataSource {
             return
         }
 
-        self.completion = completion
-        task = JSONRequest.makeRequest(url: safeUrl, onCompletion: gotDelays)
-    }
+        let dataCompletion: (Delays?, Error?) -> Void = { data, error in
 
-    func gotDelays(data: Delays?, err: Error?) {
-        task = nil
-        dataItems = []
-        guard let data = data else {
-            completion?(self, dataItems, err)
-            return
-        }
+            var dataItems: [DataItem] = []
 
-        if data.delayedTrains.count == 0 {
-            dataItems.append(DataItem(icon: "🚊", text: "\(sourceCrs!) to \(targetCrs!) trains: Good Service"))
-        }
-
-        for delay in data.delayedTrains {
-            var text = "\(delay.std) \(sourceCrs!) to \(targetCrs!): "
-            if delay.isCancelled {
-                text += "Cancelled"
-            } else {
-                let df = DateFormatter()
-                df.dateFormat = "HH:mm"
-                let std = df.date(from: delay.std)
-                let etd = df.date(from: delay.etd)
-                if (std != nil && etd != nil) {
-                    let mins = Int(etd!.timeIntervalSince(std!) / 60)
-                    text += "\(mins) mins late"
-                } else {
-                    text += "Delayed"
-                }
+            guard let data = data else {
+                completion(self, dataItems, error)
+                return
             }
-            dataItems.append(DataItem(icon: "🚊", text: text, flags: [.warning]))
+
+            if data.delayedTrains.count == 0 {
+                dataItems.append(DataItem(icon: "🚊", text: "\(sourceCrs) to \(targetCrs) trains: Good Service"))
+            }
+
+            for delay in data.delayedTrains {
+                var text = "\(delay.std) \(sourceCrs) to \(targetCrs): "
+                if delay.isCancelled {
+                    text += "Cancelled"
+                } else {
+                    let df = DateFormatter()
+                    df.dateFormat = "HH:mm"
+                    let std = df.date(from: delay.std)
+                    let etd = df.date(from: delay.etd)
+                    if (std != nil && etd != nil) {
+                        let mins = Int(etd!.timeIntervalSince(std!) / 60)
+                        text += "\(mins) mins late"
+                    } else {
+                        text += "Delayed"
+                    }
+                }
+                dataItems.append(DataItem(icon: "🚊", text: text, flags: [.warning]))
+            }
+            completion(self, dataItems, error)
         }
-        completion?(self, dataItems, err)
+
+        // We don't need to store the task as it's using a shared task.
+        _ = JSONRequest.makeRequest(url: safeUrl, onCompletion: dataCompletion)
     }
 
     func summary(settings: Settings) -> String? {

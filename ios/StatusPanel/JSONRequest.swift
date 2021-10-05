@@ -22,6 +22,7 @@ import Foundation
 
 class JSONRequest {
 
+    // TODO: Does anything inject the session?
     static func makeRequest<T>(url: URL, session: URLSession? = nil, onCompletion: @escaping (T?, Error?) -> Void) -> URLSessionDataTask where T : Decodable {
         let session = session ?? URLSession.shared
         let task = session.dataTask(with: url) { (data: Data?, response: URLResponse?, err: Error?) in

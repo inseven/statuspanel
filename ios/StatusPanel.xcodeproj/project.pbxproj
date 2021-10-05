@@ -21,6 +21,7 @@
 		D83CC5202707532400260DC1 /* DataSourceWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC51F2707532400260DC1 /* DataSourceWrapper.swift */; };
 		D83CC5222707543E00260DC1 /* UIStoryboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC5212707543E00260DC1 /* UIStoryboard.swift */; };
 		D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A197270C8DB100681F62 /* TextDataSource.swift */; };
+		D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A199270D16AD00681F62 /* AddDataSourceView.swift */; };
 		D89104852707B9A00020A2CF /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104842707B99F0020A2CF /* UIViewController.swift */; };
 		D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104862707BAD50020A2CF /* DataSourceInstance.swift */; };
 		D891048A2707BB6D0020A2CF /* DummyDataSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104892707BB6D0020A2CF /* DummyDataSettingsView.swift */; };
@@ -95,6 +96,7 @@
 		D83CC51F2707532400260DC1 /* DataSourceWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceWrapper.swift; sourceTree = "<group>"; };
 		D83CC5212707543E00260DC1 /* UIStoryboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStoryboard.swift; sourceTree = "<group>"; };
 		D848A197270C8DB100681F62 /* TextDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDataSource.swift; sourceTree = "<group>"; };
+		D848A199270D16AD00681F62 /* AddDataSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDataSourceView.swift; sourceTree = "<group>"; };
 		D89104842707B99F0020A2CF /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		D89104862707BAD50020A2CF /* DataSourceInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceInstance.swift; sourceTree = "<group>"; };
 		D89104892707BB6D0020A2CF /* DummyDataSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyDataSettingsView.swift; sourceTree = "<group>"; };
@@ -167,6 +169,7 @@
 			isa = PBXGroup;
 			children = (
 				D812523527093C4500C9D80A /* AboutView.swift */,
+				D848A199270D16AD00681F62 /* AddDataSourceView.swift */,
 				D81252372709400E00C9D80A /* LicenseRow.swift */,
 				D81252392709403C00C9D80A /* LicenseView.swift */,
 			);
@@ -437,6 +440,7 @@
 				D891048E2707E4B70020A2CF /* Calendar.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
 				DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */,
+				D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */,
 				D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */,
 				D8DAED7226E3F3320002F388 /* Configuration.swift in Sources */,
 				DB87810C223D67B2005AEBD8 /* UpdateTimeController.swift in Sources */,

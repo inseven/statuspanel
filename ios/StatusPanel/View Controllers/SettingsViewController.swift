@@ -28,37 +28,6 @@ protocol SettingsViewControllerDelegate: AnyObject {
 
 }
 
-struct AddDataSourceView: View {
-
-    @Environment(\.presentationMode) var presentationMode
-
-    var sourceController: DataSourceController
-    var completion: (DataSourceWrapper?) -> Void
-
-    var body: some View {
-        NavigationView {
-            Form {
-                ForEach(sourceController.dataSources) { factory in
-                    Button {
-                        completion(factory)
-                        presentationMode.wrappedValue.dismiss()
-                    } label: {
-                        Text(factory.name)
-                            .foregroundColor(.primary)
-                    }
-                }
-            }
-            .navigationBarTitle("Add Data Source", displayMode: .inline)
-            .navigationBarItems(leading: Button {
-                presentationMode.wrappedValue.dismiss()
-            } label: {
-                Text("Cancel")
-            })
-        }
-    }
-
-}
-
 class SettingsViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
 
     let DataSourcesSection = 0
