@@ -27,7 +27,6 @@ class NationalRailSettingsController : UITableViewController {
 
     @IBOutlet weak var fromStationCell: UITableViewCell!
     @IBOutlet weak var toStationCell: UITableViewCell!
-    @IBOutlet weak var enabledCell: UITableViewCell!
     var stationPickerShowing: StationPickerController?
     var pickingDest = false
 
@@ -43,17 +42,6 @@ class NationalRailSettingsController : UITableViewController {
         }
         fromStationCell.textLabel?.text = from
         toStationCell.textLabel?.text = to
-        let enabled = route.from != nil && route.to != nil
-        if let enabledSwitch = enabledCell.accessoryView as? UISwitch {
-            enabledSwitch.setOn(enabled, animated: false)
-        }
-    }
-
-    override func viewDidLoad() {
-        let enabledSwitch = UISwitch()
-        enabledSwitch.addTarget(self, action: #selector(enabledSwitchDidChange), for: UIControl.Event.valueChanged)
-        enabledCell.accessoryView = enabledSwitch
-        super.viewDidLoad()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -74,17 +62,6 @@ class NationalRailSettingsController : UITableViewController {
             try! store.save(settings: settings)
         }
         update()
-    }
-
-    @objc func enabledSwitchDidChange(sender: Any) {
-        guard let enabledSwitch = sender as? UISwitch else {
-            return
-        }
-        if !enabledSwitch.isOn {
-            settings.routes = []
-            try! store.save(settings: settings)
-            update()
-        }
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
