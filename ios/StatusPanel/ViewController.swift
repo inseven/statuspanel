@@ -222,7 +222,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         var x : CGFloat = 5
         var y : CGFloat = 0
         let colWidth = twoCols ? (rect.width / 2 - x * 2) : rect.width - x
-        let itemGap : CGFloat = 10
+        let bodyFont = config.getFont(named: config.bodyFont)
+        let itemGap = CGFloat(min(10, bodyFont.textHeight / 2)) // ie 50% of the body text line height up to a max of 10px
         var colStart = y
         var col = 0
         var columnItemCount = 0 // Number of items assigned to the current column
