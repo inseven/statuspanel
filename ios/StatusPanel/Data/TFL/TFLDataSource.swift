@@ -73,7 +73,7 @@ final class TFLDataSource: DataSource {
     let configuration: Configuration
 
     var dataItems = [DataItem]()
-    var completion: ((TFLDataSource, [DataItemBase], Error?) -> Void)?
+    var completion: (([DataItemBase], Error?) -> Void)?
     var task: URLSessionTask?
 
     var defaults: Settings { Settings() }
@@ -82,14 +82,14 @@ final class TFLDataSource: DataSource {
         self.configuration = configuration
     }
 
-    func data(settings: Settings, completion: @escaping (TFLDataSource, [DataItemBase], Error?) -> Void) {
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
         task?.cancel()
         self.completion = completion
 
         let lines = settings.lines.filter({ Self.lines[$0] != nil })
 
         guard !lines.isEmpty else {
-            completion(self, [], nil)
+            completion([], nil)
             self.completion = nil
             return
         }
@@ -106,7 +106,7 @@ final class TFLDataSource: DataSource {
             ])
 
         guard let safeUrl = url else {
-            completion(self, [], StatusPanelError.invalidUrl)
+            completion([], StatusPanelError.invalidUrl)
             self.completion = nil
             return
         }
@@ -129,13 +129,13 @@ final class TFLDataSource: DataSource {
             }
 
             guard let name = Self.lines[line.id] else {
-                completion?(self, [], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
+                completion?([], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
                 return
             }
 
             dataItems.append(DataItem(icon: "🚇", text: "\(name): \(desc)", flags: flags))
         }
-        completion?(self, dataItems, err)
+        completion?(dataItems, err)
     }
 
     func summary(settings: Settings) -> String? {

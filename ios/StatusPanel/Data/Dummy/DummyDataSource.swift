@@ -34,7 +34,7 @@ final class DummyDataSource : DataSource {
 
     var defaults: Settings { Settings() }
 
-    func data(settings: Settings, completion: @escaping (DummyDataSource, [DataItemBase], Error?) -> Void) {
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
         var data: [DataItemBase] = []
         if settings.enabled {
             var specialChars: [String] = []
@@ -74,7 +74,7 @@ final class DummyDataSource : DataSource {
                 data.append(specialCharsItem)
             }
         }
-        completion(self, data, nil)
+        completion(data, nil)
     }
 
     func summary(settings: Settings) -> String? {

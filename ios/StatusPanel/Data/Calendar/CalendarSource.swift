@@ -96,12 +96,12 @@ final class CalendarSource : DataSource {
         eventStore = EKEventStore()
     }
 
-    func data(settings: Settings, completion: @escaping (CalendarSource, [DataItemBase], Error?) -> Void) {
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
         eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
             if (granted) {
                 self.getData(settings: settings, callback: completion)
             } else {
-                completion(self, [], err)
+                completion([], err)
             }
         }
     }
@@ -118,7 +118,7 @@ final class CalendarSource : DataSource {
             // predicateForEvents treats calendars:[] the same as calendars:nil
             // which matches against _all_ calendars, which we definitely don't
             // want, so we have to return early here.
-            callback(self, [], nil)
+            callback([], nil)
             return
         }
 
@@ -200,7 +200,7 @@ final class CalendarSource : DataSource {
                 results.append(CalendarItem(time: timeStr, title: title, location: location))
             }
         }
-        callback(self, results, nil)
+        callback(results, nil)
     }
 
     func redactUrls(_ value: String) -> String {

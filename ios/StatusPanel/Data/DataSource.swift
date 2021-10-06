@@ -28,8 +28,7 @@ protocol DataSourceSettings: Codable {
 
 protocol DataSource: AnyObject, Identifiable {
 
-    // TODO: Remove self
-    typealias Callback = (Self, [DataItemBase], Error?) -> Void // TODO: Move this inline.
+    typealias Callback = ([DataItemBase], Error?) -> Void // TODO: Move this inline.
     typealias Store = SettingsStore<Settings>
 
     associatedtype Settings: DataSourceSettings

@@ -59,12 +59,11 @@ final class NationalRailDataSource : DataSource {
         self.configuration = configuration
     }
 
-    func data(settings: Settings,
-              completion: @escaping (NationalRailDataSource, [DataItemBase], Error?) -> Void) {
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
 
         guard let sourceCrs = settings.from,
               let targetCrs = settings.to else {
-                  completion(self, [], nil)
+                  completion([], nil)
             return
         }
 
@@ -79,7 +78,7 @@ final class NationalRailDataSource : DataSource {
             ])
 
         guard let safeUrl = url else {
-            completion(self, [], StatusPanelError.invalidUrl)
+            completion([], StatusPanelError.invalidUrl)
             return
         }
 
@@ -88,7 +87,7 @@ final class NationalRailDataSource : DataSource {
             var dataItems: [DataItem] = []
 
             guard let data = data else {
-                completion(self, dataItems, error)
+                completion(dataItems, error)
                 return
             }
 
@@ -114,7 +113,7 @@ final class NationalRailDataSource : DataSource {
                 }
                 dataItems.append(DataItem(icon: "🚊", text: text, flags: [.warning]))
             }
-            completion(self, dataItems, error)
+            completion(dataItems, error)
         }
 
         // We don't need to store the task as it's using a shared task.

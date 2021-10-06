@@ -52,7 +52,7 @@ final class TextDataSource: DataSource {
     let defaults = Settings(flags: [], text: "")
 
     func data(settings: Settings, completion: @escaping Callback) {
-        completion(self, [DataItem(text: settings.text, flags: settings.flags)], nil)
+        completion([DataItem(text: settings.text, flags: settings.flags)], nil)
     }
 
     func summary(settings: Settings) -> String? {

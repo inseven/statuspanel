@@ -49,7 +49,7 @@ class DataSourceWrapper: Identifiable {
         fetchProxy = { uuid, completion in
             do {
                 let settings = try dataSource.settings(uuid: uuid)
-                dataSource.data(settings: settings) { _, data, error in
+                dataSource.data(settings: settings) { data, error in
                     if let error = error {
                         completion(self, nil, error)
                         return

@@ -102,10 +102,10 @@ final class CalendarHeaderSource : DataSource {
     init() {
     }
 
-    func data(settings: Settings, completion: @escaping (CalendarHeaderSource, [DataItemBase], Error?) -> Void) {
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
 
         guard let date = Calendar.current.date(byAdding: settings.component, value: settings.offset, to: Date()) else {
-            completion(self, [], StatusPanelError.invalidDate)
+            completion([], StatusPanelError.invalidDate)
             return
         }
 
@@ -113,7 +113,7 @@ final class CalendarHeaderSource : DataSource {
                                        longFormat: settings.longFormat,
                                        shortFormat: settings.shortFormat,
                                        flags: settings.flags)]
-        completion(self, data, nil)
+        completion(data, nil)
     }
 
     func summary(settings: Settings) -> String? {
