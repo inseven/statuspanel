@@ -138,7 +138,8 @@ final class TFLDataSource: DataSource {
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor") as? TFLSettingsController else {
+        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor")
+                as? TFLSettingsController else {
             return nil
         }
         viewController.store = store
