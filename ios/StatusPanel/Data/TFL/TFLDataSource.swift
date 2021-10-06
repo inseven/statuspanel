@@ -126,7 +126,7 @@ final class TFLDataSource: DataSource {
         }
 
         // We don't need to store the task as it's using a shared task.
-        _ = JSONRequest.makeRequest(url: safeUrl, onCompletion: dataCompletion)
+        _ = JSONRequest.makeRequest(url: safeUrl, completion: dataCompletion)
     }
 
     func summary(settings: Settings) -> String? {
