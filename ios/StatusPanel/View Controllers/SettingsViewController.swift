@@ -78,9 +78,13 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             guard let dataSource = dataSource else {
                 return
             }
-            self.dataSourceController.add(dataSource)
-            let indexPath = IndexPath(row: self.dataSourceController.sources.count - 1, section: 0)
-            self.tableView.insertRows(at: [indexPath], with: .none)
+            do {
+                try self.dataSourceController.add(dataSource)
+                let indexPath = IndexPath(row: self.dataSourceController.sources.count - 1, section: 0)
+                self.tableView.insertRows(at: [indexPath], with: .none)
+            } catch {
+                self.present(error: error, completion: nil)
+            }
         })
         navigationController?.present(viewController, animated: true, completion: nil)
     }
@@ -194,11 +198,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DataSourceCell")
             let source = dataSourceController.sources[indexPath.row]
             cell.textLabel?.text = source.dataSource.name
-            do {
-                cell.detailTextLabel?.text = try source.dataSource.summary(uuid: source.id)
-            } catch {
-                present(error: error, completion: nil)
-            }
+            cell.detailTextLabel?.text = try? source.dataSource.summary(uuid: source.id)
             cell.accessoryType = source.dataSource.configurable ? .disclosureIndicator : .none
             cell.showsReorderControl = true
             return cell

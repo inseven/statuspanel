@@ -85,12 +85,9 @@ class DataSourceController {
                                               offset: 1))
     }
 
-    // TODO: This can fail and we should probably handle an error during this initialization.
-    // TODO: We probably don't need this method?
-    fileprivate func add(type: DataSourceType) {
+    fileprivate func add(type: DataSourceType) throws {
         guard let dataSource = factories[type] else {
-            print("Failed to instantiate data source with type '\(type.rawValue)'.")
-            return
+            throw StatusPanelError.unknownDataSource(type)
         }
         sources.append(DataSourceInstance(id: UUID(), dataSource: dataSource))
     }
@@ -117,8 +114,8 @@ class DataSourceController {
         sources.append(instance)
     }
 
-    func add(_ dataSource: DataSourceWrapper) {
-        self.add(type: dataSource.id)
+    func add(_ dataSource: DataSourceWrapper) throws {
+        try self.add(type: dataSource.id)
     }
 
     func remove(instance: DataSourceInstance) {

@@ -28,5 +28,6 @@ enum StatusPanelError: Error {
     case invalidDate
     case corruptSettings
     case noSettings
+    case unknownDataSource(DataSourceType)
 
 }
