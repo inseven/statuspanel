@@ -34,14 +34,37 @@ class DataSourceWrapper: Identifiable {
     fileprivate var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
     fileprivate var validateSettingsProxy: ((DataSourceSettings) -> Bool)! = nil
 
-    var id: DataSourceType { idProxy() }
-    var name: String { nameProxy() }
-    var configurable: Bool { configurableProxy() }
-    func fetch(uuid: UUID, completion: @escaping (DataSourceWrapper, [DataItemBase]?, Error?) -> Void) { fetchProxy(uuid, completion) }
-    func summary(uuid: UUID) throws -> String? { try summaryProxy(uuid) }
-    func settingsViewController(uuid: UUID) throws -> UIViewController? { try settingsViewControllerProxy(uuid) }
-    func settingsView(uuid: UUID) throws -> UIViewController { try settingsViewProxy(uuid) }
-    func validate(settings: DataSourceSettings) -> Bool { validateSettingsProxy(settings) }
+    var id: DataSourceType {
+        idProxy()
+    }
+
+    var name: String {
+        nameProxy()
+    }
+
+    var configurable: Bool {
+        configurableProxy()
+    }
+
+    func fetch(uuid: UUID, completion: @escaping (DataSourceWrapper, [DataItemBase]?, Error?) -> Void) {
+        fetchProxy(uuid, completion)
+    }
+
+    func summary(uuid: UUID) throws -> String? {
+        throw StatusPanelError.corruptSettings
+    }
+
+    func settingsViewController(uuid: UUID) throws -> UIViewController? {
+        try settingsViewControllerProxy(uuid)
+    }
+
+    func settingsView(uuid: UUID) throws -> UIViewController {
+        try settingsViewProxy(uuid)
+    }
+
+    func validate(settings: DataSourceSettings) -> Bool {
+        validateSettingsProxy(settings)
+    }
 
     init<T: DataSource>(_ dataSource: T) {
         idProxy = { dataSource.id }
