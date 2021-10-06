@@ -42,7 +42,7 @@ class Config {
         case dataSources = "dataSources"
     }
 
-    struct TrainRoute: Codable {
+    struct TrainRoute {
         var from: String?
         var to: String?
         init(from: String?, to: String?) {
