@@ -50,8 +50,6 @@ class DataSourceController {
 
     init() {
 
-        // TODO: Ensure this is thread safe (aka always called on the main thread?)
-
         let configuration = try! Bundle.main.configuration()
         factories = [
             .calendar: CalendarSource().wrapped(),
@@ -63,63 +61,56 @@ class DataSourceController {
         ]
 
         let config = Config()
-        add(type: .calendarHeader,
-            settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
-                                                    shortFormat: "yMMMMdEEE",
-                                                    flags: [.header, .spansColumns],
-                                                    offset: 0,
-                                                    component: .day))
-        add(type: .transportForLondon,
-            settings: TFLDataSource.Settings(lines: config.activeTFLLines))
-        add(type: .nationalRail,
-            settings: NationalRailDataSource.Settings(from: config.trainRoute.from, to: config.trainRoute.to))
-        add(type: .calendar,
-            settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
-                                              showUrls: config.showUrlsInCalendarLocations))
-        add(type: .text,
-            settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
-                                              text: "Tomorrow:"))
-        add(type: .calendar,
-            settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
-                                              showUrls: config.showUrlsInCalendarLocations,
-                                              offset: 1))
+        do {
+            try add(type: .calendarHeader,
+                    settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                                            shortFormat: "yMMMMdEEE",
+                                                            flags: [.header, .spansColumns],
+                                                            offset: 0,
+                                                            component: .day))
+            try add(type: .transportForLondon,
+                    settings: TFLDataSource.Settings(lines: config.activeTFLLines))
+            try add(type: .nationalRail,
+                    settings: NationalRailDataSource.Settings(from: config.trainRoute.from, to: config.trainRoute.to))
+            try add(type: .calendar,
+                    settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
+                                                      showUrls: config.showUrlsInCalendarLocations))
+            try add(type: .text,
+                    settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
+                                                      text: "Tomorrow:"))
+            try add(type: .calendar,
+                    settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
+                                                      showUrls: config.showUrlsInCalendarLocations,
+                                                      offset: 1))
+        } catch {
+            print("Failed to add default data sources with error \(error).")
+        }
     }
 
-    fileprivate func add(type: DataSourceType) throws {
+    fileprivate func add(type: DataSourceType, uuid: UUID = UUID()) throws {
         dispatchPrecondition(condition: .onQueue(.main))
-
         guard let dataSource = factories[type] else {
             throw StatusPanelError.unknownDataSource(type)
         }
         sources.append(DataSourceInstance(id: UUID(), dataSource: dataSource))
     }
 
-    // TODO: Can we make this safe by somehow associating the type with the enum?
-    fileprivate func add<T: DataSourceSettings>(type: DataSourceType, settings: T) {
+    fileprivate func add<T: DataSourceSettings>(type: DataSourceType, settings: T) throws {
         dispatchPrecondition(condition: .onQueue(.main))
-
-        // Get the data source.
         guard let dataSource = factories[type] else {
-            // TODO: Handle failure.
-            print("Failed to instantiate data source with type '\(type.rawValue)'.")
-            return
+            throw StatusPanelError.unknownDataSource(type)
         }
-
-        // Generate a new identifying UUID.
         let uuid = UUID()
-
-        // Save the default settings (if specified).
+        // TODO: Can we make this safe by somehow associating the type with the enum?
         // TODO: Validate the settings type; throw so we can handle the error?
         assert(dataSource.validate(settings: settings))
-        try! Config().save(settings: settings, uuid: uuid)
-
-        let instance = DataSourceInstance(id: uuid, dataSource: dataSource)
-        sources.append(instance)
+        try Config().save(settings: settings, uuid: uuid)
+        sources.append(DataSourceInstance(id: uuid, dataSource: dataSource))
     }
 
     func add(_ dataSource: DataSourceWrapper) throws {
         dispatchPrecondition(condition: .onQueue(.main))
-        try self.add(type: dataSource.id)
+        _ = try self.add(type: dataSource.id)
     }
 
     func remove(instance: DataSourceInstance) {
