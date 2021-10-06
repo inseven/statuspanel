@@ -24,7 +24,15 @@ import UIKit
 
 final class CalendarHeaderSource : DataSource {
 
-    struct Settings: DataSourceSettings {
+    struct Settings: DataSourceSettings & Equatable {
+
+        static func == (lhs: CalendarHeaderSource.Settings, rhs: CalendarHeaderSource.Settings) -> Bool {
+            return (lhs.longFormat == rhs.longFormat &&
+                    lhs.shortFormat == rhs.shortFormat &&
+                    lhs.flags == rhs.flags &&
+                    lhs.offset == rhs.offset &&
+                    lhs.component == rhs.component)
+        }
 
         var longFormat: String
         var shortFormat: String

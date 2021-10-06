@@ -23,6 +23,7 @@
 		D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A197270C8DB100681F62 /* TextDataSource.swift */; };
 		D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A199270D16AD00681F62 /* AddDataSourceView.swift */; };
 		D848A19C270D206300681F62 /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A19B270D206300681F62 /* Int.swift */; };
+		D848A19E270D213800681F62 /* FlagsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A19D270D213800681F62 /* FlagsSection.swift */; };
 		D89104852707B9A00020A2CF /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104842707B99F0020A2CF /* UIViewController.swift */; };
 		D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104862707BAD50020A2CF /* DataSourceInstance.swift */; };
 		D891048A2707BB6D0020A2CF /* DummyDataSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104892707BB6D0020A2CF /* DummyDataSettingsView.swift */; };
@@ -99,6 +100,7 @@
 		D848A197270C8DB100681F62 /* TextDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDataSource.swift; sourceTree = "<group>"; };
 		D848A199270D16AD00681F62 /* AddDataSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDataSourceView.swift; sourceTree = "<group>"; };
 		D848A19B270D206300681F62 /* Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
+		D848A19D270D213800681F62 /* FlagsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagsSection.swift; sourceTree = "<group>"; };
 		D89104842707B99F0020A2CF /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		D89104862707BAD50020A2CF /* DataSourceInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceInstance.swift; sourceTree = "<group>"; };
 		D89104892707BB6D0020A2CF /* DummyDataSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyDataSettingsView.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 			children = (
 				D812523527093C4500C9D80A /* AboutView.swift */,
 				D848A199270D16AD00681F62 /* AddDataSourceView.swift */,
+				D848A19D270D213800681F62 /* FlagsSection.swift */,
 				D81252372709400E00C9D80A /* LicenseRow.swift */,
 				D81252392709403C00C9D80A /* LicenseView.swift */,
 			);
@@ -435,6 +438,7 @@
 				D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */,
 				D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */,
 				D81252382709400E00C9D80A /* LicenseRow.swift in Sources */,
+				D848A19E270D213800681F62 /* FlagsSection.swift in Sources */,
 				D8293A0C26F787D3008CE13B /* URL.swift in Sources */,
 				D891048A2707BB6D0020A2CF /* DummyDataSettingsView.swift in Sources */,
 				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
