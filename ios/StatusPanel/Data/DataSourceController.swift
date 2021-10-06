@@ -21,17 +21,6 @@
 import Combine
 import Foundation
 
-enum DataSourceType: String, Codable {
-
-    case calendar = "io.statuspanel.source.calendar"
-    case calendarHeader = "io.statuspanel.source.calendar-header"
-    case dummy = "io.statuspanel.source.dummy"
-    case nationalRail = "io.statuspanel.source.national-rail"
-    case text = "io.statuspanel.source.text"
-    case transportForLondon = "io.statuspanel.source.transport-for-london"
-
-}
-
 struct DataSourceTuple: Codable {
 
     var type: DataSourceType
@@ -40,6 +29,7 @@ struct DataSourceTuple: Codable {
 }
 
 protocol DataSourceControllerDelegate: AnyObject {
+
     // Always called in context of main thread
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase])
     func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error)
