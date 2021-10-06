@@ -22,7 +22,6 @@ import Foundation
 import SwiftUI
 import UIKit
 
-// TODO: & Equatable
 protocol DataSourceSettings: Codable {
 
 }
