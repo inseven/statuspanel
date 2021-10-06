@@ -97,15 +97,22 @@ class DataSourceController {
 
     // TODO: Can we make this safe by somehow associating the type with the enum?
     fileprivate func add<T: DataSourceSettings>(type: DataSourceType, settings: T) {
+
+        // Get the data source.
         guard let dataSource = factories[type] else {
             // TODO: Handle failure.
             print("Failed to instantiate data source with type '\(type.rawValue)'.")
             return
         }
-        // TODO: Validate the settings type.
-        assert(dataSource.validate(settings: settings))
+
+        // Generate a new identifying UUID.
         let uuid = UUID()
+
+        // Save the default settings (if specified).
+        // TODO: Validate the settings type; throw so we can handle the error?
+        assert(dataSource.validate(settings: settings))
         try! Config().save(settings: settings, uuid: uuid)
+
         let instance = DataSourceInstance(id: uuid, dataSource: dataSource)
         sources.append(instance)
     }
