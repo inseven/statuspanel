@@ -22,10 +22,6 @@ import Foundation
 import SwiftUI
 import UIKit
 
-extension DataItemFlags: Codable {
-
-}
-
 final class CalendarHeaderSource : DataSource {
 
     struct Settings: DataSourceSettings {

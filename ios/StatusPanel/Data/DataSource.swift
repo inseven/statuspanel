@@ -82,7 +82,7 @@ class SettingsStore<T: DataSourceSettings> {
 
 }
 
-struct DataItemFlags: OptionSet {
+struct DataItemFlags: OptionSet, Codable {
 
     let rawValue: Int
 
