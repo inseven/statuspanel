@@ -23,7 +23,6 @@ import SwiftUI
 import UIKit
 
 // See https://api-portal.tfl.gov.uk/admin/applications/1409617922524
-// TODO: Don't bother to return self?
 final class TFLDataSource: DataSource {
 
     struct Settings: DataSourceSettings {
