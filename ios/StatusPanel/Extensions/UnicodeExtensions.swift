@@ -20,7 +20,7 @@
 
 import Foundation
 
-public enum UnicodeScalarEnum: UInt32 {
+public enum NamedUnicodeScalar: UInt32 {
     case A = 0x41
     case a = 0x61
     case ZeroWidthJoiner = 0x200D
@@ -42,10 +42,14 @@ public enum UnicodeScalarEnum: UInt32 {
     case Tag_a = 0xE0061
     case Tag_z = 0xE007A
     case CancelTag = 0xE007F
+
+    func scalar() -> Unicode.Scalar {
+        return Unicode.Scalar(self.rawValue)!
+    }
 }
 
 public extension Unicode.Scalar {
-    func inRange(_ lower: UnicodeScalarEnum, _ upper: UnicodeScalarEnum) -> Bool {
+    func inRange(_ lower: NamedUnicodeScalar, _ upper: NamedUnicodeScalar) -> Bool {
         let val = self.value
         return val >= lower.rawValue && val <= upper.rawValue
     }
@@ -61,33 +65,33 @@ public extension String.UnicodeScalarView {
         return self[self.index(self.startIndex, offsetBy: realIndex)]
     }
 
-    func inRange(index: Int, _ lower: UnicodeScalarEnum, _ upper: UnicodeScalarEnum) -> Bool {
+    func inRange(index: Int, _ lower: NamedUnicodeScalar, _ upper: NamedUnicodeScalar) -> Bool {
         guard let scalar = get(index) else {
             return false
         }
         return scalar.inRange(lower, upper)
     }
 
-    func firstInRange(_ lower: UnicodeScalarEnum, _ upper: UnicodeScalarEnum) -> Bool {
+    func firstInRange(_ lower: NamedUnicodeScalar, _ upper: NamedUnicodeScalar) -> Bool {
         return inRange(index: 0, lower, upper)
     }
 
-    func lastInRange(_ lower: UnicodeScalarEnum, _ upper: UnicodeScalarEnum) -> Bool {
+    func lastInRange(_ lower: NamedUnicodeScalar, _ upper: NamedUnicodeScalar) -> Bool {
         return inRange(index: -1, lower, upper)
     }
 
-    func scalarAt(index: Int, equals value: UnicodeScalarEnum) -> Bool {
+    func scalarAt(index: Int, equals value: NamedUnicodeScalar) -> Bool {
         guard let scalar = get(index) else {
             return false
         }
         return scalar.value == value.rawValue
     }
 
-    func firstIs(_ value: UnicodeScalarEnum) -> Bool {
+    func firstIs(_ value: NamedUnicodeScalar) -> Bool {
         return scalarAt(index: 0, equals: value)
     }
 
-    func lastIs(_ value: UnicodeScalarEnum) -> Bool {
+    func lastIs(_ value: NamedUnicodeScalar) -> Bool {
         return scalarAt(index: -1, equals: value)
     }
 }
@@ -98,8 +102,8 @@ public extension Character {
         if scalars.count == 2 && scalars.firstInRange(.RegionalIndicatorStart, .RegionalIndicatorEnd) &&
                 scalars.inRange(index: 1, .RegionalIndicatorStart, .RegionalIndicatorEnd) {
             // Emoji regional indicator style flag
-            let A = UnicodeScalarEnum.A.rawValue
-            let regionalStart = UnicodeScalarEnum.RegionalIndicatorStart.rawValue
+            let A = NamedUnicodeScalar.A.rawValue
+            let regionalStart = NamedUnicodeScalar.RegionalIndicatorStart.rawValue
             let ch1 = Character(Unicode.Scalar(A + (scalars.get(0)!.value - regionalStart))!)
             let ch2 = Character(Unicode.Scalar(A + (scalars.get(1)!.value - regionalStart))!)
             return "\(ch1)\(ch2)"
@@ -107,8 +111,8 @@ public extension Character {
 
         if scalars.firstIs(.BlackFlag) && scalars.lastIs(.CancelTag) {
             // Emoji tag sequence style flag
-            let a = UnicodeScalarEnum.a.rawValue
-            let tag_a = UnicodeScalarEnum.Tag_a.rawValue
+            let a = NamedUnicodeScalar.a.rawValue
+            let tag_a = NamedUnicodeScalar.Tag_a.rawValue
             var chars: [String] = []
             for i in 1 ..< scalars.count - 1 {
                 let scalar = scalars.get(i)!
@@ -122,5 +126,15 @@ public extension Character {
         }
 
         return nil
+    }
+
+    func splitZeroWidthJoiners() -> [Character] {
+        var result: [Character] = []
+        let zwj = NamedUnicodeScalar.ZeroWidthJoiner.scalar()
+        let splits = self.unicodeScalars.split(separator: zwj, omittingEmptySubsequences: true)
+        for scalars in splits {
+            result.append(String(scalars).first!)
+        }
+        return result
     }
 }
