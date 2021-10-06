@@ -86,6 +86,8 @@ class DataSourceController {
     }
 
     fileprivate func add(type: DataSourceType) throws {
+        dispatchPrecondition(condition: .onQueue(.main))
+
         guard let dataSource = factories[type] else {
             throw StatusPanelError.unknownDataSource(type)
         }
@@ -94,6 +96,7 @@ class DataSourceController {
 
     // TODO: Can we make this safe by somehow associating the type with the enum?
     fileprivate func add<T: DataSourceSettings>(type: DataSourceType, settings: T) {
+        dispatchPrecondition(condition: .onQueue(.main))
 
         // Get the data source.
         guard let dataSource = factories[type] else {
@@ -115,18 +118,21 @@ class DataSourceController {
     }
 
     func add(_ dataSource: DataSourceWrapper) throws {
+        dispatchPrecondition(condition: .onQueue(.main))
         try self.add(type: dataSource.id)
     }
 
     func remove(instance: DataSourceInstance) {
+        dispatchPrecondition(condition: .onQueue(.main))
         self.sources.removeAll { $0 == instance }
     }
 
     func save() {
-        
+        dispatchPrecondition(condition: .onQueue(.main))
     }
 
     func fetch() {
+        dispatchPrecondition(condition: .onQueue(.main))
         let promises = sources.map { $0.fetch() }
         let zip = promises.dropFirst().reduce(into: AnyPublisher(promises[0].map { [$0] }) ) {
             res, just in
@@ -150,21 +156,4 @@ class DataSourceController {
                 self.delegate?.dataSourceController(self, didUpdateData: items)
             }
     }
-}
-
-extension DataSourceInstance {
-
-    func fetch() -> Future<[DataItemBase], Error> {
-        Future { promise in
-            DispatchQueue.global().async {
-                self.dataSource.fetch(uuid: id) { _, items, error in
-                    if let error = error {
-                        promise(.failure(error))
-                    }
-                    promise(.success(items ?? []))
-                }
-            }
-        }
-    }
-
 }

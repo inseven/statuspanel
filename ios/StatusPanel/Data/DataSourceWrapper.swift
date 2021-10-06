@@ -51,7 +51,7 @@ class DataSourceWrapper: Identifiable {
     }
 
     func summary(uuid: UUID) throws -> String? {
-        throw StatusPanelError.corruptSettings
+        try summaryProxy(uuid)
     }
 
     func settingsViewController(uuid: UUID) throws -> UIViewController? {

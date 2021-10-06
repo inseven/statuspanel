@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import Combine
 import Foundation
 
 struct DataSourceInstance: Identifiable, Equatable {
@@ -28,5 +29,18 @@ struct DataSourceInstance: Identifiable, Equatable {
 
     let id: UUID
     let dataSource: DataSourceWrapper
+
+    func fetch() -> Future<[DataItemBase], Error> {
+        Future { promise in
+            DispatchQueue.global().async {
+                self.dataSource.fetch(uuid: id) { _, items, error in
+                    if let error = error {
+                        promise(.failure(error))
+                    }
+                    promise(.success(items ?? []))
+                }
+            }
+        }
+    }
 
 }
