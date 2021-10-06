@@ -72,10 +72,6 @@ final class TFLDataSource: DataSource {
 
     let configuration: Configuration
 
-    var dataItems = [DataItem]()
-    var completion: (([DataItemBase], Error?) -> Void)?
-    var task: URLSessionTask?
-
     var defaults: Settings { Settings() }
 
     init(configuration: Configuration) {
@@ -83,14 +79,12 @@ final class TFLDataSource: DataSource {
     }
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
-        task?.cancel()
-        self.completion = completion
 
+        // Remove any unknown lines.
         let lines = settings.lines.filter({ Self.lines[$0] != nil })
 
         guard !lines.isEmpty else {
             completion([], nil)
-            self.completion = nil
             return
         }
 
@@ -106,35 +100,34 @@ final class TFLDataSource: DataSource {
 
         guard let safeUrl = url else {
             completion([], StatusPanelError.invalidUrl)
-            self.completion = nil
             return
         }
 
-        task = JSONRequest.makeRequest(url: safeUrl, onCompletion: gotLineData)
-    }
+        let dataCompletion: ([LineStatus]?, Error?) -> Void = { data, error in
+            var dataItems: [DataItem] = []
+            for line in data ?? [] {
+                if line.lineStatuses.count < 1 {
+                    continue
+                }
+                let desc = line.lineStatuses[0].statusSeverityDescription
+                let sev = line.lineStatuses[0].statusSeverity
+                var flags: DataItemFlags = []
+                if sev < 10 {
+                    flags.insert(.warning)
+                }
 
-    func gotLineData(data: [LineStatus]?, err: Error?) {
-        task = nil
-        dataItems = []
-        for line in data ?? [] {
-            if line.lineStatuses.count < 1 {
-                continue
-            }
-            let desc = line.lineStatuses[0].statusSeverityDescription
-            let sev = line.lineStatuses[0].statusSeverity
-            var flags: DataItemFlags = []
-            if sev < 10 {
-                flags.insert(.warning)
-            }
+                guard let name = Self.lines[line.id] else {
+                    completion([], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
+                    return
+                }
 
-            guard let name = Self.lines[line.id] else {
-                completion?([], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
-                return
+                dataItems.append(DataItem(icon: "🚇", text: "\(name): \(desc)", flags: flags))
             }
-
-            dataItems.append(DataItem(icon: "🚇", text: "\(name): \(desc)", flags: flags))
+            completion(dataItems, error)
         }
-        completion?(dataItems, err)
+
+        // We don't need to store the task as it's using a shared task.
+        _ = JSONRequest.makeRequest(url: safeUrl, onCompletion: dataCompletion)
     }
 
     func summary(settings: Settings) -> String? {
