@@ -57,7 +57,7 @@ final class CalendarHeaderSource : DataSource {
 
         let flags: DataItemFlags
 
-        init(for date: Date, longFormat: String, shortFormat: String, flags: DataItemFlags) {
+        init(date: Date, longFormat: String, shortFormat: String, flags: DataItemFlags) {
             self.date = date
             self.longFormat = longFormat
             self.shortFormat = shortFormat
@@ -89,12 +89,9 @@ final class CalendarHeaderSource : DataSource {
     let name = "Date"
     let configurable = true
 
-    let component: Calendar.Component
-
     var defaults: Settings { CalendarHeaderSource.Settings() }
 
-    init(component: Calendar.Component = .day) {
-        self.component = component
+    init() {
     }
 
     func data(settings: Settings, completion: @escaping (CalendarHeaderSource, [DataItemBase], Error?) -> Void) {
@@ -104,7 +101,10 @@ final class CalendarHeaderSource : DataSource {
             return
         }
 
-        let data = [CalendarHeaderItem(for: date, longFormat: settings.longFormat, shortFormat: settings.shortFormat, flags: settings.flags)]
+        let data = [CalendarHeaderItem(date: date,
+                                       longFormat: settings.longFormat,
+                                       shortFormat: settings.shortFormat,
+                                       flags: settings.flags)]
         completion(self, data, nil)
     }
 
