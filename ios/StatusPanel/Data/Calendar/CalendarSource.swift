@@ -106,14 +106,16 @@ final class CalendarSource : DataSource {
         }
     }
 
-    func getData(settings: Settings, callback: Callback) {
+    func getData(settings: Settings, callback: ([DataItemBase], Error?) -> Void) {
         let df = DateFormatter()
         df.timeStyle = DateFormatter.Style.short
         let timeZoneFormatter = DateFormatter()
         timeZoneFormatter.dateFormat = "z"
 
         let activeCalendars = Config().activeCalendars
-        let calendars = eventStore.calendars(for: .event).filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
+        let calendars = eventStore
+            .calendars(for: .event)
+            .filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
         if calendars.count == 0 {
             // predicateForEvents treats calendars:[] the same as calendars:nil
             // which matches against _all_ calendars, which we definitely don't
@@ -222,7 +224,8 @@ final class CalendarSource : DataSource {
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "CalendarsEditor") as? CalendarViewController else {
+        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "CalendarsEditor")
+                as? CalendarViewController else {
             return nil
         }
         viewController.store = store

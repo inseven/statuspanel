@@ -28,7 +28,6 @@ protocol DataSourceSettings: Codable {
 
 protocol DataSource: AnyObject, Identifiable {
 
-    typealias Callback = ([DataItemBase], Error?) -> Void // TODO: Move this inline.
     typealias Store = SettingsStore<Settings>
 
     associatedtype Settings: DataSourceSettings
@@ -41,7 +40,7 @@ protocol DataSource: AnyObject, Identifiable {
 
     var defaults: Settings { get }
 
-    func data(settings: Settings, completion: @escaping Callback)
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void)
 
     func summary(settings: Settings) -> String?
 

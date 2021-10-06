@@ -51,7 +51,7 @@ final class TextDataSource: DataSource {
     let configurable = true
     let defaults = Settings(flags: [], text: "")
 
-    func data(settings: Settings, completion: @escaping Callback) {
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
         completion([DataItem(text: settings.text, flags: settings.flags)], nil)
     }
 
