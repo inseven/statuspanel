@@ -109,14 +109,7 @@ final class CalendarHeaderSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        switch settings.offset {
-        case 0:
-            return "Today"
-        case 1:
-            return "Tomorrow"
-        default:
-            return nil
-        }
+        settings.offset.localizedOffset
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? { nil }

@@ -114,7 +114,7 @@ class CalendarViewController: UITableViewController {
             case 0:
                 let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
                 cell.textLabel?.text = "Date"
-                cell.detailTextLabel?.text = settings.localizedOffset
+                cell.detailTextLabel?.text = settings.offset.localizedOffset
                 cell.accessoryType = .disclosureIndicator
                 return cell
             case 1:

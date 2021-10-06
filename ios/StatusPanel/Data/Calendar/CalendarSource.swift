@@ -73,10 +73,6 @@ final class CalendarSource : DataSource {
             self.offset = offset
         }
 
-        var localizedOffset: String {
-            self.offset == 0 ? "Today" : "Tomorrow"
-        }
-
         var calendarNames: String {
             let eventStore = EKEventStore()
             let calendarNames = Config().activeCalendars.compactMap { eventStore.calendar(withIdentifier:$0)?.title }
@@ -222,7 +218,7 @@ final class CalendarSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        "\(settings.localizedOffset): \(settings.calendarNames)"
+        "\(settings.offset.localizedOffset): \(settings.calendarNames)"
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
