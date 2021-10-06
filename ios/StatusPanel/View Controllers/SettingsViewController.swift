@@ -386,15 +386,17 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         var vcid: String?
         switch indexPath.section {
         case DataSourcesSection:
-            let source = dataSourceController.sources[indexPath.row]
-            let uikitViewController = try! source.dataSource.settingsViewController(uuid: source.id)
-            if let safeViewController = uikitViewController {
-                navigationController?.pushViewController(safeViewController, animated: true)
-                return
+            do {
+                let source = dataSourceController.sources[indexPath.row]
+                if let classicViewController = try source.dataSource.settingsViewController(uuid: source.id) {
+                    navigationController?.pushViewController(classicViewController, animated: true)
+                    return
+                }
+                let viewController = try source.dataSource.settingsView(uuid: source.id)
+                navigationController?.pushViewController(viewController, animated: true)
+            } catch {
+                self.present(error: error, completion: nil)
             }
-            // TODO: Common code for presenting an error?
-            let viewController = try! source.dataSource.settingsView(uuid: source.id)  // TODO: Handle the throwing
-            navigationController?.pushViewController(viewController, animated: true)
             return
         case UpdateTimeSection:
             vcid = "UpdateTimeEditor"
