@@ -94,7 +94,6 @@ final class TFLDataSource: DataSource {
             return
         }
 
-        // TODO: This URL construction could be an extension on the settings?
         let url = URL(string: "https://api.tfl.gov.uk")?
             .appendingPathComponent("Line")
             .appendingPathComponent(lines.joined(separator: ","))
