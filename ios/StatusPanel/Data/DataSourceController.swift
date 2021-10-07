@@ -40,9 +40,9 @@ protocol DataSourceControllerDelegate: AnyObject {
 class DataSourceController {
 
     weak var delegate: DataSourceControllerDelegate?
-    var sources: [DataSourceInstance] = []
 
     var factories: [DataSourceType: DataSourceWrapper] = [:]
+    var instances: [DataSourceInstance] = []
     var dataSources: [DataSourceWrapper] { Array(factories.values) }
     var syncQueue = DispatchQueue(label: "DataSourceController.syncQueue")
 
@@ -90,7 +90,7 @@ class DataSourceController {
         guard let dataSource = factories[type] else {
             throw StatusPanelError.unknownDataSource(type)
         }
-        sources.append(DataSourceInstance(id: UUID(), dataSource: dataSource))
+        instances.append(DataSourceInstance(id: UUID(), dataSource: dataSource))
     }
 
     fileprivate func add<T: DataSourceSettings>(type: DataSourceType, settings: T) throws {
@@ -103,7 +103,7 @@ class DataSourceController {
         // TODO: Validate the settings type; throw so we can handle the error?
         assert(dataSource.validate(settings: settings))
         try Config().save(settings: settings, uuid: uuid)
-        sources.append(DataSourceInstance(id: uuid, dataSource: dataSource))
+        instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
     }
 
     func add(_ dataSource: DataSourceWrapper) throws {
@@ -113,7 +113,7 @@ class DataSourceController {
 
     func remove(instance: DataSourceInstance) {
         dispatchPrecondition(condition: .onQueue(.main))
-        self.sources.removeAll { $0 == instance }
+        self.instances.removeAll { $0 == instance }
     }
 
     func save() {
@@ -122,7 +122,7 @@ class DataSourceController {
 
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
-        let sources = Array(self.sources)  // Capture the ordered sources in case they change.
+        let sources = Array(self.instances)  // Capture the ordered sources in case they change.
         syncQueue.async {
 
             let dispatchGroup = DispatchGroup()

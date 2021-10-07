@@ -107,7 +107,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case DataSourcesSection:
-            return dataSourceController.sources.count
+            return dataSourceController.instances.count
         case UpdateTimeOrAddSourceSection:
             return 1
         case DisplaySettingsSection:
@@ -165,7 +165,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         switch indexPath.section {
         case DataSourcesSection:
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DataSourceCell")
-            let source = dataSourceController.sources[indexPath.row]
+            let source = dataSourceController.instances[indexPath.row]
             cell.textLabel?.text = source.dataSource.name
             cell.detailTextLabel?.text = try? source.dataSource.summary(uuid: source.id)
             cell.accessoryType = source.dataSource.configurable ? .disclosureIndicator : .none
@@ -313,7 +313,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         } else if indexPath.section == DisplaySettingsSection {
             return indexPath.row > 1
         } else if indexPath.section == DataSourcesSection {
-            return dataSourceController.sources[indexPath.row].dataSource.configurable
+            return dataSourceController.instances[indexPath.row].dataSource.configurable
         } else {
             // All others are highlightable
             return true
@@ -341,8 +341,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     override func tableView(_ tableView: UITableView,
                             moveRowAt sourceIndexPath: IndexPath,
                             to destinationIndexPath: IndexPath) {
-        let dataSource = dataSourceController.sources.remove(at: sourceIndexPath.row)
-        dataSourceController.sources.insert(dataSource, at: destinationIndexPath.row)
+        let dataSource = dataSourceController.instances.remove(at: sourceIndexPath.row)
+        dataSourceController.instances.insert(dataSource, at: destinationIndexPath.row)
     }
 
     override func tableView(_ tableView: UITableView,
@@ -356,7 +356,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     override func tableView(_ tableView: UITableView,
                             commit editingStyle: UITableViewCell.EditingStyle,
                             forRowAt indexPath: IndexPath) {
-        let dataSource = dataSourceController.sources[indexPath.row]
+        let dataSource = dataSourceController.instances[indexPath.row]
         dataSourceController.remove(instance: dataSource)
         tableView.deleteRows(at: [indexPath], with: .automatic)
     }
@@ -376,7 +376,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         switch indexPath.section {
         case DataSourcesSection:
             do {
-                let source = dataSourceController.sources[indexPath.row]
+                let source = dataSourceController.instances[indexPath.row]
                 if let classicViewController = try source.dataSource.settingsViewController(uuid: source.id) {
                     navigationController?.pushViewController(classicViewController, animated: true)
                     return
@@ -395,7 +395,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                     }
                     do {
                         try self.dataSourceController.add(dataSource)
-                        let indexPath = IndexPath(row: self.dataSourceController.sources.count - 1, section: 0)
+                        let indexPath = IndexPath(row: self.dataSourceController.instances.count - 1, section: 0)
                         self.tableView.insertRows(at: [indexPath], with: .none)
                     } catch {
                         self.present(error: error, completion: nil)
