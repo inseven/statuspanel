@@ -43,9 +43,6 @@ class NationalRailDataSource : DataSource {
     var targetCrs: String?
     var sourceCrs: String?
 
-    var dataItems = [DataItem]()
-    var completion: DataSource.Callback?
-
     init(configuration: Configuration) {
         self.configuration = configuration
     }
@@ -76,39 +73,39 @@ class NationalRailDataSource : DataSource {
             return
         }
 
-        completion = onCompletion
+        let gotDelays: (Delays?, Error?) -> Void = { data, error in
+            var dataItems = [DataItem]()
+            guard let data = data else {
+                onCompletion(dataItems, error)
+                return
+            }
+
+            if data.delayedTrains.count == 0 {
+                dataItems.append(DataItem(icon: "🚊", text: "\(sourceCrs) to \(targetCrs) trains: Good Service"))
+            }
+
+            for delay in data.delayedTrains {
+                var text = "\(delay.std) \(sourceCrs) to \(targetCrs): "
+                if delay.isCancelled {
+                    text += "Cancelled"
+                } else {
+                    let df = DateFormatter()
+                    df.dateFormat = "HH:mm"
+                    let std = df.date(from: delay.std)
+                    let etd = df.date(from: delay.etd)
+                    if (std != nil && etd != nil) {
+                        let mins = Int(etd!.timeIntervalSince(std!) / 60)
+                        text += "\(mins) mins late"
+                    } else {
+                        text += "Delayed"
+                    }
+                }
+                dataItems.append(DataItem(icon: "🚊", text: text, flags: [.warning]))
+            }
+            onCompletion(dataItems, error)
+        }
+
         JSONRequest.makeRequest(url: safeUrl, completion: gotDelays)
     }
 
-    func gotDelays(data: Delays?, err: Error?) {
-        dataItems = []
-        guard let data = data else {
-            completion?(dataItems, err)
-            return
-        }
-
-        if data.delayedTrains.count == 0 {
-            dataItems.append(DataItem(icon: "🚊", text: "\(sourceCrs!) to \(targetCrs!) trains: Good Service"))
-        }
-
-        for delay in data.delayedTrains {
-            var text = "\(delay.std) \(sourceCrs!) to \(targetCrs!): "
-            if delay.isCancelled {
-                text += "Cancelled"
-            } else {
-                let df = DateFormatter()
-                df.dateFormat = "HH:mm"
-                let std = df.date(from: delay.std)
-                let etd = df.date(from: delay.etd)
-                if (std != nil && etd != nil) {
-                    let mins = Int(etd!.timeIntervalSince(std!) / 60)
-                    text += "\(mins) mins late"
-                } else {
-                    text += "Delayed"
-                }
-            }
-            dataItems.append(DataItem(icon: "🚊", text: text, flags: [.warning]))
-        }
-        completion?(dataItems, err)
-    }
 }
