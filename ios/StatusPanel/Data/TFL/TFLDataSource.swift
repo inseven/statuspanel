@@ -51,15 +51,11 @@ class TFLDataSource: DataSource {
 
     let configuration: Configuration
 
-    var dataItems = [DataItem]()
-    var completion: DataSource.Callback?
-
     init(configuration: Configuration) {
         self.configuration = configuration
     }
 
     func fetchData(onCompletion: @escaping Callback) {
-        completion = onCompletion
 
         let activeLines = Config().activeTFLLines
         guard !activeLines.isEmpty else {
@@ -82,29 +78,30 @@ class TFLDataSource: DataSource {
             return
         }
 
+        let gotLineData: ([LineStatus]?, Error?) -> Void = { data, error in
+            var dataItems = [DataItem]()
+            for line in data ?? [] {
+                if line.lineStatuses.count < 1 {
+                    continue
+                }
+                let desc = line.lineStatuses[0].statusSeverityDescription
+                let sev = line.lineStatuses[0].statusSeverity
+                var flags: DataItemFlags = []
+                if sev < 10 {
+                    flags.insert(.warning)
+                }
+
+                guard let name = Self.lines[line.id] else {
+                    onCompletion([], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
+                    return
+                }
+
+                dataItems.append(DataItem(icon: "🚇", text: "\(name): \(desc)", flags: flags))
+            }
+            onCompletion(dataItems, error)
+        }
+
         JSONRequest.makeRequest(url: safeUrl, completion: gotLineData)
     }
 
-    func gotLineData(data: [LineStatus]?, err: Error?) {
-        dataItems = []
-        for line in data ?? [] {
-            if line.lineStatuses.count < 1 {
-                continue
-            }
-            let desc = line.lineStatuses[0].statusSeverityDescription
-            let sev = line.lineStatuses[0].statusSeverity
-            var flags: DataItemFlags = []
-            if sev < 10 {
-                flags.insert(.warning)
-            }
-
-            guard let name = Self.lines[line.id] else {
-                completion?([], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
-                return
-            }
-
-            dataItems.append(DataItem(icon: "🚇", text: "\(name): \(desc)", flags: flags))
-        }
-        completion?(dataItems, err)
-    }
 }
