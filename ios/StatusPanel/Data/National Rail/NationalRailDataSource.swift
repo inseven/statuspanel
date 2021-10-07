@@ -63,7 +63,7 @@ final class NationalRailDataSource : DataSource {
         guard let sourceCrs = settings.from,
               let targetCrs = settings.to else {
                   completion([], nil)
-            return
+                  return
         }
 
         let url = URL(string: "https://huxley.apphb.com")?
