@@ -28,6 +28,28 @@ final class DummyDataSource : DataSource {
         var enabled: Bool = false
     }
 
+    struct SettingsView: View {
+
+        @State var settings: DummyDataSource.Settings
+        var store: SettingsStore<DummyDataSource.Settings>
+
+        func enabled() -> Binding<Bool> {
+            Binding {
+                settings.enabled
+            } set: { enabled in
+                settings.enabled = enabled
+                try! store.save(settings: settings)
+            }
+        }
+
+        var body: some View {
+            Form {
+                Toggle("Enabled", isOn: enabled())
+            }
+        }
+
+    }
+
     let id: DataSourceType = .dummy
     let name = "Dummy Data"
     let configurable = true
@@ -83,8 +105,8 @@ final class DummyDataSource : DataSource {
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? { nil }
 
-    func settingsView(store: Store, settings: Settings) -> some View {
-        DummyDataSettingsView(settings: settings, store: store)
+    func settingsView(store: Store, settings: Settings) -> SettingsView {
+        SettingsView(settings: settings, store: store)
     }
 
 }
