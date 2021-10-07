@@ -55,7 +55,7 @@ class TFLDataSource: DataSource {
         self.configuration = configuration
     }
 
-    func fetchData(completion: @escaping Callback) {
+    func fetchData(completion: @escaping ([DataItemBase], Error?) -> Void) {
 
         let activeLines = Config().activeTFLLines
         guard !activeLines.isEmpty else {

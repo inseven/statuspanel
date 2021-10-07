@@ -21,8 +21,7 @@
 import Foundation
 
 protocol DataSource : AnyObject {
-    typealias Callback = ([DataItemBase], Error?) -> Void
-    func fetchData(completion: @escaping Callback)
+    func fetchData(completion: @escaping ([DataItemBase], Error?) -> Void)
 }
 
 struct DataItemFlags: OptionSet {
