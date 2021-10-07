@@ -55,11 +55,11 @@ class TFLDataSource: DataSource {
         self.configuration = configuration
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    func fetchData(completion: @escaping Callback) {
 
         let activeLines = Config().activeTFLLines
         guard !activeLines.isEmpty else {
-            onCompletion([], nil)
+            completion([], nil)
             return
         }
 
@@ -74,7 +74,7 @@ class TFLDataSource: DataSource {
             ])
 
         guard let safeUrl = url else {
-            onCompletion([], StatusPanelError.invalidUrl)
+            completion([], StatusPanelError.invalidUrl)
             return
         }
 
@@ -92,13 +92,13 @@ class TFLDataSource: DataSource {
                 }
 
                 guard let name = Self.lines[line.id] else {
-                    onCompletion([], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
+                    completion([], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
                     return
                 }
 
                 dataItems.append(DataItem(icon: "🚇", text: "\(name): \(desc)", flags: flags))
             }
-            onCompletion(dataItems, error)
+            completion(dataItems, error)
         }
 
         JSONRequest.makeRequest(url: safeUrl, completion: gotLineData)

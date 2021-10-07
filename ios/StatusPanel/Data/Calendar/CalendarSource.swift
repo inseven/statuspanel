@@ -66,12 +66,12 @@ class CalendarSource : DataSource {
         self.dayOffset = dayOffset
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    func fetchData(completion: @escaping Callback) {
         eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
             if (granted) {
-                self.getData(callback: onCompletion)
+                self.getData(callback: completion)
             } else {
-                onCompletion([], err)
+                completion([], err)
             }
             // print("Granted EKEventStore access \(granted) err \(String(describing: err))")
         }
