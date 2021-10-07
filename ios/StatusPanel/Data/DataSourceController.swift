@@ -64,8 +64,7 @@ class DataSourceController {
                     settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
                                                             shortFormat: "yMMMMdEEE",
                                                             flags: [.header, .spansColumns],
-                                                            offset: 0,
-                                                            component: .day))
+                                                            offset: 0))
             try add(type: .transportForLondon,
                     settings: TFLDataSource.Settings(lines: config.activeTFLLines))
             try add(type: .nationalRail,

@@ -30,8 +30,7 @@ final class CalendarHeaderSource : DataSource {
             return (lhs.longFormat == rhs.longFormat &&
                     lhs.shortFormat == rhs.shortFormat &&
                     lhs.flags == rhs.flags &&
-                    lhs.offset == rhs.offset &&
-                    lhs.component == rhs.component)
+                    lhs.offset == rhs.offset)
         }
 
         var longFormat: String
@@ -40,18 +39,15 @@ final class CalendarHeaderSource : DataSource {
         var flags: DataItemFlags
 
         var offset: Int
-        var component: Calendar.Component
 
         init(longFormat: String = "yMMMMdEEEE",
              shortFormat: String = "yMMMMdEEE",
              flags: DataItemFlags = [],
-             offset: Int = 0,
-             component: Calendar.Component = .day) {
+             offset: Int = 0) {
             self.longFormat = longFormat
             self.shortFormat = shortFormat
             self.flags = flags
             self.offset = offset
-            self.component = component
         }
 
     }
@@ -104,7 +100,7 @@ final class CalendarHeaderSource : DataSource {
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
 
-        guard let date = Calendar.current.date(byAdding: settings.component, value: settings.offset, to: Date()) else {
+        guard let date = Calendar.current.date(byAdding: .day, value: settings.offset, to: Date()) else {
             completion([], StatusPanelError.invalidDate)
             return
         }
