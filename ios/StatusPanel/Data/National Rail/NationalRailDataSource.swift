@@ -45,14 +45,12 @@ class NationalRailDataSource : DataSource {
 
     var dataItems = [DataItem]()
     var completion: DataSource.Callback?
-    var task: URLSessionTask?
 
     init(configuration: Configuration) {
         self.configuration = configuration
     }
 
     func fetchData(onCompletion: @escaping Callback) {
-        task?.cancel()
         let route = Config().trainRoute
         sourceCrs = route.from
         targetCrs = route.to
@@ -83,7 +81,6 @@ class NationalRailDataSource : DataSource {
     }
 
     func gotDelays(data: Delays?, err: Error?) {
-        task = nil
         dataItems = []
         guard let data = data else {
             completion?(dataItems, err)

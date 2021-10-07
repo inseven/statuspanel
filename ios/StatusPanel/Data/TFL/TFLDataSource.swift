@@ -53,14 +53,12 @@ class TFLDataSource: DataSource {
 
     var dataItems = [DataItem]()
     var completion: DataSource.Callback?
-    var task: URLSessionTask?
 
     init(configuration: Configuration) {
         self.configuration = configuration
     }
 
     func fetchData(onCompletion: @escaping Callback) {
-        task?.cancel()
         completion = onCompletion
 
         let activeLines = Config().activeTFLLines
@@ -88,7 +86,6 @@ class TFLDataSource: DataSource {
     }
 
     func gotLineData(data: [LineStatus]?, err: Error?) {
-        task = nil
         dataItems = []
         for line in data ?? [] {
             if line.lineStatuses.count < 1 {
