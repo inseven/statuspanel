@@ -47,7 +47,7 @@ class NationalRailDataSource : DataSource {
         self.configuration = configuration
     }
 
-    func fetchData(completion: @escaping Callback) {
+    func fetchData(completion: @escaping ([DataItemBase], Error?) -> Void) {
         let route = Config().trainRoute
         sourceCrs = route.from
         targetCrs = route.to
