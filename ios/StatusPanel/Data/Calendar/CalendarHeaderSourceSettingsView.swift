@@ -20,6 +20,29 @@
 
 import SwiftUI
 
+struct FormatEditor: View {
+
+    @Binding var settings: CalendarHeaderSource.Settings
+
+    var body: some View {
+        Form {
+            Section(header: Text("Long Format"),
+                    footer: Text("Preferred format specifier.")) {
+                TextField("Long", text: $settings.longFormat)
+                    .transition(.opacity)
+            }
+            Section(header: Text("Short Format"),
+                    footer: Text("Used if the result of the long format specifier is too long to fit on the screen.")) {
+                TextField(settings.longFormat.isEmpty ? "Short" : settings.longFormat, text: $settings.shortFormat)
+                    .transition(.opacity)
+            }
+            .autocapitalization(.none)
+        }
+        .navigationTitle("Format")
+    }
+
+}
+
 struct CalendarHeaderSourceSettingsView: View {
 
     enum Offset {
@@ -37,20 +60,10 @@ struct CalendarHeaderSourceSettingsView: View {
     var store: SettingsStore<CalendarHeaderSource.Settings>
     @State var settings: CalendarHeaderSource.Settings
     @State var format: Format = .custom
-    @State var long: String
-    @State var short: String
 
     init(store: SettingsStore<CalendarHeaderSource.Settings>, settings: CalendarHeaderSource.Settings) {
         self.store = store
-        _long = State(initialValue: settings.longFormat)
-        _short = State(initialValue: settings.shortFormat)
         _settings = State(initialValue: settings)
-    }
-
-    func update() {
-        settings.longFormat = long
-        settings.shortFormat = short
-        try! store.save(settings: settings)
     }
 
     var body: some View {
@@ -60,82 +73,19 @@ struct CalendarHeaderSourceSettingsView: View {
                     Text("Today").tag(0)
                     Text("Tomorrow").tag(1)
                 }
+                NavigationLink(destination: FormatEditor(settings: $settings)) {
+                    HStack {
+                        Text("Format")
+                        Spacer()
+                        Text(settings.longFormat)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
             FlagsSection(flags: $settings.flags)
-            Section(header: Text("Format")) {
-                Button {
-                    format = .year
-                    long = "y"
-                    short = "y"
-                    update()
-                } label: {
-                    HStack {
-                        Text("Year")
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Image(systemName: "checkmark")
-                            .foregroundColor(format == .year ? .accentColor : .clear)
-                    }
-                }
-                Button {
-                    format = .dayMonth
-                    long = "MMMMd"
-                    short = "MMMMd"
-                    update()
-                } label: {
-                    HStack {
-                        Text("Day, Month")
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Image(systemName: "checkmark")
-                            .foregroundColor(format == .dayMonth ? .accentColor : .clear)
-                    }
-                }
-                Button {
-                    format = .dayMonthYear
-                    long = "yMMMMdEEEE"
-                    short = "yMMMMdEEE"
-                    update()
-                } label: {
-                    HStack {
-                        Text("Day, Month, Year")
-                            .foregroundColor(.primary)
-                            .layoutPriority(1)
-                        Spacer()
-                        Image(systemName: "checkmark")
-                            .foregroundColor(format == .dayMonthYear ? .accentColor : .clear)
-                    }
-                }
-                Button {
-                    format = .custom
-                    update()
-                } label: {
-                    HStack {
-                        Text("Custom")
-                            .foregroundColor(.primary)
-                        Spacer()
-                        if format == .custom {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.accentColor)
-                        }
-                    }
-                }
-            }
-            if case .custom = format {
-                Section(header: Text("Long Format"),
-                        footer: Text("Preferred format specifier.")) {
-                    TextField("Long", text: $long)
-                        .transition(.opacity)
-                }
-                Section(header: Text("Short Format"),
-                        footer: Text("Used if the result of the long format specifier is too long to fit on the screen.")) {
-                    TextField(long.isEmpty ? "Short" : long, text: $short)
-                        .transition(.opacity)
-                }
-                .autocapitalization(.none)
-            }
         }
         .onChange(of: settings) { newSettings in
+            // TODO: Inject an error handler!
             try! store.save(settings: newSettings)
         }
     }
