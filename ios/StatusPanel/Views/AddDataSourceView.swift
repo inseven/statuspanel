@@ -27,10 +27,14 @@ struct AddDataSourceView: View {
     var sourceController: DataSourceController
     var completion: (DataSourceWrapper?) -> Void
 
+    var sources: [DataSourceWrapper] {
+        sourceController.dataSources.sorted { $0.name < $1.name }
+    }
+
     var body: some View {
         NavigationView {
             Form {
-                ForEach(sourceController.dataSources) { factory in
+                ForEach(sources) { factory in
                     Button {
                         completion(factory)
                         presentationMode.wrappedValue.dismiss()
