@@ -31,7 +31,7 @@ class CalendarHeaderSource : DataSource {
 
         let flags: DataItemFlags
 
-        init(for date: Date, longFormat: String, shortFormat: String, flags: DataItemFlags) {
+        init(date: Date, longFormat: String, shortFormat: String, flags: DataItemFlags) {
             self.date = date
             self.longFormat = longFormat
             self.shortFormat = shortFormat
@@ -80,8 +80,11 @@ class CalendarHeaderSource : DataSource {
             completion([], StatusPanelError.invalidDate)
             return
         }
-        
-        let data = [CalendarHeaderItem(for: date, longFormat: longFormat, shortFormat: shortFormat, flags: flags)]
+
+        let data = [CalendarHeaderItem(date: date,
+                                       longFormat: longFormat,
+                                       shortFormat: shortFormat,
+                                       flags: flags)]
         completion(data, nil)
     }
 
