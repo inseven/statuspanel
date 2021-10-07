@@ -45,7 +45,7 @@ class DataSourceController {
             for source in sources {
                 let identifier = ObjectIdentifier(source)
                 dispatchGroup.enter()
-                source.fetchData { data, error in
+                source.data { data, error in
                     self.syncQueue.async {
                         if let error = error {
                             results[identifier] = .failure(error)
