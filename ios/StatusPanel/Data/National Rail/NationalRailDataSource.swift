@@ -47,15 +47,15 @@ class NationalRailDataSource : DataSource {
         self.configuration = configuration
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    func fetchData(completion: @escaping Callback) {
         let route = Config().trainRoute
         sourceCrs = route.from
         targetCrs = route.to
 
         guard let sourceCrs = sourceCrs,
               let targetCrs = targetCrs else {
-            onCompletion([], nil)
-            return
+                  completion([], nil)
+                  return
         }
 
         let url = URL(string: "https://huxley.apphb.com")?
@@ -69,14 +69,14 @@ class NationalRailDataSource : DataSource {
             ])
 
         guard let safeUrl = url else {
-            onCompletion([], StatusPanelError.invalidUrl)
+            completion([], StatusPanelError.invalidUrl)
             return
         }
 
         let gotDelays: (Delays?, Error?) -> Void = { data, error in
             var dataItems = [DataItem]()
             guard let data = data else {
-                onCompletion(dataItems, error)
+                completion(dataItems, error)
                 return
             }
 
@@ -102,7 +102,7 @@ class NationalRailDataSource : DataSource {
                 }
                 dataItems.append(DataItem(icon: "🚊", text: text, flags: [.warning]))
             }
-            onCompletion(dataItems, error)
+            completion(dataItems, error)
         }
 
         JSONRequest.makeRequest(url: safeUrl, completion: gotDelays)

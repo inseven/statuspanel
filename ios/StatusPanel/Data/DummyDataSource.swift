@@ -22,7 +22,7 @@ import Foundation
 
 class DummyDataSource : DataSource {
 
-    func fetchData(onCompletion:@escaping Callback) {
+    func fetchData(completion: @escaping Callback) {
         var data: [DataItemBase] = []
         #if DEBUG
         if Config().showDummyData {
@@ -63,7 +63,7 @@ class DummyDataSource : DataSource {
             }
         }
         #endif
-        onCompletion(data, nil)
+        completion(data, nil)
     }
 
 }
