@@ -28,7 +28,7 @@ struct DataSourceInstance: Identifiable, Equatable {
     }
 
     let id: UUID
-    let dataSource: DataSourceWrapper
+    let dataSource: AnyDataSource
 
     func fetch(completion: @escaping ([DataItemBase]?, Error?) -> Void) {
         DispatchQueue.global().async {

@@ -23,7 +23,7 @@ import SwiftUI
 import UIKit
 
 /// Type erasing wrapper for `DataSource`
-class DataSourceWrapper: Identifiable {
+class AnyDataSource: Identifiable {
 
     fileprivate var idProxy: (() -> DataSourceType)! = nil
     fileprivate var nameProxy: (() -> String)! = nil
@@ -113,8 +113,8 @@ class DataSourceWrapper: Identifiable {
 
 extension DataSource {
 
-    func wrapped() -> DataSourceWrapper {
-        DataSourceWrapper(self)
+    func anyDataSource() -> AnyDataSource {
+        AnyDataSource(self)
     }
 
 }

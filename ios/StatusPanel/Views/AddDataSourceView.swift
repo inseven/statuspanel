@@ -25,9 +25,9 @@ struct AddDataSourceView: View {
     @Environment(\.presentationMode) var presentationMode
 
     var sourceController: DataSourceController
-    var completion: (DataSourceWrapper?) -> Void
+    var completion: (AnyDataSource?) -> Void
 
-    var sources: [DataSourceWrapper] {
+    var sources: [AnyDataSource] {
         sourceController.dataSources.sorted { $0.name < $1.name }
     }
 

@@ -19,7 +19,7 @@
 		D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */; };
 		D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D835EC972471D811003E402E /* NetworkExtension.framework */; };
 		D8383EBC270FB8E20007EBB7 /* DayPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBB270FB8E20007EBB7 /* DayPicker.swift */; };
-		D83CC5202707532400260DC1 /* DataSourceWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC51F2707532400260DC1 /* DataSourceWrapper.swift */; };
+		D83CC5202707532400260DC1 /* AnyDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC51F2707532400260DC1 /* AnyDataSource.swift */; };
 		D83CC5222707543E00260DC1 /* UIStoryboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC5212707543E00260DC1 /* UIStoryboard.swift */; };
 		D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A197270C8DB100681F62 /* TextDataSource.swift */; };
 		D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A199270D16AD00681F62 /* AddDataSourceView.swift */; };
@@ -96,7 +96,7 @@
 		D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		D835EC972471D811003E402E /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		D8383EBB270FB8E20007EBB7 /* DayPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPicker.swift; sourceTree = "<group>"; };
-		D83CC51F2707532400260DC1 /* DataSourceWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceWrapper.swift; sourceTree = "<group>"; };
+		D83CC51F2707532400260DC1 /* AnyDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDataSource.swift; sourceTree = "<group>"; };
 		D83CC5212707543E00260DC1 /* UIStoryboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStoryboard.swift; sourceTree = "<group>"; };
 		D848A197270C8DB100681F62 /* TextDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDataSource.swift; sourceTree = "<group>"; };
 		D848A199270D16AD00681F62 /* AddDataSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDataSourceView.swift; sourceTree = "<group>"; };
@@ -218,11 +218,11 @@
 		D842A400265BE8C1009C1156 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				D83CC51F2707532400260DC1 /* AnyDataSource.swift */,
 				DBCA98B42144421F0084B710 /* DataSource.swift */,
 				DBCA98B6214518EF0084B710 /* DataSourceController.swift */,
 				D89104862707BAD50020A2CF /* DataSourceInstance.swift */,
 				D8E6839B270DF11800504B5E /* DataSourceType.swift */,
-				D83CC51F2707532400260DC1 /* DataSourceWrapper.swift */,
 				D842A3FC265BE81F009C1156 /* Calendar */,
 				D89104882707BB3D0020A2CF /* Dummy */,
 				D842A3FE265BE878009C1156 /* National Rail */,
@@ -472,7 +472,7 @@
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */,
 				DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */,
-				D83CC5202707532400260DC1 /* DataSourceWrapper.swift in Sources */,
+				D83CC5202707532400260DC1 /* AnyDataSource.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */,
 				DB5E9DA1241562ED009F3807 /* StringUtils.swift in Sources */,
 				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,

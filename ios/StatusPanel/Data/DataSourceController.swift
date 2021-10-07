@@ -41,21 +41,21 @@ class DataSourceController {
 
     weak var delegate: DataSourceControllerDelegate?
 
-    var factories: [DataSourceType: DataSourceWrapper] = [:]
+    var factories: [DataSourceType: AnyDataSource] = [:]
     var instances: [DataSourceInstance] = []
-    var dataSources: [DataSourceWrapper] { Array(factories.values) }
+    var dataSources: [AnyDataSource] { Array(factories.values) }
     var syncQueue = DispatchQueue(label: "DataSourceController.syncQueue")
 
     init() {
 
         let configuration = try! Bundle.main.configuration()
         factories = [
-            .calendar: CalendarSource().wrapped(),
-            .calendarHeader: CalendarHeaderSource().wrapped(),
-            .dummy: DummyDataSource().wrapped(),
-            .nationalRail: NationalRailDataSource(configuration: configuration).wrapped(),
-            .text: TextDataSource().wrapped(),
-            .transportForLondon: TFLDataSource(configuration: configuration).wrapped(),
+            .calendar: CalendarSource().anyDataSource(),
+            .calendarHeader: CalendarHeaderSource().anyDataSource(),
+            .dummy: DummyDataSource().anyDataSource(),
+            .nationalRail: NationalRailDataSource(configuration: configuration).anyDataSource(),
+            .text: TextDataSource().anyDataSource(),
+            .transportForLondon: TFLDataSource(configuration: configuration).anyDataSource(),
         ]
 
         let config = Config()
@@ -105,7 +105,7 @@ class DataSourceController {
         instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
     }
 
-    func add(_ dataSource: DataSourceWrapper) throws {
+    func add(_ dataSource: AnyDataSource) throws {
         dispatchPrecondition(condition: .onQueue(.main))
         _ = try self.add(type: dataSource.id)
     }
