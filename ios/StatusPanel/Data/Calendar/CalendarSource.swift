@@ -71,7 +71,7 @@ class CalendarSource : DataSource {
             if (granted) {
                 self.getData(callback: onCompletion)
             } else {
-                onCompletion(self, [], err)
+                onCompletion([], err)
             }
             // print("Granted EKEventStore access \(granted) err \(String(describing: err))")
         }
@@ -89,7 +89,7 @@ class CalendarSource : DataSource {
             // predicateForEvents treats calendars:[] the same as calendars:nil
             // which matches against _all_ calendars, which we definitely don't
             // want, so we have to return early here.
-            callback(self, [], nil)
+            callback([], nil)
             return
         }
 
@@ -178,7 +178,7 @@ class CalendarSource : DataSource {
                 results.append(CalendarItem(time: timeStr, title: title, location: location))
             }
         }
-        callback(self, results, nil)
+        callback(results, nil)
     }
 
     func redactUrls(_ value: String) -> String {

@@ -80,12 +80,12 @@ class CalendarHeaderSource : DataSource {
     func fetchData(onCompletion: @escaping Callback) {
 
         guard let date = Calendar.current.date(byAdding: component, value: offset, to: Date()) else {
-            onCompletion(self, [], StatusPanelError.invalidDate)
+            onCompletion([], StatusPanelError.invalidDate)
             return
         }
         
         let data = [CalendarHeaderItem(for: date, longFormat: longFormat, shortFormat: shortFormat, flags: flags)]
-        onCompletion(self, data, nil)
+        onCompletion(data, nil)
     }
 
 }

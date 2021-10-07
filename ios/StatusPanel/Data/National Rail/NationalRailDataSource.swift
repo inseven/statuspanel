@@ -59,7 +59,7 @@ class NationalRailDataSource : DataSource {
 
         guard let sourceCrs = sourceCrs,
               let targetCrs = targetCrs else {
-            onCompletion(self, [], nil)
+            onCompletion([], nil)
             return
         }
 
@@ -74,7 +74,7 @@ class NationalRailDataSource : DataSource {
             ])
 
         guard let safeUrl = url else {
-            onCompletion(self, [], StatusPanelError.invalidUrl)
+            onCompletion([], StatusPanelError.invalidUrl)
             return
         }
 
@@ -86,7 +86,7 @@ class NationalRailDataSource : DataSource {
         task = nil
         dataItems = []
         guard let data = data else {
-            completion?(self, dataItems, err)
+            completion?(dataItems, err)
             return
         }
 
@@ -112,6 +112,6 @@ class NationalRailDataSource : DataSource {
             }
             dataItems.append(DataItem(icon: "🚊", text: text, flags: [.warning]))
         }
-        completion?(self, dataItems, err)
+        completion?(dataItems, err)
     }
 }

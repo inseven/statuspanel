@@ -28,41 +28,63 @@ protocol DataSourceControllerDelegate: AnyObject {
 class DataSourceController {
     weak var delegate: DataSourceControllerDelegate?
     var sources: [DataSource] = []
-    var completed: [ObjectIdentifier: [DataItemBase]] = [:]
-    var lock = NSLock()
 
     func add(dataSource: DataSource) {
         sources.append(dataSource)
     }
 
     func fetch() {
-        print("Fetching")
-        completed.removeAll()
-        for source in sources {
-            source.fetchData(onCompletion: gotData)
-        }
-    }
+        dispatchPrecondition(condition: .onQueue(.main))
+        let sources = self.sources  // Capture the ordered sources in case they change.
 
-    func gotData(source: DataSource, data:[DataItemBase], error: Error?) {
-        let obj = ObjectIdentifier(source)
-        lock.lock()
-        completed[obj] = data
-        // TODO something with error
+        let queue = DispatchQueue.global(qos: .userInitiated)
+        queue.async {
 
-        let allCompleted = (completed.count == sources.count)
-        var items = [DataItemBase]()
+            let dispatchGroup = DispatchGroup()
 
-        // Use the ordering of sources, not completedItems
-        for source in sources {
-            let completedItems = completed[ObjectIdentifier(source)]
-            items += completedItems ?? []
-        }
-        lock.unlock()
+            var results: [ObjectIdentifier: Result<[DataItemBase], Error>] = [:]  // Synchronized on queue.
+            for source in sources {
+                dispatchGroup.enter()
+                source.fetchData { data, error in
+                    queue.async {
+                        if let error = error {
+                            results[ObjectIdentifier(source)] = .failure(error)
+                        } else {
+                            results[ObjectIdentifier(source)] = .success(data)
+                        }
+                        dispatchGroup.leave()
+                    }
+                }
+            }
 
-        if (allCompleted) {
-            DispatchQueue.main.async {
-                self.delegate?.dataSourceController(self, didUpdateData: items)
+            dispatchGroup.notify(queue: queue) {
+                let orderedResults = sources.compactMap { results[ObjectIdentifier($0)] }
+                let errors = orderedResults.compactMap { result -> Error? in
+                    switch result {
+                    case .success:
+                        return nil
+                    case .failure(let error):
+                        return error
+                    }
+                }
+                if let error = errors.first {
+                    print("Failed to retrieve results with error \(error).")
+                    return
+                }
+                let items = orderedResults.compactMap { result -> [DataItemBase]? in
+                    switch result {
+                    case .success(let items):
+                        return items
+                    case .failure:
+                        return nil
+                    }
+                }.reduce([], +)
+                DispatchQueue.main.async {
+                    self.delegate?.dataSourceController(self, didUpdateData: items)
+                }
             }
         }
+
     }
+
 }
