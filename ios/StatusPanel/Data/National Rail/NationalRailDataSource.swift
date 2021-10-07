@@ -54,7 +54,6 @@ final class NationalRailDataSource : DataSource {
     let configuration: Configuration
 
     var defaults: Settings { Settings() }
-
     init(configuration: Configuration) {
         self.configuration = configuration
     }
@@ -82,10 +81,8 @@ final class NationalRailDataSource : DataSource {
             return
         }
 
-        let dataCompletion: (Delays?, Error?) -> Void = { data, error in
-
-            var dataItems: [DataItem] = []
-
+        let gotDelays: (Delays?, Error?) -> Void = { data, error in
+            var dataItems = [DataItem]()
             guard let data = data else {
                 completion(dataItems, error)
                 return
@@ -116,7 +113,7 @@ final class NationalRailDataSource : DataSource {
             completion(dataItems, error)
         }
 
-        JSONRequest.makeRequest(url: safeUrl, completion: dataCompletion)
+        JSONRequest.makeRequest(url: safeUrl, completion: gotDelays)
     }
 
     func summary(settings: Settings) -> String? {
@@ -140,4 +137,5 @@ final class NationalRailDataSource : DataSource {
     func settingsView(store: Store, settings: Settings) -> EmptyView {
         EmptyView()
     }
+
 }

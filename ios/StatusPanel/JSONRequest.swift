@@ -34,7 +34,9 @@ class JSONRequest {
                 let data = data
                 else {
                     print("Server errored! resp = \(response!)")
-                    let err = NSError(domain: NSURLErrorDomain, code: URLError.badServerResponse.rawValue, userInfo: ["response": response!])
+                    let err = NSError(domain: NSURLErrorDomain,
+                                      code: URLError.badServerResponse.rawValue,
+                                      userInfo: ["response": response!])
                     completion(nil, err)
                     return
             }
