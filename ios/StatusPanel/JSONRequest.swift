@@ -23,7 +23,7 @@ import Foundation
 class JSONRequest {
 
     static func makeRequest<T>(url: URL,
-                               completion: @escaping (T?, Error?) -> Void) -> URLSessionDataTask where T : Decodable {
+                               completion: @escaping (T?, Error?) -> Void) where T : Decodable {
         let task = URLSession.shared.dataTask(with: url) { (data: Data?, response: URLResponse?, err: Error?) in
             if let err = err {
                 print("Error fetching \(url): \(err)")
@@ -48,7 +48,6 @@ class JSONRequest {
             }
         }
         task.resume()
-        return task
     }
 }
 

@@ -116,8 +116,7 @@ final class NationalRailDataSource : DataSource {
             completion(dataItems, error)
         }
 
-        // We don't need to store the task as it's using a shared task.
-        _ = JSONRequest.makeRequest(url: safeUrl, completion: dataCompletion)
+        JSONRequest.makeRequest(url: safeUrl, completion: dataCompletion)
     }
 
     func summary(settings: Settings) -> String? {
