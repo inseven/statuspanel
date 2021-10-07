@@ -82,7 +82,7 @@ class TFLDataSource: DataSource {
             return
         }
 
-        JSONRequest.makeRequest(url: safeUrl, onCompletion: gotLineData)
+        JSONRequest.makeRequest(url: safeUrl, completion: gotLineData)
     }
 
     func gotLineData(data: [LineStatus]?, err: Error?) {

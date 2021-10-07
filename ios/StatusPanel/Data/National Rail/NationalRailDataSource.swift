@@ -77,7 +77,7 @@ class NationalRailDataSource : DataSource {
         }
 
         completion = onCompletion
-        JSONRequest.makeRequest(url: safeUrl, onCompletion: gotDelays)
+        JSONRequest.makeRequest(url: safeUrl, completion: gotDelays)
     }
 
     func gotDelays(data: Delays?, err: Error?) {
