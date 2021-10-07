@@ -28,7 +28,7 @@ class DataSourceWrapper: Identifiable {
     fileprivate var idProxy: (() -> DataSourceType)! = nil
     fileprivate var nameProxy: (() -> String)! = nil
     fileprivate var configurableProxy: (() -> Bool)! = nil
-    fileprivate var fetchProxy: ((UUID, @escaping (DataSourceWrapper, [DataItemBase]?, Error?) -> Void) -> Void)! = nil
+    fileprivate var fetchProxy: ((UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
     fileprivate var summaryProxy: ((UUID) throws -> String?)! = nil
     fileprivate var settingsViewControllerProxy: ((UUID) throws -> UIViewController?)! = nil
     fileprivate var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
@@ -46,7 +46,7 @@ class DataSourceWrapper: Identifiable {
         configurableProxy()
     }
 
-    func fetch(uuid: UUID, completion: @escaping (DataSourceWrapper, [DataItemBase]?, Error?) -> Void) {
+    func fetch(uuid: UUID, completion: @escaping ([DataItemBase]?, Error?) -> Void) {
         fetchProxy(uuid, completion)
     }
 
@@ -74,13 +74,13 @@ class DataSourceWrapper: Identifiable {
                 let settings = try dataSource.settings(uuid: uuid)
                 dataSource.data(settings: settings) { data, error in
                     if let error = error {
-                        completion(self, nil, error)
+                        completion(nil, error)
                         return
                     }
-                    completion(self, data, nil)
+                    completion(data, nil)
                 }
             } catch {
-                completion(self, [], error)
+                completion(nil, error)
                 return
             }
         }

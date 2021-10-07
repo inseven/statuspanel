@@ -30,16 +30,9 @@ struct DataSourceInstance: Identifiable, Equatable {
     let id: UUID
     let dataSource: DataSourceWrapper
 
-    func fetch() -> Future<[DataItemBase], Error> {
-        Future { promise in
-            DispatchQueue.global().async {
-                self.dataSource.fetch(uuid: id) { _, items, error in
-                    if let error = error {
-                        promise(.failure(error))
-                    }
-                    promise(.success(items ?? []))
-                }
-            }
+    func fetch(completion: @escaping ([DataItemBase]?, Error?) -> Void) {
+        DispatchQueue.global().async {
+            self.dataSource.fetch(uuid: id, completion: completion)
         }
     }
 

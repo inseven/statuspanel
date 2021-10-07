@@ -47,6 +47,7 @@ class DataSourceController {
 
     var factories: [DataSourceType: DataSourceWrapper] = [:]
     var dataSources: [DataSourceWrapper] { Array(factories.values) }
+    var syncQueue = DispatchQueue(label: "DataSourceController.syncQueue")
 
     init() {
 
@@ -124,27 +125,59 @@ class DataSourceController {
 
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
-        let promises = sources.map { $0.fetch() }
-        let zip = promises.dropFirst().reduce(into: AnyPublisher(promises[0].map { [$0] }) ) {
-            res, just in
-            res = res.zip(just) {
-                i1, i2 -> [[DataItemBase]] in
-                return i1 + [i2]
-            }.eraseToAnyPublisher()
-        }
-        cancellable = zip
-            .receive(on: DispatchQueue.main)
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    print("complete")
-                case .failure(let error):
-                    self.delegate?.dataSourceController(self, didFailWithError: error)
+        let sources = Array(self.sources)  // Capture the ordered sources in case they change.
+        syncQueue.async {
+
+            let dispatchGroup = DispatchGroup()
+
+            var results: [UUID: Result<[DataItemBase], Error>] = [:]  // Synchronized on syncQueue.
+            for source in sources {
+                dispatchGroup.enter()
+                source.fetch { data, error in
+                    self.syncQueue.async {
+                        if let error = error {
+                            results[source.id] = .failure(error)
+                        } else if let data = data {
+                            results[source.id] = .success(data)
+                        } else {
+                            // TODO: This is a terrible error.
+                            results[source.id] = .failure(StatusPanelError.corruptSettings)
+                        }
+                        dispatchGroup.leave()
+                    }
                 }
-            } receiveValue: { result in
-                print("result = \(result)")
-                let items = result.reduce([], +)
-                self.delegate?.dataSourceController(self, didUpdateData: items)
             }
+
+            dispatchGroup.notify(queue: self.syncQueue) {
+                let orderedResults = sources.compactMap { results[$0.id] }
+                let errors = orderedResults.compactMap { result -> Error? in
+                    switch result {
+                    case .success:
+                        return nil
+                    case .failure(let error):
+                        return error
+                    }
+                }
+                if let error = errors.first {
+                    DispatchQueue.main.async {
+                        self.delegate?.dataSourceController(self, didFailWithError: error)
+                    }
+                    return
+                }
+                let items = orderedResults.compactMap { result -> [DataItemBase]? in
+                    switch result {
+                    case .success(let items):
+                        return items
+                    case .failure:
+                        return nil
+                    }
+                }.reduce([], +)
+                DispatchQueue.main.async {
+                    self.delegate?.dataSourceController(self, didUpdateData: items)
+                }
+            }
+        }
+
     }
+
 }
