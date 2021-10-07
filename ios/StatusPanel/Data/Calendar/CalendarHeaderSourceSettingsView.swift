@@ -45,11 +45,6 @@ struct FormatEditor: View {
 
 struct CalendarHeaderSourceSettingsView: View {
 
-    enum Offset {
-        case today
-        case tomorrow
-    }
-
     var store: DataSourceSettingsStore<CalendarHeaderSource.Settings>
     @State var settings: CalendarHeaderSource.Settings
 
