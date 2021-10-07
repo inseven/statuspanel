@@ -62,24 +62,21 @@ class CalendarHeaderSource : DataSource {
     let longFormat: String
     let shortFormat: String
     let offset: Int
-    let component: Calendar.Component
     let flags: DataItemFlags
 
     init(longFormat: String,
          shortFormat: String,
          flags: DataItemFlags,
-         offset: Int = 0,
-         component: Calendar.Component = .day) {
+         offset: Int = 0) {
         self.longFormat = longFormat
         self.shortFormat = shortFormat
         self.flags = flags
-        self.component = component
         self.offset = offset
     }
 
     func fetchData(completion: @escaping Callback) {
 
-        guard let date = Calendar.current.date(byAdding: component, value: offset, to: Date()) else {
+        guard let date = Calendar.current.date(byAdding: .day, value: offset, to: Date()) else {
             completion([], StatusPanelError.invalidDate)
             return
         }
