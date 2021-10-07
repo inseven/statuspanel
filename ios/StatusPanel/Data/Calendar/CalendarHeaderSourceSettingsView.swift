@@ -50,16 +50,8 @@ struct CalendarHeaderSourceSettingsView: View {
         case tomorrow
     }
 
-    enum Format {
-        case year
-        case dayMonth
-        case dayMonthYear
-        case custom
-    }
-
     var store: SettingsStore<CalendarHeaderSource.Settings>
     @State var settings: CalendarHeaderSource.Settings
-    @State var format: Format = .custom
 
     init(store: SettingsStore<CalendarHeaderSource.Settings>, settings: CalendarHeaderSource.Settings) {
         self.store = store
