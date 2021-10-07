@@ -72,7 +72,6 @@ final class TFLDataSource: DataSource {
     let configuration: Configuration
 
     var defaults: Settings { Settings() }
-
     init(configuration: Configuration) {
         self.configuration = configuration
     }
@@ -102,8 +101,8 @@ final class TFLDataSource: DataSource {
             return
         }
 
-        let dataCompletion: ([LineStatus]?, Error?) -> Void = { data, error in
-            var dataItems: [DataItem] = []
+        let gotLineData: ([LineStatus]?, Error?) -> Void = { data, error in
+            var dataItems = [DataItem]()
             for line in data ?? [] {
                 if line.lineStatuses.count < 1 {
                     continue
@@ -125,7 +124,7 @@ final class TFLDataSource: DataSource {
             completion(dataItems, error)
         }
 
-        JSONRequest.makeRequest(url: safeUrl, completion: dataCompletion)
+        JSONRequest.makeRequest(url: safeUrl, completion: gotLineData)
     }
 
     func summary(settings: Settings) -> String? {
@@ -149,4 +148,5 @@ final class TFLDataSource: DataSource {
     func settingsView(store: Store, settings: Settings) -> EmptyView {
         EmptyView()
     }
+
 }
