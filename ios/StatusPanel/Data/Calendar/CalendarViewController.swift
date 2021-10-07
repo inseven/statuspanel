@@ -22,43 +22,6 @@ import EventKit
 import SwiftUI
 import UIKit
 
-struct DayPicker: View {
-
-    @State var offset: Int
-    var completion: (Int) -> Void
-
-    var body: some View {
-        Form {
-            Button {
-                offset = 0
-            } label: {
-                HStack {
-                    Text("Today")
-                    Spacer()
-                    if offset == 0 {
-                        Image(systemName: "checkmark")
-                    }
-                }
-            }
-            Button {
-                offset = 1
-            } label: {
-                HStack {
-                    Text("Tomorrow")
-                    Spacer()
-                    if offset == 1 {
-                        Image(systemName: "checkmark")
-                    }
-                }
-            }
-        }
-        .onChange(of: offset) { newValue in
-            completion(newValue)
-        }
-    }
-
-}
-
 class CalendarViewController: UITableViewController {
 
     var store: SettingsStore<CalendarSource.Settings>!
