@@ -65,7 +65,7 @@ class TFLDataSource: DataSource {
 
         let activeLines = Config().activeTFLLines
         guard !activeLines.isEmpty else {
-            onCompletion(self, [], nil)
+            onCompletion([], nil)
             return
         }
 
@@ -80,7 +80,7 @@ class TFLDataSource: DataSource {
             ])
 
         guard let safeUrl = url else {
-            onCompletion(self, [], StatusPanelError.invalidUrl)
+            onCompletion([], StatusPanelError.invalidUrl)
             return
         }
 
@@ -102,12 +102,12 @@ class TFLDataSource: DataSource {
             }
 
             guard let name = Self.lines[line.id] else {
-                completion?(self, [], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
+                completion?([], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
                 return
             }
 
             dataItems.append(DataItem(icon: "🚇", text: "\(name): \(desc)", flags: flags))
         }
-        completion?(self, dataItems, err)
+        completion?(dataItems, err)
     }
 }

@@ -63,7 +63,7 @@ class DummyDataSource : DataSource {
             }
         }
         #endif
-        onCompletion(self, data, nil)
+        onCompletion(data, nil)
     }
 
 }

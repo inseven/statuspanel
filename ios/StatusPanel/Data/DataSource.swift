@@ -21,7 +21,7 @@
 import Foundation
 
 protocol DataSource : AnyObject {
-    typealias Callback = (DataSource, [DataItemBase], Error?) -> Void
+    typealias Callback = ([DataItemBase], Error?) -> Void
     func fetchData(onCompletion:@escaping Callback)
 }
 
