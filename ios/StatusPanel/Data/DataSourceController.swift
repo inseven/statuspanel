@@ -18,7 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Combine
 import Foundation
 
 struct DataSourceTuple: Codable {
@@ -39,8 +38,6 @@ protocol DataSourceControllerDelegate: AnyObject {
 }
 
 class DataSourceController {
-
-    var cancellable: Cancellable?
 
     weak var delegate: DataSourceControllerDelegate?
     var sources: [DataSourceInstance] = []
