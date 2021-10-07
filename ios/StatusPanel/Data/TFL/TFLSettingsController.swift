@@ -22,7 +22,7 @@ import UIKit
 
 class TFLSettingsController: UITableViewController {
 
-    var store: SettingsStore<TFLDataSource.Settings>!
+    var store: DataSourceSettingsStore<TFLDataSource.Settings>!
     var settings: TFLDataSource.Settings!
 
     var sortedLines: [String]!

@@ -31,7 +31,7 @@ final class DummyDataSource : DataSource {
     struct SettingsView: View {
 
         @State var settings: DummyDataSource.Settings
-        var store: SettingsStore<DummyDataSource.Settings>
+        var store: DataSourceSettingsStore<DummyDataSource.Settings>
 
         func enabled() -> Binding<Bool> {
             Binding {

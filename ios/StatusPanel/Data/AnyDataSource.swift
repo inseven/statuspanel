@@ -91,14 +91,14 @@ class AnyDataSource: Identifiable {
         }
         settingsViewControllerProxy = { uuid in
             let settings = try dataSource.settings(uuid: uuid)
-            let wrapper = SettingsStore<T.Settings>(uuid: uuid)
-            let viewController = dataSource.settingsViewController(store: wrapper, settings: settings)
+            let store = DataSourceSettingsStore<T.Settings>(config: Config(), uuid: uuid)
+            let viewController = dataSource.settingsViewController(store: store, settings: settings)
             return viewController
         }
         settingsViewProxy = { uuid in
             let settings = try dataSource.settings(uuid: uuid)
-            let wrapper = SettingsStore<T.Settings>(uuid: uuid)
-            let viewController = UIHostingController(rootView: dataSource.settingsView(store: wrapper,
+            let store = DataSourceSettingsStore<T.Settings>(config: Config(), uuid: uuid)
+            let viewController = UIHostingController(rootView: dataSource.settingsView(store: store,
                                                                                        settings: settings))
             viewController.navigationItem.title = dataSource.name
             return viewController

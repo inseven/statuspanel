@@ -50,10 +50,10 @@ struct CalendarHeaderSourceSettingsView: View {
         case tomorrow
     }
 
-    var store: SettingsStore<CalendarHeaderSource.Settings>
+    var store: DataSourceSettingsStore<CalendarHeaderSource.Settings>
     @State var settings: CalendarHeaderSource.Settings
 
-    init(store: SettingsStore<CalendarHeaderSource.Settings>, settings: CalendarHeaderSource.Settings) {
+    init(store: DataSourceSettingsStore<CalendarHeaderSource.Settings>, settings: CalendarHeaderSource.Settings) {
         self.store = store
         _settings = State(initialValue: settings)
     }

@@ -28,7 +28,7 @@ protocol DataSourceSettings: Codable {
 
 protocol DataSource: AnyObject, Identifiable {
 
-    typealias Store = SettingsStore<Settings>
+    typealias Store = DataSourceSettingsStore<Settings>
 
     associatedtype Settings: DataSourceSettings
     associatedtype SettingsView: View = EmptyView
@@ -61,20 +61,6 @@ extension DataSource {
             settings = defaults
         }
         return settings
-    }
-
-}
-
-class SettingsStore<T: DataSourceSettings> {
-
-    var uuid: UUID
-
-    init(uuid: UUID) {
-        self.uuid = uuid
-    }
-
-    func save(settings: T) throws {
-        try Config().save(settings: settings, uuid: uuid)
     }
 
 }

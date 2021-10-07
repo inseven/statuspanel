@@ -22,7 +22,7 @@ import UIKit
 
 class NationalRailSettingsController : UITableViewController {
 
-    var store: SettingsStore<NationalRailDataSource.Settings>!
+    var store: DataSourceSettingsStore<NationalRailDataSource.Settings>!
     var settings: NationalRailDataSource.Settings!
 
     @IBOutlet weak var fromStationCell: UITableViewCell!

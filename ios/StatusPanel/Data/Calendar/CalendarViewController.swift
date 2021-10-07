@@ -24,7 +24,7 @@ import UIKit
 
 class CalendarViewController: UITableViewController {
 
-    var store: SettingsStore<CalendarSource.Settings>!
+    var store: DataSourceSettingsStore<CalendarSource.Settings>!
     var settings: CalendarSource.Settings!
 
     private var eventStore: EKEventStore!
