@@ -79,7 +79,7 @@ class NationalRailDataSource : DataSource {
         }
 
         completion = onCompletion
-        task = JSONRequest.makeRequest(url: safeUrl, onCompletion: gotDelays)
+        JSONRequest.makeRequest(url: safeUrl, onCompletion: gotDelays)
     }
 
     func gotDelays(data: Delays?, err: Error?) {
