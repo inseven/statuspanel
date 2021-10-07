@@ -28,6 +28,7 @@ protocol DataSourceControllerDelegate: AnyObject {
 class DataSourceController {
     weak var delegate: DataSourceControllerDelegate?
     var sources: [DataSource] = []
+    var syncQueue = DispatchQueue(label: "DataSourceController.syncQueue")
 
     func add(dataSource: DataSource) {
         sources.append(dataSource)
@@ -35,29 +36,28 @@ class DataSourceController {
 
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
-        let sources = self.sources  // Capture the ordered sources in case they change.
-
-        let queue = DispatchQueue.global(qos: .userInitiated)
-        queue.async {
+        let sources = Array(self.sources)  // Capture the ordered sources in case they change.
+        syncQueue.async {
 
             let dispatchGroup = DispatchGroup()
 
             var results: [ObjectIdentifier: Result<[DataItemBase], Error>] = [:]  // Synchronized on queue.
             for source in sources {
+                let identifier = ObjectIdentifier(source)
                 dispatchGroup.enter()
                 source.fetchData { data, error in
-                    queue.async {
+                    self.syncQueue.async {
                         if let error = error {
-                            results[ObjectIdentifier(source)] = .failure(error)
+                            results[identifier] = .failure(error)
                         } else {
-                            results[ObjectIdentifier(source)] = .success(data)
+                            results[identifier] = .success(data)
                         }
                         dispatchGroup.leave()
                     }
                 }
             }
 
-            dispatchGroup.notify(queue: queue) {
+            dispatchGroup.notify(queue: self.syncQueue) {
                 let orderedResults = sources.compactMap { results[ObjectIdentifier($0)] }
                 let errors = orderedResults.compactMap { result -> Error? in
                     switch result {
