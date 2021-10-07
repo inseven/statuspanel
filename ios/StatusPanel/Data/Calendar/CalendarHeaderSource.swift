@@ -35,20 +35,8 @@ final class CalendarHeaderSource : DataSource {
 
         var longFormat: String
         var shortFormat: String
-
-        var flags: DataItemFlags
-
         var offset: Int
-
-        init(longFormat: String = "yMMMMdEEEE",
-             shortFormat: String = "yMMMMdEEE",
-             flags: DataItemFlags = [],
-             offset: Int = 0) {
-            self.longFormat = longFormat
-            self.shortFormat = shortFormat
-            self.flags = flags
-            self.offset = offset
-        }
+        var flags: DataItemFlags
 
     }
 
@@ -93,7 +81,12 @@ final class CalendarHeaderSource : DataSource {
     let name = "Date"
     let configurable = true
 
-    var defaults: Settings { CalendarHeaderSource.Settings() }
+    var defaults: Settings {
+        CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                      shortFormat: "yMMMMdEEE",
+                                      offset: 0,
+                                      flags: [])
+    }
 
     init() {
     }

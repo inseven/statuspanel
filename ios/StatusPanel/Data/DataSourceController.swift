@@ -63,8 +63,8 @@ class DataSourceController {
             try add(type: .calendarHeader,
                     settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
                                                             shortFormat: "yMMMMdEEE",
-                                                            flags: [.header, .spansColumns],
-                                                            offset: 0))
+                                                            offset: 0,
+                                                            flags: [.header, .spansColumns]))
             try add(type: .transportForLondon,
                     settings: TFLDataSource.Settings(lines: config.activeTFLLines))
             try add(type: .nationalRail,
