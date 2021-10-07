@@ -41,7 +41,7 @@ class DataSourceController {
 
             let dispatchGroup = DispatchGroup()
 
-            var results: [ObjectIdentifier: Result<[DataItemBase], Error>] = [:]  // Synchronized on queue.
+            var results: [ObjectIdentifier: Result<[DataItemBase], Error>] = [:]  // Synchronized on syncQueue.
             for source in sources {
                 let identifier = ObjectIdentifier(source)
                 dispatchGroup.enter()
