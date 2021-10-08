@@ -18,21 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
+import SwiftUI
 
-class DataSourceSettingsStore<T: DataSourceSettings> {
+extension Alert {
 
-    var config: Config
-    var uuid: UUID
-
-    init(config: Config, uuid: UUID) {
-        self.config = config
-        self.uuid = uuid
-    }
-
-    func save(settings: T) throws {
-        throw StatusPanelError.corruptSettings
-//        try config.save(settings: settings, uuid: uuid)
+    init(error: Error?) {
+        self.init(title: Text("Error"),
+                  message: Text(error?.localizedDescription ?? ""),
+                  dismissButton: .default(Text("OK")))
     }
 
 }

@@ -381,8 +381,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                     navigationController?.pushViewController(classicViewController, animated: true)
                     return
                 }
-                let viewController = try source.dataSource.settingsView(uuid: source.id,
-                                                                        parent: self.navigationController)
+                let viewController = try source.dataSource.settingsView(uuid: source.id)
                 navigationController?.pushViewController(viewController, animated: true)
             } catch {
                 self.present(error: error, completion: nil)

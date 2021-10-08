@@ -20,34 +20,9 @@
 
 import SwiftUI
 
-class ErrorHandler {
-
-    var viewController: UIViewController?
-
-    init(viewController: UIViewController? = nil) {
-        self.viewController = viewController
-    }
-
-    func present(error: Error) {
-        viewController?.present(error: error, completion: nil)
-    }
-
-}
-
-struct ErrorHandlerEnvironmentKey: EnvironmentKey {
-    static var defaultValue = ErrorHandler()
-}
-
-extension EnvironmentValues {
-    var errorHandler: ErrorHandler {
-        get { self[ErrorHandlerEnvironmentKey.self] }
-        set { self[ErrorHandlerEnvironmentKey.self] = newValue }
-    }
-}
-
 struct CalendarHeaderSourceSettingsView: View {
 
-    @Environment(\.errorHandler) var errorHandler
+    @State var error: Error? = nil
 
     var store: DataSourceSettingsStore<CalendarHeaderSource.Settings>
     @State var settings: CalendarHeaderSource.Settings
@@ -75,11 +50,14 @@ struct CalendarHeaderSourceSettingsView: View {
             }
             FlagsSection(flags: $settings.flags)
         }
+        .alert(isPresented: $error.mappedToBool()) {
+            Alert(error: error)
+        }
         .onChange(of: settings) { newSettings in
             do {
                 try store.save(settings: newSettings)
             } catch {
-                errorHandler.present(error: error)
+                self.error = error
             }
         }
     }
