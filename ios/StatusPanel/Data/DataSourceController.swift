@@ -38,15 +38,14 @@ class DataSourceController {
 
     weak var delegate: DataSourceControllerDelegate?
 
-    var factories: [DataSourceType: AnyDataSource] = [:]
+    var sources: [DataSourceType: AnyDataSource] = [:]
     var instances: [DataSourceInstance] = []
-    var dataSources: [AnyDataSource] { Array(factories.values) }
     var syncQueue = DispatchQueue(label: "DataSourceController.syncQueue")
 
     init() {
 
         let configuration = try! Bundle.main.configuration()
-        factories = [
+        sources = [
             .calendar: CalendarSource().anyDataSource(),
             .calendarHeader: CalendarHeaderSource().anyDataSource(),
             .dummy: DummyDataSource().anyDataSource(),
@@ -83,7 +82,7 @@ class DataSourceController {
 
     fileprivate func add(type: DataSourceType, uuid: UUID = UUID()) throws {
         dispatchPrecondition(condition: .onQueue(.main))
-        guard let dataSource = factories[type] else {
+        guard let dataSource = sources[type] else {
             throw StatusPanelError.unknownDataSource(type)
         }
         instances.append(DataSourceInstance(id: UUID(), dataSource: dataSource))
@@ -91,7 +90,7 @@ class DataSourceController {
 
     fileprivate func add<T: DataSourceSettings>(type: DataSourceType, settings: T) throws {
         dispatchPrecondition(condition: .onQueue(.main))
-        guard let dataSource = factories[type] else {
+        guard let dataSource = sources[type] else {
             throw StatusPanelError.unknownDataSource(type)
         }
         let uuid = UUID()

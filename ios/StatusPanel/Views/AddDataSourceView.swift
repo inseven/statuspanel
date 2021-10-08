@@ -28,7 +28,7 @@ struct AddDataSourceView: View {
     var completion: (AnyDataSource?) -> Void
 
     var sources: [AnyDataSource] {
-        sourceController.dataSources.sorted { $0.name < $1.name }
+        Array(sourceController.sources.values).sorted { $0.name < $1.name }
     }
 
     var body: some View {
