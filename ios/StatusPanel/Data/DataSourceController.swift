@@ -101,9 +101,9 @@ class DataSourceController {
             throw StatusPanelError.unknownDataSource(type)
         }
         let uuid = UUID()
-        // TODO: Can we make this safe by somehow associating the type with the enum?
-        // TODO: Validate the settings type; throw so we can handle the error?
-        assert(dataSource.validate(settings: settings))
+        if !dataSource.validate(settings: settings) {
+            throw StatusPanelError.incorrectSettingsType
+        }
         try Config().save(settings: settings, uuid: uuid)
         instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
     }
