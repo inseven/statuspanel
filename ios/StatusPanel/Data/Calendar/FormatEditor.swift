@@ -36,8 +36,8 @@ struct FormatEditor: View {
                 TextField(settings.longFormat.isEmpty ? "Short" : settings.longFormat, text: $settings.shortFormat)
                     .transition(.opacity)
             }
-            .autocapitalization(.none)
         }
+        .autocapitalization(.none)
         .navigationTitle("Format")
     }
 
