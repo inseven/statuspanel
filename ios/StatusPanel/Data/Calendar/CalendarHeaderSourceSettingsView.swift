@@ -22,10 +22,9 @@ import SwiftUI
 
 struct CalendarHeaderSourceSettingsView: View {
 
-    @State var error: Error? = nil
-
     var store: DataSourceSettingsStore<CalendarHeaderSource.Settings>
     @State var settings: CalendarHeaderSource.Settings
+    @State var error: Error? = nil
 
     init(store: DataSourceSettingsStore<CalendarHeaderSource.Settings>, settings: CalendarHeaderSource.Settings) {
         self.store = store
@@ -53,9 +52,9 @@ struct CalendarHeaderSourceSettingsView: View {
         .alert(isPresented: $error.mappedToBool()) {
             Alert(error: error)
         }
-        .onChange(of: settings) { newSettings in
+        .onChange(of: settings) { newValue in
             do {
-                try store.save(settings: newSettings)
+                try store.save(settings: newValue)
             } catch {
                 self.error = error
             }

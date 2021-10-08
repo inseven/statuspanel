@@ -31,8 +31,7 @@ class DataSourceSettingsStore<T: DataSourceSettings> {
     }
 
     func save(settings: T) throws {
-        throw StatusPanelError.corruptSettings
-//        try config.save(settings: settings, uuid: uuid)
+        try config.save(settings: settings, uuid: uuid)
     }
 
 }

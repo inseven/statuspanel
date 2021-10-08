@@ -31,6 +31,7 @@ final class TextDataSource: DataSource {
 
         var store: Store
         @State var settings: Settings
+        @State var error: Error? = nil
 
         var body: some View {
             Form {
@@ -39,9 +40,17 @@ final class TextDataSource: DataSource {
                 }
                 FlagsSection(flags: $settings.flags)
             }
-            .onChange(of: settings) { newValue in
-                try! store.save(settings: settings)
+            .alert(isPresented: $error.mappedToBool()) {
+                Alert(error: error)
             }
+            .onChange(of: settings) { newValue in
+                do {
+                    try store.save(settings: newValue)
+                } catch {
+                    self.error = error
+                }
+            }
+
         }
 
     }
