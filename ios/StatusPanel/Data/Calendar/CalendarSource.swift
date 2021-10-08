@@ -66,7 +66,7 @@ class CalendarSource : DataSource {
         self.dayOffset = dayOffset
     }
 
-    func fetchData(completion: @escaping ([DataItemBase], Error?) -> Void) {
+    func data(completion: @escaping ([DataItemBase], Error?) -> Void) {
         eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
             if (granted) {
                 self.getData(callback: completion)

@@ -74,7 +74,7 @@ class CalendarHeaderSource : DataSource {
         self.offset = offset
     }
 
-    func fetchData(completion: @escaping ([DataItemBase], Error?) -> Void) {
+    func data(completion: @escaping ([DataItemBase], Error?) -> Void) {
 
         guard let date = Calendar.current.date(byAdding: .day, value: offset, to: Date()) else {
             completion([], StatusPanelError.invalidDate)
