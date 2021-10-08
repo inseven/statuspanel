@@ -23,12 +23,26 @@ import Foundation
 
 struct DataSourceInstance: Identifiable, Equatable {
 
+    struct Details: Codable {
+
+        var identifier: UUID
+        var type: DataSourceType
+
+    }
+
     static func == (lhs: DataSourceInstance, rhs: DataSourceInstance) -> Bool {
         lhs.id == rhs.id
     }
 
-    let id: UUID
+    var id: UUID { details.identifier }
+
+    let details: Details
     let dataSource: AnyDataSource
+
+    init(id: UUID, dataSource: AnyDataSource) {
+        self.details = Details(identifier: id, type: dataSource.id)
+        self.dataSource = dataSource
+    }
 
     func fetch(completion: @escaping ([DataItemBase]?, Error?) -> Void) {
         DispatchQueue.global().async {

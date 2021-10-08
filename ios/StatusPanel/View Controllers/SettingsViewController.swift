@@ -343,6 +343,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                             to destinationIndexPath: IndexPath) {
         let dataSource = dataSourceController.instances.remove(at: sourceIndexPath.row)
         dataSourceController.instances.insert(dataSource, at: destinationIndexPath.row)
+        do {
+            try dataSourceController.save()
+        } catch {
+            self.present(error: error, completion: nil)
+        }
     }
 
     override func tableView(_ tableView: UITableView,

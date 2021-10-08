@@ -20,13 +20,6 @@
 
 import Foundation
 
-struct DataSourceTuple: Codable {
-
-    var type: DataSourceType
-    var identifier: UUID
-
-}
-
 protocol DataSourceControllerDelegate: AnyObject {
 
     // Always called in context of main thread
@@ -55,30 +48,43 @@ class DataSourceController {
         ]
 
         let config = Config()
-        do {
-            try add(type: .calendarHeader,
-                    settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
-                                                            shortFormat: "yMMMMdEEE",
-                                                            offset: 0,
-                                                            flags: [.header, .spansColumns]))
-            try add(type: .transportForLondon,
-                    settings: TFLDataSource.Settings(lines: config.activeTFLLines))
-            try add(type: .nationalRail,
-                    settings: NationalRailDataSource.Settings(from: config.trainRoute.from, to: config.trainRoute.to))
-            try add(type: .calendar,
-                    settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
-                                                      showUrls: config.showUrlsInCalendarLocations,
-                                                      offset: 0))
-            try add(type: .text,
-                    settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
-                                                      text: "Tomorrow:"))
-            try add(type: .calendar,
-                    settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
-                                                      showUrls: config.showUrlsInCalendarLocations,
-                                                      offset: 1))
-        } catch {
-            print("Failed to add default data sources with error \(error).")
+
+        if let instances = try? Config().dataSources() {
+            do {
+                for instance in instances {
+                    try add(type: instance.type, uuid: instance.identifier)
+                }
+            } catch {
+                print("Failed to load data source details with error \(error).")
+            }
+        } else {
+            do {
+                try add(type: .calendarHeader,
+                        settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                                                shortFormat: "yMMMMdEEE",
+                                                                offset: 0,
+                                                                flags: [.header, .spansColumns]))
+                try add(type: .transportForLondon,
+                        settings: TFLDataSource.Settings(lines: config.activeTFLLines))
+                try add(type: .nationalRail,
+                        settings: NationalRailDataSource.Settings(from: config.trainRoute.from, to: config.trainRoute.to))
+                try add(type: .calendar,
+                        settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
+                                                          showUrls: config.showUrlsInCalendarLocations,
+                                                          offset: 0))
+                try add(type: .text,
+                        settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
+                                                          text: "Tomorrow:"))
+                try add(type: .calendar,
+                        settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
+                                                          showUrls: config.showUrlsInCalendarLocations,
+                                                          offset: 1))
+                try save()
+            } catch {
+                print("Failed to add default data sources with error \(error).")
+            }
         }
+
     }
 
     fileprivate func add(type: DataSourceType, uuid: UUID = UUID()) throws {
@@ -86,7 +92,7 @@ class DataSourceController {
         guard let dataSource = sources.first(where: { $0.id == type }) else {
             throw StatusPanelError.unknownDataSource(type)
         }
-        instances.append(DataSourceInstance(id: UUID(), dataSource: dataSource))
+        instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
     }
 
     fileprivate func add<T: DataSourceSettings>(type: DataSourceType, settings: T) throws {
@@ -112,8 +118,9 @@ class DataSourceController {
         self.instances.removeAll { $0 == instance }
     }
 
-    func save() {
+    func save() throws {
         dispatchPrecondition(condition: .onQueue(.main))
+        try Config().set(dataSources: self.instances.map { $0.details })
     }
 
     func fetch() {
