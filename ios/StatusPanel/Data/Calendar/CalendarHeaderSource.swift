@@ -70,6 +70,49 @@ final class CalendarHeaderSource : DataSource {
 
     }
 
+    struct SettingsView: View {
+
+        var store: DataSourceSettingsStore<CalendarHeaderSource.Settings>
+        @State var settings: CalendarHeaderSource.Settings
+        @State var error: Error? = nil
+
+        init(store: DataSourceSettingsStore<CalendarHeaderSource.Settings>, settings: CalendarHeaderSource.Settings) {
+            self.store = store
+            _settings = State(initialValue: settings)
+        }
+
+        var body: some View {
+            Form {
+                Section {
+                    Picker("Date", selection: $settings.offset) {
+                        Text("Today").tag(0)
+                        Text("Tomorrow").tag(1)
+                    }
+                    NavigationLink(destination: FormatEditor(settings: $settings)) {
+                        HStack {
+                            Text("Format")
+                            Spacer()
+                            Text(settings.longFormat)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                FlagsSection(flags: $settings.flags)
+            }
+            .alert(isPresented: $error.mappedToBool()) {
+                Alert(error: error)
+            }
+            .onChange(of: settings) { newValue in
+                do {
+                    try store.save(settings: newValue)
+                } catch {
+                    self.error = error
+                }
+            }
+        }
+
+    }
+
     let id: DataSourceType = .calendarHeader
     let name = "Date"
     let configurable = true
@@ -104,8 +147,8 @@ final class CalendarHeaderSource : DataSource {
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? { nil }
 
-    func settingsView(store: Store, settings: Settings) -> some View {
-        CalendarHeaderSourceSettingsView(store: store, settings: settings)
+    func settingsView(store: Store, settings: Settings) -> SettingsView {
+        SettingsView(store: store, settings: settings)
     }
 
 }
