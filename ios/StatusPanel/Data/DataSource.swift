@@ -53,11 +53,8 @@ protocol DataSource: AnyObject, Identifiable {
 extension DataSource {
 
     func settings(uuid: UUID) throws -> Settings {
-        var settings: Settings!
-        do {
-            settings = try Config().settings(uuid: uuid)
-        } catch StatusPanelError.noSettings {
-            settings = defaults
+        guard let settings: Settings = try Config().settings(uuid: uuid) else {
+            return defaults
         }
         return settings
     }

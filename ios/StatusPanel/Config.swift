@@ -381,17 +381,13 @@ class Config {
 
     func settings<T: DataSourceSettings>(uuid: UUID) throws -> T? {
         guard let data = userDefaults.object(forKey: uuid.key) as? Data else {
-            print("data: no settings for key \(uuid.key)")
-            // TODO: I think this might be wrong; it's technically not an error.
-            throw StatusPanelError.noSettings
+            return nil
         }
-        print("data (load) = \(String(data: data, encoding: .utf8) ?? "nil")")
         return try JSONDecoder().decode(T.self, from: data as Data)
     }
 
     func save<T: DataSourceSettings>(settings: T, uuid: UUID) throws {
         let data = try JSONEncoder().encode(settings)
-        print("save: data = \(String(data: data, encoding: .utf8) ?? "nil"), key = \(uuid.key)")
         userDefaults.set(data, forKey: uuid.key)
     }
 

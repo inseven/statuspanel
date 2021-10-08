@@ -27,7 +27,6 @@ enum StatusPanelError: Error {
     case invalidUrl
     case invalidDate
     case corruptSettings
-    case noSettings  // TODO: Remove this
     case unknownDataSource(DataSourceType)
     case internalInconsistency
     case incorrectSettingsType
