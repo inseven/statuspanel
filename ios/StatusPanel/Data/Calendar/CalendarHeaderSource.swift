@@ -26,13 +26,6 @@ final class CalendarHeaderSource : DataSource {
 
     struct Settings: DataSourceSettings & Equatable {
 
-        static func == (lhs: CalendarHeaderSource.Settings, rhs: CalendarHeaderSource.Settings) -> Bool {
-            return (lhs.longFormat == rhs.longFormat &&
-                    lhs.shortFormat == rhs.shortFormat &&
-                    lhs.flags == rhs.flags &&
-                    lhs.offset == rhs.offset)
-        }
-
         var longFormat: String
         var shortFormat: String
         var offset: Int
