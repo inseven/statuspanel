@@ -29,5 +29,6 @@ enum StatusPanelError: Error {
     case corruptSettings
     case noSettings
     case unknownDataSource(DataSourceType)
+    case internalInconsistency
 
 }

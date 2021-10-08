@@ -140,8 +140,7 @@ class DataSourceController {
                         } else if let data = data {
                             results[source.id] = .success(data)
                         } else {
-                            // TODO: This is a terrible error.
-                            results[source.id] = .failure(StatusPanelError.corruptSettings)
+                            results[source.id] = .failure(StatusPanelError.internalInconsistency)
                         }
                         dispatchGroup.leave()
                     }
