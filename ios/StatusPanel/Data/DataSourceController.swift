@@ -32,9 +32,6 @@ protocol DataSourceControllerDelegate: AnyObject {
     // Always called in context of main thread
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase])
     func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error)
-
-    // TODO: Consder doing it this way?
-//    func dataSourceController(_ dataSourceController: DataSourceController, didAddSourceAtIndex index: Int)
 }
 
 class DataSourceController {
