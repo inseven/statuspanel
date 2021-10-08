@@ -59,7 +59,7 @@ class NationalRailSettingsController : UITableViewController {
             do {
                 try store.save(settings: settings)
             } catch {
-                self.present(error: error, completion: nil)
+                self.present(error: error)
             }
         }
         update()

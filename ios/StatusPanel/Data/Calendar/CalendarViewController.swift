@@ -148,7 +148,7 @@ class CalendarViewController: UITableViewController {
         do {
             try store.save(settings: settings)
         } catch {
-            self.present(error: error, completion: nil)
+            self.present(error: error)
         }
         tableView.performBatchUpdates({
             let redactUrlsIndexPath = IndexPath(row: 2, section: calendars.count)
@@ -165,7 +165,7 @@ class CalendarViewController: UITableViewController {
         do {
             try store.save(settings: settings)
         } catch {
-            self.present(error: error, completion: nil)
+            self.present(error: error)
         }
     }
 }

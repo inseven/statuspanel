@@ -346,7 +346,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         do {
             try dataSourceController.save()
         } catch {
-            self.present(error: error, completion: nil)
+            self.present(error: error)
         }
     }
 
@@ -367,7 +367,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         do {
             try dataSourceController.save()
         } catch {
-            present(error: error, completion: nil)
+            present(error: error)
         }
     }
 
@@ -392,7 +392,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 let indexPath = IndexPath(row: self.dataSourceController.instances.count - 1, section: 0)
                 self.tableView.insertRows(at: [indexPath], with: .none)
             } catch {
-                self.present(error: error, completion: nil)
+                self.present(error: error)
             }
         }
         navigationController?.present(UIHostingController(rootView: view), animated: true, completion: nil)
@@ -411,7 +411,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 let viewController = try source.dataSource.settingsView(uuid: source.id)
                 navigationController?.pushViewController(viewController, animated: true)
             } catch {
-                self.present(error: error, completion: nil)
+                self.present(error: error)
             }
             return
         case UpdateTimeOrAddSourceSection:

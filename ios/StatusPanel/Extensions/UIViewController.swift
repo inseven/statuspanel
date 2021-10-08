@@ -22,10 +22,10 @@ import UIKit
 
 extension UIViewController {
 
-    func present(error: Error, completion: (() -> Void)? = nil) {
+    func present(error: Error) {
         let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
         alert.addAction(.init(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: completion)
+        present(alert, animated: true, completion: nil)
     }
 
 }
