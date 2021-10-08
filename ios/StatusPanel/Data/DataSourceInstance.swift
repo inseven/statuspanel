@@ -32,7 +32,7 @@ struct DataSourceInstance: Identifiable, Equatable {
 
     func fetch(completion: @escaping ([DataItemBase]?, Error?) -> Void) {
         DispatchQueue.global().async {
-            self.dataSource.fetch(uuid: id, completion: completion)
+            self.dataSource.data(uuid: id, completion: completion)
         }
     }
 

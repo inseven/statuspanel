@@ -28,7 +28,7 @@ class AnyDataSource: Identifiable {
     fileprivate var idProxy: (() -> DataSourceType)! = nil
     fileprivate var nameProxy: (() -> String)! = nil
     fileprivate var configurableProxy: (() -> Bool)! = nil
-    fileprivate var fetchProxy: ((UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
+    fileprivate var dataProxy: ((UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
     fileprivate var summaryProxy: ((UUID) throws -> String?)! = nil
     fileprivate var settingsViewControllerProxy: ((UUID) throws -> UIViewController?)! = nil
     fileprivate var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
@@ -46,8 +46,8 @@ class AnyDataSource: Identifiable {
         configurableProxy()
     }
 
-    func fetch(uuid: UUID, completion: @escaping ([DataItemBase]?, Error?) -> Void) {
-        fetchProxy(uuid, completion)
+    func data(uuid: UUID, completion: @escaping ([DataItemBase]?, Error?) -> Void) {
+        dataProxy(uuid, completion)
     }
 
     func summary(uuid: UUID) throws -> String? {
@@ -69,7 +69,7 @@ class AnyDataSource: Identifiable {
     init<T: DataSource>(_ dataSource: T) {
         idProxy = { dataSource.id }
         configurableProxy = { dataSource.configurable }
-        fetchProxy = { uuid, completion in
+        dataProxy = { uuid, completion in
             do {
                 let settings = try dataSource.settings(uuid: uuid)
                 dataSource.data(settings: settings) { data, error in
