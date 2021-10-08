@@ -67,7 +67,8 @@ class DataSourceController {
                     settings: NationalRailDataSource.Settings(from: config.trainRoute.from, to: config.trainRoute.to))
             try add(type: .calendar,
                     settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
-                                                      showUrls: config.showUrlsInCalendarLocations))
+                                                      showUrls: config.showUrlsInCalendarLocations,
+                                                      offset: 0))
             try add(type: .text,
                     settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
                                                       text: "Tomorrow:"))

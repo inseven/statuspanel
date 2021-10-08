@@ -65,14 +65,6 @@ final class CalendarSource : DataSource {
         var showUrls: Bool
         var offset: Int
 
-        init(showLocations: Bool = false,
-             showUrls: Bool = false,
-             offset: Int = 0) {
-            self.showLocations = showLocations
-            self.showUrls = showUrls
-            self.offset = offset
-        }
-
         var calendarNames: String {
             let eventStore = EKEventStore()
             let calendarNames = Config().activeCalendars.compactMap { eventStore.calendar(withIdentifier:$0)?.title }
@@ -90,7 +82,11 @@ final class CalendarSource : DataSource {
 
     let eventStore: EKEventStore
 
-    var defaults: Settings { Settings() }
+    var defaults: Settings {
+        Settings(showLocations: false,
+                 showUrls: false,
+                 offset: 0)
+    }
 
     init() {
         eventStore = EKEventStore()
