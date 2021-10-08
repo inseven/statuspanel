@@ -52,7 +52,6 @@ protocol DataSource: AnyObject, Identifiable {
 
 extension DataSource {
 
-    // TODO: Check the thread safety (in the settings themselves?)
     func settings(uuid: UUID) throws -> Settings {
         var settings: Settings!
         do {
