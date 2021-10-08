@@ -38,7 +38,7 @@ class DataSourceController {
 
     weak var delegate: DataSourceControllerDelegate?
 
-    var sources: [DataSourceType: AnyDataSource] = [:]
+    var sources: [AnyDataSource] = []
     var instances: [DataSourceInstance] = []
     var syncQueue = DispatchQueue(label: "DataSourceController.syncQueue")
 
@@ -46,12 +46,12 @@ class DataSourceController {
 
         let configuration = try! Bundle.main.configuration()
         sources = [
-            .calendar: CalendarSource().anyDataSource(),
-            .calendarHeader: CalendarHeaderSource().anyDataSource(),
-            .dummy: DummyDataSource().anyDataSource(),
-            .nationalRail: NationalRailDataSource(configuration: configuration).anyDataSource(),
-            .text: TextDataSource().anyDataSource(),
-            .transportForLondon: TFLDataSource(configuration: configuration).anyDataSource(),
+            CalendarSource().anyDataSource(),
+            CalendarHeaderSource().anyDataSource(),
+            DummyDataSource().anyDataSource(),
+            NationalRailDataSource(configuration: configuration).anyDataSource(),
+            TextDataSource().anyDataSource(),
+            TFLDataSource(configuration: configuration).anyDataSource(),
         ]
 
         let config = Config()
@@ -82,7 +82,7 @@ class DataSourceController {
 
     fileprivate func add(type: DataSourceType, uuid: UUID = UUID()) throws {
         dispatchPrecondition(condition: .onQueue(.main))
-        guard let dataSource = sources[type] else {
+        guard let dataSource = sources.first(where: { $0.id == type }) else {
             throw StatusPanelError.unknownDataSource(type)
         }
         instances.append(DataSourceInstance(id: UUID(), dataSource: dataSource))
@@ -90,7 +90,7 @@ class DataSourceController {
 
     fileprivate func add<T: DataSourceSettings>(type: DataSourceType, settings: T) throws {
         dispatchPrecondition(condition: .onQueue(.main))
-        guard let dataSource = sources[type] else {
+        guard let dataSource = sources.first(where: { $0.id == type }) else {
             throw StatusPanelError.unknownDataSource(type)
         }
         let uuid = UUID()
