@@ -56,7 +56,11 @@ class NationalRailSettingsController : UITableViewController {
             } else {
                 settings.from = station.code
             }
-            try! store.save(settings: settings)
+            do {
+                try store.save(settings: settings)
+            } catch {
+                self.present(error: error, completion: nil)
+            }
         }
         update()
     }

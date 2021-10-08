@@ -145,7 +145,11 @@ class CalendarViewController: UITableViewController {
 
     @objc func showCalendarLocationsSwitchChanged(sender: UISwitch) {
         settings.showLocations = sender.isOn
-        try! store.save(settings: settings)
+        do {
+            try store.save(settings: settings)
+        } catch {
+            self.present(error: error, completion: nil)
+        }
         tableView.performBatchUpdates({
             let redactUrlsIndexPath = IndexPath(row: 2, section: calendars.count)
             if settings.showLocations {
@@ -158,6 +162,10 @@ class CalendarViewController: UITableViewController {
 
     @objc func showUrlsInCalendarLocationsSwitchChanged(sender: UISwitch) {
         settings.showUrls = sender.isOn
-        try! store.save(settings: settings)
+        do {
+            try store.save(settings: settings)
+        } catch {
+            self.present(error: error, completion: nil)
+        }
     }
 }

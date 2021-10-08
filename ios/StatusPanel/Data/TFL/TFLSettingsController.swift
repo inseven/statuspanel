@@ -64,6 +64,10 @@ class TFLSettingsController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         tableView.reloadRows(at: [indexPath], with: .fade)
         settings.lines = activeLines.sorted()
-        try! store.save(settings: settings)
+        do {
+            try store.save(settings: settings)
+        } catch {
+            self.present(error: error, completion: nil)
+        }
     }
 }

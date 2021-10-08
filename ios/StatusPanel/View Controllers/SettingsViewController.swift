@@ -376,6 +376,23 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     }
 
+    func addDataSource() {
+        let view = AddDataSourceView(sourceController: dataSourceController) { dataSource in
+            guard let dataSource = dataSource else {
+                return
+            }
+            do {
+                try self.dataSourceController.add(dataSource)
+                try self.dataSourceController.save()
+                let indexPath = IndexPath(row: self.dataSourceController.instances.count - 1, section: 0)
+                self.tableView.insertRows(at: [indexPath], with: .none)
+            } catch {
+                self.present(error: error, completion: nil)
+            }
+        }
+        navigationController?.present(UIHostingController(rootView: view), animated: true, completion: nil)
+    }
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var vcid: String?
         switch indexPath.section {
@@ -394,19 +411,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return
         case UpdateTimeOrAddSourceSection:
             if isEditing {
-                let view = AddDataSourceView(sourceController: dataSourceController) { dataSource in
-                    guard let dataSource = dataSource else {
-                        return
-                    }
-                    do {
-                        try self.dataSourceController.add(dataSource)
-                        let indexPath = IndexPath(row: self.dataSourceController.instances.count - 1, section: 0)
-                        self.tableView.insertRows(at: [indexPath], with: .none)
-                    } catch {
-                        self.present(error: error, completion: nil)
-                    }
-                }
-                navigationController?.present(UIHostingController(rootView: view), animated: true, completion: nil)
+                addDataSource()
                 tableView.deselectRow(at: indexPath, animated: true)
                 return
             } else {

@@ -30,21 +30,23 @@ final class DummyDataSource : DataSource {
 
     struct SettingsView: View {
 
-        @State var settings: DummyDataSource.Settings
         var store: DataSourceSettingsStore<DummyDataSource.Settings>
-
-        func enabled() -> Binding<Bool> {
-            Binding {
-                settings.enabled
-            } set: { enabled in
-                settings.enabled = enabled
-                try! store.save(settings: settings)
-            }
-        }
+        @State var settings: DummyDataSource.Settings
+        @State var error: Error? = nil
 
         var body: some View {
             Form {
-                Toggle("Enabled", isOn: enabled())
+                Toggle("Enabled", isOn: $settings.enabled)
+            }
+            .alert(isPresented: $error.mappedToBool()) {
+                Alert(error: error)
+            }
+            .onChange(of: settings) { newValue in
+                do {
+                    try store.save(settings: newValue)
+                } catch {
+                    self.error = error
+                }
             }
         }
 
@@ -106,7 +108,7 @@ final class DummyDataSource : DataSource {
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? { nil }
 
     func settingsView(store: Store, settings: Settings) -> SettingsView {
-        SettingsView(settings: settings, store: store)
+        SettingsView(store: store, settings: settings)
     }
 
 }
