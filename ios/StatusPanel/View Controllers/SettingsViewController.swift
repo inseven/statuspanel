@@ -364,6 +364,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         let dataSource = dataSourceController.instances[indexPath.row]
         dataSourceController.remove(instance: dataSource)
         tableView.deleteRows(at: [indexPath], with: .automatic)
+        do {
+            try dataSourceController.save()
+        } catch {
+            present(error: error, completion: nil)
+        }
     }
 
     // Overridden to prevent swipe gestures setting isEditing.
