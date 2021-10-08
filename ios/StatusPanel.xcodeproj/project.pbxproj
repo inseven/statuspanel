@@ -20,6 +20,7 @@
 		D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D835EC972471D811003E402E /* NetworkExtension.framework */; };
 		D8383EBC270FB8E20007EBB7 /* DayPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBB270FB8E20007EBB7 /* DayPicker.swift */; };
 		D8383EBE270FBA1B0007EBB7 /* DataSourceSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBD270FBA1B0007EBB7 /* DataSourceSettingsStore.swift */; };
+		D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBF270FC50A0007EBB7 /* FormatEditor.swift */; };
 		D83CC5202707532400260DC1 /* AnyDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC51F2707532400260DC1 /* AnyDataSource.swift */; };
 		D83CC5222707543E00260DC1 /* UIStoryboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC5212707543E00260DC1 /* UIStoryboard.swift */; };
 		D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A197270C8DB100681F62 /* TextDataSource.swift */; };
@@ -98,6 +99,7 @@
 		D835EC972471D811003E402E /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		D8383EBB270FB8E20007EBB7 /* DayPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPicker.swift; sourceTree = "<group>"; };
 		D8383EBD270FBA1B0007EBB7 /* DataSourceSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceSettingsStore.swift; sourceTree = "<group>"; };
+		D8383EBF270FC50A0007EBB7 /* FormatEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatEditor.swift; sourceTree = "<group>"; };
 		D83CC51F2707532400260DC1 /* AnyDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDataSource.swift; sourceTree = "<group>"; };
 		D83CC5212707543E00260DC1 /* UIStoryboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStoryboard.swift; sourceTree = "<group>"; };
 		D848A197270C8DB100681F62 /* TextDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDataSource.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 				D891048B2707BDB20020A2CF /* CalendarHeaderSourceSettingsView.swift */,
 				DBCA98B221440CD90084B710 /* CalendarSource.swift */,
 				D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */,
+				D8383EBF270FC50A0007EBB7 /* FormatEditor.swift */,
 			);
 			path = Calendar;
 			sourceTree = "<group>";
@@ -481,6 +484,7 @@
 				DB5E9DA1241562ED009F3807 /* StringUtils.swift in Sources */,
 				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,
 				DB62F333224F89C200CA5E64 /* StationPickerController.swift in Sources */,
+				D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
 				D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */,
 			);

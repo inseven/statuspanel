@@ -20,38 +20,25 @@
 
 import SwiftUI
 
-struct CalendarHeaderSourceSettingsView: View {
+struct FormatEditor: View {
 
-    var store: DataSourceSettingsStore<CalendarHeaderSource.Settings>
-    @State var settings: CalendarHeaderSource.Settings
-
-    init(store: DataSourceSettingsStore<CalendarHeaderSource.Settings>, settings: CalendarHeaderSource.Settings) {
-        self.store = store
-        _settings = State(initialValue: settings)
-    }
+    @Binding var settings: CalendarHeaderSource.Settings
 
     var body: some View {
         Form {
-            Section {
-                Picker("Date", selection: $settings.offset) {
-                    Text("Today").tag(0)
-                    Text("Tomorrow").tag(1)
-                }
-                NavigationLink(destination: FormatEditor(settings: $settings)) {
-                    HStack {
-                        Text("Format")
-                        Spacer()
-                        Text(settings.longFormat)
-                            .foregroundColor(.secondary)
-                    }
-                }
+            Section(header: Text("Long Format"),
+                    footer: Text("Preferred format specifier.")) {
+                TextField("Long", text: $settings.longFormat)
+                    .transition(.opacity)
             }
-            FlagsSection(flags: $settings.flags)
+            Section(header: Text("Short Format"),
+                    footer: Text("Used if the result of the long format specifier is too long to fit on the screen.")) {
+                TextField(settings.longFormat.isEmpty ? "Short" : settings.longFormat, text: $settings.shortFormat)
+                    .transition(.opacity)
+            }
+            .autocapitalization(.none)
         }
-        .onChange(of: settings) { newSettings in
-            // TODO: Inject an error handler!
-            try! store.save(settings: newSettings)
-        }
+        .navigationTitle("Format")
     }
 
 }
