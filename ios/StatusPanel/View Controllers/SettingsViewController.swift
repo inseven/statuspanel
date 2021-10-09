@@ -60,13 +60,16 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return
         }
         super.setEditing(editing, animated: animated)
-        self.navigationItem.leftBarButtonItem?.isEnabled = !editing
         if editing {
+            self.navigationItem.setLeftBarButton(nil, animated: true)
             tableView.performBatchUpdates {
                 tableView.deleteSections([1, 2, 3, 4, 5], with: .fade)
                 tableView.insertSections([1], with: .fade)
             }
         } else {
+            self.navigationItem.setLeftBarButton(UIBarButtonItem(barButtonSystemItem: .done,
+                                                                 target: self,
+                                                                 action: #selector(cancelTapped(_:))), animated: true)
             tableView.performBatchUpdates {
                 tableView.deleteSections([1], with: .fade)
                 tableView.insertSections([1, 2, 3, 4, 5], with: .fade)
