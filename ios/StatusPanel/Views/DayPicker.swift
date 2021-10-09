@@ -35,6 +35,7 @@ struct DayPicker: View {
                     Spacer()
                     if offset == 0 {
                         Image(systemName: "checkmark")
+                            .foregroundColor(.accentColor)
                     }
                 }
             }
@@ -46,10 +47,12 @@ struct DayPicker: View {
                     Spacer()
                     if offset == 1 {
                         Image(systemName: "checkmark")
+                            .foregroundColor(.accentColor)
                     }
                 }
             }
         }
+        .foregroundColor(.primary)
         .onChange(of: offset) { newValue in
             completion(newValue)
         }
