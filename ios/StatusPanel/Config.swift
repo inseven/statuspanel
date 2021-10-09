@@ -464,16 +464,16 @@ class Config {
         try self.set(codable: dataSources, for: .dataSources)
     }
 
-    func settings<T: DataSourceSettings>(for uuid: UUID) throws -> T? {
-        guard let data = object(for: .settings(uuid)) as? Data else {
+    func settings<T: DataSourceSettings>(for instanceId: UUID) throws -> T? {
+        guard let data = object(for: .settings(instanceId)) as? Data else {
             return nil
         }
         return try JSONDecoder().decode(T.self, from: data as Data)
     }
 
-    func save<T: DataSourceSettings>(settings: T, uuid: UUID) throws {
+    func save<T: DataSourceSettings>(settings: T, instanceId: UUID) throws {
         let data = try JSONEncoder().encode(settings)
-        set(data, for: .settings(uuid))
+        set(data, for: .settings(instanceId))
     }
 
 }

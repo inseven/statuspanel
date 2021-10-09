@@ -48,8 +48,8 @@ protocol DataSource: AnyObject, Identifiable {
 
 extension DataSource {
 
-    func settings(uuid: UUID) throws -> Settings {
-        guard let settings: Settings = try Config().settings(for: uuid) else {
+    func settings(for instanceId: UUID) throws -> Settings {
+        guard let settings: Settings = try Config().settings(for: instanceId) else {
             return defaults
         }
         return settings

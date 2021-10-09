@@ -167,7 +167,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DataSourceCell")
             let source = dataSourceController.instances[indexPath.row]
             cell.textLabel?.text = source.dataSource.name
-            cell.detailTextLabel?.text = try? source.dataSource.summary(uuid: source.id)
+            cell.detailTextLabel?.text = try? source.dataSource.summary(for: source.id)
             cell.accessoryType = source.dataSource.configurable ? .disclosureIndicator : .none
             cell.showsReorderControl = true
             return cell
@@ -401,7 +401,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DataSourcesSection:
             do {
                 let source = dataSourceController.instances[indexPath.row]
-                guard let viewController = try source.dataSource.settingsViewController(uuid: source.id) else {
+                guard let viewController = try source.dataSource.settingsViewController(for: source.id) else {
                     return
                 }
                 navigationController?.pushViewController(viewController, animated: true)

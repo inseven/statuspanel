@@ -23,15 +23,15 @@ import Foundation
 class DataSourceSettingsStore<T: DataSourceSettings> {
 
     var config: Config
-    var uuid: UUID
+    var instanceId: UUID
 
     init(config: Config, uuid: UUID) {
         self.config = config
-        self.uuid = uuid
+        self.instanceId = uuid
     }
 
     func save(settings: T) throws {
-        try config.save(settings: settings, uuid: uuid)
+        try config.save(settings: settings, instanceId: instanceId)
     }
 
 }

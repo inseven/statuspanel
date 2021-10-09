@@ -104,7 +104,7 @@ class DataSourceController {
         if !dataSource.validate(settings: settings) {
             throw StatusPanelError.incorrectSettingsType
         }
-        try Config().save(settings: settings, uuid: uuid)
+        try Config().save(settings: settings, instanceId: uuid)
         instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
     }
 

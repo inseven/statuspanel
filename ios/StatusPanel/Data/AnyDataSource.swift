@@ -44,16 +44,16 @@ class AnyDataSource: Identifiable {
         configurableProxy()
     }
 
-    func data(uuid: UUID, completion: @escaping ([DataItemBase]?, Error?) -> Void) {
-        dataProxy(uuid, completion)
+    func data(for instanceId: UUID, completion: @escaping ([DataItemBase]?, Error?) -> Void) {
+        dataProxy(instanceId, completion)
     }
 
-    func summary(uuid: UUID) throws -> String? {
-        try summaryProxy(uuid)
+    func summary(for instanceId: UUID) throws -> String? {
+        try summaryProxy(instanceId)
     }
 
-    func settingsViewController(uuid: UUID) throws -> UIViewController? {
-        try settingsViewControllerProxy(uuid)
+    func settingsViewController(for instanceId: UUID) throws -> UIViewController? {
+        try settingsViewControllerProxy(instanceId)
     }
 
     func validate(settings: DataSourceSettings) -> Bool {
@@ -63,9 +63,9 @@ class AnyDataSource: Identifiable {
     init<T: DataSource>(_ dataSource: T) {
         idProxy = { dataSource.id }
         configurableProxy = { dataSource.configurable }
-        dataProxy = { uuid, completion in
+        dataProxy = { instanceId, completion in
             do {
-                let settings = try dataSource.settings(uuid: uuid)
+                let settings = try dataSource.settings(for: instanceId)
                 dataSource.data(settings: settings) { data, error in
                     if let error = error {
                         completion(nil, error)
@@ -79,13 +79,13 @@ class AnyDataSource: Identifiable {
             }
         }
         nameProxy = { dataSource.name }
-        summaryProxy = { uuid in
-            let settings = try dataSource.settings(uuid: uuid)
+        summaryProxy = { instanceId in
+            let settings = try dataSource.settings(for: instanceId)
             return dataSource.summary(settings: settings)
         }
-        settingsViewControllerProxy = { uuid in
-            let settings = try dataSource.settings(uuid: uuid)
-            let store = DataSourceSettingsStore<T.Settings>(config: Config(), uuid: uuid)
+        settingsViewControllerProxy = { instanceId in
+            let settings = try dataSource.settings(for: instanceId)
+            let store = DataSourceSettingsStore<T.Settings>(config: Config(), uuid: instanceId)
             let viewController = dataSource.settingsViewController(store: store, settings: settings)
             viewController?.navigationItem.title = dataSource.name
             return viewController
