@@ -33,7 +33,6 @@
 		D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */; };
 		D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */; };
 		D8B9874B270FF88D00EC2BA4 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B9874A270FF88D00EC2BA4 /* Alert.swift */; };
-		D8B9874D27100AE700EC2BA4 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B9874C27100AE700EC2BA4 /* String.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
 		D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D98E422493019A00F853CA /* NetworkProvisioner.swift */; };
 		D8DAED7026E3EAA90002F388 /* configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = D8DAED6F26E3EAA90002F388 /* configuration.json */; };
@@ -114,7 +113,6 @@
 		D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderSource.swift; sourceTree = "<group>"; };
 		D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+mappedToBool.swift"; sourceTree = "<group>"; };
 		D8B9874A270FF88D00EC2BA4 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
-		D8B9874C27100AE700EC2BA4 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		D8D98E422493019A00F853CA /* NetworkProvisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvisioner.swift; sourceTree = "<group>"; };
 		D8DAED6F26E3EAA90002F388 /* configuration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = configuration.json; sourceTree = "<group>"; };
@@ -281,7 +279,6 @@
 				D848A19B270D206300681F62 /* Int.swift */,
 				D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */,
 				D8B9874A270FF88D00EC2BA4 /* Alert.swift */,
-				D8B9874C27100AE700EC2BA4 /* String.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -453,7 +450,6 @@
 				D848A19E270D213800681F62 /* FlagsSection.swift in Sources */,
 				D8293A0C26F787D3008CE13B /* URL.swift in Sources */,
 				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
-				D8B9874D27100AE700EC2BA4 /* String.swift in Sources */,
 				D8383EBC270FB8E20007EBB7 /* DayPicker.swift in Sources */,
 				DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */,
 				DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */,

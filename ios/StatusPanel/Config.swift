@@ -43,6 +43,8 @@ class Config {
         case dataSources
         case settings(UUID)
 
+        static let settingsPrefix = "Settings-"
+
         init?(rawValue: String) {
             switch rawValue {
             case "activeCalendars":
@@ -77,8 +79,8 @@ class Config {
                 self = .showIcons
             case "dataSources":
                 self = .dataSources
-            case _ where rawValue.starts(with: "Settings-"):
-                guard let uuid = UUID(uuidString: String(rawValue.dropPrefix("Settings-"))) else {
+            case _ where rawValue.starts(with: Self.settingsPrefix):
+                guard let uuid = UUID(uuidString: String(rawValue.dropFirst(Self.settingsPrefix.count))) else {
                     return nil
                 }
                 self = .settings(uuid)
