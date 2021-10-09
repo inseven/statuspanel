@@ -165,7 +165,7 @@ class Config {
         return value
     }
 
-    private func codable<T: Codable>(for key: Key) throws -> T? {
+    private func decodeObject<T: Codable>(for key: Key) throws -> T? {
         guard let data = self.userDefaults.object(forKey: key.rawValue) as? Data else {
             return nil
         }
@@ -457,7 +457,7 @@ class Config {
     }
 
     func dataSources() throws -> [DataSourceInstance.Details]? {
-        return try self.codable(for: .dataSources)
+        return try self.decodeObject(for: .dataSources)
     }
 
     func set(dataSources: [DataSourceInstance.Details]) throws {
