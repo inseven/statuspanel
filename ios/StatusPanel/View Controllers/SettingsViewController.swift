@@ -170,7 +170,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DataSourceCell")
             let source = dataSourceController.instances[indexPath.row]
             cell.textLabel?.text = source.dataSource.name
-            cell.detailTextLabel?.text = try? source.dataSource.summary(for: source.id)
+            do {
+                cell.detailTextLabel?.text = try source.dataSource.summary(for: source.id)
+            } catch {
+                cell.detailTextLabel?.text = error.localizedDescription
+            }
             cell.accessoryType = source.dataSource.configurable ? .disclosureIndicator : .none
             cell.showsReorderControl = true
             return cell
