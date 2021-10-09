@@ -25,14 +25,14 @@ import UIKit
 /// Type erasing wrapper for `DataSource`
 class AnyDataSource: Identifiable {
 
-    fileprivate var idProxy: (() -> DataSourceType)! = nil
-    fileprivate var nameProxy: (() -> String)! = nil
-    fileprivate var configurableProxy: (() -> Bool)! = nil
-    fileprivate var dataProxy: ((UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
-    fileprivate var summaryProxy: ((UUID) throws -> String?)! = nil
-    fileprivate var settingsViewControllerProxy: ((UUID) throws -> UIViewController?)! = nil
-    fileprivate var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
-    fileprivate var validateSettingsProxy: ((DataSourceSettings) -> Bool)! = nil
+    private var idProxy: (() -> DataSourceType)! = nil
+    private var nameProxy: (() -> String)! = nil
+    private var configurableProxy: (() -> Bool)! = nil
+    private var dataProxy: ((UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
+    private var summaryProxy: ((UUID) throws -> String?)! = nil
+    private var settingsViewControllerProxy: ((UUID) throws -> UIViewController?)! = nil
+    private var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
+    private var validateSettingsProxy: ((DataSourceSettings) -> Bool)! = nil
 
     var id: DataSourceType {
         idProxy()
