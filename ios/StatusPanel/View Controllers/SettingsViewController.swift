@@ -387,17 +387,17 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     func addDataSource() {
         let view = AddDataSourceView(sourceController: dataSourceController) { dataSource in
-            guard let dataSource = dataSource else {
-                return
+            if let dataSource = dataSource {
+                do {
+                    try self.dataSourceController.add(dataSource)
+                    try self.dataSourceController.save()
+                    let indexPath = IndexPath(row: self.dataSourceController.instances.count - 1, section: 0)
+                    self.tableView.insertRows(at: [indexPath], with: .none)
+                } catch {
+                    self.present(error: error)
+                }
             }
-            do {
-                try self.dataSourceController.add(dataSource)
-                try self.dataSourceController.save()
-                let indexPath = IndexPath(row: self.dataSourceController.instances.count - 1, section: 0)
-                self.tableView.insertRows(at: [indexPath], with: .none)
-            } catch {
-                self.present(error: error)
-            }
+            self.navigationController?.dismiss(animated: true, completion: nil)
         }
         navigationController?.present(UIHostingController(rootView: view), animated: true, completion: nil)
     }

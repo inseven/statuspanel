@@ -22,8 +22,6 @@ import SwiftUI
 
 struct AddDataSourceView: View {
 
-    @Environment(\.presentationMode) var presentationMode
-
     var sourceController: DataSourceController
     var completion: (AnyDataSource?) -> Void
 
@@ -37,7 +35,6 @@ struct AddDataSourceView: View {
                 ForEach(sources) { factory in
                     Button {
                         completion(factory)
-                        presentationMode.wrappedValue.dismiss()
                     } label: {
                         Text(factory.name)
                             .foregroundColor(.primary)
@@ -46,7 +43,7 @@ struct AddDataSourceView: View {
             }
             .navigationBarTitle("Add Data Source", displayMode: .inline)
             .navigationBarItems(leading: Button {
-                presentationMode.wrappedValue.dismiss()
+                completion(nil)
             } label: {
                 Text("Cancel")
             })
