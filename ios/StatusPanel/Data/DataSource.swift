@@ -53,7 +53,7 @@ protocol DataSource: AnyObject, Identifiable {
 extension DataSource {
 
     func settings(uuid: UUID) throws -> Settings {
-        guard let settings: Settings = try Config().settings(uuid: uuid) else {
+        guard let settings: Settings = try Config().settings(for: uuid) else {
             return defaults
         }
         return settings

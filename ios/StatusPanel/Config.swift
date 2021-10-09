@@ -464,7 +464,7 @@ class Config {
         try self.set(codable: dataSources, for: .dataSources)
     }
 
-    func settings<T: DataSourceSettings>(uuid: UUID) throws -> T? {
+    func settings<T: DataSourceSettings>(for uuid: UUID) throws -> T? {
         guard let data = object(for: .settings(uuid)) as? Data else {
             return nil
         }
