@@ -457,7 +457,7 @@ class Config {
     }
 
     func dataSources() throws -> [DataSourceInstance.Details]? {
-        return try? self.codable(for: .dataSources)
+        return try self.codable(for: .dataSources)
     }
 
     func set(dataSources: [DataSourceInstance.Details]) throws {
