@@ -76,7 +76,7 @@ final class CalendarSource : DataSource {
     }
 
     let id: DataSourceType = .calendar
-    let name = "Events"
+    let name = "Calendar"
     let configurable = true
 
     let eventStore: EKEventStore
