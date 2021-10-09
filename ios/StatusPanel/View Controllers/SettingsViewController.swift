@@ -321,10 +321,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        guard indexPath.section == DataSourcesSection else {
-            return false
-        }
-        return true
+        return indexPath.section == DataSourcesSection
     }
 
     override func tableView(_ tableView: UITableView,
