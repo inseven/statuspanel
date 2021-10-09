@@ -19,7 +19,6 @@
 // SOFTWARE.
 
 import Foundation
-import SwiftUI
 import UIKit
 
 /// Type erasing wrapper for `DataSource`
