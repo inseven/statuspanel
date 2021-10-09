@@ -20,7 +20,6 @@
 
 import Foundation
 import EventKit
-import SwiftUI
 import UIKit
 
 class CalendarItem : DataItemBase {
@@ -227,10 +226,6 @@ final class CalendarSource : DataSource {
         viewController.store = store
         viewController.settings = settings
         return viewController
-    }
-
-    func settingsView(store: Store, settings: Settings) -> EmptyView {
-        EmptyView()
     }
 
 }

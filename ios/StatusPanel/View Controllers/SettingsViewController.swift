@@ -401,11 +401,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DataSourcesSection:
             do {
                 let source = dataSourceController.instances[indexPath.row]
-                if let classicViewController = try source.dataSource.settingsViewController(uuid: source.id) {
-                    navigationController?.pushViewController(classicViewController, animated: true)
+                guard let viewController = try source.dataSource.settingsViewController(uuid: source.id) else {
                     return
                 }
-                let viewController = try source.dataSource.settingsView(uuid: source.id)
                 navigationController?.pushViewController(viewController, animated: true)
             } catch {
                 self.present(error: error)

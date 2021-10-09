@@ -69,11 +69,7 @@ final class TextDataSource: DataSource {
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        nil
-    }
-
-    func settingsView(store: Store, settings: Settings) -> SettingsView {
-        SettingsView(store: store, settings: settings)
+        UIHostingController(rootView: SettingsView(store: store, settings: settings))
     }
 
 }

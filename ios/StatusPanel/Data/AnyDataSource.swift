@@ -31,7 +31,6 @@ class AnyDataSource: Identifiable {
     private var dataProxy: ((UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
     private var summaryProxy: ((UUID) throws -> String?)! = nil
     private var settingsViewControllerProxy: ((UUID) throws -> UIViewController?)! = nil
-    private var settingsViewProxy: ((UUID) throws -> UIViewController)! = nil
     private var validateSettingsProxy: ((DataSourceSettings) -> Bool)! = nil
 
     var id: DataSourceType {
@@ -56,10 +55,6 @@ class AnyDataSource: Identifiable {
 
     func settingsViewController(uuid: UUID) throws -> UIViewController? {
         try settingsViewControllerProxy(uuid)
-    }
-
-    func settingsView(uuid: UUID) throws -> UIViewController {
-        try settingsViewProxy(uuid)
     }
 
     func validate(settings: DataSourceSettings) -> Bool {
@@ -93,14 +88,7 @@ class AnyDataSource: Identifiable {
             let settings = try dataSource.settings(uuid: uuid)
             let store = DataSourceSettingsStore<T.Settings>(config: Config(), uuid: uuid)
             let viewController = dataSource.settingsViewController(store: store, settings: settings)
-            return viewController
-        }
-        settingsViewProxy = { uuid in
-            let settings = try dataSource.settings(uuid: uuid)
-            let store = DataSourceSettingsStore<T.Settings>(config: Config(), uuid: uuid)
-            let view = dataSource.settingsView(store: store, settings: settings)
-            let viewController = UIHostingController(rootView: view)
-            viewController.navigationItem.title = dataSource.name
+            viewController?.navigationItem.title = dataSource.name
             return viewController
         }
         validateSettingsProxy = { settings in

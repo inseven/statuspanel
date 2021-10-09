@@ -19,7 +19,6 @@
 // SOFTWARE.
 
 import Foundation
-import SwiftUI
 import UIKit
 
 // See https://api-portal.tfl.gov.uk/admin/applications/1409617922524
@@ -143,10 +142,6 @@ final class TFLDataSource: DataSource {
         viewController.store = store
         viewController.settings = settings
         return viewController
-    }
-
-    func settingsView(store: Store, settings: Settings) -> EmptyView {
-        EmptyView()
     }
 
 }

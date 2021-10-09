@@ -105,10 +105,8 @@ final class DummyDataSource : DataSource {
         settings.enabled ? "Enabled" : "Disabled"
     }
 
-    func settingsViewController(store: Store, settings: Settings) -> UIViewController? { nil }
-
-    func settingsView(store: Store, settings: Settings) -> SettingsView {
-        SettingsView(store: store, settings: settings)
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
+        UIHostingController(rootView: SettingsView(store: store, settings: settings))
     }
 
 }

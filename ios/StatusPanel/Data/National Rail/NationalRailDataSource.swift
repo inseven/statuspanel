@@ -19,7 +19,6 @@
 // SOFTWARE.
 
 import Foundation
-import SwiftUI
 import UIKit
 
 final class NationalRailDataSource : DataSource {
@@ -132,10 +131,6 @@ final class NationalRailDataSource : DataSource {
         viewController.store = store
         viewController.settings = settings
         return viewController
-    }
-
-    func settingsView(store: Store, settings: Settings) -> EmptyView {
-        EmptyView()
     }
 
 }
