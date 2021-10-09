@@ -657,9 +657,6 @@ extension ViewController: DataSourceControllerDelegate {
 
     func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error) {
         present(error: error)
-        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-        alert.addAction(.init(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true)
     }
 
 }
