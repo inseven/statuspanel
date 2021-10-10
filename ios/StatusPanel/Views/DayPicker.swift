@@ -31,7 +31,7 @@ struct DayPicker: View {
                 offset = 0
             } label: {
                 HStack {
-                    Text("Today")
+                    Text(LocalizedOffset(0))
                     Spacer()
                     if offset == 0 {
                         Image(systemName: "checkmark")
@@ -43,7 +43,7 @@ struct DayPicker: View {
                 offset = 1
             } label: {
                 HStack {
-                    Text("Tomorrow")
+                    Text(LocalizedOffset(1))
                     Spacer()
                     if offset == 1 {
                         Image(systemName: "checkmark")

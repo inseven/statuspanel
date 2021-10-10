@@ -215,7 +215,7 @@ final class CalendarSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        return "\(settings.offset.localizedOffset): \(settings.calendarNames)"
+        return "\(LocalizedOffset(settings.offset)): \(settings.calendarNames)"
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {

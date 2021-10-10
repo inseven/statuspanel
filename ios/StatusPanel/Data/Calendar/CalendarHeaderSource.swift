@@ -49,11 +49,17 @@ final class CalendarHeaderSource : DataSource {
             self.flags = flags
         }
 
-        var icon: String? { nil }
+        var icon: String? {
+            return nil
+        }
 
-        var prefix: String { "" }
+        var prefix: String {
+            return ""
+        }
 
-        var subText: String? { nil }
+        var subText: String? {
+            return nil
+        }
 
         func getText(checkFit: (String) -> Bool) -> String {
             let df = DateFormatter()
@@ -85,8 +91,8 @@ final class CalendarHeaderSource : DataSource {
             Form {
                 Section {
                     Picker("Date", selection: $settings.offset) {
-                        Text("Today").tag(0)
-                        Text("Tomorrow").tag(1)
+                        Text(LocalizedOffset(0)).tag(0)
+                        Text(LocalizedOffset(1)).tag(1)
                     }
                     NavigationLink(destination: FormatEditor(settings: $settings)) {
                         HStack {
@@ -142,7 +148,7 @@ final class CalendarHeaderSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        return settings.offset.localizedOffset
+        return LocalizedOffset(settings.offset)
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {

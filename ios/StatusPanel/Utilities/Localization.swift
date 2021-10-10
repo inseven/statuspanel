@@ -20,10 +20,13 @@
 
 import Foundation
 
-extension Int {
-
-    var localizedOffset: String {
-        return self == 0 ? "Today" : "Tomorrow"
+func LocalizedOffset(_ offset: Int) -> String {
+    switch offset {
+    case 0:
+        return "Today"
+    case 1:
+        return "Tomorrow"
+    default:
+        return "Unknown"
     }
-
 }
