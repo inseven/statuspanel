@@ -33,36 +33,40 @@ class AnyDataSource: Identifiable {
     private var validateSettingsProxy: ((DataSourceSettings) -> Bool)! = nil
 
     var id: DataSourceType {
-        idProxy()
+        return idProxy()
     }
 
     var name: String {
-        nameProxy()
+        return nameProxy()
     }
 
     var configurable: Bool {
-        configurableProxy()
+        return configurableProxy()
     }
 
     func data(for instanceId: UUID, completion: @escaping ([DataItemBase]?, Error?) -> Void) {
-        dataProxy(instanceId, completion)
+        return dataProxy(instanceId, completion)
     }
 
     func summary(for instanceId: UUID) throws -> String? {
-        try summaryProxy(instanceId)
+        return try summaryProxy(instanceId)
     }
 
     func settingsViewController(for instanceId: UUID) throws -> UIViewController? {
-        try settingsViewControllerProxy(instanceId)
+        return try settingsViewControllerProxy(instanceId)
     }
 
     func validate(settings: DataSourceSettings) -> Bool {
-        validateSettingsProxy(settings)
+        return validateSettingsProxy(settings)
     }
 
     init<T: DataSource>(_ dataSource: T) {
-        idProxy = { dataSource.id }
-        configurableProxy = { dataSource.configurable }
+        idProxy = {
+            return dataSource.id
+        }
+        configurableProxy = {
+            return dataSource.configurable
+        }
         dataProxy = { instanceId, completion in
             do {
                 let settings = try dataSource.settings(for: instanceId)
@@ -78,7 +82,9 @@ class AnyDataSource: Identifiable {
                 return
             }
         }
-        nameProxy = { dataSource.name }
+        nameProxy = {
+            return dataSource.name
+        }
         summaryProxy = { instanceId in
             let settings = try dataSource.settings(for: instanceId)
             return dataSource.summary(settings: settings)
@@ -91,7 +97,7 @@ class AnyDataSource: Identifiable {
             return viewController
         }
         validateSettingsProxy = { settings in
-            type(of: settings) == type(of: dataSource).Settings
+            return type(of: settings) == type(of: dataSource).Settings
         }
 
     }
@@ -101,7 +107,7 @@ class AnyDataSource: Identifiable {
 extension DataSource {
 
     func anyDataSource() -> AnyDataSource {
-        AnyDataSource(self)
+        return AnyDataSource(self)
     }
 
 }
