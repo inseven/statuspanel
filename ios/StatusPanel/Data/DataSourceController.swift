@@ -87,7 +87,7 @@ class DataSourceController {
 
     }
 
-    fileprivate func add(type: DataSourceType, uuid: UUID = UUID()) throws {
+    private func add(type: DataSourceType, uuid: UUID = UUID()) throws {
         dispatchPrecondition(condition: .onQueue(.main))
         guard let dataSource = sources.first(where: { $0.id == type }) else {
             throw StatusPanelError.unknownDataSource(type)
@@ -95,7 +95,7 @@ class DataSourceController {
         instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
     }
 
-    fileprivate func add<T: DataSourceSettings>(type: DataSourceType, settings: T) throws {
+    private func add<T: DataSourceSettings>(type: DataSourceType, settings: T) throws {
         dispatchPrecondition(condition: .onQueue(.main))
         guard let dataSource = sources.first(where: { $0.id == type }) else {
             throw StatusPanelError.unknownDataSource(type)
@@ -110,7 +110,7 @@ class DataSourceController {
 
     func add(_ dataSource: AnyDataSource) throws {
         dispatchPrecondition(condition: .onQueue(.main))
-        _ = try self.add(type: dataSource.id)
+        try self.add(type: dataSource.id)
     }
 
     func remove(instance: DataSourceInstance) {
