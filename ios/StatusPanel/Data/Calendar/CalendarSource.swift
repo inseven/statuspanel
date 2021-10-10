@@ -20,6 +20,7 @@
 
 import Foundation
 import EventKit
+import UIKit
 
 class CalendarItem : DataItemBase {
 
@@ -55,36 +56,61 @@ class CalendarItem : DataItemBase {
 
 }
 
-class CalendarSource : DataSource {
-    let eventStore: EKEventStore
-    let header : String?
-    let dayOffset: Int
+final class CalendarSource : DataSource {
 
-    init(forDayOffset dayOffset: Int = 0, header: String? = nil) {
-        eventStore = EKEventStore()
-        self.header = header
-        self.dayOffset = dayOffset
+    struct Settings: DataSourceSettings {
+
+        var showLocations: Bool
+        var showUrls: Bool
+        var offset: Int
+
+        var calendarNames: String {
+            let eventStore = EKEventStore()
+            let calendarNames = Config().activeCalendars.compactMap { eventStore.calendar(withIdentifier:$0)?.title }
+            guard calendarNames.count > 0 else {
+                return "No Calendars Selected"
+            }
+            return calendarNames.joined(separator: ", ")
+        }
+
     }
 
-    func data(completion: @escaping ([DataItemBase], Error?) -> Void) {
+    let id: DataSourceType = .calendar
+    let name = "Calendar"
+    let configurable = true
+
+    let eventStore: EKEventStore
+
+    var defaults: Settings {
+        return Settings(showLocations: false,
+                        showUrls: false,
+                        offset: 0)
+    }
+
+    init() {
+        eventStore = EKEventStore()
+    }
+
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
         eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
             if (granted) {
-                self.getData(callback: completion)
+                self.getData(settings: settings, callback: completion)
             } else {
                 completion([], err)
             }
-            // print("Granted EKEventStore access \(granted) err \(String(describing: err))")
         }
     }
 
-    func getData(callback: ([DataItemBase], Error?) -> Void) {
+    func getData(settings: Settings, callback: ([DataItemBase], Error?) -> Void) {
         let df = DateFormatter()
         df.timeStyle = DateFormatter.Style.short
         let timeZoneFormatter = DateFormatter()
         timeZoneFormatter.dateFormat = "z"
 
         let activeCalendars = Config().activeCalendars
-        let calendars = eventStore.calendars(for: .event).filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
+        let calendars = eventStore
+            .calendars(for: .event)
+            .filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
         if calendars.count == 0 {
             // predicateForEvents treats calendars:[] the same as calendars:nil
             // which matches against _all_ calendars, which we definitely don't
@@ -97,19 +123,12 @@ class CalendarSource : DataSource {
         let cal = Calendar.current
         let dayComponents = cal.dateComponents([.year, .month, .day], from: now)
         let todayStart = cal.date(from: dayComponents)!
-        let dayStart = cal.date(byAdding: DateComponents(day: dayOffset), to: todayStart)!
+        let dayStart = cal.date(byAdding: DateComponents(day: settings.offset), to: todayStart)!
         let tz = cal.timeZone
         let dayEnd = cal.date(byAdding: DateComponents(day: 1, second: -1), to: dayStart)!
         let pred = eventStore.predicateForEvents(withStart: dayStart, end: dayEnd, calendars: calendars)
         let events = eventStore.events(matching: pred)
         var results = [DataItemBase]()
-        if let header = header {
-            results.append(DataItem(text: header, flags: [.prefersEmptyColumn]))
-        }
-
-        let config = Config()
-        let showLocations = config.showCalendarLocations
-        let shouldRedactUrls = !config.showUrlsInCalendarLocations
 
         for event in events {
 
@@ -148,8 +167,8 @@ class CalendarSource : DataSource {
                 continue
             }
 
-            var location = showLocations ? event.location : nil
-            if location != nil && shouldRedactUrls {
+            var location = settings.showLocations ? event.location : nil
+            if location != nil && !settings.showUrls {
                 location = redactUrls(location!)
             }
 
@@ -193,6 +212,20 @@ class CalendarSource : DataSource {
             }
         }
         return result
+    }
+
+    func summary(settings: Settings) -> String? {
+        return "\(LocalizedOffset(settings.offset)): \(settings.calendarNames)"
+    }
+
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
+        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "CalendarsEditor")
+                as? CalendarViewController else {
+            return nil
+        }
+        viewController.store = store
+        viewController.settings = settings
+        return viewController
     }
 
 }

@@ -31,7 +31,7 @@ protocol SettingsViewControllerDelegate: AnyObject {
 class SettingsViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
 
     let DataSourcesSection = 0
-    let UpdateTimeSection = 1
+    let UpdateTimeOrAddSourceSection = 1
     let DisplaySettingsSection = 2
     let FontsSection = 3
     let PairedDevicesSection = 4
@@ -39,33 +39,46 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     let DisplaySettingsRowCount = 5
 
-    // These are the view controller storyboard IDs, in IndexPath order
-    let DataSourceEditors = [
-        "CalendarsEditor",
-        "TflEditor",
-        "NationalRailEditor"
-    ]
-
     weak var delegate: SettingsViewControllerDelegate?
 
     var devices: [(String, String)] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.rightBarButtonItem = editButtonItem
+        self.tableView.allowsSelectionDuringEditing = true
     }
 
     @IBAction func cancelTapped(_ sender: Any) {
-        self.dismiss(animated: true, completion: {
-            if self.delegate != nil {
-                self.delegate?.didDismiss(settingsViewController: self)
+        self.dismiss(animated: true) {
+            self.delegate?.didDismiss(settingsViewController: self)
+        }
+    }
+
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        guard editing != self.isEditing else {
+            return
+        }
+        super.setEditing(editing, animated: animated)
+        if editing {
+            self.navigationItem.setLeftBarButton(nil, animated: true)
+            tableView.performBatchUpdates {
+                tableView.deleteSections([1, 2, 3, 4, 5], with: .fade)
+                tableView.insertSections([1], with: .fade)
             }
-        })
+        } else {
+            self.navigationItem.setLeftBarButton(UIBarButtonItem(barButtonSystemItem: .done,
+                                                                 target: self,
+                                                                 action: #selector(cancelTapped(_:))), animated: true)
+            tableView.performBatchUpdates {
+                tableView.deleteSections([1], with: .fade)
+                tableView.insertSections([1, 2, 3, 4, 5], with: .fade)
+            }
+        }
     }
 
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        if delegate != nil {
-            delegate?.didDismiss(settingsViewController: self)
-        }
+        delegate?.didDismiss(settingsViewController: self)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -82,18 +95,24 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 6
+        if isEditing {
+            return 2
+        } else {
+            return 6
+        }
+    }
+
+    var dataSourceController: DataSourceController {
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        return delegate.sourceController
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case DataSourcesSection:
-            #if DEBUG
-                return 4
-            #else
-                return 3
-            #endif
-        case UpdateTimeSection: return 1
+            return dataSourceController.instances.count
+        case UpdateTimeOrAddSourceSection:
+            return 1
         case DisplaySettingsSection:
             return DisplaySettingsRowCount
         case FontsSection:
@@ -116,8 +135,13 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case DataSourcesSection: return "Data Sources"
-        case UpdateTimeSection: return "Update Time"
+        case DataSourcesSection: return "Layout"
+        case UpdateTimeOrAddSourceSection:
+            if isEditing {
+                return nil
+            } else {
+                return "Update Time"
+            }
         case DisplaySettingsSection: return "Display Settings"
         case FontsSection: return "Fonts"
         case PairedDevicesSection: return "Paired Devices"
@@ -144,64 +168,32 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         switch indexPath.section {
         case DataSourcesSection:
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DataSourceCell")
-            switch indexPath.row {
-            case 0:
-                cell.textLabel?.text = "Calendars"
-                let calendarIds = config.activeCalendars
-                let eventStore = EKEventStore()
-                var calendarNames: [String] = []
-                for calendarId in calendarIds {
-                   guard let cal = eventStore.calendar(withIdentifier: calendarId) else {
-                       // Calendar has been deleted?
-                       continue
-                   }
-                   calendarNames.append(cal.title)
-                }
-                if calendarNames.count > 0 {
-                    cell.detailTextLabel?.text = calendarNames.joined(separator: ", ")
-                } else {
-                    cell.detailTextLabel?.text = "None"
-                }
-            case 1:
-                cell.textLabel?.text = "London Underground"
-                let lineNames = config.activeTFLLines.compactMap { TFLDataSource.lines[$0] }
-                if !lineNames.isEmpty {
-                    cell.detailTextLabel?.text = lineNames.joined(separator: ", ")
-                } else {
-                    cell.detailTextLabel?.text = "None"
-                }
-            case 2:
-                cell.textLabel?.text = "National Rail"
-                let route = config.trainRoute
-                if let from = route.from, let to = route.to {
-                    cell.detailTextLabel?.text = "\(from) to \(to)"
-                } else {
-                    cell.detailTextLabel?.text = "Not configured"
-                }
-            #if DEBUG
-            case 3:
-                cell.textLabel?.text = "Show Dummy Data"
-                let control = UISwitch()
-                control.isOn = config.showDummyData
-                control.addTarget(self, action:#selector(dummyDataSwitchChanged(sender:)), for: .valueChanged)
-                cell.accessoryView = control
-                return cell
-            #endif
-            default:
-                cell.textLabel?.text = "TODO"
+            let source = dataSourceController.instances[indexPath.row]
+            cell.textLabel?.text = source.dataSource.name
+            do {
+                cell.detailTextLabel?.text = try source.dataSource.summary(for: source.id)
+            } catch {
+                cell.detailTextLabel?.text = error.localizedDescription
             }
-            cell.accessoryType = .disclosureIndicator
+            cell.accessoryType = source.dataSource.configurable ? .disclosureIndicator : .none
+            cell.showsReorderControl = true
             return cell
-        case UpdateTimeSection:
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            let updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
-            let df = DateFormatter()
-            df.timeStyle = .short
-            df.timeZone = TimeZone(secondsFromGMT: 0)
-            let timeStr = df.string(from: updateTime)
-            cell.textLabel?.text = timeStr
-            cell.accessoryType = .disclosureIndicator
-            return cell
+        case UpdateTimeOrAddSourceSection:
+            if isEditing {
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                cell.textLabel?.text = "Add Data Source..."
+                return cell
+            } else {
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                let updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
+                let df = DateFormatter()
+                df.timeStyle = .short
+                df.timeZone = TimeZone(secondsFromGMT: 0)
+                let timeStr = df.string(from: updateTime)
+                cell.textLabel?.text = timeStr
+                cell.accessoryType = .disclosureIndicator
+                return cell
+            }
         case PairedDevicesSection:
             let cell = UITableViewCell(style: .default, reuseIdentifier: "DeviceCell")
             if devices.count == 0 && indexPath.row == 0 {
@@ -319,12 +311,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         Config().showIcons = sender.isOn
     }
 
-#if DEBUG
-    @objc func dummyDataSwitchChanged(sender: UISwitch) {
-        Config().showDummyData = sender.isOn
-    }
-#endif
-
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == PairedDevicesSection {
             if indexPath.row == (devices.count == 0 ? 1 : devices.count) {
@@ -333,21 +319,111 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return false
         } else if indexPath.section == DisplaySettingsSection {
             return indexPath.row > 1
-        } else if indexPath.section == DataSourcesSection && indexPath.row >= DataSourceEditors.count {
-            return false
+        } else if indexPath.section == DataSourcesSection {
+            return dataSourceController.instances[indexPath.row].dataSource.configurable
         } else {
             // All others are highlightable
             return true
         }
     }
 
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == DataSourcesSection
+    }
+
+    override func tableView(_ tableView: UITableView,
+                            targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath,
+                            toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        // Ensure rows cannot be moved outside of their own section.
+        if (sourceIndexPath.section != proposedDestinationIndexPath.section) {
+            return sourceIndexPath
+        } else {
+            return proposedDestinationIndexPath
+        }
+    }
+
+    override func tableView(_ tableView: UITableView,
+                            moveRowAt sourceIndexPath: IndexPath,
+                            to destinationIndexPath: IndexPath) {
+        let dataSource = dataSourceController.instances.remove(at: sourceIndexPath.row)
+        dataSourceController.instances.insert(dataSource, at: destinationIndexPath.row)
+        do {
+            try dataSourceController.save()
+        } catch {
+            self.present(error: error)
+        }
+    }
+
+    override func tableView(_ tableView: UITableView,
+                            canEditRowAt indexPath: IndexPath) -> Bool {
+        guard indexPath.section == DataSourcesSection else {
+            return false
+        }
+        return true
+    }
+
+    override func tableView(_ tableView: UITableView,
+                            commit editingStyle: UITableViewCell.EditingStyle,
+                            forRowAt indexPath: IndexPath) {
+        let dataSource = dataSourceController.instances[indexPath.row]
+        dataSourceController.remove(instance: dataSource)
+        tableView.deleteRows(at: [indexPath], with: .automatic)
+        do {
+            try dataSourceController.save()
+        } catch {
+            present(error: error)
+        }
+    }
+
+    // Overridden to prevent swipe gestures setting isEditing.
+    override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+
+    }
+
+    // Overridden to prevent swipe gestures setting isEditing.
+    override func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
+
+    }
+
+    func addDataSource() {
+        let view = AddDataSourceView(sourceController: dataSourceController) { dataSource in
+            if let dataSource = dataSource {
+                do {
+                    try self.dataSourceController.add(dataSource)
+                    try self.dataSourceController.save()
+                    let indexPath = IndexPath(row: self.dataSourceController.instances.count - 1, section: 0)
+                    self.tableView.insertRows(at: [indexPath], with: .none)
+                } catch {
+                    self.present(error: error)
+                }
+            }
+            self.navigationController?.dismiss(animated: true, completion: nil)
+        }
+        navigationController?.present(UIHostingController(rootView: view), animated: true, completion: nil)
+    }
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var vcid: String?
         switch indexPath.section {
         case DataSourcesSection:
-            vcid = DataSourceEditors[indexPath.row]
-        case UpdateTimeSection:
-            vcid = "UpdateTimeEditor"
+            do {
+                let source = dataSourceController.instances[indexPath.row]
+                guard let viewController = try source.dataSource.settingsViewController(for: source.id) else {
+                    return
+                }
+                navigationController?.pushViewController(viewController, animated: true)
+            } catch {
+                self.present(error: error)
+            }
+            return
+        case UpdateTimeOrAddSourceSection:
+            if isEditing {
+                addDataSource()
+                tableView.deselectRow(at: indexPath, animated: true)
+                return
+            } else {
+                vcid = "UpdateTimeEditor"
+            }
         case PairedDevicesSection:
             let prevCount = devices.count
             if indexPath.row == (prevCount == 0 ? 1 : prevCount) {

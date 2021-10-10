@@ -20,15 +20,18 @@
 
 import Foundation
 
-enum StatusPanelError: Error {
+class DataSourceSettingsStore<T: DataSourceSettings> {
 
-    case missingConfiguration
-    case invalidResponse(String)
-    case invalidUrl
-    case invalidDate
-    case corruptSettings
-    case unknownDataSource(DataSourceType)
-    case internalInconsistency
-    case incorrectSettingsType
+    var config: Config
+    var instanceId: UUID
+
+    init(config: Config, uuid: UUID) {
+        self.config = config
+        self.instanceId = uuid
+    }
+
+    func save(settings: T) throws {
+        try config.save(settings: settings, instanceId: instanceId)
+    }
 
 }

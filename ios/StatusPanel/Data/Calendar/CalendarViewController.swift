@@ -19,9 +19,13 @@
 // SOFTWARE.
 
 import EventKit
+import SwiftUI
 import UIKit
 
 class CalendarViewController: UITableViewController {
+
+    var store: DataSourceSettingsStore<CalendarSource.Settings>!
+    var settings: CalendarSource.Settings!
 
     private var eventStore: EKEventStore!
     private var calendars: [[EKCalendar]]!
@@ -55,7 +59,7 @@ class CalendarViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == calendars.count {
-            return 1 + (Config().showCalendarLocations ? 1 : 0)
+            return 2 + (settings.showLocations ? 1 : 0)
         }
         return calendars[section].count
     }
@@ -69,24 +73,33 @@ class CalendarViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == calendars.count {
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             switch indexPath.row {
             case 0:
+                let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
+                cell.textLabel?.text = "Date"
+                cell.detailTextLabel?.text = LocalizedOffset(settings.offset)
+                cell.accessoryType = .disclosureIndicator
+                return cell
+            case 1:
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Show locations"
                 let control = UISwitch()
-                control.isOn = Config().showCalendarLocations
+                control.isOn = settings.showLocations
                 control.addTarget(self, action:#selector(showCalendarLocationsSwitchChanged(sender:)), for: .valueChanged)
                 cell.accessoryView = control
-            case 1:
+                return cell
+            case 2:
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Show full URLs in locations"
                 let control = UISwitch()
-                control.isOn = Config().showUrlsInCalendarLocations
+                control.isOn = settings.showUrls
                 control.addTarget(self, action:#selector(showUrlsInCalendarLocationsSwitchChanged(sender:)), for: .valueChanged)
                 cell.accessoryView = control
+                return cell
             default:
                 break
             }
-            return cell
+            assert(false)
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let calendar = calendars[indexPath.section][indexPath.row]
@@ -100,27 +113,46 @@ class CalendarViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section < calendars.count
+        if indexPath.section >= calendars.count {
+            return indexPath.row == 0
+        }
+        return true
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let calendar = calendars[indexPath.section][indexPath.row]
-        if activeCalendars.contains(calendar.calendarIdentifier) {
-            activeCalendars.remove(calendar.calendarIdentifier)
+        if indexPath.section >= calendars.count {
+            if indexPath.row == 0 {
+                let viewController = UIHostingController(rootView: DayPicker(offset: settings.offset, completion: { offset in
+                    self.settings.offset = offset
+                    try! self.store.save(settings: self.settings)
+                    self.navigationController?.popToViewController(self, animated: true)
+                    self.tableView.reloadRows(at: [indexPath], with: .automatic)
+                }))
+                navigationController?.pushViewController(viewController, animated: true)
+            }
         } else {
-            activeCalendars.insert(calendar.calendarIdentifier)
+            let calendar = calendars[indexPath.section][indexPath.row]
+            if activeCalendars.contains(calendar.calendarIdentifier) {
+                activeCalendars.remove(calendar.calendarIdentifier)
+            } else {
+                activeCalendars.insert(calendar.calendarIdentifier)
+            }
+            tableView.deselectRow(at: indexPath, animated: true)
+            tableView.reloadRows(at: [indexPath], with: .fade)
+            Config().activeCalendars = activeCalendars.sorted()
         }
-        tableView.deselectRow(at: indexPath, animated: true)
-        tableView.reloadRows(at: [indexPath], with: .fade)
-        Config().activeCalendars = activeCalendars.sorted()
     }
 
     @objc func showCalendarLocationsSwitchChanged(sender: UISwitch) {
-        let config = Config()
-        config.showCalendarLocations = sender.isOn
+        settings.showLocations = sender.isOn
+        do {
+            try store.save(settings: settings)
+        } catch {
+            self.present(error: error)
+        }
         tableView.performBatchUpdates({
-            let redactUrlsIndexPath = IndexPath(row: 1, section: calendars.count)
-            if config.showCalendarLocations {
+            let redactUrlsIndexPath = IndexPath(row: 2, section: calendars.count)
+            if settings.showLocations {
                 tableView.insertRows(at: [redactUrlsIndexPath], with: .automatic)
             } else {
                 tableView.deleteRows(at: [redactUrlsIndexPath], with: .automatic)
@@ -129,6 +161,11 @@ class CalendarViewController: UITableViewController {
     }
 
     @objc func showUrlsInCalendarLocationsSwitchChanged(sender: UISwitch) {
-        Config().showUrlsInCalendarLocations = sender.isOn
+        settings.showUrls = sender.isOn
+        do {
+            try store.save(settings: settings)
+        } catch {
+            self.present(error: error)
+        }
     }
 }

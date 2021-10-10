@@ -19,12 +19,45 @@
 // SOFTWARE.
 
 import Foundation
+import UIKit
 
-protocol DataSource : AnyObject {
-    func data(completion: @escaping ([DataItemBase], Error?) -> Void)
+protocol DataSourceSettings: Codable {
+
 }
 
-struct DataItemFlags: OptionSet {
+protocol DataSource: AnyObject, Identifiable {
+
+    typealias Store = DataSourceSettingsStore<Settings>
+
+    associatedtype Settings: DataSourceSettings
+
+    var id: DataSourceType { get }
+
+    var name: String { get }
+    var configurable: Bool { get }
+
+    var defaults: Settings { get }
+
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void)
+
+    func summary(settings: Settings) -> String?
+
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController?
+
+}
+
+extension DataSource {
+
+    func settings(for instanceId: UUID) throws -> Settings {
+        guard let settings: Settings = try Config().settings(for: instanceId) else {
+            return defaults
+        }
+        return settings
+    }
+
+}
+
+struct DataItemFlags: OptionSet, Codable {
 
     let rawValue: Int
 
@@ -76,9 +109,13 @@ class DataItem : Equatable, DataItemBase {
         self.init(icon: nil, text: text, flags: flags)
     }
 
-    var prefix: String { "" }
+    var prefix: String {
+        return ""
+    }
 
-    var subText: String? { nil }
+    var subText: String? {
+        nil
+    }
 
     func getText(checkFit: (String) -> Bool) -> String {
         return text

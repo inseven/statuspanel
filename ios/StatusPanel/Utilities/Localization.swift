@@ -20,15 +20,13 @@
 
 import Foundation
 
-enum StatusPanelError: Error {
-
-    case missingConfiguration
-    case invalidResponse(String)
-    case invalidUrl
-    case invalidDate
-    case corruptSettings
-    case unknownDataSource(DataSourceType)
-    case internalInconsistency
-    case incorrectSettingsType
-
+func LocalizedOffset(_ offset: Int) -> String {
+    switch offset {
+    case 0:
+        return "Today"
+    case 1:
+        return "Tomorrow"
+    default:
+        return "Unknown"
+    }
 }

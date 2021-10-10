@@ -20,15 +20,33 @@
 
 import Foundation
 
-enum StatusPanelError: Error {
+struct DataSourceInstance: Identifiable, Equatable {
 
-    case missingConfiguration
-    case invalidResponse(String)
-    case invalidUrl
-    case invalidDate
-    case corruptSettings
-    case unknownDataSource(DataSourceType)
-    case internalInconsistency
-    case incorrectSettingsType
+    struct Details: Codable {
+
+        var identifier: UUID
+        var type: DataSourceType
+
+    }
+
+    static func == (lhs: DataSourceInstance, rhs: DataSourceInstance) -> Bool {
+        return lhs.id == rhs.id
+    }
+
+    var id: UUID { details.identifier }
+
+    let details: Details
+    let dataSource: AnyDataSource
+
+    init(id: UUID, dataSource: AnyDataSource) {
+        self.details = Details(identifier: id, type: dataSource.id)
+        self.dataSource = dataSource
+    }
+
+    func fetch(completion: @escaping ([DataItemBase]?, Error?) -> Void) {
+        DispatchQueue.global().async {
+            self.dataSource.data(for: id, completion: completion)
+        }
+    }
 
 }

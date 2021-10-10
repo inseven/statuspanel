@@ -18,17 +18,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
+import SwiftUI
 
-enum StatusPanelError: Error {
+struct FormatEditor: View {
 
-    case missingConfiguration
-    case invalidResponse(String)
-    case invalidUrl
-    case invalidDate
-    case corruptSettings
-    case unknownDataSource(DataSourceType)
-    case internalInconsistency
-    case incorrectSettingsType
+    @Binding var settings: CalendarHeaderSource.Settings
+
+    var body: some View {
+        Form {
+            Section(header: Text("Long Format"),
+                    footer: Text("Preferred format specifier.")) {
+                TextField("Long", text: $settings.longFormat)
+                    .transition(.opacity)
+            }
+            Section(header: Text("Short Format"),
+                    footer: Text("Used if the result of the long format specifier is too long to fit on the screen.")) {
+                TextField(settings.longFormat.isEmpty ? "Short" : settings.longFormat, text: $settings.shortFormat)
+                    .transition(.opacity)
+            }
+        }
+        .autocapitalization(.none)
+        .navigationTitle("Format")
+    }
 
 }

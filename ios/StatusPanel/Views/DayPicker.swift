@@ -18,17 +18,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
+import SwiftUI
 
-enum StatusPanelError: Error {
+struct DayPicker: View {
 
-    case missingConfiguration
-    case invalidResponse(String)
-    case invalidUrl
-    case invalidDate
-    case corruptSettings
-    case unknownDataSource(DataSourceType)
-    case internalInconsistency
-    case incorrectSettingsType
+    @State var offset: Int
+    var completion: (Int) -> Void
+
+    var body: some View {
+        Form {
+            Button {
+                offset = 0
+            } label: {
+                HStack {
+                    Text(LocalizedOffset(0))
+                    Spacer()
+                    if offset == 0 {
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.accentColor)
+                    }
+                }
+            }
+            Button {
+                offset = 1
+            } label: {
+                HStack {
+                    Text(LocalizedOffset(1))
+                    Spacer()
+                    if offset == 1 {
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.accentColor)
+                    }
+                }
+            }
+        }
+        .foregroundColor(.primary)
+        .onChange(of: offset) { newValue in
+            completion(newValue)
+        }
+    }
 
 }

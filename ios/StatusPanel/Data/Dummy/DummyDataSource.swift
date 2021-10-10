@@ -19,17 +19,55 @@
 // SOFTWARE.
 
 import Foundation
+import SwiftUI
+import UIKit
 
-class DummyDataSource : DataSource {
+final class DummyDataSource : DataSource {
 
-    func data(completion: @escaping ([DataItemBase], Error?) -> Void) {
+    struct Settings: DataSourceSettings, Equatable {
+        var enabled: Bool = false
+    }
+
+    struct SettingsView: View {
+
+        var store: DataSourceSettingsStore<DummyDataSource.Settings>
+        @State var settings: DummyDataSource.Settings
+        @State var error: Error? = nil
+
+        var body: some View {
+            Form {
+                Toggle("Enabled", isOn: $settings.enabled)
+            }
+            .alert(isPresented: $error.mappedToBool()) {
+                Alert(error: error)
+            }
+            .onChange(of: settings) { newValue in
+                do {
+                    try store.save(settings: newValue)
+                } catch {
+                    self.error = error
+                }
+            }
+        }
+
+    }
+
+    let id: DataSourceType = .dummy
+    let name = "Dummy Data"
+    let configurable = true
+
+    var defaults: Settings {
+        return Settings()
+    }
+
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
         var data: [DataItemBase] = []
-        #if DEBUG
-        if Config().showDummyData {
+        if settings.enabled {
             var specialChars: [String] = []
             let images = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: "fonts/font6x10") ?? []
             for imgName in images.map({$0.lastPathComponent}).sorted() {
-                let parts = StringUtils.regex(imgName, pattern: #"U\+([0-9A-Fa-f]+)(?:_U\+([0-9A-Fa-f]+))*(?:@[2-4])?\.png"#)
+                let parts = StringUtils.regex(imgName,
+                                              pattern: #"U\+([0-9A-Fa-f]+)(?:_U\+([0-9A-Fa-f]+))*(?:@[2-4])?\.png"#)
                 if parts.count == 0 {
                     continue
                 }
@@ -62,8 +100,15 @@ class DummyDataSource : DataSource {
                 data.append(specialCharsItem)
             }
         }
-        #endif
         completion(data, nil)
+    }
+
+    func summary(settings: Settings) -> String? {
+        return settings.enabled ? "Enabled" : "Disabled"
+    }
+
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
+        return UIHostingController(rootView: SettingsView(store: store, settings: settings))
     }
 
 }

@@ -126,7 +126,7 @@
             </objects>
             <point key="canvasLocation" x="3825" y="-962"/>
         </scene>
-        <!--TfL Lines-->
+        <!--London Underground-->
         <scene sceneID="YRt-MR-AXX">
             <objects>
                 <tableViewController storyboardIdentifier="TflEditor" id="CQW-u6-DD0" customClass="TFLSettingsController" customModule="StatusPanel" customModuleProvider="target" sceneMemberID="viewController">
@@ -149,7 +149,7 @@
                             <outlet property="delegate" destination="CQW-u6-DD0" id="nT8-DX-QBz"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="TfL Lines" id="NoI-Ll-EVd"/>
+                    <navigationItem key="navigationItem" title="London Underground" id="NoI-Ll-EVd"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BVB-z7-beR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -163,31 +163,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <sections>
-                            <tableViewSection id="USp-lD-D4g">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="FMN-uG-ImG" style="IBUITableViewCellStyleDefault" id="NDP-Ia-JHN">
-                                        <rect key="frame" x="16" y="18" width="288" height="43.5"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="NDP-Ia-JHN" id="ZpL-Ru-frP">
-                                            <rect key="frame" x="0.0" y="0.0" width="288" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Enable" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="FMN-uG-ImG">
-                                                    <rect key="frame" x="16" y="0.0" width="256" height="43.5"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                             <tableViewSection headerTitle="From" id="abR-Uf-AIc">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="Fez-af-eKN">
-                                        <rect key="frame" x="16" y="111.5" width="288" height="43.5"/>
+                                        <rect key="frame" x="16" y="49.5" width="288" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Fez-af-eKN" id="yeu-OO-Jg1">
                                             <rect key="frame" x="0.0" y="0.0" width="262.5" height="43.5"/>
@@ -202,7 +181,7 @@
                             <tableViewSection headerTitle="To" id="dvc-rf-1S1">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="7kP-8y-KOj">
-                                        <rect key="frame" x="16" y="205" width="288" height="43.5"/>
+                                        <rect key="frame" x="16" y="143" width="288" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="7kP-8y-KOj" id="nuB-fc-eZt">
                                             <rect key="frame" x="0.0" y="0.0" width="262.5" height="43.5"/>
@@ -222,7 +201,6 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="National Rail" id="ySJ-HI-htr"/>
                     <connections>
-                        <outlet property="enabledCell" destination="NDP-Ia-JHN" id="u2J-bJ-pkY"/>
                         <outlet property="fromStationCell" destination="Fez-af-eKN" id="pXu-UI-DJi"/>
                         <outlet property="toStationCell" destination="7kP-8y-KOj" id="TMx-XH-Tjt"/>
                     </connections>

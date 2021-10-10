@@ -19,9 +19,24 @@
 // SOFTWARE.
 
 import Foundation
+import UIKit
 
 // See https://api-portal.tfl.gov.uk/admin/applications/1409617922524
-class TFLDataSource: DataSource {
+final class TFLDataSource: DataSource {
+
+    struct Settings: DataSourceSettings {
+
+        var lines: [String]
+
+        init(lines: [String]) {
+            self.lines = lines
+        }
+
+        init() {
+            self.init(lines: [])
+        }
+
+    }
 
     struct LineStatus: Decodable {
         var id: String
@@ -49,23 +64,33 @@ class TFLDataSource: DataSource {
         "waterloo-city": "Waterloo & City Line",
     ]
 
+    let id: DataSourceType = .transportForLondon
+    let name = "London Underground"
+    let configurable = true
+
     let configuration: Configuration
+
+    var defaults: Settings {
+        return Settings()
+    }
 
     init(configuration: Configuration) {
         self.configuration = configuration
     }
 
-    func data(completion: @escaping ([DataItemBase], Error?) -> Void) {
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
 
-        let activeLines = Config().activeTFLLines
-        guard !activeLines.isEmpty else {
+        // Remove any unknown lines.
+        let lines = settings.lines.filter({ Self.lines[$0] != nil })
+
+        guard !lines.isEmpty else {
             completion([], nil)
             return
         }
 
         let url = URL(string: "https://api.tfl.gov.uk")?
             .appendingPathComponent("Line")
-            .appendingPathComponent(activeLines.joined(separator: ","))
+            .appendingPathComponent(lines.joined(separator: ","))
             .appendingPathComponent("Status")
             .settingQueryItems([
                 URLQueryItem(name: "detail", value: "false"),
@@ -102,6 +127,24 @@ class TFLDataSource: DataSource {
         }
 
         JSONRequest.makeRequest(url: safeUrl, completion: gotLineData)
+    }
+
+    func summary(settings: Settings) -> String? {
+        let lineNames = settings.lines.compactMap { TFLDataSource.lines[$0] }
+        guard !lineNames.isEmpty else {
+            return "None"
+        }
+        return lineNames.joined(separator: ", ")
+    }
+
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
+        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor")
+                as? TFLSettingsController else {
+            return nil
+        }
+        viewController.store = store
+        viewController.settings = settings
+        return viewController
     }
 
 }

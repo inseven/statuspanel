@@ -34,22 +34,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         client = Client(baseUrl: "https://api.statuspanel.io/")
-
-        let configuration = try! Bundle.main.configuration()
-        sourceController.add(dataSource: CalendarHeaderSource(longFormat: "yMMMMdEEE",
-                                                              shortFormat: "yMMMMdEEEE",
-                                                              flags: [.header, .spansColumns]))
-        sourceController.add(dataSource: TFLDataSource(configuration: configuration))
-        sourceController.add(dataSource: NationalRailDataSource(configuration: configuration))
-        sourceController.add(dataSource: CalendarSource())
-        #if DEBUG
-            sourceController.add(dataSource: DummyDataSource())
-        #endif
-        sourceController.add(dataSource: CalendarSource(forDayOffset: 1, header: "Tomorrow:"))
-        #if DEBUG
-            sourceController.add(dataSource: DummyDataSource())
-        #endif
-
         application.registerForRemoteNotifications()
 
         window?.tintColor = UIColor(named: "TintColor")

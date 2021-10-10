@@ -645,6 +645,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 }
 
 extension ViewController: DataSourceControllerDelegate {
+
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase]) {
         self.renderAndUpload(data: data, completion: { (changes: Bool) -> Void in
                 DispatchQueue.main.async {
@@ -653,4 +654,9 @@ extension ViewController: DataSourceControllerDelegate {
                 }
             })
     }
+
+    func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error) {
+        present(error: error)
+    }
+
 }

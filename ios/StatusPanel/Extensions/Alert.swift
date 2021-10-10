@@ -18,17 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
+import SwiftUI
 
-enum StatusPanelError: Error {
+extension Alert {
 
-    case missingConfiguration
-    case invalidResponse(String)
-    case invalidUrl
-    case invalidDate
-    case corruptSettings
-    case unknownDataSource(DataSourceType)
-    case internalInconsistency
-    case incorrectSettingsType
+    init(error: Error?) {
+        self.init(title: Text("Error"),
+                  message: Text(error?.localizedDescription ?? ""),
+                  dismissButton: .default(Text("OK")))
+    }
 
 }

@@ -19,8 +19,19 @@
 // SOFTWARE.
 
 import Foundation
+import SwiftUI
+import UIKit
 
-class CalendarHeaderSource : DataSource {
+final class CalendarHeaderSource : DataSource {
+
+    struct Settings: DataSourceSettings & Equatable {
+
+        var longFormat: String
+        var shortFormat: String
+        var offset: Int
+        var flags: DataItemFlags
+
+    }
 
     class CalendarHeaderItem : DataItemBase {
 
@@ -38,11 +49,17 @@ class CalendarHeaderSource : DataSource {
             self.flags = flags
         }
 
-        var icon: String? { nil }
+        var icon: String? {
+            return nil
+        }
 
-        var prefix: String { "" }
+        var prefix: String {
+            return ""
+        }
 
-        var subText: String? { nil }
+        var subText: String? {
+            return nil
+        }
 
         func getText(checkFit: (String) -> Bool) -> String {
             let df = DateFormatter()
@@ -59,33 +76,83 @@ class CalendarHeaderSource : DataSource {
 
     }
 
-    let longFormat: String
-    let shortFormat: String
-    let offset: Int
-    let flags: DataItemFlags
+    struct SettingsView: View {
 
-    init(longFormat: String,
-         shortFormat: String,
-         flags: DataItemFlags,
-         offset: Int = 0) {
-        self.longFormat = longFormat
-        self.shortFormat = shortFormat
-        self.flags = flags
-        self.offset = offset
+        var store: DataSourceSettingsStore<CalendarHeaderSource.Settings>
+        @State var settings: CalendarHeaderSource.Settings
+        @State var error: Error? = nil
+
+        init(store: DataSourceSettingsStore<CalendarHeaderSource.Settings>, settings: CalendarHeaderSource.Settings) {
+            self.store = store
+            _settings = State(initialValue: settings)
+        }
+
+        var body: some View {
+            Form {
+                Section {
+                    Picker("Date", selection: $settings.offset) {
+                        Text(LocalizedOffset(0)).tag(0)
+                        Text(LocalizedOffset(1)).tag(1)
+                    }
+                    NavigationLink(destination: FormatEditor(settings: $settings)) {
+                        HStack {
+                            Text("Format")
+                            Spacer()
+                            Text(settings.longFormat)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                FlagsSection(flags: $settings.flags)
+            }
+            .alert(isPresented: $error.mappedToBool()) {
+                Alert(error: error)
+            }
+            .onChange(of: settings) { newValue in
+                do {
+                    try store.save(settings: newValue)
+                } catch {
+                    self.error = error
+                }
+            }
+        }
+
     }
 
-    func data(completion: @escaping ([DataItemBase], Error?) -> Void) {
+    let id: DataSourceType = .calendarHeader
+    let name = "Date"
+    let configurable = true
 
-        guard let date = Calendar.current.date(byAdding: .day, value: offset, to: Date()) else {
+    var defaults: Settings {
+        return CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                             shortFormat: "yMMMMdEEE",
+                                             offset: 0,
+                                             flags: [])
+    }
+
+    init() {
+    }
+
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
+
+        guard let date = Calendar.current.date(byAdding: .day, value: settings.offset, to: Date()) else {
             completion([], StatusPanelError.invalidDate)
             return
         }
 
         let data = [CalendarHeaderItem(date: date,
-                                       longFormat: longFormat,
-                                       shortFormat: shortFormat,
-                                       flags: flags)]
+                                       longFormat: settings.longFormat,
+                                       shortFormat: settings.shortFormat,
+                                       flags: settings.flags)]
         completion(data, nil)
+    }
+
+    func summary(settings: Settings) -> String? {
+        return LocalizedOffset(settings.offset)
+    }
+
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
+        return UIHostingController(rootView: SettingsView(store: store, settings: settings))
     }
 
 }

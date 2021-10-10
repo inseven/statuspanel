@@ -19,11 +19,19 @@
 // SOFTWARE.
 
 import Foundation
+import UIKit
 
-class NationalRailDataSource : DataSource {
+final class NationalRailDataSource : DataSource {
     // See https://wiki.openraildata.com/index.php/NRE_Darwin_Web_Service_(Public)
     // and https://lite.realtime.nationalrail.co.uk/OpenLDBWS/
     // As implemented by https://huxley.unop.uk/ because the raw national rail API is so bad
+
+    struct Settings: DataSourceSettings {
+
+        var from: String?
+        var to: String?
+
+    }
 
     struct Delays: Decodable {
         var delays: Bool
@@ -38,22 +46,24 @@ class NationalRailDataSource : DataSource {
         }
     }
 
+    let id: DataSourceType = .nationalRail
+    let name = "National Rail"
+    let configurable = true
+
     let configuration: Configuration
 
-    var targetCrs: String?
-    var sourceCrs: String?
+    var defaults: Settings {
+        return Settings()
+    }
 
     init(configuration: Configuration) {
         self.configuration = configuration
     }
 
-    func data(completion: @escaping ([DataItemBase], Error?) -> Void) {
-        let route = Config().trainRoute
-        sourceCrs = route.from
-        targetCrs = route.to
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
 
-        guard let sourceCrs = sourceCrs,
-              let targetCrs = targetCrs else {
+        guard let sourceCrs = settings.from,
+              let targetCrs = settings.to else {
                   completion([], nil)
                   return
         }
@@ -106,6 +116,24 @@ class NationalRailDataSource : DataSource {
         }
 
         JSONRequest.makeRequest(url: safeUrl, completion: gotDelays)
+    }
+
+    func summary(settings: Settings) -> String? {
+        guard let from = settings.from,
+              let to = settings.to else {
+            return "Not configured"
+        }
+        return "\(from) to \(to)"
+    }
+
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
+        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
+                as? NationalRailSettingsController else {
+            return nil
+        }
+        viewController.store = store
+        viewController.settings = settings
+        return viewController
     }
 
 }

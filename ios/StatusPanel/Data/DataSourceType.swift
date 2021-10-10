@@ -20,15 +20,13 @@
 
 import Foundation
 
-enum StatusPanelError: Error {
+enum DataSourceType: String, Codable {
 
-    case missingConfiguration
-    case invalidResponse(String)
-    case invalidUrl
-    case invalidDate
-    case corruptSettings
-    case unknownDataSource(DataSourceType)
-    case internalInconsistency
-    case incorrectSettingsType
+    case calendar = "io.statuspanel.source.calendar"
+    case calendarHeader = "io.statuspanel.source.calendar-header"
+    case dummy = "io.statuspanel.source.dummy"
+    case nationalRail = "io.statuspanel.source.national-rail"
+    case text = "io.statuspanel.source.text"
+    case transportForLondon = "io.statuspanel.source.transport-for-london"
 
 }

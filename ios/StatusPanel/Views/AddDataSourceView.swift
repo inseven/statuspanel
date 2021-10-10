@@ -18,17 +18,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
+import SwiftUI
 
-enum StatusPanelError: Error {
+struct AddDataSourceView: View {
 
-    case missingConfiguration
-    case invalidResponse(String)
-    case invalidUrl
-    case invalidDate
-    case corruptSettings
-    case unknownDataSource(DataSourceType)
-    case internalInconsistency
-    case incorrectSettingsType
+    var sourceController: DataSourceController
+    var completion: (AnyDataSource?) -> Void
+
+    var sources: [AnyDataSource] {
+        sourceController.sources.sorted { $0.name < $1.name }
+    }
+
+    var body: some View {
+        NavigationView {
+            Form {
+                ForEach(sources) { factory in
+                    Button {
+                        completion(factory)
+                    } label: {
+                        Text(factory.name)
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
+            .navigationBarTitle("Add Data Source", displayMode: .inline)
+            .navigationBarItems(leading: Button {
+                completion(nil)
+            } label: {
+                Text("Cancel")
+            })
+        }
+    }
 
 }
