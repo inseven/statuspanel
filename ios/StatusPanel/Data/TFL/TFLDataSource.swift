@@ -117,7 +117,7 @@ final class TFLDataSource: DataSource {
                 }
 
                 guard let name = Self.lines[line.id] else {
-                    completion([], StatusPanelError.invalidResponse("Unknown line identifier (\(line.id)"))
+                    completion([], StatusPanelError.invalidResponse)
                     return
                 }
 

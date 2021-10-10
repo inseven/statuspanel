@@ -45,6 +45,7 @@ class DataSourceController {
             NationalRailDataSource(configuration: configuration).anyDataSource(),
             TextDataSource().anyDataSource(),
             TFLDataSource(configuration: configuration).anyDataSource(),
+            ZenQuotesDataSource().anyDataSource(),
         ]
 
         let config = Config()
