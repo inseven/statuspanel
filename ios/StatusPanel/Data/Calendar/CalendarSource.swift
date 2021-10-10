@@ -82,9 +82,9 @@ final class CalendarSource : DataSource {
     let eventStore: EKEventStore
 
     var defaults: Settings {
-        Settings(showLocations: false,
-                 showUrls: false,
-                 offset: 0)
+        return Settings(showLocations: false,
+                        showUrls: false,
+                        offset: 0)
     }
 
     init() {
@@ -215,7 +215,7 @@ final class CalendarSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        "\(settings.offset.localizedOffset): \(settings.calendarNames)"
+        return "\(settings.offset.localizedOffset): \(settings.calendarNames)"
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {

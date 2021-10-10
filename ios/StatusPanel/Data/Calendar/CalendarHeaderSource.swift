@@ -118,10 +118,10 @@ final class CalendarHeaderSource : DataSource {
     let configurable = true
 
     var defaults: Settings {
-        CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
-                                      shortFormat: "yMMMMdEEE",
-                                      offset: 0,
-                                      flags: [])
+        return CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                             shortFormat: "yMMMMdEEE",
+                                             offset: 0,
+                                             flags: [])
     }
 
     init() {
@@ -142,11 +142,11 @@ final class CalendarHeaderSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        settings.offset.localizedOffset
+        return settings.offset.localizedOffset
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        UIHostingController(rootView: SettingsView(store: store, settings: settings))
+        return UIHostingController(rootView: SettingsView(store: store, settings: settings))
     }
 
 }

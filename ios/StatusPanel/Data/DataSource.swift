@@ -109,9 +109,13 @@ class DataItem : Equatable, DataItemBase {
         self.init(icon: nil, text: text, flags: flags)
     }
 
-    var prefix: String { "" }
+    var prefix: String {
+        return ""
+    }
 
-    var subText: String? { nil }
+    var subText: String? {
+        nil
+    }
 
     func getText(checkFit: (String) -> Bool) -> String {
         return text
