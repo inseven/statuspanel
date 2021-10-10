@@ -23,7 +23,7 @@ import UIKit
 extension UIStoryboard {
 
     static var main: UIStoryboard = {
-        UIStoryboard(name: "Main", bundle: nil)
+        return UIStoryboard(name: "Main", bundle: nil)
     }()
 
 }

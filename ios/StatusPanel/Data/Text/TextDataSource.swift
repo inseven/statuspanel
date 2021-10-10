@@ -65,11 +65,11 @@ final class TextDataSource: DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        "\"\(settings.text)\""
+        return "\"\(settings.text)\""
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        UIHostingController(rootView: SettingsView(store: store, settings: settings))
+        return UIHostingController(rootView: SettingsView(store: store, settings: settings))
     }
 
 }

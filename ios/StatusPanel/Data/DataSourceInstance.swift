@@ -30,7 +30,7 @@ struct DataSourceInstance: Identifiable, Equatable {
     }
 
     static func == (lhs: DataSourceInstance, rhs: DataSourceInstance) -> Bool {
-        lhs.id == rhs.id
+        return lhs.id == rhs.id
     }
 
     var id: UUID { details.identifier }

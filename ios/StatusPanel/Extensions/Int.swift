@@ -23,7 +23,7 @@ import Foundation
 extension Int {
 
     var localizedOffset: String {
-        self == 0 ? "Today" : "Tomorrow"
+        return self == 0 ? "Today" : "Tomorrow"
     }
 
 }

@@ -52,7 +52,10 @@ final class NationalRailDataSource : DataSource {
 
     let configuration: Configuration
 
-    var defaults: Settings { Settings() }
+    var defaults: Settings {
+        return Settings()
+    }
+
     init(configuration: Configuration) {
         self.configuration = configuration
     }

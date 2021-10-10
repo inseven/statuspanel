@@ -56,7 +56,9 @@ final class DummyDataSource : DataSource {
     let name = "Dummy Data"
     let configurable = true
 
-    var defaults: Settings { Settings() }
+    var defaults: Settings {
+        return Settings()
+    }
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
         var data: [DataItemBase] = []
@@ -102,11 +104,11 @@ final class DummyDataSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        settings.enabled ? "Enabled" : "Disabled"
+        return settings.enabled ? "Enabled" : "Disabled"
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        UIHostingController(rootView: SettingsView(store: store, settings: settings))
+        return UIHostingController(rootView: SettingsView(store: store, settings: settings))
     }
 
 }
