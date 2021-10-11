@@ -65,11 +65,18 @@ class NationalRailSettingsController : UITableViewController {
         update()
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // If we're about to show the station picker, track it and which field
-        // it was triggered for
-        stationPickerShowing = segue.destination as? StationPickerController
-        pickingDest = (sender as? UITableViewCell) == toStationCell
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let viewController = StationPickerController()
+        stationPickerShowing = viewController
+        switch indexPath.section {
+        case 0:
+            pickingDest = false
+        case 1:
+            pickingDest = true
+        default:
+            break
+        }
+        navigationController?.pushViewController(viewController, animated: true)
     }
 
 }
