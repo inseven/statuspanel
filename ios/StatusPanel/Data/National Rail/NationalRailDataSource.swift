@@ -127,10 +127,11 @@ final class NationalRailDataSource : DataSource {
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
-                as? NationalRailSettingsController else {
-            return nil
-        }
+        let viewController = NationalRailSettingsController()
+//        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
+//                as? NationalRailSettingsController else {
+//            return nil
+//        }
         viewController.store = store
         viewController.settings = settings
         return viewController
