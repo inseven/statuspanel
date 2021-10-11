@@ -27,9 +27,6 @@ class NationalRailSettingsController : UITableViewController {
 
     var store: DataSourceSettingsStore<NationalRailDataSource.Settings>!
     var settings: NationalRailDataSource.Settings!
-
-    @IBOutlet weak var fromStationCell: UITableViewCell!
-    @IBOutlet weak var toStationCell: UITableViewCell!
     var stationPickerShowing: StationPickerController?
     var pickingDest = false
 
