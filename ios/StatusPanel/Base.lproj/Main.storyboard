@@ -86,13 +86,7 @@
                             <outlet property="delegate" destination="539-wo-ocb" id="lhk-er-PYQ"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Settings" id="MMN-cF-13V">
-                        <barButtonItem key="leftBarButtonItem" title="Done" id="4Xn-7A-Dbg">
-                            <connections>
-                                <action selector="cancelTapped:" destination="539-wo-ocb" id="dyo-Nq-ELp"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Settings" id="MMN-cF-13V"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Qgi-lm-KnI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -220,11 +214,11 @@
                                         <rect key="frame" x="16" y="18" width="288" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="T3J-yi-VzE" id="a8l-Ns-0wa">
-                                            <rect key="frame" x="0.0" y="0.0" width="248" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="251.5" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Off" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="voL-9n-Ns7">
-                                                    <rect key="frame" x="16" y="0.0" width="224" height="43.5"/>
+                                                    <rect key="frame" x="16" y="0.0" width="227.5" height="43.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>

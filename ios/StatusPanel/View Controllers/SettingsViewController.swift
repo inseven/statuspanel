@@ -43,8 +43,15 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     var devices: [(String, String)] = []
 
+    var doneButtonItem: UIBarButtonItem {
+        return UIBarButtonItem(barButtonSystemItem: .done,
+                               target: self,
+                               action: #selector(cancelTapped(_:)))
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.leftBarButtonItem = doneButtonItem
         self.navigationItem.rightBarButtonItem = editButtonItem
         self.tableView.allowsSelectionDuringEditing = true
     }
@@ -67,9 +74,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 tableView.insertSections([1], with: .fade)
             }
         } else {
-            self.navigationItem.setLeftBarButton(UIBarButtonItem(barButtonSystemItem: .done,
-                                                                 target: self,
-                                                                 action: #selector(cancelTapped(_:))), animated: true)
+            self.navigationItem.setLeftBarButton(doneButtonItem, animated: true)
             tableView.performBatchUpdates {
                 tableView.deleteSections([1], with: .fade)
                 tableView.insertSections([1, 2, 3, 4, 5], with: .fade)
