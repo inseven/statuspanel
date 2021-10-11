@@ -79,7 +79,7 @@ struct AboutView: View {
                 }
                 Section(header: Text("Font Licenses")) {
                     ForEach(fonts) { font in
-                        LicenseRow(name: font.humanReadableName, author: "", license: font.attribution)
+                        LicenseRow(name: font.humanReadableName, author: font.author, license: font.attribution)
                     }
                 }
                 Section(header: Text("Code Licenses")) {
