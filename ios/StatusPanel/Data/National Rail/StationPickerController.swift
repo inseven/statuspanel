@@ -31,6 +31,14 @@ class StationPickerController: UITableViewController, UISearchResultsUpdating {
     var filteredStations: [Station]?
     var selectedStation: Station?
 
+    init() {
+        super.init(style: .grouped)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         stations = StationsList.get()
         for _ in 0...25 {
