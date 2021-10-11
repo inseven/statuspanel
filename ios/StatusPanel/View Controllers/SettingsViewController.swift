@@ -147,7 +147,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             } else {
                 return "Update Time"
             }
-        case DisplaySettingsSection: return "Display Settings"
+        case DisplaySettingsSection: return "Display"
         case FontsSection: return "Fonts"
         case PairedDevicesSection: return "Paired Devices"
         default: return nil
