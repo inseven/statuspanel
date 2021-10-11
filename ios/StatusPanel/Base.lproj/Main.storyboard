@@ -155,54 +155,6 @@
             </objects>
             <point key="canvasLocation" x="3825" y="-271"/>
         </scene>
-        <!--National Rail-->
-        <scene sceneID="YXI-Qe-vF3">
-            <objects>
-                <tableViewController storyboardIdentifier="NationalRailEditor" id="a1p-dV-Lii" customClass="NationalRailSettingsController" customModule="StatusPanel" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="h7x-z1-aIg">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="1024"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <sections>
-                            <tableViewSection headerTitle="From" id="abR-Uf-AIc">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="Fez-af-eKN">
-                                        <rect key="frame" x="16" y="49.5" width="288" height="43.5"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Fez-af-eKN" id="yeu-OO-Jg1">
-                                            <rect key="frame" x="0.0" y="0.0" width="262.5" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                            <tableViewSection headerTitle="To" id="dvc-rf-1S1">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="7kP-8y-KOj">
-                                        <rect key="frame" x="16" y="143" width="288" height="43.5"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="7kP-8y-KOj" id="nuB-fc-eZt">
-                                            <rect key="frame" x="0.0" y="0.0" width="262.5" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
-                        </sections>
-                        <connections>
-                            <outlet property="dataSource" destination="a1p-dV-Lii" id="CAX-58-2UV"/>
-                            <outlet property="delegate" destination="a1p-dV-Lii" id="5WK-Aj-fIF"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="National Rail" id="ySJ-HI-htr"/>
-                    <connections>
-                        <outlet property="fromStationCell" destination="Fez-af-eKN" id="pXu-UI-DJi"/>
-                        <outlet property="toStationCell" destination="7kP-8y-KOj" id="TMx-XH-Tjt"/>
-                    </connections>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="BYC-OK-O8i" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3825" y="465"/>
-        </scene>
         <!--Root Controller-->
         <scene sceneID="GLh-JR-ag9">
             <objects>
@@ -268,11 +220,11 @@
                                         <rect key="frame" x="16" y="18" width="288" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="T3J-yi-VzE" id="a8l-Ns-0wa">
-                                            <rect key="frame" x="0.0" y="0.0" width="251.5" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="248" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Off" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="voL-9n-Ns7">
-                                                    <rect key="frame" x="16" y="0.0" width="227.5" height="43.5"/>
+                                                    <rect key="frame" x="16" y="0.0" width="224" height="43.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>

@@ -19,28 +19,24 @@
 // SOFTWARE.
 
 import UIKit
+import SwiftUI
 
 class NationalRailSettingsController : UITableViewController {
 
+    static let valueCellReuseIdentifier = "ValueCell"
+
     var store: DataSourceSettingsStore<NationalRailDataSource.Settings>!
     var settings: NationalRailDataSource.Settings!
-
-    @IBOutlet weak var fromStationCell: UITableViewCell!
-    @IBOutlet weak var toStationCell: UITableViewCell!
     var stationPickerShowing: StationPickerController?
     var pickingDest = false
 
-    func update() {
-        var from = "Select a starting station"
-        var to = "Select a destination"
-        if let fromStation = StationsList.lookup(code: settings.from) {
-            from = fromStation.nameAndCode
-        }
-        if let toStation = StationsList.lookup(code: settings.to) {
-            to = toStation.nameAndCode
-        }
-        fromStationCell.textLabel?.text = from
-        toStationCell.textLabel?.text = to
+    init() {
+        super.init(style: .insetGrouped)
+        tableView.register(ValueCell.self, forCellReuseIdentifier: Self.valueCellReuseIdentifier)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -51,24 +47,53 @@ class NationalRailSettingsController : UITableViewController {
                 // User might not have made a selection
                 return
             }
+            var indexPath: IndexPath? = nil
             if pickingDest {
                 settings.to = station.code
+                indexPath = IndexPath(row: 1, section: 0)
             } else {
                 settings.from = station.code
+                indexPath = IndexPath(row: 0, section: 0)
             }
             do {
                 try store.save(settings: settings)
             } catch {
                 self.present(error: error)
             }
+            if let indexPath = indexPath {
+                tableView.reloadRows(at: [indexPath], with: .fade)
+            }
         }
-        update()
+    }
+
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 2
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: Self.valueCellReuseIdentifier, for: indexPath)
+        switch indexPath.row {
+        case 0:
+            cell.textLabel?.text = "From"
+            cell.detailTextLabel?.text = StationsList.lookup(code: settings.from)?.nameAndCode
+        case 1:
+            cell.textLabel?.text = "To"
+            cell.detailTextLabel?.text = StationsList.lookup(code: settings.to)?.nameAndCode
+        default:
+            break
+        }
+        cell.accessoryType = .disclosureIndicator
+        return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let viewController = StationPickerController()
         stationPickerShowing = viewController
-        switch indexPath.section {
+        switch indexPath.row {
         case 0:
             pickingDest = false
         case 1:
