@@ -35,6 +35,7 @@
 		D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */; };
 		D8B9874B270FF88D00EC2BA4 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B9874A270FF88D00EC2BA4 /* Alert.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
+		D8D252B327146ED800C68EF9 /* ValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D252B227146ED800C68EF9 /* ValueCell.swift */; };
 		D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D98E422493019A00F853CA /* NetworkProvisioner.swift */; };
 		D8DAED7026E3EAA90002F388 /* configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = D8DAED6F26E3EAA90002F388 /* configuration.json */; };
 		D8DAED7226E3F3320002F388 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7126E3F3320002F388 /* Configuration.swift */; };
@@ -116,6 +117,7 @@
 		D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+mappedToBool.swift"; sourceTree = "<group>"; };
 		D8B9874A270FF88D00EC2BA4 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
+		D8D252B227146ED800C68EF9 /* ValueCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueCell.swift; sourceTree = "<group>"; };
 		D8D98E422493019A00F853CA /* NetworkProvisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvisioner.swift; sourceTree = "<group>"; };
 		D8DAED6F26E3EAA90002F388 /* configuration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = configuration.json; sourceTree = "<group>"; };
 		D8DAED7126E3F3320002F388 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
@@ -286,6 +288,14 @@
 			path = Dummy;
 			sourceTree = "<group>";
 		};
+		D8D252B127146EB700C68EF9 /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+				D8D252B227146ED800C68EF9 /* ValueCell.swift */,
+			);
+			path = Controls;
+			sourceTree = "<group>";
+		};
 		D8DAED7526E3F3C40002F388 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -355,6 +365,7 @@
 				DBCA987E2143E2920084B710 /* ViewController.swift */,
 				DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */,
 				DBCA98832143E2920084B710 /* Assets.xcassets */,
+				D8D252B127146EB700C68EF9 /* Controls */,
 				D842A400265BE8C1009C1156 /* Data */,
 				D8DAED7526E3F3C40002F388 /* Extensions */,
 				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
@@ -483,6 +494,7 @@
 				D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */,
 				DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */,
 				D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */,
+				D8D252B327146ED800C68EF9 /* ValueCell.swift in Sources */,
 				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
 				D80380AB23E9B6D2002606C7 /* Client.swift in Sources */,
