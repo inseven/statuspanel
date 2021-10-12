@@ -132,7 +132,7 @@ final class ZenQuotesDataSource: DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        settings.mode.localizedName
+        return settings.mode.localizedName
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
