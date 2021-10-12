@@ -50,7 +50,8 @@ class DataSourceController {
 
         let config = Config()
 
-        if let instances = try? Config().dataSources() {
+        do {
+            let instances = try Config().dataSources() ?? []
             do {
                 for instance in instances {
                     try add(type: instance.type, uuid: instance.identifier)
@@ -58,7 +59,12 @@ class DataSourceController {
             } catch {
                 print("Failed to load data source details with error \(error).")
             }
-        } else {
+        } catch {
+            print("Failed to load data sources with error \(error).")
+        }
+
+        // Restore the default configuration if there are none configured.
+        if instances.isEmpty {
             do {
                 try add(type: .calendarHeader,
                         settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
