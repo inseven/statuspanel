@@ -23,7 +23,7 @@ import Foundation
 enum StatusPanelError: Error {
 
     case missingConfiguration
-    case invalidResponse(String)
+    case invalidResponse
     case invalidUrl
     case invalidDate
     case corruptSettings

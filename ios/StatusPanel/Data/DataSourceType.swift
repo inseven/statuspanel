@@ -28,5 +28,6 @@ enum DataSourceType: String, Codable {
     case nationalRail = "io.statuspanel.source.national-rail"
     case text = "io.statuspanel.source.text"
     case transportForLondon = "io.statuspanel.source.transport-for-london"
+    case zenQuotes = "io.statuspanel.source.zen-quotes"
 
 }
