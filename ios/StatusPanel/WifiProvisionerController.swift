@@ -35,7 +35,7 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
 
     let ButtonSection = 1
 
-    private var loc = CLLocationManager()
+    private var locationManager = CLLocationManager()
     private var spot = NEHotspotConfigurationManager.shared
     private var hotspotSsid: String?
     private var hotspotPassword: String?
@@ -134,15 +134,15 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         networkProvisioner = NetworkProvisioner(address: "192.168.4.1", port: 9001)
-        loc.delegate = self
+        locationManager.delegate = self
         ssidField.delegate = self
         passwordField.delegate = self
         tableView.tableHeaderView = headerView
         tableView.tableFooterView = footerView
 
-        let status = CLLocationManager.authorizationStatus()
+        let status = locationManager.authorizationStatus
         if status == .notDetermined {
-            loc.requestWhenInUseAuthorization()
+            locationManager.requestWhenInUseAuthorization()
         } else if status == .authorizedWhenInUse {
             setSSID()
         }
