@@ -98,7 +98,7 @@ final class ZenQuotesDataSource: DataSource {
     }
 
     let id: DataSourceType = .zenQuotes
-    let name = "Zen Quotes"
+    let name = "ZenQuotes"
     let configurable = true
     let defaults = Settings(mode: .today)
 
