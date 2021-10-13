@@ -20,8 +20,8 @@
 
 import UIKit
 import EventKit
-import Sodium
 
+import Sodium
 
 extension DataItemFlags {
 
@@ -52,10 +52,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     static let panelStatusBarHeight: CGFloat = 20.0
 
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var redactButton: UIBarButtonItem!
+
     private var image: UIImage?
     private var redactedImage: UIImage?
-    private var showRedacted = false
 
     let SettingsButtonTag = 1
 
@@ -71,27 +70,29 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         sourceController.fetch()
     }
 
-    @IBAction func redact(_ sender: Any) {
-        showRedacted = !showRedacted
-        updateImageView()
-    }
-
-    func updateImageView() {
-        if showRedacted {
-            imageView.image = redactedImage
-            redactButton.title = "🅟"
-        } else {
-            imageView.image = image
-            redactButton.title = "Ⓟ"
-        }
-    }
-
-    lazy var settingsButtonItem: UIBarButtonItem = {
+    private lazy var settingsButtonItem: UIBarButtonItem = {
         return UIBarButtonItem(title: "Settings",
                                style: .plain,
                                target: self,
                                action: #selector(settingsTapped(sender:)))
     }()
+
+    private lazy var longPressGestureRecognizer: UIGestureRecognizer = {
+        let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(imageTapped(recognizer:)))
+        gestureRecognizer.minimumPressDuration = 0
+        return gestureRecognizer
+    }()
+
+    private var showRedacted: Bool = false {
+        didSet {
+            switch showRedacted {
+            case true:
+                imageView.image = redactedImage
+            case false:
+                imageView.image = image
+            }
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -105,6 +106,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
 
         navigationItem.leftBarButtonItem = settingsButtonItem
+
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(longPressGestureRecognizer)
     }
 
     @objc func settingsTapped(sender: Any) {
@@ -113,6 +117,20 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         settingsViewController.delegate = self
         present(viewController, animated: true, completion: nil)
     }
+
+    @objc func imageTapped(recognizer: UIGestureRecognizer) {
+        switch recognizer.state {
+        case .began:
+            imageView.image = redactedImage
+        case .ended, .cancelled, .failed:
+            imageView.image = image
+        case .possible, .changed:
+            break
+        @unknown default:
+            break
+        }
+    }
+
 
     func didDismiss(settingsViewController: SettingsViewController) {
         sourceController.fetch()
@@ -149,7 +167,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         self.image = payloads[0].1
         self.redactedImage = payloads[1].1
 
-        updateImageView()
+        imageView.image = image
+
         let imageData = payloads.map { $0.0 }
         print("Uploading new images")
         uploadImages(imageData, completion: { (anythingChanged: Bool) in
