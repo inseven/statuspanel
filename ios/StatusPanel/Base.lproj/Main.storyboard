@@ -15,24 +15,10 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FFU-oW-4OP">
-                                <rect key="frame" x="24" y="78" width="272" height="938"/>
-                            </imageView>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="pJd-Og-7Yn"/>
                         <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="pJd-Og-7Yn" firstAttribute="bottom" secondItem="FFU-oW-4OP" secondAttribute="bottom" constant="8" id="Av1-Hl-pJx"/>
-                            <constraint firstItem="FFU-oW-4OP" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="8" id="IEV-9x-3xx"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="FFU-oW-4OP" secondAttribute="trailing" constant="8" id="doV-8C-bRh"/>
-                            <constraint firstItem="FFU-oW-4OP" firstAttribute="top" secondItem="pJd-Og-7Yn" secondAttribute="top" constant="8" id="fJc-MJ-NoI"/>
-                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="StatusPanel" id="KXp-yM-jbC"/>
-                    <connections>
-                        <outlet property="imageView" destination="FFU-oW-4OP" id="PVv-bA-T4k"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -160,11 +146,11 @@
                                         <rect key="frame" x="16" y="18" width="288" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="T3J-yi-VzE" id="a8l-Ns-0wa">
-                                            <rect key="frame" x="0.0" y="0.0" width="248" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="251.5" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Off" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="voL-9n-Ns7">
-                                                    <rect key="frame" x="16" y="0.0" width="224" height="43.5"/>
+                                                    <rect key="frame" x="16" y="0.0" width="227.5" height="43.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
