@@ -30,11 +30,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="StatusPanel" id="KXp-yM-jbC">
-                        <barButtonItem key="leftBarButtonItem" tag="1" title="Settings" id="RBu-R8-TYb">
-                            <connections>
-                                <segue destination="h6m-t0-RnA" kind="modal" identifier="settings" id="BDV-kQ-Aip"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="leftBarButtonItem" tag="1" title="Settings" id="RBu-R8-TYb"/>
                         <rightBarButtonItems>
                             <barButtonItem title="Refresh" id="f8x-mG-zRg">
                                 <connections>
@@ -56,41 +52,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1295" y="29"/>
-        </scene>
-        <!--Modal Settings Nav Controller-->
-        <scene sceneID="0vY-xr-QMW">
-            <objects>
-                <navigationController id="h6m-t0-RnA" userLabel="Modal Settings Nav Controller" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="A6K-3S-cBO">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="56"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="539-wo-ocb" kind="relationship" relationship="rootViewController" id="Vt8-1z-xF4"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="6cc-th-Vj4" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2132" y="-359"/>
-        </scene>
-        <!--Settings-->
-        <scene sceneID="WtI-DX-VQ9">
-            <objects>
-                <tableViewController id="539-wo-ocb" customClass="SettingsViewController" customModule="StatusPanel" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="m6I-NE-wYz">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="1004"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <sections/>
-                        <connections>
-                            <outlet property="dataSource" destination="539-wo-ocb" id="KBO-jJ-h5P"/>
-                            <outlet property="delegate" destination="539-wo-ocb" id="lhk-er-PYQ"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Settings" id="MMN-cF-13V"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Qgi-lm-KnI" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2886" y="-359"/>
         </scene>
         <!--Calendars-->
         <scene sceneID="3G6-lz-4ro">

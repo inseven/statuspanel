@@ -86,6 +86,13 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
     }
 
+    lazy var settingsButtonItem: UIBarButtonItem = {
+        return UIBarButtonItem(title: "Settings",
+                               style: .plain,
+                               target: self,
+                               action: #selector(settingsTapped(sender:)))
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -96,17 +103,15 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         } else {
             print("ViewController.vieWDidLoad: App delegate said not to fetch")
         }
+
+        navigationItem.leftBarButtonItem = settingsButtonItem
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "settings" {
-            guard
-                let navigationController = segue.destination as? UINavigationController,
-                let settingsViewController = navigationController.viewControllers[0] as? SettingsViewController else {
-                    return
-            }
-            settingsViewController.delegate = self
-        }
+    @objc func settingsTapped(sender: Any) {
+        let settingsViewController = SettingsViewController()
+        let viewController = UINavigationController(rootViewController: settingsViewController)
+        settingsViewController.delegate = self
+        present(viewController, animated: true, completion: nil)
     }
 
     func didDismiss(settingsViewController: SettingsViewController) {
