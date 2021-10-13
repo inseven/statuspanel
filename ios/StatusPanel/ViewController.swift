@@ -58,6 +58,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     var sourceController: DataSourceController!
 
+    var client: Client {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.client
+    }
+
     private lazy var settingsButtonItem: UIBarButtonItem = {
         return UIBarButtonItem(title: "Settings",
                                style: .plain,
@@ -207,10 +212,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         self.redactedImage = privacyImage
         imageView.image = image
 
-        upload(image: image, privacyImage: privacyImage, completion: { (anythingChanged: Bool) in
+        client.upload(image: image, privacyImage: privacyImage) { anythingChanged in
             print("Changes: \(anythingChanged)")
             completion(anythingChanged)
-        })
+        }
     }
 
     static func blankPanelImage() -> UIImage {
@@ -396,138 +401,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             }
         }
         return result
-    }
-
-    func upload(image: UIImage, privacyImage: UIImage, completion: @escaping (Bool) -> Void) {
-        DispatchQueue.global().async {
-            print("Uploading new images")
-
-            let payloads = Panel.rlePayloads(for: [image, privacyImage])
-            let images = payloads.map { $0.0 }
-
-            var devices = Config().devices
-            if devices.count == 0 {
-                print("No keys configured, not uploading")
-                completion(false)
-                return
-            }
-
-            var nextUpload : (Bool) -> Void = { (b: Bool) -> Void in }
-            var anythingUploaded = false
-            nextUpload = { (lastUploadDidUpload: Bool) in
-                if lastUploadDidUpload {
-                    anythingUploaded = true
-                }
-                if devices.count == 0 {
-                    completion(anythingUploaded)
-                } else {
-                    let (id, pubkey) = devices.remove(at: 0)
-                    if pubkey.isEmpty {
-                        // Empty keys are used for debugging the UI, and shouldn't cause an upload
-                        nextUpload(false)
-                        return
-                    }
-                    self.uploadImages(images, deviceid: id, publickey: pubkey, completion: nextUpload)
-                }
-            }
-            nextUpload(false)
-        }
-    }
-
-    func uploadImages(_ images: [Data], deviceid: String, publickey: String, completion: @escaping (Bool) -> Void) {
-        let sodium = Sodium()
-        guard let key = sodium.utils.base642bin(publickey, variant: .ORIGINAL) else {
-            print("Failed to decode key from publickey userdefault!")
-            completion(false)
-            return
-        }
-
-        // We can't just hash the resulting encryptedData because libsodium ensures it is different every time even
-        // for identical input data (which normally is a good thing!) so we have to construct a unencrypted blob just
-        // for the purposes of calculating the hash.
-        let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(makeMultipartUpload(parts: images)))!, variant: .ORIGINAL)!
-        if hash == Config().getLastUploadHash(for: deviceid) {
-            print("Data for \(deviceid) is the same as before, not uploading")
-            completion(false)
-            return
-        }
-
-        var encryptedParts: [Data] = []
-        for image in images {
-            let encryptedDataBytes = sodium.box.seal(message: Array(image), recipientPublicKey: key)
-            if encryptedDataBytes == nil {
-                print("Failed to seal box")
-                completion(false)
-                return
-            }
-            encryptedParts.append(Data(encryptedDataBytes!))
-        }
-        let encryptedData = makeMultipartUpload(parts: encryptedParts)
-        let path = "https://api.statuspanel.io/api/v2/\(deviceid)"
-        guard let url = URL(string: path) else {
-            print("Unable to create URL")
-            completion(false)
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-
-        let boundary = "---------------------------14737809831466499882746641449"
-        let contentType = "multipart/form-data; boundary=\(boundary)"
-
-        request.addValue(contentType, forHTTPHeaderField: "Content-Type")
-        var body = Data()
-        body.append("--\(boundary)\r\n".data(using: String.Encoding.utf8)!)
-        body.append("Content-Disposition:form-data; name=\"test\"\r\n\r\n".data(using: String.Encoding.utf8)!)
-        body.append("hi\r\n".data(using: String.Encoding.utf8)!)
-
-        let fname = "img_panel_rle"
-        let mimetype = "application/octet-stream"
-
-        body.append("--\(boundary)\r\n".data(using: String.Encoding.utf8)!)
-        body.append("Content-Disposition:form-data; name=\"file\"; filename=\"\(fname)\"\r\n".data(using: String.Encoding.utf8)!)
-        body.append("Content-Type: \(mimetype)\r\n\r\n".data(using: String.Encoding.utf8)!)
-        body.append(encryptedData)
-        body.append("\r\n".data(using: String.Encoding.utf8)!)
-        body.append("--\(boundary)--\r\n".data(using: String.Encoding.utf8)!)
-
-        request.httpBody = body
-        let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-            // print(response ?? "")
-            if let error = error {
-                print(error)
-            } else {
-                Config().setLastUploadHash(for: deviceid, to: hash)
-            }
-            completion(true)
-        })
-        task.resume()
-    }
-
-    func makeMultipartUpload(parts: [Data]) -> Data {
-        let wakeTime = Int(Config.getLocalWakeTime() / 60)
-        // Header format is as below. Any fields beyond length can be omitted
-        // providing the length is set appropriately.
-        // FF 00 - indicating header present
-        // NN    - Length of header
-        // TT TT - wakeup time
-        // CC    - count of images (index immediately follows header)
-        var data = Data([0xFF, 0x00, 0x06, UInt8(wakeTime >> 8), UInt8(wakeTime & 0xFF), UInt8(parts.count)])
-        // I'm sure there's a way to do this with UnsafeRawPointers or something, but eh
-        let u32le = { (val: Int) -> Data in
-            let u32 = UInt32(val)
-            return Data([UInt8(u32 & 0xFF), UInt8((u32 & 0xFF00) >> 8), UInt8((u32 & 0xFF0000) >> 16), UInt8(u32 >> 24)])
-        }
-        var idx = data.count + 4 * parts.count
-        for part in parts {
-            data += u32le(idx)
-            idx += part.count
-        }
-        for part in parts {
-            data += part
-        }
-        return data
     }
 
     private func shouldBeDark() -> Bool {
