@@ -59,9 +59,10 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.leftBarButtonItem = doneButtonItem
-        self.navigationItem.rightBarButtonItem = editButtonItem
-        self.tableView.allowsSelectionDuringEditing = true
+        navigationItem.leftBarButtonItem = doneButtonItem
+        navigationItem.rightBarButtonItem = editButtonItem
+        tableView.allowsSelectionDuringEditing = true
+        title = "Settings"
     }
 
     @IBAction func cancelTapped(_ sender: Any) {
