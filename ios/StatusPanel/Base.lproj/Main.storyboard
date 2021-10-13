@@ -31,11 +31,6 @@
                     </view>
                     <navigationItem key="navigationItem" title="StatusPanel" id="KXp-yM-jbC">
                         <barButtonItem key="leftBarButtonItem" tag="1" title="Settings" id="RBu-R8-TYb"/>
-                        <barButtonItem key="rightBarButtonItem" title="Refresh" id="f8x-mG-zRg">
-                            <connections>
-                                <action selector="refresh:" destination="BYZ-38-t0r" id="Meh-cm-yqD"/>
-                            </connections>
-                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="imageView" destination="FFU-oW-4OP" id="PVv-bA-T4k"/>
@@ -167,11 +162,11 @@
                                         <rect key="frame" x="16" y="18" width="288" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="T3J-yi-VzE" id="a8l-Ns-0wa">
-                                            <rect key="frame" x="0.0" y="0.0" width="248" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="251.5" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Off" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="voL-9n-Ns7">
-                                                    <rect key="frame" x="16" y="0.0" width="224" height="43.5"/>
+                                                    <rect key="frame" x="16" y="0.0" width="227.5" height="43.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
