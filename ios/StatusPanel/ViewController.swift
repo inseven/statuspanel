@@ -60,21 +60,17 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     var sourceController: DataSourceController!
 
-    @IBAction func refresh(_ sender: Any) {
-        // Wipe all stored hashes to force reupload
-        let config = Config()
-        for (deviceid, _) in config.devices {
-            config.setLastUploadHash(for: deviceid, to: nil)
-        }
-
-        sourceController.fetch()
-    }
-
     private lazy var settingsButtonItem: UIBarButtonItem = {
         return UIBarButtonItem(title: "Settings",
                                style: .plain,
                                target: self,
                                action: #selector(settingsTapped(sender:)))
+    }()
+
+    private lazy var refreshButtonItem: UIBarButtonItem = {
+        return UIBarButtonItem(barButtonSystemItem: .refresh,
+                               target: self,
+                               action: #selector(refreshTapped(sender:)))
     }()
 
     private lazy var longPressGestureRecognizer: UIGestureRecognizer = {
@@ -100,12 +96,13 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         sourceController = appDelegate.sourceController
         sourceController.delegate = self
         if appDelegate.shouldFetch() {
-            sourceController.fetch()
+            fetch()
         } else {
             print("ViewController.vieWDidLoad: App delegate said not to fetch")
         }
 
         navigationItem.leftBarButtonItem = settingsButtonItem
+        navigationItem.rightBarButtonItem = refreshButtonItem
 
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(longPressGestureRecognizer)
@@ -116,6 +113,16 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let viewController = UINavigationController(rootViewController: settingsViewController)
         settingsViewController.delegate = self
         present(viewController, animated: true, completion: nil)
+    }
+
+    @objc func refreshTapped(sender: Any) {
+        // Wipe all stored hashes to force reupload
+        let config = Config()
+        for (deviceid, _) in config.devices {
+            config.setLastUploadHash(for: deviceid, to: nil)
+        }
+
+        fetch()
     }
 
     @objc func imageTapped(recognizer: UIGestureRecognizer) {
@@ -132,7 +139,18 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     func didDismiss(settingsViewController: SettingsViewController) {
+        fetch()
+    }
+
+    func fetch() {
+        dispatchPrecondition(condition: .onQueue(.main))
+        refreshButtonItem.isEnabled = false
         sourceController.fetch()
+    }
+
+    func fetchDidComplete() {
+        dispatchPrecondition(condition: .onQueue(.main))
+        refreshButtonItem.isEnabled = true
     }
 
     static func getLabel(frame: CGRect, font fontName: String, style: LabelStyle, redactMode: RedactMode = .none) -> UILabel {
@@ -674,12 +692,14 @@ extension ViewController: DataSourceControllerDelegate {
                 DispatchQueue.main.async {
                     let appDelegate = UIApplication.shared.delegate as! AppDelegate
                     appDelegate.fetchCompleted(hasChanged: changes)
+                    self.fetchDidComplete()
                 }
             })
     }
 
     func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error) {
         present(error: error)
+        fetchDidComplete()
     }
 
 }
