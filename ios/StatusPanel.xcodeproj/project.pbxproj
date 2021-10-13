@@ -34,6 +34,7 @@
 		D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */; };
 		D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */; };
 		D8B9874B270FF88D00EC2BA4 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B9874A270FF88D00EC2BA4 /* Alert.swift */; };
+		D8CC37B12717887A00938C5D /* Panel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CC37B02717887A00938C5D /* Panel.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
 		D8D252B327146ED800C68EF9 /* ValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D252B227146ED800C68EF9 /* ValueCell.swift */; };
 		D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D98E422493019A00F853CA /* NetworkProvisioner.swift */; };
@@ -116,6 +117,7 @@
 		D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderSource.swift; sourceTree = "<group>"; };
 		D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+mappedToBool.swift"; sourceTree = "<group>"; };
 		D8B9874A270FF88D00EC2BA4 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
+		D8CC37B02717887A00938C5D /* Panel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panel.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		D8D252B227146ED800C68EF9 /* ValueCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueCell.swift; sourceTree = "<group>"; };
 		D8D98E422493019A00F853CA /* NetworkProvisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvisioner.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 			isa = PBXGroup;
 			children = (
 				D81DA7BF2712953D0052D32C /* Localization.swift */,
+				D8CC37B02717887A00938C5D /* Panel.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -490,6 +493,7 @@
 				D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */,
 				D8DAED7226E3F3320002F388 /* Configuration.swift in Sources */,
 				D81DA7C3271297460052D32C /* ZenQuotesDataSource.swift in Sources */,
+				D8CC37B12717887A00938C5D /* Panel.swift in Sources */,
 				DB87810C223D67B2005AEBD8 /* UpdateTimeController.swift in Sources */,
 				D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */,
 				DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */,
