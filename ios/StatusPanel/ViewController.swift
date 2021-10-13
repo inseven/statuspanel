@@ -203,21 +203,17 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let privacyImage = (Config().privacyMode == .customImage) ?
             ViewController.cropCustomRedactImageToPanelSize() : renderToImage(data: data, shouldRedact: true)
 
-        let payloads = makeRlePayloadsFor(images: [image, privacyImage])
-        self.image = payloads[0].1
-        self.redactedImage = payloads[1].1
-
+        self.image = image
+        self.redactedImage = privacyImage
         imageView.image = image
 
-        let imageData = payloads.map { $0.0 }
-        print("Uploading new images")
-        uploadImages(imageData, completion: { (anythingChanged: Bool) in
+        upload(image: image, privacyImage: privacyImage, completion: { (anythingChanged: Bool) in
             print("Changes: \(anythingChanged)")
             completion(anythingChanged)
         })
     }
 
-    func makeRlePayloadsFor(images: [UIImage]) -> [(Data, UIImage)] {
+    static func makeRlePayloadsFor(images: [UIImage]) -> [(Data, UIImage)] {
         var result: [(Data, UIImage)] = []
         for (i, image) in images.enumerated() {
             let (rawdata, panelImage) = imgToARGBData(image)
@@ -425,33 +421,40 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         return result
     }
 
-    func uploadImages(_ images: [Data], completion: @escaping (Bool) -> Void) {
-        var devices = Config().devices
-        if devices.count == 0 {
-            print("No keys configured, not uploading")
-            completion(false)
-            return
-        }
+    func upload(image: UIImage, privacyImage: UIImage, completion: @escaping (Bool) -> Void) {
+        DispatchQueue.global().async {
+            print("Uploading new images")
 
-        var nextUpload : (Bool) -> Void = { (b: Bool) -> Void in }
-        var anythingUploaded = false
-        nextUpload = { (lastUploadDidUpload: Bool) in
-            if lastUploadDidUpload {
-                anythingUploaded = true
-            }
+            let payloads = Self.makeRlePayloadsFor(images: [image, privacyImage])
+            let images = payloads.map { $0.0 }
+
+            var devices = Config().devices
             if devices.count == 0 {
-                completion(anythingUploaded)
-            } else {
-                let (id, pubkey) = devices.remove(at: 0)
-                if pubkey.isEmpty {
-                    // Empty keys are used for debugging the UI, and shouldn't cause an upload
-                    nextUpload(false)
-                    return
-                }
-                self.uploadImages(images, deviceid: id, publickey: pubkey, completion: nextUpload)
+                print("No keys configured, not uploading")
+                completion(false)
+                return
             }
+
+            var nextUpload : (Bool) -> Void = { (b: Bool) -> Void in }
+            var anythingUploaded = false
+            nextUpload = { (lastUploadDidUpload: Bool) in
+                if lastUploadDidUpload {
+                    anythingUploaded = true
+                }
+                if devices.count == 0 {
+                    completion(anythingUploaded)
+                } else {
+                    let (id, pubkey) = devices.remove(at: 0)
+                    if pubkey.isEmpty {
+                        // Empty keys are used for debugging the UI, and shouldn't cause an upload
+                        nextUpload(false)
+                        return
+                    }
+                    self.uploadImages(images, deviceid: id, publickey: pubkey, completion: nextUpload)
+                }
+            }
+            nextUpload(false)
         }
-        nextUpload(false)
     }
 
     func uploadImages(_ images: [Data], deviceid: String, publickey: String, completion: @escaping (Bool) -> Void) {
@@ -550,7 +553,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         return data
     }
 
-    func flattenColours(_ red: UInt8, _ green: UInt8, _ blue: UInt8) -> (UInt8, UInt8, UInt8) {
+    static func flattenColours(_ red: UInt8, _ green: UInt8, _ blue: UInt8) -> (UInt8, UInt8, UInt8) {
         let col = UIColor.init(red: CGFloat(red) / 256, green: CGFloat(green) / 256, blue: CGFloat(blue) / 256, alpha: 0)
         var hue: CGFloat = 0
         var sat: CGFloat = 0
@@ -570,7 +573,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
     }
 
-    func imgToARGBData(_ image:UIImage) -> (Data, UIImage) {
+    static func imgToARGBData(_ image:UIImage) -> (Data, UIImage) {
         // From https://stackoverflow.com/questions/448125/how-to-get-pixel-data-from-a-uiimage-cocoa-touch-or-cgimage-core-graphics
 
         var result = Data()
@@ -617,7 +620,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         return (result, resultImage)
     }
 
-    func ARGBtoPanel(_ data: Data) -> Data {
+    static func ARGBtoPanel(_ data: Data) -> Data {
         let Black: UInt8 = 0, Colored: UInt8 = 1, White: UInt8 = 2
         var result = Data()
         var i = 0
@@ -652,7 +655,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         return result
     }
 
-    func rleEncode(_ data: Data) -> Data {
+    static func rleEncode(_ data: Data) -> Data {
         var result = Data()
         var len : UInt8 = 0
         var current : UInt8 = 0
