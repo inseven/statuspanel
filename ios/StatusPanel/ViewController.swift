@@ -131,7 +131,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
     }
 
-
     func didDismiss(settingsViewController: SettingsViewController) {
         sourceController.fetch()
     }
