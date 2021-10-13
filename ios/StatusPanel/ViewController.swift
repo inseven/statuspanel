@@ -51,8 +51,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     static let panelHeight: CGFloat = 384.0
     static let panelStatusBarHeight: CGFloat = 20.0
 
-    @IBOutlet weak var imageView: UIImageView!
-
     private var image: UIImage?
     private var redactedImage: UIImage?
 
@@ -77,6 +75,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let activityIndicator = UIActivityIndicatorView()
         activityIndicator.startAnimating()
         return UIBarButtonItem(customView: activityIndicator)
+    }()
+
+    private lazy var imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isUserInteractionEnabled = true
+        imageView.contentMode = .scaleAspectFit
+        return imageView
     }()
 
     private lazy var longPressGestureRecognizer: UIGestureRecognizer = {
@@ -105,7 +111,17 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         navigationItem.leftBarButtonItem = settingsButtonItem
         navigationItem.rightBarButtonItem = refreshButtonItem
 
-        imageView.isUserInteractionEnabled = true
+        view.addSubview(imageView)
+
+        NSLayoutConstraint.activate([
+
+            imageView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
+            imageView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
+
+        ])
+
         imageView.addGestureRecognizer(longPressGestureRecognizer)
 
         if appDelegate.shouldFetch() {
