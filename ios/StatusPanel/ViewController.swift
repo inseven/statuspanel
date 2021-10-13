@@ -73,6 +73,12 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                                action: #selector(refreshTapped(sender:)))
     }()
 
+    private lazy var refreshActivityIndicatorItem: UIBarButtonItem = {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.startAnimating()
+        return UIBarButtonItem(customView: activityIndicator)
+    }()
+
     private lazy var longPressGestureRecognizer: UIGestureRecognizer = {
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(imageTapped(recognizer:)))
         gestureRecognizer.minimumPressDuration = 0
@@ -95,17 +101,18 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         sourceController = appDelegate.sourceController
         sourceController.delegate = self
-        if appDelegate.shouldFetch() {
-            fetch()
-        } else {
-            print("ViewController.vieWDidLoad: App delegate said not to fetch")
-        }
 
         navigationItem.leftBarButtonItem = settingsButtonItem
         navigationItem.rightBarButtonItem = refreshButtonItem
 
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(longPressGestureRecognizer)
+
+        if appDelegate.shouldFetch() {
+            fetch()
+        } else {
+            print("ViewController.vieWDidLoad: App delegate said not to fetch")
+        }
     }
 
     @objc func settingsTapped(sender: Any) {
@@ -144,13 +151,13 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
-        refreshButtonItem.isEnabled = false
+        self.navigationItem.setRightBarButton(refreshActivityIndicatorItem, animated: true)
         sourceController.fetch()
     }
 
     func fetchDidComplete() {
         dispatchPrecondition(condition: .onQueue(.main))
-        refreshButtonItem.isEnabled = true
+        self.navigationItem.setRightBarButton(refreshButtonItem, animated: true)
     }
 
     static func getLabel(frame: CGRect, font fontName: String, style: LabelStyle, redactMode: RedactMode = .none) -> UILabel {
