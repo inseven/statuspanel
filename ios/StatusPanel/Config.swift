@@ -449,6 +449,12 @@ class Config {
         return self.userDefaults.string(forKey: Config.getLastUploadHashKey(for: deviceid))
     }
 
+    func clearUploadHashes() {
+        for (deviceid, _) in devices {
+            setLastUploadHash(for: deviceid, to: nil)
+        }
+    }
+
     var lastBackgroundUpdate: Date? {
         get {
             self.object(for: .lastBackgroundUpdate) as? Date

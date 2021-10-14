@@ -144,12 +144,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     @objc func refreshTapped(sender: Any) {
-        // Wipe all stored hashes to force reupload
-        let config = Config()
-        for (deviceid, _) in config.devices {
-            config.setLastUploadHash(for: deviceid, to: nil)
-        }
-
+        Config().clearUploadHashes()  // Wipe all stored hashes to force re-upload on completion.
         fetch()
     }
 
@@ -204,10 +199,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
-        let image = renderToImage(data: data, shouldRedact: false)
-        let privacyImage = (Config().privacyMode == .customImage) ?
-            ViewController.cropCustomRedactImageToPanelSize() : renderToImage(data: data, shouldRedact: true)
-
+        let darkMode = shouldBeDark()
+        let image = Self.renderToImage(data: data, shouldRedact: false, darkMode: darkMode)
+        let privacyImage = ((Config().privacyMode == .customImage)
+                            ? ViewController.cropCustomRedactImageToPanelSize()
+                            : Self.renderToImage(data: data, shouldRedact: true, darkMode: darkMode))
         self.image = image
         self.redactedImage = privacyImage
         imageView.image = image
@@ -246,13 +242,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
     }
 
-    func renderToImage(data: [DataItemBase], shouldRedact: Bool) -> UIImage {
+    static func renderToImage(data: [DataItemBase], shouldRedact: Bool, darkMode: Bool) -> UIImage {
         let contentView = UIView(frame: CGRect(x: 0, y: 0, width: Self.panelWidth, height: Self.panelHeight))
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
-        // TODO move this to UICollectionView?
-        let darkMode = shouldBeDark()
         contentView.backgroundColor = darkMode ? UIColor.black : UIColor.white
         let foregroundColor = darkMode ? UIColor.white : UIColor.black
         let config = Config()
