@@ -30,6 +30,8 @@ protocol SettingsViewControllerDelegate: AnyObject {
 
 class SettingsViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
 
+    static let datePickerCellReuseIdentifier = "DatePickerCell"
+
     let DataSourcesSection = 0
     let UpdateTimeOrAddSourceSection = 1
     let DisplaySettingsSection = 2
@@ -63,6 +65,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         navigationItem.rightBarButtonItem = editButtonItem
         tableView.allowsSelectionDuringEditing = true
         title = "Settings"
+
+        tableView.register(DatePickerCell.self, forCellReuseIdentifier: Self.datePickerCellReuseIdentifier)
     }
 
     @IBAction func cancelTapped(_ sender: Any) {
@@ -154,11 +158,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             if isEditing {
                 return nil
             } else {
-                return "Update Time"
+                return "Schedule"
             }
         case DisplaySettingsSection: return "Display"
         case FontsSection: return "Fonts"
-        case PairedDevicesSection: return "Paired Devices"
+        case PairedDevicesSection: return "Devices"
         default: return nil
         }
     }
@@ -173,6 +177,12 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             dateFormatter.dateStyle = .short
             dateFormatter.timeStyle = .short
             return "Last background update at \(dateFormatter.string(from: lastBackgroundUpdate))"
+        case UpdateTimeOrAddSourceSection:
+            if isEditing {
+                return nil
+            } else {
+                return "The time at which the status panel should update."
+            }
         default: return nil
         }
     }
@@ -198,14 +208,15 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.textLabel?.text = "Add Data Source..."
                 return cell
             } else {
-                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                let updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
-                let df = DateFormatter()
-                df.timeStyle = .short
-                df.timeZone = TimeZone(secondsFromGMT: 0)
-                let timeStr = df.string(from: updateTime)
-                cell.textLabel?.text = timeStr
-                cell.accessoryType = .disclosureIndicator
+                let cell = tableView.dequeueReusableCell(withIdentifier: Self.datePickerCellReuseIdentifier,
+                                                         for: indexPath) as! DatePickerCell
+                cell.label.text = "Update Time"
+                cell.datePicker.datePickerMode = .time
+                cell.datePicker.timeZone = TimeZone(secondsFromGMT: 0)
+                cell.datePicker.date = Date.init(timeIntervalSinceReferenceDate: Config().updateTime)
+                cell.datePicker.addTarget(self,
+                                          action: #selector(updateTimeChanged(sender:forEvent:)),
+                                          for: .valueChanged)
                 return cell
             }
         case PairedDevicesSection:
@@ -323,6 +334,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     @objc func showIconsChanged(sender: UISwitch) {
         Config().showIcons = sender.isOn
+    }
+
+    @objc func updateTimeChanged(sender: UIDatePicker, forEvent event: UIEvent) {
+        let newTime = sender.date.timeIntervalSinceReferenceDate
+        Config().updateTime = newTime
     }
 
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
