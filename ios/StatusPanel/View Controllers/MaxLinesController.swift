@@ -22,6 +22,11 @@ import UIKit
 
 class MaxLinesController : UITableViewController {
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        title = "Maximum Lines"
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let val = Config().maxLines
@@ -45,6 +50,8 @@ class MaxLinesController : UITableViewController {
         tableView.performBatchUpdates({
             tableView.deselectRow(at: indexPath, animated: true)
             updateTickMark(tag)
+        }, completion: { finished in
+            self.navigationController?.popViewController(animated: true)
         })
     }
 }

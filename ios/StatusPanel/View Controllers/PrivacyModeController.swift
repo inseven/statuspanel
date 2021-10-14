@@ -36,9 +36,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
             picker.delegate = self
             picker.sourceType = .photoLibrary
             picker.modalPresentationStyle = .popover
-            present(picker, animated: true) {
-                // print("Finished presenting?")
-            }
+            present(picker, animated: true)
         } else {
             let prevMode = config.privacyMode
             let prevIndexPath = IndexPath(row: prevMode.rawValue, section: 0)
@@ -57,7 +55,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
                 } else if prevMode == .customImage && newMode != .customImage{
                     tableView.deleteRows(at: [imgCellIndexPath], with: .automatic)
                 }
-            }, completion: nil)
+            })
         }
     }
 

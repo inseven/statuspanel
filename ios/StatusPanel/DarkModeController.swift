@@ -40,6 +40,8 @@ class DarkModeController : UITableViewController {
         tableView.performBatchUpdates({
             tableView.deselectRow(at: indexPath, animated: true)
             updateTickMark(indexPath.row)
-        })
+        }) { finished in
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 }
