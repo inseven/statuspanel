@@ -52,7 +52,7 @@ struct DayPicker: View {
                 }
             }
         }
-        .listStyle(.grouped)
+        .listStyle(GroupedListStyle())
         .foregroundColor(.primary)
         .onChange(of: offset) { newValue in
             completion(newValue)
