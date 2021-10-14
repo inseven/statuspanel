@@ -30,11 +30,13 @@ protocol SettingsViewControllerDelegate: AnyObject {
 
 class SettingsViewController: UITableViewController, UIAdaptivePresentationControllerDelegate {
 
+    static let datePickerCellReuseIdentifier = "DatePickerCell"
+
     let DataSourcesSection = 0
-    let UpdateTimeOrAddSourceSection = 1
+    let ScheduleOrAddSourceSection = 1
     let DisplaySettingsSection = 2
     let FontsSection = 3
-    let PairedDevicesSection = 4
+    let DevicesSection = 4
     let AboutSection = 5
 
     let DisplaySettingsRowCount = 5
@@ -63,6 +65,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         navigationItem.rightBarButtonItem = editButtonItem
         tableView.allowsSelectionDuringEditing = true
         title = "Settings"
+
+        tableView.register(DatePickerCell.self, forCellReuseIdentifier: Self.datePickerCellReuseIdentifier)
     }
 
     @IBAction func cancelTapped(_ sender: Any) {
@@ -125,13 +129,13 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         switch section {
         case DataSourcesSection:
             return dataSourceController.instances.count
-        case UpdateTimeOrAddSourceSection:
+        case ScheduleOrAddSourceSection:
             return 1
         case DisplaySettingsSection:
             return DisplaySettingsRowCount
         case FontsSection:
             return 2
-        case PairedDevicesSection:
+        case DevicesSection:
             var n = devices.count
             if n == 0 {
                 n += 1 // For "No devices configured"
@@ -150,22 +154,22 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case DataSourcesSection: return "Layout"
-        case UpdateTimeOrAddSourceSection:
+        case ScheduleOrAddSourceSection:
             if isEditing {
                 return nil
             } else {
-                return "Update Time"
+                return "Schedule"
             }
         case DisplaySettingsSection: return "Display"
         case FontsSection: return "Fonts"
-        case PairedDevicesSection: return "Paired Devices"
+        case DevicesSection: return "Devices"
         default: return nil
         }
     }
 
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         switch section {
-        case PairedDevicesSection:
+        case DevicesSection:
             guard let lastBackgroundUpdate = Config().lastBackgroundUpdate else {
                 return nil
             }
@@ -173,6 +177,12 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             dateFormatter.dateStyle = .short
             dateFormatter.timeStyle = .short
             return "Last background update at \(dateFormatter.string(from: lastBackgroundUpdate))"
+        case ScheduleOrAddSourceSection:
+            if isEditing {
+                return nil
+            } else {
+                return "The time at which the status panel should update."
+            }
         default: return nil
         }
     }
@@ -192,23 +202,24 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             cell.accessoryType = source.dataSource.configurable ? .disclosureIndicator : .none
             cell.showsReorderControl = true
             return cell
-        case UpdateTimeOrAddSourceSection:
+        case ScheduleOrAddSourceSection:
             if isEditing {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Add Data Source..."
                 return cell
             } else {
-                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-                let updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
-                let df = DateFormatter()
-                df.timeStyle = .short
-                df.timeZone = TimeZone(secondsFromGMT: 0)
-                let timeStr = df.string(from: updateTime)
-                cell.textLabel?.text = timeStr
-                cell.accessoryType = .disclosureIndicator
+                let cell = tableView.dequeueReusableCell(withIdentifier: Self.datePickerCellReuseIdentifier,
+                                                         for: indexPath) as! DatePickerCell
+                cell.label.text = "Update Time"
+                cell.datePicker.datePickerMode = .time
+                cell.datePicker.timeZone = TimeZone(secondsFromGMT: 0)
+                cell.datePicker.date = Date.init(timeIntervalSinceReferenceDate: Config().updateTime)
+                cell.datePicker.addTarget(self,
+                                          action: #selector(updateTimeChanged(sender:forEvent:)),
+                                          for: .valueChanged)
                 return cell
             }
-        case PairedDevicesSection:
+        case DevicesSection:
             let cell = UITableViewCell(style: .default, reuseIdentifier: "DeviceCell")
             if devices.count == 0 && indexPath.row == 0 {
                 cell.textLabel?.text = "No devices configured"
@@ -325,12 +336,19 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         Config().showIcons = sender.isOn
     }
 
+    @objc func updateTimeChanged(sender: UIDatePicker, forEvent event: UIEvent) {
+        let newTime = sender.date.timeIntervalSinceReferenceDate
+        Config().updateTime = newTime
+    }
+
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.section == PairedDevicesSection {
+        if indexPath.section == DevicesSection {
             if indexPath.row == (devices.count == 0 ? 1 : devices.count) {
                 return true // The debug add button
             }
             return false
+        } else if indexPath.section == ScheduleOrAddSourceSection {
+            return isEditing
         } else if indexPath.section == DisplaySettingsSection {
             return indexPath.row > 1
         } else if indexPath.section == DataSourcesSection {
@@ -419,15 +437,15 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 self.present(error: error)
             }
             return
-        case UpdateTimeOrAddSourceSection:
+        case ScheduleOrAddSourceSection:
             if isEditing {
                 addDataSource()
                 tableView.deselectRow(at: indexPath, animated: true)
                 return
             } else {
-                vcid = "UpdateTimeEditor"
+                return
             }
-        case PairedDevicesSection:
+        case DevicesSection:
             let prevCount = devices.count
             if indexPath.row == (prevCount == 0 ? 1 : prevCount) {
                 devices.append(("DummyDevice\(indexPath.row)", ""))
@@ -435,9 +453,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 tableView.performBatchUpdates({
                     tableView.deselectRow(at: indexPath, animated: true)
                     if (prevCount == 0) {
-                        tableView.deleteRows(at: [IndexPath(row: prevCount, section: PairedDevicesSection)], with: .fade)
+                        tableView.deleteRows(at: [IndexPath(row: prevCount, section: DevicesSection)], with: .fade)
                     }
-                    tableView.insertRows(at: [IndexPath(row: prevCount, section: PairedDevicesSection)], with: .fade)
+                    tableView.insertRows(at: [IndexPath(row: prevCount, section: DevicesSection)], with: .fade)
                 }, completion: nil)
                 vcid = "WifiProvisionerController"
             } else {
@@ -492,7 +510,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if indexPath.section != PairedDevicesSection || indexPath.row >= devices.count {
+        if indexPath.section != DevicesSection || indexPath.row >= devices.count {
             return nil
         }
         let action = UIContextualAction(style: .destructive, title: "Delete") { (_, _, completion) in
@@ -500,7 +518,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             tableView.performBatchUpdates({
                 tableView.deleteRows(at: [indexPath], with: .automatic)
                 if self.devices.count == 0 {
-                    tableView.insertRows(at: [IndexPath(row: 0, section: self.PairedDevicesSection)], with: .automatic)
+                    tableView.insertRows(at: [IndexPath(row: 0, section: self.DevicesSection)], with: .automatic)
                 }
             }, completion: nil)
             let config = Config()
