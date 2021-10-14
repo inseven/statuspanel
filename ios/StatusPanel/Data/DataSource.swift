@@ -34,6 +34,7 @@ protocol DataSource: AnyObject, Identifiable {
     var id: DataSourceType { get }
 
     var name: String { get }
+    var image: UIImage { get }
     var configurable: Bool { get }
 
     var defaults: Settings { get }

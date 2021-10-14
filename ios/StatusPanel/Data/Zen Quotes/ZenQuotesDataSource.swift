@@ -99,6 +99,7 @@ final class ZenQuotesDataSource: DataSource {
 
     let id: DataSourceType = .zenQuotes
     let name = "ZenQuotes"
+    let image = UIImage(systemName: "quote.bubble", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
     let configurable = true
     let defaults = Settings(mode: .today)
 

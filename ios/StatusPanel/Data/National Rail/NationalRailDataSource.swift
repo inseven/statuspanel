@@ -48,6 +48,7 @@ final class NationalRailDataSource : DataSource {
 
     let id: DataSourceType = .nationalRail
     let name = "National Rail"
+    let image = UIImage(systemName: "tram.fill", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
     let configurable = true
 
     let configuration: Configuration

@@ -77,6 +77,8 @@ final class CalendarSource : DataSource {
 
     let id: DataSourceType = .calendar
     let name = "Calendar"
+    let image = UIImage(systemName: "calendar", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
+
     let configurable = true
 
     let eventStore: EKEventStore

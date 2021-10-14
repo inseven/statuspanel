@@ -54,6 +54,7 @@ final class DummyDataSource : DataSource {
 
     let id: DataSourceType = .dummy
     let name = "Dummy Data"
+    let image = UIImage(systemName: "text.alignleft", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
     let configurable = true
 
     var defaults: Settings {
