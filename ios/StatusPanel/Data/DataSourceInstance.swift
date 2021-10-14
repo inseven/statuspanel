@@ -24,6 +24,7 @@ struct DataSourceInstance: Identifiable, Equatable {
 
     struct Details: Codable {
 
+        // TODO: Make this ID?
         var identifier: UUID
         var type: DataSourceType
 

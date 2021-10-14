@@ -30,24 +30,22 @@ struct AddDataSourceView: View {
     }
 
     var body: some View {
-        NavigationView {
-            Form {
-                ForEach(sources) { factory in
-                    Button {
-                        completion(factory)
-                    } label: {
-                        Text(factory.name)
-                            .foregroundColor(.primary)
-                    }
+        Form {
+            ForEach(sources) { factory in
+                Button {
+                    completion(factory)
+                } label: {
+                    Text(factory.name)
+                        .foregroundColor(.primary)
                 }
             }
-            .navigationBarTitle("Add Data Source", displayMode: .inline)
-            .navigationBarItems(leading: Button {
-                completion(nil)
-            } label: {
-                Text("Cancel")
-            })
         }
+        .navigationBarTitle("Add Data Source", displayMode: .inline)
+        .navigationBarItems(leading: Button {
+            completion(nil)
+        } label: {
+            Text("Cancel")
+        })
     }
 
 }
