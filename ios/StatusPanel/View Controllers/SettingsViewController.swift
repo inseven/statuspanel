@@ -347,6 +347,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 return true // The debug add button
             }
             return false
+        } else if indexPath.section == ScheduleOrAddSourceSection {
+            return isEditing
         } else if indexPath.section == DisplaySettingsSection {
             return indexPath.row > 1
         } else if indexPath.section == DataSourcesSection {
@@ -441,7 +443,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 tableView.deselectRow(at: indexPath, animated: true)
                 return
             } else {
-                vcid = "UpdateTimeEditor"
+                return
             }
         case DevicesSection:
             let prevCount = devices.count
