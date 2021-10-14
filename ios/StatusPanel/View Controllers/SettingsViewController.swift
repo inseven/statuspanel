@@ -479,10 +479,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             break
         }
         if let vcid = vcid {
-            guard let vc = storyboard?.instantiateViewController(withIdentifier: vcid) else {
-                print("Couldn't find view controller for \(vcid)!")
-                return
-            }
+            let vc = UIStoryboard.main.instantiateViewController(withIdentifier: vcid)
             if let navvc = vc as? UINavigationController {
                 // Hack for presenting the underlying controller, useful for dummy device
                 navigationController?.pushViewController(navvc.topViewController!, animated: true)
