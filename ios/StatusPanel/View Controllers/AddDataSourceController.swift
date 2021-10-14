@@ -78,12 +78,12 @@ class AddDataSourceController: UINavigationController {
 
     func didSelectDataSource(_ dataSource: AnyDataSource) {
         do {
-            let details = DataSourceInstance.Details(identifier: UUID(), type: dataSource.id)
+            let details = DataSourceInstance.Details(id: UUID(), type: dataSource.id)
             guard dataSource.configurable else {
                 self.addSourceDelegate?.addDataSourceController(self, didCompleteWithDetails: details)
                 return
             }
-            guard let settingsViewController = try dataSource.settingsViewController(for: details.identifier) else {
+            guard let settingsViewController = try dataSource.settingsViewController(for: details.id) else {
                 throw StatusPanelError.internalInconsistency
             }
             settingsViewController.navigationItem.rightBarButtonItem = self.doneButtonItem
