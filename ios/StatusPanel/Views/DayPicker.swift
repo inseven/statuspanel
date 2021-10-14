@@ -26,7 +26,7 @@ struct DayPicker: View {
     var completion: (Int) -> Void
 
     var body: some View {
-        Form {
+        List {
             Button {
                 offset = 0
             } label: {
@@ -52,6 +52,7 @@ struct DayPicker: View {
                 }
             }
         }
+        .listStyle(GroupedListStyle())
         .foregroundColor(.primary)
         .onChange(of: offset) { newValue in
             completion(newValue)

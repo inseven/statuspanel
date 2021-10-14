@@ -90,7 +90,7 @@ final class CalendarHeaderSource : DataSource {
         var body: some View {
             Form {
                 Section {
-                    Picker("Date", selection: $settings.offset) {
+                    Picker("Day", selection: $settings.offset) {
                         Text(LocalizedOffset(0)).tag(0)
                         Text(LocalizedOffset(1)).tag(1)
                     }
