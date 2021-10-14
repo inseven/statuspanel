@@ -400,20 +400,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     func addDataSource() {
-        let view = AddDataSourceView(sourceController: dataSourceController) { dataSource in
-            if let dataSource = dataSource {
-                do {
-                    try self.dataSourceController.add(dataSource)
-                    try self.dataSourceController.save()
-                    let indexPath = IndexPath(row: self.dataSourceController.instances.count - 1, section: 0)
-                    self.tableView.insertRows(at: [indexPath], with: .none)
-                } catch {
-                    self.present(error: error)
-                }
-            }
-            self.navigationController?.dismiss(animated: true, completion: nil)
-        }
-        navigationController?.present(UIHostingController(rootView: view), animated: true, completion: nil)
+        let viewController = AddDataSourceController(dataSourceController: dataSourceController)
+        viewController.addSourceDelegate = self
+        self.navigationController?.present(viewController, animated: true, completion: nil)
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -524,6 +513,27 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         }
         let actions = UISwipeActionsConfiguration(actions: [action])
         return actions
+    }
+
+}
+
+extension SettingsViewController: AddDataSourceControllerDelegate {
+
+    func addDataSourceController(_ addDataSourceController: AddDataSourceController,
+                                 didCompleteWithDetails details: DataSourceInstance.Details) {
+        do {
+            try self.dataSourceController.add(details)
+            try self.dataSourceController.save()
+            let indexPath = IndexPath(row: self.dataSourceController.instances.count - 1, section: 0)
+            self.tableView.insertRows(at: [indexPath], with: .none)
+            self.navigationController?.dismiss(animated: true, completion: nil)
+        } catch {
+            present(error: error)
+        }
+    }
+
+    func addDataSourceControllerDidCancel(_ addDataSourceController: AddDataSourceController) {
+        self.navigationController?.dismiss(animated: true, completion: nil)
     }
 
 }

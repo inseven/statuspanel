@@ -22,9 +22,14 @@ import Foundation
 
 struct DataSourceInstance: Identifiable, Equatable {
 
-    struct Details: Codable {
+    struct Details: Codable, Identifiable {
 
-        var identifier: UUID
+        enum CodingKeys: String, CodingKey {
+            case id = "identifier"
+            case type = "type"
+        }
+
+        var id: UUID
         var type: DataSourceType
 
     }
@@ -33,13 +38,13 @@ struct DataSourceInstance: Identifiable, Equatable {
         return lhs.id == rhs.id
     }
 
-    var id: UUID { details.identifier }
+    var id: UUID { details.id }
 
     let details: Details
     let dataSource: AnyDataSource
 
     init(id: UUID, dataSource: AnyDataSource) {
-        self.details = Details(identifier: id, type: dataSource.id)
+        self.details = Details(id: id, type: dataSource.id)
         self.dataSource = dataSource
     }
 

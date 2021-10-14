@@ -54,7 +54,7 @@ class DataSourceController {
             let instances = try Config().dataSources() ?? []
             do {
                 for instance in instances {
-                    try add(type: instance.type, uuid: instance.identifier)
+                    try add(type: instance.type, uuid: instance.id)
                 }
             } catch {
                 print("Failed to load data source details with error \(error).")
@@ -102,6 +102,10 @@ class DataSourceController {
         instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
     }
 
+    func add(_ details: DataSourceInstance.Details) throws {
+        try self.add(type: details.type, uuid: details.id)
+    }
+
     private func add<T: DataSourceSettings>(type: DataSourceType, settings: T) throws {
         dispatchPrecondition(condition: .onQueue(.main))
         guard let dataSource = sources.first(where: { $0.id == type }) else {
@@ -122,7 +126,8 @@ class DataSourceController {
 
     func remove(instance: DataSourceInstance) {
         dispatchPrecondition(condition: .onQueue(.main))
-        self.instances.removeAll { $0 == instance }
+        let index = instances.firstIndex(of: instance)!
+        instances.remove(at: index)
     }
 
     func save() throws {
