@@ -286,6 +286,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
             let textLabel = UILabel()
             textLabel.translatesAutoresizingMaskIntoConstraints = false
+            textLabel.font = UIFont.preferredFont(forTextStyle: .body)
+            textLabel.adjustsFontForContentSizeCategory = true
             cell.contentView.addSubview(textLabel)
 
             let config = Config()
