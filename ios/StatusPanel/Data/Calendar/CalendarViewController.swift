@@ -76,7 +76,7 @@ class CalendarViewController: UITableViewController {
             switch indexPath.row {
             case 0:
                 let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
-                cell.textLabel?.text = "Date"
+                cell.textLabel?.text = "Day"
                 cell.detailTextLabel?.text = LocalizedOffset(settings.offset)
                 cell.accessoryType = .disclosureIndicator
                 return cell
@@ -128,6 +128,7 @@ class CalendarViewController: UITableViewController {
                     self.navigationController?.popToViewController(self, animated: true)
                     self.tableView.reloadRows(at: [indexPath], with: .automatic)
                 }))
+                viewController.title = "Day"
                 navigationController?.pushViewController(viewController, animated: true)
             }
         } else {
