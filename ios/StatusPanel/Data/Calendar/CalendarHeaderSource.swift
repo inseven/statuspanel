@@ -148,7 +148,7 @@ final class CalendarHeaderSource : DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        return LocalizedOffset(settings.offset)
+        return "\(LocalizedOffset(settings.offset)): \(settings.longFormat)"
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
