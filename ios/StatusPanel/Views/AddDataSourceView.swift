@@ -35,8 +35,12 @@ struct AddDataSourceView: View {
                 Button {
                     completion(factory)
                 } label: {
-                    Text(factory.name)
-                        .foregroundColor(.primary)
+                    HStack(spacing: 0) {
+                        Image(uiImage: factory.image)
+                            .padding(.trailing)
+                        Text(factory.name)
+                            .foregroundColor(.primary)
+                    }
                 }
             }
         }

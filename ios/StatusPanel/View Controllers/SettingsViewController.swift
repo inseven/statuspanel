@@ -192,7 +192,10 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         switch indexPath.section {
         case DataSourcesSection:
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DataSourceCell")
+            cell.imageView?.contentMode = .center
+            cell.imageView?.tintColor = UIColor.label
             let source = dataSourceController.instances[indexPath.row]
+            cell.imageView?.image = source.dataSource.image
             cell.textLabel?.text = source.dataSource.name
             do {
                 cell.detailTextLabel?.text = try source.dataSource.summary(for: source.id)

@@ -57,6 +57,7 @@ final class TextDataSource: DataSource {
 
     let id: DataSourceType = .text
     let name = "Text"
+    let image = UIImage(systemName: "textformat", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
     let configurable = true
     let defaults = Settings(flags: [], text: "")
 
