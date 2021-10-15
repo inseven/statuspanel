@@ -70,12 +70,9 @@ class Client {
         }
     }
 
-    func upload(image: UIImage, privacyImage: UIImage, completion: @escaping (Bool) -> Void) {
+    func upload(image: Data, privacyImage: Data, completion: @escaping (Bool) -> Void) {
         DispatchQueue.global().async {
             print("Uploading new images")
-
-            let payloads = Panel.rlePayloads(for: [image, privacyImage])
-            let images = payloads.map { $0.0 }
 
             var devices = Config().devices
             if devices.count == 0 {
@@ -99,7 +96,7 @@ class Client {
                         nextUpload(false)
                         return
                     }
-                    self.uploadImages(images, deviceid: id, publickey: pubkey, completion: nextUpload)
+                    self.uploadImages([image, privacyImage], deviceid: id, publickey: pubkey, completion: nextUpload)
                 }
             }
             nextUpload(false)
