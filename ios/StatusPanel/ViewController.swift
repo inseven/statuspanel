@@ -204,14 +204,20 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let privacyImage = ((Config().privacyMode == .customImage)
                             ? ViewController.cropCustomRedactImageToPanelSize()
                             : Self.renderToImage(data: data, shouldRedact: true, darkMode: darkMode))
-        self.image = image
-        self.redactedImage = privacyImage
-        imageView.image = image
 
-        client.upload(image: image, privacyImage: privacyImage) { anythingChanged in
-            print("Changes: \(anythingChanged)")
-            completion(anythingChanged)
+        DispatchQueue.global().async {
+            let payloads = Panel.rlePayloads(for: [image, privacyImage])
+            DispatchQueue.main.sync {
+                self.image = payloads[0].1
+                self.redactedImage = payloads[1].1
+                self.imageView.image = image
+            }
+            self.client.upload(image: payloads[0].0, privacyImage: payloads[1].0) { anythingChanged in
+                print("Changes: \(anythingChanged)")
+                completion(anythingChanged)
+            }
         }
+
     }
 
     static func blankPanelImage() -> UIImage {
