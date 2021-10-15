@@ -34,6 +34,7 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     private let scheme: String
 
     private let session = AVCaptureSession()
+    private var previewLayer: AVCaptureVideoPreviewLayer?
 
     private var running = false
 
@@ -56,6 +57,15 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = UIColor.clear
+        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.compactAppearance = appearance
+
         title = "Add Device"
         navigationItem.leftBarButtonItem = cancelButtonItem
 
@@ -75,12 +85,41 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             output.metadataObjectTypes = [.qr]
 
             let previewLayer = AVCaptureVideoPreviewLayer(session: session)
+            previewLayer.videoGravity = .resizeAspectFill
             previewLayer.frame = view.layer.bounds
             view.layer.addSublayer(previewLayer)
+            self.previewLayer = previewLayer
 
         } catch {
             print("Failed to initialize camera with error \(error).")
         }
+    }
+
+    override func viewWillTransition(to size: CGSize,
+                                     with transitionCoordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: transitionCoordinator)
+        guard let connection = previewLayer?.connection,
+              connection.isVideoOrientationSupported
+        else {
+            return
+        }
+        switch (UIDevice.current.orientation) {
+        case .portrait:
+            connection.videoOrientation = .portrait
+        case .landscapeRight:
+            connection.videoOrientation = .landscapeLeft
+        case .landscapeLeft:
+            connection.videoOrientation = .landscapeRight
+        case .portraitUpsideDown:
+            connection.videoOrientation = .portraitUpsideDown
+        default:
+            connection.videoOrientation = .portrait
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        previewLayer?.frame = view.layer.bounds
     }
 
     override func viewWillAppear(_ animated: Bool) {
