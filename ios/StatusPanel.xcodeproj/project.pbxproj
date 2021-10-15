@@ -49,6 +49,7 @@
 		D8DC8D8326E1ADAF004B081D /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D8026E1ADAF004B081D /* Release.xcconfig */; };
 		D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6839B270DF11800504B5E /* DataSourceType.swift */; };
 		D8EED7F12630EF19009E2166 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = D8EED7F02630EF19009E2166 /* Sodium */; };
+		D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F57FE9271A009200847C67 /* QRCodeViewController.swift */; };
 		DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB17F92E249E3BAD008CD83E /* CGExtensions.swift */; };
 		DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */; };
 		DB1EB9062427E1F900050A08 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = DB1EB9052427E1F900050A08 /* fonts */; };
@@ -133,6 +134,7 @@
 		D8DC8D8026E1ADAF004B081D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		D8E6839B270DF11800504B5E /* DataSourceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceType.swift; sourceTree = "<group>"; };
 		D8EED7EF2630EEFF009E2166 /* swift-sodium */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "swift-sodium"; sourceTree = "<group>"; };
+		D8F57FE9271A009200847C67 /* QRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeViewController.swift; sourceTree = "<group>"; };
 		DB17F92E249E3BAD008CD83E /* CGExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
 		DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxLinesController.swift; sourceTree = "<group>"; };
 		DB1EB9052427E1F900050A08 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = StatusPanel/fonts; sourceTree = "<group>"; };
@@ -272,6 +274,7 @@
 				D812523B2709875600C9D80A /* FontPickerViewController.swift */,
 				DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */,
 				DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */,
+				D8F57FE9271A009200847C67 /* QRCodeViewController.swift */,
 				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
 			);
 			path = "View Controllers";
@@ -517,6 +520,7 @@
 				DBF15BC72471A61E004AA972 /* WifiProvisionerController.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
 				D812523627093C4500C9D80A /* AboutView.swift in Sources */,
+				D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */,
 				DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */,
 				D83CC5222707543E00260DC1 /* UIStoryboard.swift in Sources */,
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,

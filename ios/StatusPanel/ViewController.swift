@@ -76,6 +76,12 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                                action: #selector(refreshTapped(sender:)))
     }()
 
+    private lazy var addButtonItem: UIBarButtonItem = {
+        return UIBarButtonItem(barButtonSystemItem: .add,
+                               target: self,
+                               action: #selector(addTapped(sender:)))
+    }()
+
     private lazy var refreshActivityIndicatorItem: UIBarButtonItem = {
         let activityIndicator = UIActivityIndicatorView()
         activityIndicator.startAnimating()
@@ -114,7 +120,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         sourceController.delegate = self
 
         navigationItem.leftBarButtonItem = settingsButtonItem
-        navigationItem.rightBarButtonItem = refreshButtonItem
+        navigationItem.rightBarButtonItems = [addButtonItem, refreshButtonItem]
 
         view.addSubview(imageView)
 
@@ -148,6 +154,13 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         fetch()
     }
 
+    @objc func addTapped(sender: Any) {
+        let viewController = QRCodeViewController(scheme: "statuspanel")
+        viewController.delegate = self
+        let navigationController = UINavigationController(rootViewController: viewController)
+        present(navigationController, animated: true)
+    }
+
     @objc func imageTapped(recognizer: UIGestureRecognizer) {
         switch recognizer.state {
         case .began:
@@ -167,13 +180,13 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
-        self.navigationItem.setRightBarButton(refreshActivityIndicatorItem, animated: true)
+        self.navigationItem.setRightBarButtonItems([addButtonItem, refreshActivityIndicatorItem], animated: true)
         sourceController.fetch()
     }
 
     func fetchDidComplete() {
         dispatchPrecondition(condition: .onQueue(.main))
-        self.navigationItem.setRightBarButton(refreshButtonItem, animated: true)
+        self.navigationItem.setRightBarButtonItems([addButtonItem, refreshButtonItem], animated: true)
     }
 
     static func getLabel(frame: CGRect, font fontName: String, style: LabelStyle, redactMode: RedactMode = .none) -> UILabel {
@@ -205,6 +218,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                             ? ViewController.cropCustomRedactImageToPanelSize()
                             : Self.renderToImage(data: data, shouldRedact: true, darkMode: darkMode))
 
+        let client = self.client
         DispatchQueue.global().async {
             let payloads = Panel.rlePayloads(for: [image, privacyImage])
             DispatchQueue.main.sync {
@@ -212,7 +226,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 self.redactedImage = payloads[1].1
                 self.imageView.image = image
             }
-            self.client.upload(image: payloads[0].0, privacyImage: payloads[1].0) { anythingChanged in
+            client.upload(image: payloads[0].0, privacyImage: payloads[1].0) { anythingChanged in
                 print("Changes: \(anythingChanged)")
                 completion(anythingChanged)
             }
@@ -435,6 +449,23 @@ extension ViewController: DataSourceControllerDelegate {
     func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error) {
         present(error: error)
         fetchDidComplete()
+    }
+
+}
+
+
+extension ViewController: QRCodeViewConrollerDelegate {
+
+    func qrCodeViewController(_ qrCodeViewController: QRCodeViewController, didDetectURL url: URL) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        dismiss(animated: true) {
+            UIApplication.shared.open(url, options: [:])
+        }
+    }
+
+    func qrCodeViewControllerDidCancel(_ qrCodeViewController: QRCodeViewController) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        dismiss(animated: true)
     }
 
 }
