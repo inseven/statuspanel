@@ -29,6 +29,9 @@
 		D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A197270C8DB100681F62 /* TextDataSource.swift */; };
 		D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A199270D16AD00681F62 /* AddDataSourceView.swift */; };
 		D848A19E270D213800681F62 /* FlagsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A19D270D213800681F62 /* FlagsSection.swift */; };
+		D862BF3C271B98F90086BE48 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D862BF3B271B98F90086BE48 /* String.swift */; };
+		D862BF3F271B99700086BE48 /* Swift-Sodium in Resources */ = {isa = PBXBuildFile; fileRef = D862BF3E271B99700086BE48 /* Swift-Sodium */; };
+		D862BF41271B9B620086BE48 /* Binding+mappedToBool in Resources */ = {isa = PBXBuildFile; fileRef = D862BF40271B9B620086BE48 /* Binding+mappedToBool */; };
 		D89104852707B9A00020A2CF /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104842707B99F0020A2CF /* UIViewController.swift */; };
 		D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104862707BAD50020A2CF /* DataSourceInstance.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
@@ -116,6 +119,9 @@
 		D848A197270C8DB100681F62 /* TextDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDataSource.swift; sourceTree = "<group>"; };
 		D848A199270D16AD00681F62 /* AddDataSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDataSourceView.swift; sourceTree = "<group>"; };
 		D848A19D270D213800681F62 /* FlagsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagsSection.swift; sourceTree = "<group>"; };
+		D862BF3B271B98F90086BE48 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		D862BF3E271B99700086BE48 /* Swift-Sodium */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Swift-Sodium"; sourceTree = "<group>"; };
+		D862BF40271B9B620086BE48 /* Binding+mappedToBool */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Binding+mappedToBool"; sourceTree = "<group>"; };
 		D89104842707B99F0020A2CF /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		D89104862707BAD50020A2CF /* DataSourceInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceInstance.swift; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
@@ -293,6 +299,15 @@
 			path = Text;
 			sourceTree = "<group>";
 		};
+		D862BF3D271B99450086BE48 /* Licenses */ = {
+			isa = PBXGroup;
+			children = (
+				D862BF3E271B99700086BE48 /* Swift-Sodium */,
+				D862BF40271B9B620086BE48 /* Binding+mappedToBool */,
+			);
+			path = Licenses;
+			sourceTree = "<group>";
+		};
 		D89104882707BB3D0020A2CF /* Dummy */ = {
 			isa = PBXGroup;
 			children = (
@@ -313,14 +328,15 @@
 		D8DAED7526E3F3C40002F388 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				D8B9874A270FF88D00EC2BA4 /* Alert.swift */,
+				D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */,
 				D8DAED7626E3F3D40002F388 /* Bundle.swift */,
 				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
-				D8293A0B26F787D3008CE13B /* URL.swift */,
+				D862BF3B271B98F90086BE48 /* String.swift */,
 				D83CC5212707543E00260DC1 /* UIStoryboard.swift */,
-				DB981489270887590029BA0A /* UnicodeExtensions.swift */,
 				D89104842707B99F0020A2CF /* UIViewController.swift */,
-				D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */,
-				D8B9874A270FF88D00EC2BA4 /* Alert.swift */,
+				DB981489270887590029BA0A /* UnicodeExtensions.swift */,
+				D8293A0B26F787D3008CE13B /* URL.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -371,6 +387,7 @@
 				D89CAF1021ABDDA200B4B314 /* Config.swift */,
 				D8DAED7126E3F3320002F388 /* Configuration.swift */,
 				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
+				D8E285AE271A45CE001738A8 /* Device.swift */,
 				DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */,
 				DB51C2E221749A2A00F016DB /* JSONRequest.swift */,
 				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
@@ -383,12 +400,12 @@
 				D842A400265BE8C1009C1156 /* Data */,
 				D8DAED7526E3F3C40002F388 /* Extensions */,
 				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
+				D862BF3D271B99450086BE48 /* Licenses */,
 				DBCA98802143E2920084B710 /* Main.storyboard */,
 				DBCA987A2143E2920084B710 /* Products */,
 				D81DA7BE2712952D0052D32C /* Utilities */,
 				D842A401265BE916009C1156 /* View Controllers */,
 				D812523427093BAB00C9D80A /* Views */,
-				D8E285AE271A45CE001738A8 /* Device.swift */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
@@ -471,7 +488,9 @@
 				D8DC8D8126E1ADAF004B081D /* Debug.xcconfig in Resources */,
 				DBCA98822143E2920084B710 /* Main.storyboard in Resources */,
 				D8DAED7026E3EAA90002F388 /* configuration.json in Resources */,
+				D862BF3F271B99700086BE48 /* Swift-Sodium in Resources */,
 				D8DC8D8326E1ADAF004B081D /* Release.xcconfig in Resources */,
+				D862BF41271B9B620086BE48 /* Binding+mappedToBool in Resources */,
 				D8DC8D8226E1ADAF004B081D /* Common.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -511,6 +530,7 @@
 				D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */,
 				DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */,
 				D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */,
+				D862BF3C271B98F90086BE48 /* String.swift in Sources */,
 				D8D252B327146ED800C68EF9 /* ValueCell.swift in Sources */,
 				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
