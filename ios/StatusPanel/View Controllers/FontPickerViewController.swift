@@ -27,7 +27,7 @@ class FontPickerViewController: UITableViewController {
 
     init(_ title: String, font: Binding<String>) {
         self.font = font
-        super.init(style: .insetGrouped)
+        super.init(style: .grouped)
         self.title = title
     }
 
