@@ -105,19 +105,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.rootViewController?.present(navvc, animated: true, completion: nil)
             return true
         } else {
-            addDevice(id: deviceid, pubkey: pubkey)
+            let device = Device(id: deviceid, publicKey: pubkey)
+            addDevice(device)
             return true
         }
     }
 
-    func addDevice(id: String, pubkey: String) {
+    func addDevice(_ device: Device) {
         let config = Config()
         var devices = config.devices
-        devices.append((id, pubkey))
+        devices.append((device.id, device.publicKey))
         config.devices = devices
-        let alert = UIAlertController(title: "Device added", message: "Device \(id) has been added.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default, handler: {
-            (action: UIAlertAction) in
+        let alert = UIAlertController(title: "Device added",
+                                      message: "Device \(device.id) has been added.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"),
+                                      style: .default,
+                                      handler: { action in
             // Sneakily delay fetching data until the user taps ok, to give wifi more time to come back up
             self.blockUpdates = false
             self.update()

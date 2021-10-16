@@ -67,7 +67,7 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
                     case .success:
                         print("Successfully configured network!")
                         let delegate = UIApplication.shared.delegate as! AppDelegate
-                        delegate.addDevice(id: self.panelIdentifer!, pubkey: self.panelPubkey!)
+                        delegate.addDevice(Device(id: self.panelIdentifer!, publicKey: self.panelPubkey!))
                         // addDevice will dismiss us, so we're done!
                     case .failure(let error):
                         print("Failed to configure network with error '\(error)'.")
