@@ -89,23 +89,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Unrecognised operation \(operation)")
             return false
         }
-        let deviceid = map["id"]!
-        let pubkey = map["pk"]!
+
+        guard let deviceId = map["id"],
+              let publicKey = map["pk"] else {
+                  return false
+              }
+
+        let device = Device(id: deviceId, publicKey: publicKey)
 
         // Now try and provision the panel
         if let panelSsid = map["s"] {
             // If the panel is telling us about an SSID, it's in AP mode and needs wifi credentials
-            let storyboard = window?.rootViewController?.storyboard
-            let navvc = storyboard?.instantiateViewController(identifier: "WifiProvisionerController") as! UINavigationController
-
-            let vc = navvc.topViewController as! WifiProvisionerController
-            vc.panelIdentifer = deviceid
-            vc.panelPubkey = pubkey
-            vc.setHotspotCredentials(ssid: panelSsid, password: pubkey)
-            window?.rootViewController?.present(navvc, animated: true, completion: nil)
+            let viewController: WifiProvisionerController = .newInstance()
+            viewController.device = device
+            viewController.setHotspotCredentials(ssid: panelSsid, password: device.publicKey)
+            window?.rootViewController?.present(UINavigationController(rootViewController: viewController),
+                                                animated: true,
+                                                completion: nil)
             return true
         } else {
-            let device = Device(id: deviceid, publicKey: pubkey)
             addDevice(device)
             return true
         }
