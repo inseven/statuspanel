@@ -44,9 +44,12 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
     private var connecting = false
     private var networkProvisioner: NetworkProvisioner!
 
-    static func newInstance() -> WifiProvisionerController {
-        return (UIStoryboard.main.instantiateViewController(withIdentifier: "WifiProvisionerController")
-                as! WifiProvisionerController)
+    static func newInstance(device: Device, ssid: String) -> WifiProvisionerController {
+        let viewController = (UIStoryboard.main.instantiateViewController(withIdentifier: "WifiProvisionerController")
+                              as! WifiProvisionerController)
+        viewController.device = device
+        viewController.setHotspotCredentials(ssid: ssid, password: device.publicKey)
+        return viewController
     }
 
     func setHotspotCredentials(ssid: String, password: String) {

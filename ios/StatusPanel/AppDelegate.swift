@@ -98,14 +98,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let device = Device(id: deviceId, publicKey: publicKey)
 
         // Now try and provision the panel
-        if let panelSsid = map["s"] {
+        if let ssid = map["s"] {
             // If the panel is telling us about an SSID, it's in AP mode and needs wifi credentials
-            let viewController: WifiProvisionerController = .newInstance()
-            viewController.device = device
-            viewController.setHotspotCredentials(ssid: panelSsid, password: device.publicKey)
-            window?.rootViewController?.present(UINavigationController(rootViewController: viewController),
-                                                animated: true,
-                                                completion: nil)
+            let viewController: WifiProvisionerController = .newInstance(device: device, ssid: ssid)
+            let navigationController = UINavigationController(rootViewController: viewController)
+            window?.rootViewController?.present(navigationController, animated: true, completion: nil)
             return true
         } else {
             addDevice(device)
