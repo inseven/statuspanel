@@ -227,7 +227,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             if devices.count == 0 && indexPath.row == 0 {
                 cell.textLabel?.text = "No devices configured"
             } else if indexPath.row >= devices.count {
-                cell.textLabel?.text = "<Add dummy device>"
+                cell.textLabel?.text = "Add Dummy Device..."
             } else {
                 let device = devices[indexPath.row]
                 cell.textLabel?.text = device.0
@@ -393,22 +393,31 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     override func tableView(_ tableView: UITableView,
                             canEditRowAt indexPath: IndexPath) -> Bool {
-        guard indexPath.section == DataSourcesSection else {
-            return false
+        if indexPath.section == DataSourcesSection {
+            return true
+        } else if indexPath.section == DevicesSection {
+            return indexPath.row < devices.count
         }
-        return true
+        return false
     }
 
     override func tableView(_ tableView: UITableView,
                             commit editingStyle: UITableViewCell.EditingStyle,
                             forRowAt indexPath: IndexPath) {
-        let dataSource = dataSourceController.instances[indexPath.row]
-        dataSourceController.remove(instance: dataSource)
-        tableView.deleteRows(at: [indexPath], with: .automatic)
-        do {
-            try dataSourceController.save()
-        } catch {
-            present(error: error)
+        guard editingStyle == .delete else {
+            return
+        }
+        if indexPath.section == DataSourcesSection {
+            let dataSource = dataSourceController.instances[indexPath.row]
+            dataSourceController.remove(instance: dataSource)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            do {
+                try dataSourceController.save()
+            } catch {
+                present(error: error)
+            }
+        } else if indexPath.section == DevicesSection {
+            // N.B. This is handled by trailingSwipeActionsConfigurationForRowAt instead.
         }
     }
 
@@ -514,7 +523,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         }
     }
 
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    override func tableView(_ tableView: UITableView,
+                            trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         if indexPath.section != DevicesSection || indexPath.row >= devices.count {
             return nil
         }
