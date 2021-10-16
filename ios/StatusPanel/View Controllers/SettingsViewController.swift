@@ -468,15 +468,10 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                     }
                     tableView.insertRows(at: [IndexPath(row: prevCount, section: DevicesSection)], with: .fade)
                 }
-                guard let url = URL(string: "statuspanel:r")?.settingQueryItems([
-                    URLQueryItem(name: "id", value: device.id),
-                    URLQueryItem(name: "pk", value: device.publicKey),
-                    URLQueryItem(name: "s", value: ""),
-                ]) else {
-                    return
-                }
-                dismiss(animated: true) {
-                    UIApplication.shared.open(url, options: [:])
+                let operation: ExternalOperation = .registerDeviceAndConfigureWiFi(device, ssid: device.publicKey)
+                self.dismiss(animated: true) {
+                    self.delegate?.didDismiss(settingsViewController: self)
+                    UIApplication.shared.open(operation.url, options: [:])
                 }
                 return
             } else {

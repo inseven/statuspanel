@@ -71,43 +71,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      open url: URL,
                      options: [UIApplication.OpenURLOptionsKey : Any] = [:] ) -> Bool {
-        // Process the URL.
-        guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
-            let operation = components.path,
-            let params = components.queryItems else {
-                print("Invalid URL or operation missing")
-                return false
-            }
-        var map: [String : String] = [:]
-        for kv in params {
-            if let val = kv.value {
-                map[kv.name] = val
-            }
-        }
-        // print("op:\(operation) params:\(params)")
-        if operation != "r" || map["id"] == nil || map["pk"] == nil {
-            print("Unrecognised operation \(operation)")
+
+        guard let operation = ExternalOperation(url: url) else {
+            print("Failed to parse URL '\(url)'.")
             return false
         }
 
-        guard let deviceId = map["id"],
-              let publicKey = map["pk"] else {
-                  return false
-              }
-
-        let device = Device(id: deviceId, publicKey: publicKey)
-
-        // Now try and provision the panel
-        if let ssid = map["s"] {
-            // If the panel is telling us about an SSID, it's in AP mode and needs wifi credentials
+        switch operation {
+        case .registerDevice(let device):
+            addDevice(device)
+        case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
             let viewController: WifiProvisionerController = .newInstance(device: device, ssid: ssid)
             let navigationController = UINavigationController(rootViewController: viewController)
-            window?.rootViewController?.present(navigationController, animated: true, completion: nil)
-            return true
-        } else {
-            addDevice(device)
-            return true
+            window?.rootViewController?.present(navigationController, animated: true)
         }
+        return true
     }
 
     func addDevice(_ device: Device) {
