@@ -130,7 +130,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DataSourcesSection:
             return dataSourceController.instances.count
         case ScheduleOrAddSourceSection:
-            return 1
+            if isEditing {
+                return 1
+            } else {
+                return 2
+            }
         case DisplaySettingsSection:
             return DisplaySettingsRowCount
         case FontsSection:
@@ -167,26 +171,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         }
     }
 
-    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        switch section {
-        case DevicesSection:
-            guard let lastBackgroundUpdate = Config().lastBackgroundUpdate else {
-                return nil
-            }
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .short
-            dateFormatter.timeStyle = .short
-            return "Last background update at \(dateFormatter.string(from: lastBackgroundUpdate))"
-        case ScheduleOrAddSourceSection:
-            if isEditing {
-                return nil
-            } else {
-                return "The time at which the status panel should update."
-            }
-        default: return nil
-        }
-    }
-
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let config = Config()
         switch indexPath.section {
@@ -211,16 +195,28 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.textLabel?.text = "Add Data Source..."
                 return cell
             } else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: Self.datePickerCellReuseIdentifier,
-                                                         for: indexPath) as! DatePickerCell
-                cell.label.text = "Update Time"
-                cell.datePicker.datePickerMode = .time
-                cell.datePicker.timeZone = TimeZone(secondsFromGMT: 0)
-                cell.datePicker.date = Date.init(timeIntervalSinceReferenceDate: Config().updateTime)
-                cell.datePicker.addTarget(self,
-                                          action: #selector(updateTimeChanged(sender:forEvent:)),
-                                          for: .valueChanged)
-                return cell
+                if indexPath.row == 0 {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: Self.datePickerCellReuseIdentifier,
+                                                             for: indexPath) as! DatePickerCell
+                    cell.label.text = "Device Update Time"
+                    cell.datePicker.datePickerMode = .time
+                    cell.datePicker.timeZone = TimeZone(secondsFromGMT: 0)
+                    cell.datePicker.date = Date.init(timeIntervalSinceReferenceDate: Config().updateTime)
+                    cell.datePicker.addTarget(self,
+                                              action: #selector(updateTimeChanged(sender:forEvent:)),
+                                              for: .valueChanged)
+                    return cell
+                } else {
+                    let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
+                    cell.textLabel?.text = "Last Background Update"
+                    if let lastBackgroundUpdate = Config().lastBackgroundUpdate {
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateStyle = .none
+                        dateFormatter.timeStyle = .short
+                        cell.detailTextLabel?.text = dateFormatter.string(from: lastBackgroundUpdate)
+                    }
+                    return cell
+                }
             }
         case DevicesSection:
             let cell = UITableViewCell(style: .default, reuseIdentifier: "DeviceCell")
