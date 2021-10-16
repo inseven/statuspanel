@@ -458,16 +458,27 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DevicesSection:
             let prevCount = devices.count
             if indexPath.row == (prevCount == 0 ? 1 : prevCount) {
-                devices.append(("DummyDevice\(indexPath.row)", ""))
+                let device = Device(id: "DummyDevice\(indexPath.row)", publicKey: "")
+                devices.append((device.id, device.publicKey))
                 Config().devices = devices
-                tableView.performBatchUpdates({
+                tableView.performBatchUpdates {
                     tableView.deselectRow(at: indexPath, animated: true)
-                    if (prevCount == 0) {
+                    if prevCount == 0 {
                         tableView.deleteRows(at: [IndexPath(row: prevCount, section: DevicesSection)], with: .fade)
                     }
                     tableView.insertRows(at: [IndexPath(row: prevCount, section: DevicesSection)], with: .fade)
-                }, completion: nil)
-                vcid = "WifiProvisionerController"
+                }
+                guard let url = URL(string: "statuspanel:r")?.settingQueryItems([
+                    URLQueryItem(name: "id", value: device.id),
+                    URLQueryItem(name: "pk", value: device.publicKey),
+                    URLQueryItem(name: "s", value: ""),
+                ]) else {
+                    return
+                }
+                dismiss(animated: true) {
+                    UIApplication.shared.open(url, options: [:])
+                }
+                return
             } else {
                 return
             }
