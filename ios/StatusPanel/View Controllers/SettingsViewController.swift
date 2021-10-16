@@ -37,7 +37,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     let DisplaySettingsSection = 2
     let FontsSection = 3
     let DevicesSection = 4
-    let AboutSection = 5
+    let DebugSection = 5
+    let AboutSection = 6
 
     let DisplaySettingsRowCount = 5
 
@@ -83,14 +84,14 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         if editing {
             self.navigationItem.setLeftBarButton(nil, animated: true)
             tableView.performBatchUpdates {
-                tableView.deleteSections([1, 2, 3, 4, 5], with: .fade)
+                tableView.deleteSections([1, 2, 3, 4, 5, 6], with: .fade)
                 tableView.insertSections([1], with: .fade)
             }
         } else {
             self.navigationItem.setLeftBarButton(doneButtonItem, animated: true)
             tableView.performBatchUpdates {
                 tableView.deleteSections([1], with: .fade)
-                tableView.insertSections([1, 2, 3, 4, 5], with: .fade)
+                tableView.insertSections([1, 2, 3, 4, 5, 6], with: .fade)
             }
         }
     }
@@ -116,7 +117,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         if isEditing {
             return 2
         } else {
-            return 6
+            return 7
         }
     }
 
@@ -130,11 +131,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DataSourcesSection:
             return dataSourceController.instances.count
         case ScheduleOrAddSourceSection:
-            if isEditing {
-                return 1
-            } else {
-                return 2
-            }
+            return 1
         case DisplaySettingsSection:
             return DisplaySettingsRowCount
         case FontsSection:
@@ -148,6 +145,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 n += 1 // For "Add dummy device"
             #endif
             return n
+        case DebugSection:
+            return 1
         case AboutSection:
             return 1
         default:
@@ -164,10 +163,16 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             } else {
                 return "Schedule"
             }
-        case DisplaySettingsSection: return "Display"
-        case FontsSection: return "Fonts"
-        case DevicesSection: return "Devices"
-        default: return nil
+        case DisplaySettingsSection:
+            return "Display"
+        case FontsSection:
+            return "Fonts"
+        case DevicesSection:
+            return "Devices"
+        case DebugSection:
+            return "Debug"
+        default:
+            return nil
         }
     }
 
@@ -195,28 +200,16 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.textLabel?.text = "Add Data Source..."
                 return cell
             } else {
-                if indexPath.row == 0 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: Self.datePickerCellReuseIdentifier,
-                                                             for: indexPath) as! DatePickerCell
-                    cell.label.text = "Device Update Time"
-                    cell.datePicker.datePickerMode = .time
-                    cell.datePicker.timeZone = TimeZone(secondsFromGMT: 0)
-                    cell.datePicker.date = Date.init(timeIntervalSinceReferenceDate: Config().updateTime)
-                    cell.datePicker.addTarget(self,
-                                              action: #selector(updateTimeChanged(sender:forEvent:)),
-                                              for: .valueChanged)
-                    return cell
-                } else {
-                    let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
-                    cell.textLabel?.text = "Last Background Update"
-                    if let lastBackgroundUpdate = Config().lastBackgroundUpdate {
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.dateStyle = .none
-                        dateFormatter.timeStyle = .short
-                        cell.detailTextLabel?.text = dateFormatter.string(from: lastBackgroundUpdate)
-                    }
-                    return cell
-                }
+                let cell = tableView.dequeueReusableCell(withIdentifier: Self.datePickerCellReuseIdentifier,
+                                                         for: indexPath) as! DatePickerCell
+                cell.label.text = "Device Update Time"
+                cell.datePicker.datePickerMode = .time
+                cell.datePicker.timeZone = TimeZone(secondsFromGMT: 0)
+                cell.datePicker.date = Date.init(timeIntervalSinceReferenceDate: Config().updateTime)
+                cell.datePicker.addTarget(self,
+                                          action: #selector(updateTimeChanged(sender:forEvent:)),
+                                          for: .valueChanged)
+                return cell
             }
         case DevicesSection:
             let cell = UITableViewCell(style: .default, reuseIdentifier: "DeviceCell")
@@ -319,6 +312,16 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
             return cell
 
+        case DebugSection:
+            let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
+            cell.textLabel?.text = "Last Background Update"
+            if let lastBackgroundUpdate = Config().lastBackgroundUpdate {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateStyle = .none
+                dateFormatter.timeStyle = .short
+                cell.detailTextLabel?.text = dateFormatter.string(from: lastBackgroundUpdate)
+            }
+            return cell
         case AboutSection:
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = "About StatusPanel"
@@ -342,6 +345,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         Config().updateTime = newTime
     }
 
+    // TODO: Consider not using this?
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == DevicesSection {
             if indexPath.row == (devices.count == 0 ? 1 : devices.count) {
@@ -354,6 +358,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return indexPath.row > 1
         } else if indexPath.section == DataSourcesSection {
             return dataSourceController.instances[indexPath.row].dataSource.configurable
+        } else if indexPath.section == DebugSection {
+            return false
         } else {
             // All others are highlightable
             return true
