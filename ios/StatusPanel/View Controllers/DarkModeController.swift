@@ -69,11 +69,11 @@ class DarkModeController : UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        config.darkMode = Config.DarkModeConfig(rawValue: indexPath.row)!
-        tableView.performBatchUpdates({
+        config.darkMode = configValue(forRowAt: indexPath)
+        tableView.performBatchUpdates {
             tableView.deselectRow(at: indexPath, animated: true)
             tableView.reloadData()
-        }) { finished in
+        } completion: { finished in
             self.navigationController?.popViewController(animated: true)
         }
     }
