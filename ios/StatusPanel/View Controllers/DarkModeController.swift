@@ -62,7 +62,7 @@ class DarkModeController : UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellReuseIdentifier, for: indexPath)
-        let configValue = configValue(forRowAt: indexPath)
+        let configValue = self.configValue(forRowAt: indexPath)
         cell.textLabel?.text = Localize(configValue)
         cell.accessoryType = config.darkMode == configValue ? .checkmark : .none
         return cell
