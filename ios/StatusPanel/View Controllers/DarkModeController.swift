@@ -49,11 +49,11 @@ class DarkModeController : UITableViewController {
     func configValue(forRowAt indexPath: IndexPath) -> Config.DarkModeConfig {
         switch indexPath.row {
         case 0:
-            return Config.DarkModeConfig.off
+            return .off
         case 1:
-            return Config.DarkModeConfig.on
+            return .on
         case 2:
-            return Config.DarkModeConfig.system
+            return .system
         default:
             break
         }
