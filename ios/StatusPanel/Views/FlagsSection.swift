@@ -77,40 +77,38 @@ struct FlagsSection: View {
 
     var body: some View {
         Section(header: Text("Display")) {
-            NavigationLink(isActive: $isShowingStyle) {
-                List {
-                    Button {
-                        flags.style = .title
-                        isShowingStyle = false
-                    } label: {
-                        HStack {
-                            Text(Localize(Style.title))
-                            Spacer()
-                            if flags.style == .title {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.accentColor)
-                            }
+            NavigationLink(destination: List {
+                Button {
+                    flags.style = .title
+                    isShowingStyle = false
+                } label: {
+                    HStack {
+                        Text(Localize(Style.title))
+                        Spacer()
+                        if flags.style == .title {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.accentColor)
                         }
-                        .foregroundColor(.primary)
                     }
-                    Button {
-                        flags.style = .body
-                        isShowingStyle = false
-                    } label: {
-                        HStack {
-                            Text(Localize(Style.body))
-                            Spacer()
-                            if flags.style == .body {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.accentColor)
-                            }
-                        }
-                        .foregroundColor(.primary)
-                    }
+                    .foregroundColor(.primary)
                 }
-                .listStyle(GroupedListStyle())
-                .navigationTitle("Style")
-            } label: {
+                Button {
+                    flags.style = .body
+                    isShowingStyle = false
+                } label: {
+                    HStack {
+                        Text(Localize(Style.body))
+                        Spacer()
+                        if flags.style == .body {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                    .foregroundColor(.primary)
+                }
+            }
+            .listStyle(GroupedListStyle())
+            .navigationTitle("Style"), isActive: $isShowingStyle) {
                 HStack {
                     Text(LocalizedString("flags_section_style_label"))
                     Spacer()
