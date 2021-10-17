@@ -214,8 +214,9 @@
 		D81DA7BE2712952D0052D32C /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				D81DA7BF2712953D0052D32C /* Localization.swift */,
 				D8E285AC271A4547001738A8 /* ExternalOperation.swift */,
+				DB51C2E221749A2A00F016DB /* JSONRequest.swift */,
+				D81DA7BF2712953D0052D32C /* Localization.swift */,
 				D8CC37B02717887A00938C5D /* Panel.swift */,
 			);
 			path = Utilities;
@@ -285,11 +286,14 @@
 			isa = PBXGroup;
 			children = (
 				D8B3B3A727182BB000DD3148 /* AddDataSourceController.swift */,
+				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
 				D812523B2709875600C9D80A /* FontPickerViewController.swift */,
 				DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */,
 				DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */,
 				D8F57FE9271A009200847C67 /* QRCodeViewController.swift */,
 				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
+				DBCA987E2143E2920084B710 /* ViewController.swift */,
+				DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -389,15 +393,11 @@
 				D80380AA23E9B6D2002606C7 /* Client.swift */,
 				D89CAF1021ABDDA200B4B314 /* Config.swift */,
 				D8DAED7126E3F3320002F388 /* Configuration.swift */,
-				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
 				D8E285AE271A45CE001738A8 /* Device.swift */,
 				DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */,
-				DB51C2E221749A2A00F016DB /* JSONRequest.swift */,
 				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
 				D8DAED7326E3F3930002F388 /* StatusPanelError.swift */,
 				DB5E9DA0241562ED009F3807 /* StringUtils.swift */,
-				DBCA987E2143E2920084B710 /* ViewController.swift */,
-				DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */,
 				DBCA98832143E2920084B710 /* Assets.xcassets */,
 				D8D252B127146EB700C68EF9 /* Controls */,
 				D842A400265BE8C1009C1156 /* Data */,
