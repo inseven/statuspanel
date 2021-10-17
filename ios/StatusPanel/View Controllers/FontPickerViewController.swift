@@ -46,16 +46,8 @@ class FontPickerViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let config = Config()
         let font = config.availableFonts[indexPath.row]
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        let label = ViewController.getLabel(frame: .zero, font: font.configName, style: .text)
-        label.text = font.humanReadableName
-        label.translatesAutoresizingMaskIntoConstraints = false
-        cell.contentView.addSubview(label)
-        NSLayoutConstraint.activate([
-            label.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            label.leadingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.leadingAnchor),
-            label.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
-        ])
+        let cell = FontTableViewCell(font: font)
+        cell.label.text = font.humanReadableName
         if font.configName == self.font.wrappedValue {
             cell.accessoryType = .checkmark
         } else {
