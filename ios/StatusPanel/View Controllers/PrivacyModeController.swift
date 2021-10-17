@@ -26,6 +26,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
 
     init(config: Config) {
         super.init(style: .grouped)
+        title = LocalizedString("privacy_mode_title")
     }
 
     required init?(coder: NSCoder) {

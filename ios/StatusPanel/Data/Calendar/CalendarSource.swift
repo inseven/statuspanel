@@ -221,7 +221,7 @@ final class CalendarSource : DataSource {
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        return CalendarViewController(store: store, settings: settings)
+        return CalendarViewController(config: Config(), store: store, settings: settings)
     }
 
 }
