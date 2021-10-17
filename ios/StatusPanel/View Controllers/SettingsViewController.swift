@@ -313,7 +313,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             cell.textLabel?.text = LocalizedString("settings_last_background_update_label")
             if let lastBackgroundUpdate = Config().lastBackgroundUpdate {
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateStyle = .none
+                dateFormatter.dateStyle = .short
                 dateFormatter.timeStyle = .short
                 cell.detailTextLabel?.text = dateFormatter.string(from: lastBackgroundUpdate)
             } else {
