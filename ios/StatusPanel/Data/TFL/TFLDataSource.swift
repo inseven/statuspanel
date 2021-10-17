@@ -139,13 +139,7 @@ final class TFLDataSource: DataSource {
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "TflEditor")
-                as? TFLSettingsController else {
-            return nil
-        }
-        viewController.store = store
-        viewController.settings = settings
-        return viewController
+        return TFLSettingsController(store: store, settings: settings)
     }
 
 }

@@ -52,35 +52,6 @@
             </objects>
             <point key="canvasLocation" x="3825" y="-962"/>
         </scene>
-        <!--London Underground-->
-        <scene sceneID="YRt-MR-AXX">
-            <objects>
-                <tableViewController storyboardIdentifier="TflEditor" id="CQW-u6-DD0" customClass="TFLSettingsController" customModule="StatusPanel" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="JiV-6p-lb2">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="1024"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="o7M-Df-WrV">
-                                <rect key="frame" x="16" y="49.5" width="288" height="43.5"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="o7M-Df-WrV" id="pUq-tS-8Lz">
-                                    <rect key="frame" x="0.0" y="0.0" width="288" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <sections/>
-                        <connections>
-                            <outlet property="dataSource" destination="CQW-u6-DD0" id="5wt-I7-gdc"/>
-                            <outlet property="delegate" destination="CQW-u6-DD0" id="nT8-DX-QBz"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="London Underground" id="NoI-Ll-EVd"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="BVB-z7-beR" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3825" y="-271"/>
-        </scene>
         <!--Root Controller-->
         <scene sceneID="GLh-JR-ag9">
             <objects>
