@@ -69,7 +69,7 @@ class DarkModeController : UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        Config().darkMode = Config.DarkModeConfig(rawValue: indexPath.row)!
+        config.darkMode = Config.DarkModeConfig(rawValue: indexPath.row)!
         tableView.performBatchUpdates({
             tableView.deselectRow(at: indexPath, animated: true)
             tableView.reloadData()
