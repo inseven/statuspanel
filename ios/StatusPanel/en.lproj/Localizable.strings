@@ -41,3 +41,12 @@
 "dark_mode_config_off" = "Off";
 "dark_mode_config_on" = "On";
 "dark_mode_config_system" = "Use System";
+
+"calendar_calendars_label" = "Calendars";
+"calendar_day_label" = "Day";
+"calendar_show_locations_label" =  "Show Locations";
+"calendar_show_urls_label" = "Show Full URLs in Locations";
+
+"calendar_picker_title" = "Calendars";
+
+"privacy_mode_title" = "Privacy Mode";

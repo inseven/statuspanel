@@ -18,35 +18,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-"error_missing_configuration" = "Missing configuration.";
-"error_invalid_response" = "Invalid response.";
-"error_invalid_url" = "Invalid URL.";
-"error_invalid_date" = "Invalid date.";
-"error_corrupt_settings" = "Corrupt settings.";
-"error_unknown_data_source" = "Unknown data source (%@).";
-"error_internal_inconsistency" = "Internal inconsistency.";
-"error_incorrect_settings_type" = "Incorrect settings type.";
+import EventKit
+import SwiftUI
+import UIKit
 
-"settings_last_background_update_label" = "Last Background Update";
-"settings_last_background_update_value_never" = "Never";
+class CalendarPickerController: UIHostingController<CalendarPicker> {
 
-"settings_no_devices_label" = "No Devices";
-"settings_add_dummy_device_label" = "Add Dummy Device...";
+    init(eventStore: EKEventStore, selection: Binding<Set<String>>) {
+        super.init(rootView: CalendarPicker(eventStore: eventStore, selection: selection))
+        title = LocalizedString("calendar_picker_title")
+    }
 
-"maximum_lines_title" = "Maximum Lines";
-"maximum_lines_unlimited_label" = "Unlimited";
+    @MainActor @objc required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
-"dark_mode_title" = "Dark Mode";
-
-"dark_mode_config_off" = "Off";
-"dark_mode_config_on" = "On";
-"dark_mode_config_system" = "Use System";
-
-"calendar_calendars_label" = "Calendars";
-"calendar_day_label" = "Day";
-"calendar_show_locations_label" =  "Show Locations";
-"calendar_show_urls_label" = "Show Full URLs in Locations";
-
-"calendar_picker_title" = "Calendars";
-
-"privacy_mode_title" = "Privacy Mode";
+}
