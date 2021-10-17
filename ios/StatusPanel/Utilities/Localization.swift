@@ -34,3 +34,14 @@ func LocalizedOffset(_ offset: Int) -> String {
         return "Unknown"
     }
 }
+
+func Localize(_ darkModeConfig: Config.DarkModeConfig) -> String {
+    switch darkModeConfig {
+    case .off:
+        return LocalizedString("dark_mode_config_off")
+    case .on:
+        return LocalizedString("dark_mode_config_on")
+    case .system:
+        return LocalizedString("dark_mode_config_system")
+    }
+}
