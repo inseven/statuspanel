@@ -119,6 +119,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         sourceController = appDelegate.sourceController
         sourceController.delegate = self
 
+        title = "StatusPanel"
         navigationItem.leftBarButtonItem = settingsButtonItem
         navigationItem.rightBarButtonItems = [addButtonItem, refreshButtonItem]
 
