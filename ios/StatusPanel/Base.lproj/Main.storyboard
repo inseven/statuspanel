@@ -24,34 +24,6 @@
             </objects>
             <point key="canvasLocation" x="1295" y="29"/>
         </scene>
-        <!--Calendars-->
-        <scene sceneID="3G6-lz-4ro">
-            <objects>
-                <tableViewController storyboardIdentifier="CalendarsEditor" id="nUA-Ft-2N7" customClass="CalendarViewController" customModule="StatusPanel" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="cn3-lj-tF4">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="1024"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="sUE-ZT-DMO">
-                                <rect key="frame" x="16" y="49.5" width="288" height="43.5"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="sUE-ZT-DMO" id="yef-w3-d7u">
-                                    <rect key="frame" x="0.0" y="0.0" width="288" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="nUA-Ft-2N7" id="KDU-A6-yT2"/>
-                            <outlet property="delegate" destination="nUA-Ft-2N7" id="vj9-wa-aCO"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Calendars" id="qFE-UL-UDf"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="p5u-k4-Mql" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2289" y="29"/>
-        </scene>
         <!--Root Controller-->
         <scene sceneID="GLh-JR-ag9">
             <objects>
@@ -72,7 +44,7 @@
         <scene sceneID="aQF-3S-Wus">
             <objects>
                 <tableViewController storyboardIdentifier="WifiProvisionerController" title="Set Wifi credentials" id="YhL-nZ-Blj" customClass="WifiProvisionerController" customModule="StatusPanel" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="pEX-JO-T1I">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="pEX-JO-T1I">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <sections>
@@ -190,7 +162,7 @@
                     <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
                 </view>
             </objects>
-            <point key="canvasLocation" x="3234" y="29"/>
+            <point key="canvasLocation" x="2151" y="29"/>
         </scene>
     </scenes>
     <resources>

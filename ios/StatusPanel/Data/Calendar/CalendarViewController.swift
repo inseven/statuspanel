@@ -23,18 +23,27 @@ import SwiftUI
 import UIKit
 
 class CalendarViewController: UITableViewController {
+    
+    private static var cellReuseIdentifier = "Cell"
 
-    var store: DataSourceSettingsStore<CalendarSource.Settings>!
-    var settings: CalendarSource.Settings!
+    private let store: DataSourceSettingsStore<CalendarSource.Settings>
+    private var settings: CalendarSource.Settings
+    private let eventStore: EKEventStore
 
-    private var eventStore: EKEventStore!
     private var calendars: [[EKCalendar]]!
     private var sources: [EKSource]!
     private var activeCalendars: Set<String>!
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        eventStore = EKEventStore()
+    init(store: DataSourceSettingsStore<CalendarSource.Settings>, settings: CalendarSource.Settings) {
+        self.store = store
+        self.settings = settings
+        self.eventStore = EKEventStore()
+        super.init(style: .insetGrouped)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Self.cellReuseIdentifier)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -101,7 +110,7 @@ class CalendarViewController: UITableViewController {
             }
             assert(false)
         }
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellReuseIdentifier, for: indexPath)
         let calendar = calendars[indexPath.section][indexPath.row]
         cell.textLabel?.text = calendar.title
         if activeCalendars.contains(calendar.calendarIdentifier) {

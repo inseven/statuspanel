@@ -24,8 +24,8 @@ class TFLSettingsController: UITableViewController {
 
     private static var cellReuseIdentifier = "Cell"
 
-    private var store: DataSourceSettingsStore<TFLDataSource.Settings>!
-    private var settings: TFLDataSource.Settings!
+    private var store: DataSourceSettingsStore<TFLDataSource.Settings>
+    private var settings: TFLDataSource.Settings
 
     private var sortedLines: [String]!
     private var activeLines = Set<String>()
@@ -34,6 +34,7 @@ class TFLSettingsController: UITableViewController {
         self.store = store
         self.settings = settings
         super.init(style: .insetGrouped)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Self.cellReuseIdentifier)
     }
 
     required init?(coder: NSCoder) {
@@ -42,7 +43,6 @@ class TFLSettingsController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Self.cellReuseIdentifier)
         sortedLines = TFLDataSource.lines.keys.sorted()
     }
 
