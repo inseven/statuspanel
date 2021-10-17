@@ -492,7 +492,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             if indexPath.row == 2 {
                 vcid = "DarkModeEditor"
             } else if indexPath.row == 3 {
-                vcid = "MaxLinesEditor"
+                let viewController = MaxLinesController(config: Config())
+                navigationController?.pushViewController(viewController, animated: true)
+                return
             } else if indexPath.row == 4 {
                 let viewController = PrivacyModeController(config: Config())
                 navigationController?.pushViewController(viewController, animated: true)
