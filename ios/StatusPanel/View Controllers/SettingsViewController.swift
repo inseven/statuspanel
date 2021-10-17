@@ -494,7 +494,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             } else if indexPath.row == 3 {
                 vcid = "MaxLinesEditor"
             } else if indexPath.row == 4 {
-                vcid = "PrivacyModeEditor"
+                let viewController = PrivacyModeController(config: Config())
+                navigationController?.pushViewController(viewController, animated: true)
+                return
             }
         case FontsSection:
             switch indexPath.row {
