@@ -17,20 +17,3 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-
-import Foundation
-
-func LocalizedString(_ key: String) -> String {
-    return NSLocalizedString(key, comment: "")
-}
-
-func LocalizedOffset(_ offset: Int) -> String {
-    switch offset {
-    case 0:
-        return "Today"
-    case 1:
-        return "Tomorrow"
-    default:
-        return "Unknown"
-    }
-}

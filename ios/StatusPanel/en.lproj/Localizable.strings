@@ -18,19 +18,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
-
-func LocalizedString(_ key: String) -> String {
-    return NSLocalizedString(key, comment: "")
-}
-
-func LocalizedOffset(_ offset: Int) -> String {
-    switch offset {
-    case 0:
-        return "Today"
-    case 1:
-        return "Tomorrow"
-    default:
-        return "Unknown"
-    }
-}
+"error_missing_configuration" = "Missing configuration.";
+"error_invalid_response" = "Invalid response.";
+"error_invalid_url" = "Invalid URL.";
+"error_invalid_date" = "Invalid date.";
+"error_corrupt_settings" = "Corrupt settings.";
+"error_unknown_data_source" = "Unknown data source (%@).";
+"error_internal_inconsistency" = "Internal inconsistency.";
+"error_incorrect_settings_type" = "Incorrect settings type.";
