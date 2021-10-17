@@ -45,3 +45,12 @@ func Localize(_ darkModeConfig: Config.DarkModeConfig) -> String {
         return LocalizedString("dark_mode_config_system")
     }
 }
+
+func Localize(_ style: FlagsSection.Style) -> String {
+    switch style {
+    case .title:
+        return LocalizedString("flags_section_style_value_title")
+    case .body:
+        return LocalizedString("flags_section_style_value_body")
+    }
+}
