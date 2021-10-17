@@ -25,7 +25,7 @@ import Sodium
 
 extension DataItemFlags {
 
-    var style: ViewController.LabelStyle {
+    var labelStyle: ViewController.LabelStyle {
         if contains(.header) {
             return .header
         }
@@ -302,7 +302,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             if !prefix.isEmpty {
                 let prefixLabel = ViewController.getLabel(frame: textFrame,
                                                           font: font,
-                                                          style: flags.style,
+                                                          style: flags.labelStyle,
                                                           redactMode: redactMode)
                 prefixLabel.textColor = foregroundColor
                 prefixLabel.numberOfLines = numPrefixLines
@@ -321,7 +321,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             }
             let label = ViewController.getLabel(frame: textFrame,
                                                 font: font,
-                                                style: flags.style,
+                                                style: flags.labelStyle,
                                                 redactMode: redactMode)
             label.numberOfLines = 1 // Temporarily while we're using it in checkFit
 

@@ -20,29 +20,35 @@
 
 import SwiftUI
 
+extension DataItemFlags {
+
+    var style: FlagsSection.Style {
+        get {
+            if contains(.header) {
+                return .title
+            }
+            return .body
+        }
+        set {
+            switch newValue {
+            case .title:
+                insert(.header)
+            case .body:
+                remove(.header)
+            }
+        }
+    }
+
+}
+
 struct FlagsSection: View {
 
     @Binding var flags: DataItemFlags
+    @State var isShowingStyle = false
 
     enum Style {
         case title
         case body
-    }
-
-    func style() -> Binding<Style> {
-        Binding {
-            if flags.contains(.header) {
-                return .title
-            }
-            return .body
-        } set: { newValue in
-            switch newValue {
-            case .title:
-                flags.insert(.header)
-            case .body:
-                flags.remove(.header)
-            }
-        }
     }
 
     func prefersEmptyColumn() -> Binding<Bool> {
@@ -71,12 +77,50 @@ struct FlagsSection: View {
 
     var body: some View {
         Section(header: Text("Display")) {
-            Picker("Style", selection: style()) {
-                Text("Title").tag(Style.title)
-                Text("Body").tag(Style.body)
+            NavigationLink(isActive: $isShowingStyle) {
+                List {
+                    Button {
+                        flags.style = .title
+                        isShowingStyle = false
+                    } label: {
+                        HStack {
+                            Text(Localize(Style.title))
+                            Spacer()
+                            if flags.style == .title {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
+                        .foregroundColor(.primary)
+                    }
+                    Button {
+                        flags.style = .body
+                        isShowingStyle = false
+                    } label: {
+                        HStack {
+                            Text(Localize(Style.body))
+                            Spacer()
+                            if flags.style == .body {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
+                        .foregroundColor(.primary)
+                    }
+                }
+                .listStyle(GroupedListStyle())
+                .navigationTitle("Style")
+            } label: {
+                HStack {
+                    Text(LocalizedString("flags_section_style_label"))
+                    Spacer()
+                    Text(Localize(flags.style))
+                        .foregroundColor(.secondary)
+                }
             }
-            Toggle("Prefers Empty Column", isOn: prefersEmptyColumn())
-            Toggle("Spans Columns", isOn: spansColumns())
+
+            Toggle(LocalizedString("flags_section_prefers_empty_column_label"), isOn: prefersEmptyColumn())
+            Toggle(LocalizedString("flags_section_spans_columns_label"), isOn: spansColumns())
         }
     }
 
