@@ -24,6 +24,14 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
 
     private let config = Config()
 
+    init(config: Config) {
+        super.init(style: .grouped)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         return true
     }
@@ -107,7 +115,8 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
         return cell
     }
 
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         var image = info[.editedImage] as? UIImage
         if image == nil {
             image = info[.originalImage] as? UIImage
@@ -125,7 +134,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
              let imgdata = image.pngData()
              try imgdata?.write(to: dir.appendingPathComponent("customPrivacyImage.png"))
          } catch {
-             print("meh")
+             present(error: error)
          }
     }
 }
