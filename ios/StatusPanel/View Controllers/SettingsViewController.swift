@@ -214,12 +214,15 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DevicesSection:
             let cell = UITableViewCell(style: .default, reuseIdentifier: "DeviceCell")
             if devices.count == 0 && indexPath.row == 0 {
-                cell.textLabel?.text = "No devices configured"
+                cell.textLabel?.text = LocalizedString("settings_no_devices_label")
+                cell.textLabel?.textColor = .secondaryLabel
             } else if indexPath.row >= devices.count {
-                cell.textLabel?.text = "Add Dummy Device..."
+                cell.textLabel?.text = LocalizedString("settings_add_dummy_device_label")
+                cell.textLabel?.textColor = .label
             } else {
                 let device = devices[indexPath.row]
                 cell.textLabel?.text = device.0
+                cell.textLabel?.textColor = .label
             }
             return cell
         case DisplaySettingsSection:
@@ -314,12 +317,14 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
         case DebugSection:
             let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
-            cell.textLabel?.text = "Last Background Update"
+            cell.textLabel?.text = LocalizedString("settings_last_background_update_label")
             if let lastBackgroundUpdate = Config().lastBackgroundUpdate {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateStyle = .none
                 dateFormatter.timeStyle = .short
                 cell.detailTextLabel?.text = dateFormatter.string(from: lastBackgroundUpdate)
+            } else {
+                cell.detailTextLabel?.text = LocalizedString("settings_last_background_update_value_never")
             }
             return cell
         case AboutSection:
