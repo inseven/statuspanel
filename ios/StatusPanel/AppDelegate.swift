@@ -22,8 +22,10 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+
     private var background = false
     private var blockUpdates = false
+
     var window: UIWindow?
     var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
     var sourceController = DataSourceController()
@@ -36,10 +38,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         client = Client(baseUrl: "https://api.statuspanel.io/")
         application.registerForRemoteNotifications()
 
+        let viewController = ViewController()
+        viewController.view.backgroundColor = .secondarySystemBackground
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.navigationBar.prefersLargeTitles = true
+
+        window = UIWindow()
+        window?.rootViewController = navigationController
         window?.tintColor = UIColor(named: "TintColor")
-        if let navigationController = window?.rootViewController as? UINavigationController {
-            navigationController.navigationBar.prefersLargeTitles = true
-        }
+        window?.makeKeyAndVisible()
 
         return true
     }
