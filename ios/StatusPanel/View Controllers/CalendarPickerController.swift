@@ -29,7 +29,7 @@ class CalendarPickerController: UIHostingController<CalendarPicker> {
         title = LocalizedString("calendar_picker_title")
     }
 
-    @MainActor @objc required dynamic init?(coder aDecoder: NSCoder) {
+    @objc required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
