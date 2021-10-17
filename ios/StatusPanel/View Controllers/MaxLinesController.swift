@@ -57,9 +57,12 @@ class MaxLinesController : UITableViewController {
             return 3
         case 3:
             return 4
-        default:
+        case 4:
             return 0
+        default:
+            break
         }
+        fatalError("Unsupported index path")
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -57,7 +57,7 @@ class DarkModeController : UITableViewController {
         default:
             break
         }
-        assert(false)
+        fatalError("Unsupported index path")
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
