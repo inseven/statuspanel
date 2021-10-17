@@ -22,14 +22,27 @@ import UIKit
 
 class TFLSettingsController: UITableViewController {
 
-    var store: DataSourceSettingsStore<TFLDataSource.Settings>!
-    var settings: TFLDataSource.Settings!
+    private static var cellReuseIdentifier = "Cell"
 
-    var sortedLines: [String]!
-    var activeLines = Set<String>()
+    private var store: DataSourceSettingsStore<TFLDataSource.Settings>!
+    private var settings: TFLDataSource.Settings!
+
+    private var sortedLines: [String]!
+    private var activeLines = Set<String>()
+
+    init(store: DataSourceSettingsStore<TFLDataSource.Settings>, settings: TFLDataSource.Settings) {
+        self.store = store
+        self.settings = settings
+        super.init(style: .insetGrouped)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Self.cellReuseIdentifier)
         sortedLines = TFLDataSource.lines.keys.sorted()
     }
 
@@ -47,7 +60,7 @@ class TFLSettingsController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellReuseIdentifier, for: indexPath)
         let line = sortedLines[indexPath.row]
         cell.textLabel?.text = TFLDataSource.lines[line]
         cell.accessoryType = activeLines.contains(line) ? .checkmark : .none
