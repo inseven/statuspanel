@@ -30,17 +30,13 @@ class MaxLinesController : UITableViewController {
     init(config: Config) {
         self.config = config
         super.init(style: .grouped)
+        tableView.allowsSelection = true
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Self.cellReuseIdentifier)
+        title = LocalizedString("maximum_lines_title")
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        title = LocalizedString("maximum_lines_title")
-        tableView.allowsSelection = true
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Self.cellReuseIdentifier)
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -68,7 +64,7 @@ class MaxLinesController : UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellReuseIdentifier, for: indexPath)
-        let configValue = configValue(forRowAt: indexPath)
+        let configValue = self.configValue(forRowAt: indexPath)
         cell.textLabel?.text = configValue == 0 ? LocalizedString("maximum_lines_unlimited_label") : String(configValue)
         cell.accessoryType = config.maxLines == configValue ? .checkmark : .none
         return cell
