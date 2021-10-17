@@ -35,3 +35,9 @@
 
 "maximum_lines_title" = "Maximum Lines";
 "maximum_lines_unlimited_label" = "Unlimited";
+
+"dark_mode_title" = "Dark Mode";
+
+"dark_mode_config_off" = "Off";
+"dark_mode_config_on" = "On";
+"dark_mode_config_system" = "Use System";

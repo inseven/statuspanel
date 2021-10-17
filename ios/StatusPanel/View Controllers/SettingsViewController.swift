@@ -243,14 +243,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.accessoryView = control
             case 2:
                 cell.textLabel?.text = "Dark Mode"
-                switch config.darkMode {
-                case .off:
-                    cell.detailTextLabel?.text = "Off"
-                case .on:
-                    cell.detailTextLabel?.text = "On"
-                case .system:
-                    cell.detailTextLabel?.text = "Use System"
-                }
+                cell.detailTextLabel?.text = Localize(config.darkMode)
                 cell.accessoryType = .disclosureIndicator
             case 3:
                 cell.textLabel?.text = "Maximum Lines per Item"
@@ -445,7 +438,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var vcid: String?
         switch indexPath.section {
         case DataSourcesSection:
             do {
@@ -490,7 +482,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             }
         case DisplaySettingsSection:
             if indexPath.row == 2 {
-                vcid = "DarkModeEditor"
+                let viewController = DarkModeController(config: Config())
+                navigationController?.pushViewController(viewController, animated: true)
+                return
             } else if indexPath.row == 3 {
                 let viewController = MaxLinesController(config: Config())
                 navigationController?.pushViewController(viewController, animated: true)
@@ -526,17 +520,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             tableView.deselectRow(at: indexPath, animated: true)
         default:
             break
-        }
-        if let vcid = vcid {
-            let vc = UIStoryboard.main.instantiateViewController(withIdentifier: vcid)
-            if let navvc = vc as? UINavigationController {
-                // Hack for presenting the underlying controller, useful for dummy device
-                navigationController?.pushViewController(navvc.topViewController!, animated: true)
-            } else {
-                navigationController?.pushViewController(vc, animated: true)
-            }
-        } else {
-            print("No view controller for \(indexPath)!")
         }
     }
 
