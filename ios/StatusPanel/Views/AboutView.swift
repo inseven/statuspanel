@@ -53,7 +53,7 @@ struct AboutView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("App")) {
+                Section {
                     HStack {
                         Text("Version")
                         Spacer()
@@ -77,12 +77,12 @@ struct AboutView: View {
                         Text(person)
                     }
                 }
-                Section(header: Text("Font Licenses")) {
+                Section(header: Text("Fonts")) {
                     ForEach(fonts) { font in
                         LicenseRow(name: font.humanReadableName, author: font.author, license: font.attribution)
                     }
                 }
-                Section(header: Text("Code Licenses")) {
+                Section(header: Text("Licenses")) {
                     LicenseRow(name: "Binding+mappedToBool",
                                author: "Joseph Duffy",
                                license: String(contentsOfBundleFile: "Binding+mappedToBool") ?? "missing file")
