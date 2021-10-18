@@ -22,9 +22,10 @@ import UIKit
 
 class PrivacyModeController : UITableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
 
-    private let config = Config()
+    private let config: Config
 
     init(config: Config) {
+        self.config = config
         super.init(style: .grouped)
         title = LocalizedString("privacy_mode_title")
     }
@@ -87,19 +88,19 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-
         if indexPath.row < 2 {
-            let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
             let redactMode: RedactMode = (indexPath.row == 0) ? .redactLines : .redactWords
-            let label = ViewController.getLabel(frame: frame, font: Config().bodyFont, style: .text, redactMode: redactMode)
-            label.text = "Redact text good"
-            label.sizeToFit()
-            label.frame = label.frame.offsetBy(dx: 0, dy: (frame.height - label.bounds.height) / 2)
-            cell.contentView.addSubview(label)
+            let cell = FontTableViewCell(font: config.getFont(named: config.bodyFont), redactMode: redactMode)
+            cell.label.text = "Redact text good"
+            cell.accessoryType = indexPath.row == config.privacyMode.rawValue ? .checkmark : .none
+            return cell
         } else if (indexPath.row == 2) {
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = "Custom Image"
+            cell.accessoryType = indexPath.row == config.privacyMode.rawValue ? .checkmark : .none
+            return cell
         } else if (indexPath.row == 3) {
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.contentView.bounds = cell.contentView.bounds.rectWithDifferentHeight(kImageRowHeight)
             cell.accessoryType = .disclosureIndicator
             let frame = cell.contentView.bounds.insetBy(left: cell.separatorInset.left, right: 35, top: 10, bottom: 10)
@@ -108,12 +109,9 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
             imgView.contentMode = .scaleAspectFit
             imgView.frame = frame
             cell.contentView.addSubview(imgView)
+            return cell
         }
-
-        if indexPath.row == Config().privacyMode.rawValue {
-            cell.accessoryType = .checkmark
-        }
-        return cell
+        fatalError("Unknown index path")
     }
 
     func imagePickerController(_ picker: UIImagePickerController,

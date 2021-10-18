@@ -43,6 +43,7 @@
 		D8C20D23271C6C1500F3F22A /* EKCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D22271C6C1500F3F22A /* EKCalendar.swift */; };
 		D8C20D25271C7A2000F3F22A /* CalendarPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */; };
 		D8C20D27271C7A6E00F3F22A /* CalendarPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D26271C7A6E00F3F22A /* CalendarPickerController.swift */; };
+		D8C20D2B271CC1E600F3F22A /* FontTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D2A271CC1E600F3F22A /* FontTableViewCell.swift */; };
 		D8CC37B12717887A00938C5D /* Panel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CC37B02717887A00938C5D /* Panel.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
 		D8D252B327146ED800C68EF9 /* ValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D252B227146ED800C68EF9 /* ValueCell.swift */; };
@@ -138,6 +139,7 @@
 		D8C20D22271C6C1500F3F22A /* EKCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKCalendar.swift; sourceTree = "<group>"; };
 		D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPicker.swift; sourceTree = "<group>"; };
 		D8C20D26271C7A6E00F3F22A /* CalendarPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPickerController.swift; sourceTree = "<group>"; };
+		D8C20D2A271CC1E600F3F22A /* FontTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontTableViewCell.swift; sourceTree = "<group>"; };
 		D8CC37B02717887A00938C5D /* Panel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panel.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		D8D252B227146ED800C68EF9 /* ValueCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueCell.swift; sourceTree = "<group>"; };
@@ -336,6 +338,7 @@
 			children = (
 				D8D252B227146ED800C68EF9 /* ValueCell.swift */,
 				D82366EB2718B2D500086538 /* DatePickerCell.swift */,
+				D8C20D2A271CC1E600F3F22A /* FontTableViewCell.swift */,
 			);
 			path = Controls;
 			sourceTree = "<group>";
@@ -578,6 +581,7 @@
 				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,
 				DB62F333224F89C200CA5E64 /* StationPickerController.swift in Sources */,
 				D81DA7C02712953D0052D32C /* Localization.swift in Sources */,
+				D8C20D2B271CC1E600F3F22A /* FontTableViewCell.swift in Sources */,
 				D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
 				D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */,
