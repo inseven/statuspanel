@@ -29,11 +29,48 @@ struct AboutView: View {
     @Environment(\.presentationMode) var presentationMode
 
     var version: String? {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        return Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
     }
 
     var build: String? {
-        Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+        return Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+    }
+
+    var date: String? {
+        guard let build = self.build,
+              build.count == 18
+        else {
+            return nil
+        }
+        let dateString = String(build.prefix(10))
+        let inputDateFormatter = DateFormatter()
+        inputDateFormatter.dateFormat = "yyMMddHHmm"
+        guard let date = inputDateFormatter.date(from: dateString) else {
+            return nil
+        }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .short
+        dateFormatter.timeStyle = .short
+        return dateFormatter.string(from: date)
+    }
+
+    var sha: String? {
+        guard let build = self.build,
+              build.count == 18
+        else {
+            return nil
+        }
+        guard let shaValue = Int(String(build.suffix(8))) else {
+            return nil
+        }
+        return String(format: "%02x", shaValue)
+    }
+
+    var commitUrl: URL? {
+        guard let sha = self.sha else {
+            return nil
+        }
+        return URL(string: "https://github.com/inseven/statuspanel/commit")?.appendingPathComponent(sha)
     }
 
     var contributors = [
@@ -54,17 +91,16 @@ struct AboutView: View {
         NavigationView {
             Form {
                 Section {
-                    HStack {
-                        Text("Version")
-                        Spacer()
-                        Text(version ?? "")
-                            .foregroundColor(.secondary)
-                    }
-                    HStack {
-                        Text("Build")
-                        Spacer()
-                        Text(build ?? "")
-                            .foregroundColor(.secondary)
+                    ValueRow(text: "Version", detailText: version ?? "")
+                    ValueRow(text: "Build", detailText: build ?? "")
+                    ValueRow(text: "Date", detailText: date ?? "")
+                    Button {
+                        guard let url = commitUrl else {
+                            return
+                        }
+                        UIApplication.shared.open(url, options: [:])
+                    } label: {
+                        ValueRow(text: "Commit", detailText: sha ?? "")
                     }
                 }
                 Section(header: Text("Contributors")) {
