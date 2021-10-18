@@ -22,17 +22,17 @@ import UIKit
 
 class FontTableViewCell: UITableViewCell {
 
-    let font: Fonts.Font
+    let labelFont: Fonts.Font
     let redactMode: RedactMode
 
     lazy var label: UILabel = {
-        let label = ViewController.getLabel(frame: .zero, font: font.configName, style: .text, redactMode: redactMode)
+        let label = ViewController.getLabel(frame: .zero, font: labelFont.configName, style: .text, redactMode: redactMode)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
     init(font: Fonts.Font, redactMode: RedactMode = .none) {
-        self.font = font
+        self.labelFont = font
         self.redactMode = redactMode
         super.init(style: .default, reuseIdentifier: nil)
         contentView.addSubview(label)
