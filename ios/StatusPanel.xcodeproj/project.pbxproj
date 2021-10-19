@@ -57,6 +57,8 @@
 		D8DC8D8226E1ADAF004B081D /* Common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */; };
 		D8DC8D8326E1ADAF004B081D /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D8026E1ADAF004B081D /* Release.xcconfig */; };
 		D8DD98FC271EE98A004088CD /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD98FB271EE98A004088CD /* UIApplication.swift */; };
+		D8DD98FF271EF8CD004088CD /* ColoredCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD98FE271EF8CD004088CD /* ColoredCheckbox.swift */; };
+		D8DD9901271EF971004088CD /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD9900271EF971004088CD /* Binding.swift */; };
 		D8E285AD271A4547001738A8 /* ExternalOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E285AC271A4547001738A8 /* ExternalOperation.swift */; };
 		D8E285AF271A45CE001738A8 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E285AE271A45CE001738A8 /* Device.swift */; };
 		D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6839B270DF11800504B5E /* DataSourceType.swift */; };
@@ -155,6 +157,8 @@
 		D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
 		D8DC8D8026E1ADAF004B081D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		D8DD98FB271EE98A004088CD /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
+		D8DD98FE271EF8CD004088CD /* ColoredCheckbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoredCheckbox.swift; sourceTree = "<group>"; };
+		D8DD9900271EF971004088CD /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		D8E285AC271A4547001738A8 /* ExternalOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalOperation.swift; sourceTree = "<group>"; };
 		D8E285AE271A45CE001738A8 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		D8E6839B270DF11800504B5E /* DataSourceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceType.swift; sourceTree = "<group>"; };
@@ -362,8 +366,17 @@
 				DB981489270887590029BA0A /* UnicodeExtensions.swift */,
 				D8293A0B26F787D3008CE13B /* URL.swift */,
 				D8DD98FB271EE98A004088CD /* UIApplication.swift */,
+				D8DD9900271EF971004088CD /* Binding.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		D8DD98FD271EF8A8004088CD /* Styles */ = {
+			isa = PBXGroup;
+			children = (
+				D8DD98FE271EF8CD004088CD /* ColoredCheckbox.swift */,
+			);
+			path = Styles;
 			sourceTree = "<group>";
 		};
 		DBB2D354217C9AC3009F7549 /* Frameworks */ = {
@@ -425,6 +438,7 @@
 				D8C20D20271C2A6200F3F22A /* Localizable.strings */,
 				DBCA98802143E2920084B710 /* Main.storyboard */,
 				DBCA987A2143E2920084B710 /* Products */,
+				D8DD98FD271EF8A8004088CD /* Styles */,
 				D81DA7BE2712952D0052D32C /* Utilities */,
 				D842A401265BE916009C1156 /* View Controllers */,
 				D812523427093BAB00C9D80A /* Views */,
@@ -537,6 +551,7 @@
 				D81252382709400E00C9D80A /* LicenseRow.swift in Sources */,
 				D848A19E270D213800681F62 /* FlagsSection.swift in Sources */,
 				D8293A0C26F787D3008CE13B /* URL.swift in Sources */,
+				D8DD98FF271EF8CD004088CD /* ColoredCheckbox.swift in Sources */,
 				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
 				D8383EBC270FB8E20007EBB7 /* DayPicker.swift in Sources */,
 				DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */,
@@ -583,6 +598,7 @@
 				D83CC5202707532400260DC1 /* AnyDataSource.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */,
 				DB5E9DA1241562ED009F3807 /* StringUtils.swift in Sources */,
+				D8DD9901271EF971004088CD /* Binding.swift in Sources */,
 				D8E285AD271A4547001738A8 /* ExternalOperation.swift in Sources */,
 				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,
 				D8DD98FC271EE98A004088CD /* UIApplication.swift in Sources */,
