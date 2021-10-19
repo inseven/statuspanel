@@ -61,7 +61,7 @@ class StationPickerController: UITableViewController, UISearchResultsUpdating {
         definesPresentationContext = true
         searchController.isActive = true
 
-        tableView.register(ValueCell.self, forCellReuseIdentifier: Self.valueCellReuseIdentifier)
+        tableView.register(Value1TableViewCell.self, forCellReuseIdentifier: Self.valueCellReuseIdentifier)
 
         super.viewDidLoad()
     }

@@ -15,7 +15,7 @@
 		D81DA7C02712953D0052D32C /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81DA7BF2712953D0052D32C /* Localization.swift */; };
 		D81DA7C3271297460052D32C /* ZenQuotesDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81DA7C2271297460052D32C /* ZenQuotesDataSource.swift */; };
 		D81DE20326E19F9200504703 /* Clibsodium in Frameworks */ = {isa = PBXBuildFile; productRef = D81DE20226E19F9200504703 /* Clibsodium */; };
-		D82366EC2718B2D500086538 /* DatePickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82366EB2718B2D500086538 /* DatePickerCell.swift */; };
+		D82366EC2718B2D500086538 /* DatePickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82366EB2718B2D500086538 /* DatePickerTableViewCell.swift */; };
 		D825A55D26F6811400B85206 /* DummyDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D825A55C26F6811400B85206 /* DummyDataSource.swift */; };
 		D8293A0C26F787D3008CE13B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8293A0B26F787D3008CE13B /* URL.swift */; };
 		D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */; };
@@ -43,11 +43,11 @@
 		D8C20D23271C6C1500F3F22A /* EKCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D22271C6C1500F3F22A /* EKCalendar.swift */; };
 		D8C20D25271C7A2000F3F22A /* CalendarPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */; };
 		D8C20D27271C7A6E00F3F22A /* CalendarPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D26271C7A6E00F3F22A /* CalendarPickerController.swift */; };
-		D8C20D2B271CC1E600F3F22A /* FontTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D2A271CC1E600F3F22A /* FontTableViewCell.swift */; };
+		D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D2A271CC1E600F3F22A /* FontLabelTableViewCell.swift */; };
 		D8C20D2D271D2C8300F3F22A /* ValueRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D2C271D2C8300F3F22A /* ValueRow.swift */; };
 		D8CC37B12717887A00938C5D /* Panel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CC37B02717887A00938C5D /* Panel.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
-		D8D252B327146ED800C68EF9 /* ValueCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D252B227146ED800C68EF9 /* ValueCell.swift */; };
+		D8D252B327146ED800C68EF9 /* Value1TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D252B227146ED800C68EF9 /* Value1TableViewCell.swift */; };
 		D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D98E422493019A00F853CA /* NetworkProvisioner.swift */; };
 		D8DAED7026E3EAA90002F388 /* configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = D8DAED6F26E3EAA90002F388 /* configuration.json */; };
 		D8DAED7226E3F3320002F388 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7126E3F3320002F388 /* Configuration.swift */; };
@@ -111,7 +111,7 @@
 		D812523B2709875600C9D80A /* FontPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPickerViewController.swift; sourceTree = "<group>"; };
 		D81DA7BF2712953D0052D32C /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		D81DA7C2271297460052D32C /* ZenQuotesDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZenQuotesDataSource.swift; sourceTree = "<group>"; };
-		D82366EB2718B2D500086538 /* DatePickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerCell.swift; sourceTree = "<group>"; };
+		D82366EB2718B2D500086538 /* DatePickerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerTableViewCell.swift; sourceTree = "<group>"; };
 		D825A55C26F6811400B85206 /* DummyDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyDataSource.swift; sourceTree = "<group>"; };
 		D8293A0B26F787D3008CE13B /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -140,11 +140,11 @@
 		D8C20D22271C6C1500F3F22A /* EKCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKCalendar.swift; sourceTree = "<group>"; };
 		D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPicker.swift; sourceTree = "<group>"; };
 		D8C20D26271C7A6E00F3F22A /* CalendarPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPickerController.swift; sourceTree = "<group>"; };
-		D8C20D2A271CC1E600F3F22A /* FontTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontTableViewCell.swift; sourceTree = "<group>"; };
+		D8C20D2A271CC1E600F3F22A /* FontLabelTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontLabelTableViewCell.swift; sourceTree = "<group>"; };
 		D8C20D2C271D2C8300F3F22A /* ValueRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueRow.swift; sourceTree = "<group>"; };
 		D8CC37B02717887A00938C5D /* Panel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panel.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
-		D8D252B227146ED800C68EF9 /* ValueCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueCell.swift; sourceTree = "<group>"; };
+		D8D252B227146ED800C68EF9 /* Value1TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Value1TableViewCell.swift; sourceTree = "<group>"; };
 		D8D98E422493019A00F853CA /* NetworkProvisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvisioner.swift; sourceTree = "<group>"; };
 		D8DAED6F26E3EAA90002F388 /* configuration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = configuration.json; sourceTree = "<group>"; };
 		D8DAED7126E3F3320002F388 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
@@ -339,9 +339,9 @@
 		D8D252B127146EB700C68EF9 /* Controls */ = {
 			isa = PBXGroup;
 			children = (
-				D8D252B227146ED800C68EF9 /* ValueCell.swift */,
-				D82366EB2718B2D500086538 /* DatePickerCell.swift */,
-				D8C20D2A271CC1E600F3F22A /* FontTableViewCell.swift */,
+				D8D252B227146ED800C68EF9 /* Value1TableViewCell.swift */,
+				D82366EB2718B2D500086538 /* DatePickerTableViewCell.swift */,
+				D8C20D2A271CC1E600F3F22A /* FontLabelTableViewCell.swift */,
 			);
 			path = Controls;
 			sourceTree = "<group>";
@@ -530,7 +530,7 @@
 				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
 				D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */,
 				D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */,
-				D82366EC2718B2D500086538 /* DatePickerCell.swift in Sources */,
+				D82366EC2718B2D500086538 /* DatePickerTableViewCell.swift in Sources */,
 				D81252382709400E00C9D80A /* LicenseRow.swift in Sources */,
 				D848A19E270D213800681F62 /* FlagsSection.swift in Sources */,
 				D8293A0C26F787D3008CE13B /* URL.swift in Sources */,
@@ -553,7 +553,7 @@
 				DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */,
 				D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */,
 				D862BF3C271B98F90086BE48 /* String.swift in Sources */,
-				D8D252B327146ED800C68EF9 /* ValueCell.swift in Sources */,
+				D8D252B327146ED800C68EF9 /* Value1TableViewCell.swift in Sources */,
 				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
 				D80380AB23E9B6D2002606C7 /* Client.swift in Sources */,
@@ -584,7 +584,7 @@
 				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,
 				DB62F333224F89C200CA5E64 /* StationPickerController.swift in Sources */,
 				D81DA7C02712953D0052D32C /* Localization.swift in Sources */,
-				D8C20D2B271CC1E600F3F22A /* FontTableViewCell.swift in Sources */,
+				D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */,
 				D8C20D2D271D2C8300F3F22A /* ValueRow.swift in Sources */,
 				D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,

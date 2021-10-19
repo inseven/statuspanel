@@ -67,7 +67,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         tableView.allowsSelectionDuringEditing = true
         title = "Settings"
 
-        tableView.register(DatePickerCell.self, forCellReuseIdentifier: Self.datePickerCellReuseIdentifier)
+        tableView.register(DatePickerTableViewCell.self, forCellReuseIdentifier: Self.datePickerCellReuseIdentifier)
     }
 
     @IBAction func cancelTapped(_ sender: Any) {
@@ -201,7 +201,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: Self.datePickerCellReuseIdentifier,
-                                                         for: indexPath) as! DatePickerCell
+                                                         for: indexPath) as! DatePickerTableViewCell
                 cell.label.text = "Device Update Time"
                 cell.datePicker.datePickerMode = .time
                 cell.datePicker.timeZone = TimeZone(secondsFromGMT: 0)

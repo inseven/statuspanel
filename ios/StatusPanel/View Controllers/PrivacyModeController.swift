@@ -90,7 +90,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row < 2 {
             let redactMode: RedactMode = (indexPath.row == 0) ? .redactLines : .redactWords
-            let cell = FontTableViewCell(font: config.getFont(named: config.bodyFont), redactMode: redactMode)
+            let cell = FontLabelTableViewCell(font: config.getFont(named: config.bodyFont), redactMode: redactMode)
             cell.label.text = "Redact text good"
             cell.accessoryType = indexPath.row == config.privacyMode.rawValue ? .checkmark : .none
             return cell

@@ -32,7 +32,7 @@ class NationalRailSettingsController : UITableViewController {
 
     init() {
         super.init(style: .insetGrouped)
-        tableView.register(ValueCell.self, forCellReuseIdentifier: Self.valueCellReuseIdentifier)
+        tableView.register(Value1TableViewCell.self, forCellReuseIdentifier: Self.valueCellReuseIdentifier)
     }
 
     required init?(coder: NSCoder) {
