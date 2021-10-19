@@ -56,6 +56,7 @@
 		D8DC8D8126E1ADAF004B081D /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */; };
 		D8DC8D8226E1ADAF004B081D /* Common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */; };
 		D8DC8D8326E1ADAF004B081D /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D8026E1ADAF004B081D /* Release.xcconfig */; };
+		D8DD98FC271EE98A004088CD /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD98FB271EE98A004088CD /* UIApplication.swift */; };
 		D8E285AD271A4547001738A8 /* ExternalOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E285AC271A4547001738A8 /* ExternalOperation.swift */; };
 		D8E285AF271A45CE001738A8 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E285AE271A45CE001738A8 /* Device.swift */; };
 		D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6839B270DF11800504B5E /* DataSourceType.swift */; };
@@ -153,6 +154,7 @@
 		D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
 		D8DC8D8026E1ADAF004B081D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		D8DD98FB271EE98A004088CD /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		D8E285AC271A4547001738A8 /* ExternalOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalOperation.swift; sourceTree = "<group>"; };
 		D8E285AE271A45CE001738A8 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		D8E6839B270DF11800504B5E /* DataSourceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceType.swift; sourceTree = "<group>"; };
@@ -359,6 +361,7 @@
 				D89104842707B99F0020A2CF /* UIViewController.swift */,
 				DB981489270887590029BA0A /* UnicodeExtensions.swift */,
 				D8293A0B26F787D3008CE13B /* URL.swift */,
+				D8DD98FB271EE98A004088CD /* UIApplication.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -582,6 +585,7 @@
 				DB5E9DA1241562ED009F3807 /* StringUtils.swift in Sources */,
 				D8E285AD271A4547001738A8 /* ExternalOperation.swift in Sources */,
 				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,
+				D8DD98FC271EE98A004088CD /* UIApplication.swift in Sources */,
 				DB62F333224F89C200CA5E64 /* StationPickerController.swift in Sources */,
 				D81DA7C02712953D0052D32C /* Localization.swift in Sources */,
 				D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */,

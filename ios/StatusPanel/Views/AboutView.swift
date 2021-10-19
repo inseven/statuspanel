@@ -28,62 +28,31 @@ struct AboutView: View {
 
     @Environment(\.presentationMode) var presentationMode
 
-    var version: String? {
-        return Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-    }
-
-    var build: String? {
-        return Bundle.main.infoDictionary?["CFBundleVersion"] as? String
-    }
-
-    var date: String? {
-        guard let build = self.build,
-              build.count == 18
-        else {
-            return nil
-        }
-        let dateString = String(build.prefix(10))
-        let inputDateFormatter = DateFormatter()
-        inputDateFormatter.dateFormat = "yyMMddHHmm"
-        guard let date = inputDateFormatter.date(from: dateString) else {
-            return nil
-        }
+    private static let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .short
         dateFormatter.timeStyle = .short
-        return dateFormatter.string(from: date)
-    }
+        return dateFormatter
+    }()
 
-    var sha: String? {
-        guard let build = self.build,
-              build.count == 18
-        else {
+    private var date: String? {
+        guard let date = UIApplication.shared.utcBuildDate else {
             return nil
         }
-        guard let shaValue = Int(String(build.suffix(8))) else {
-            return nil
-        }
-        return String(format: "%02x", shaValue)
+        return Self.dateFormatter.string(from: date)
     }
 
-    var commitUrl: URL? {
-        guard let sha = self.sha else {
-            return nil
-        }
-        return URL(string: "https://github.com/inseven/statuspanel/commit")?.appendingPathComponent(sha)
-    }
-
-    var contributors = [
+    private var contributors = [
         "Jason Morley",
         "Tom Sutcliffe",
     ]
 
-    var people = [
+    private var people = [
         "Lukas Fittl",
         "Pavlos Vinieratos",
     ]
 
-    var fonts: [Fonts.Font] {
+    private var fonts: [Fonts.Font] {
         Config().availableFonts.sorted { $0.humanReadableName < $1.humanReadableName }
     }
 
@@ -91,16 +60,16 @@ struct AboutView: View {
         NavigationView {
             Form {
                 Section {
-                    ValueRow(text: "Version", detailText: version ?? "")
-                    ValueRow(text: "Build", detailText: build ?? "")
+                    ValueRow(text: "Version", detailText: UIApplication.shared.version ?? "")
+                    ValueRow(text: "Build", detailText: UIApplication.shared.build ?? "")
                     ValueRow(text: "Date", detailText: date ?? "")
                     Button {
-                        guard let url = commitUrl else {
+                        guard let url = UIApplication.shared.commitUrl else {
                             return
                         }
                         UIApplication.shared.open(url, options: [:])
                     } label: {
-                        ValueRow(text: "Commit", detailText: sha ?? "")
+                        ValueRow(text: "Commit", detailText: UIApplication.shared.commit ?? "")
                     }
                 }
                 Section(header: Text("Contributors")) {
