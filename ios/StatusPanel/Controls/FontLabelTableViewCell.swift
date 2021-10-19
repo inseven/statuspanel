@@ -20,10 +20,30 @@
 
 import UIKit
 
-class ValueCell: UITableViewCell {
+class FontLabelTableViewCell: UITableViewCell {
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: .value1, reuseIdentifier: reuseIdentifier)
+    let labelFont: Fonts.Font
+    let redactMode: RedactMode
+
+    lazy var label: UILabel = {
+        let label = ViewController.getLabel(frame: .zero,
+                                            font: labelFont.configName,
+                                            style: .text,
+                                            redactMode: redactMode)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    init(font: Fonts.Font, redactMode: RedactMode = .none) {
+        self.labelFont = font
+        self.redactMode = redactMode
+        super.init(style: .default, reuseIdentifier: nil)
+        contentView.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            label.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
+            label.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+        ])
     }
 
     required init?(coder: NSCoder) {

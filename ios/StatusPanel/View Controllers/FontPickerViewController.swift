@@ -46,7 +46,7 @@ class FontPickerViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let config = Config()
         let font = config.availableFonts[indexPath.row]
-        let cell = FontTableViewCell(font: font)
+        let cell = FontLabelTableViewCell(font: font)
         cell.label.text = font.humanReadableName
         if font.configName == self.font.wrappedValue {
             cell.accessoryType = .checkmark

@@ -20,7 +20,7 @@
 
 import UIKit
 
-class DatePickerCell: UITableViewCell {
+class DatePickerTableViewCell: UITableViewCell {
 
     lazy var label: UILabel = {
         let label = UILabel()
@@ -38,15 +38,11 @@ class DatePickerCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
-
         contentView.addSubview(label)
         contentView.addSubview(datePicker)
-
         NSLayoutConstraint.activate([
-
             label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             label.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
-
             datePicker.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             datePicker.leadingAnchor.constraint(equalTo: label.trailingAnchor),
             datePicker.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
