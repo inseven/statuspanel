@@ -23,7 +23,7 @@ import SwiftUI
 
 struct CalendarPicker: View {
 
-    struct Source: Identifiable {
+    private struct Source: Identifiable {
 
         var id: String { source.sourceIdentifier }
 
@@ -32,11 +32,11 @@ struct CalendarPicker: View {
 
     }
 
-    var eventStore: EKEventStore
-    @Binding var selection: Set<String>
-    @State var shadowSelection: Set<String>
+    private var eventStore: EKEventStore
+    @Binding private var selection: Set<String>
+    @State private var shadowSelection: Set<String>
 
-    @State var sources: [Source] = []
+    @State private var sources: [Source] = []
 
     init(eventStore: EKEventStore, selection: Binding<Set<String>>) {
         self.eventStore = eventStore
@@ -44,7 +44,7 @@ struct CalendarPicker: View {
         _shadowSelection = State(initialValue: selection.wrappedValue)
     }
 
-    func loadSources() -> [Source] {
+    private func loadSources() -> [Source] {
         var sources: [Source] = []
         let allSources = eventStore.sources.sorted(by: { $0.title.compare($1.title) == .orderedAscending})
         for source in allSources {
@@ -63,27 +63,8 @@ struct CalendarPicker: View {
             ForEach(sources) { source in
                 Section(header: Text(source.source.title)) {
                     ForEach(source.calendars) { calendar in
-                        Button {
-                            if shadowSelection.contains(calendar.calendarIdentifier) {
-                                shadowSelection.remove(calendar.calendarIdentifier)
-                            } else {
-                                shadowSelection.insert(calendar.calendarIdentifier)
-                            }
-                        } label: {
-                            HStack {
-                                if shadowSelection.contains(calendar.calendarIdentifier) {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .imageScale(.large)
-                                        .foregroundColor(calendar.color)
-                                } else {
-                                    Image(systemName: "circle")
-                                        .imageScale(.large)
-                                        .foregroundColor(calendar.color)
-                                }
-                                Text(calendar.title)
-                                    .foregroundColor(.primary)
-                            }
-                        }
+                        Toggle(calendar.title, isOn: $shadowSelection.binding(for: calendar.calendarIdentifier))
+                            .toggleStyle(ColoredCheckbox(color: calendar.color))
                     }
                 }
             }
