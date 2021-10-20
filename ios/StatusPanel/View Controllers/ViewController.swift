@@ -59,8 +59,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     var sourceController: DataSourceController!
 
     var client: Client {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        return appDelegate.client
+        return AppDelegate.shared.client
     }
 
     private lazy var settingsButtonItem: UIBarButtonItem = {
@@ -115,8 +114,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        sourceController = appDelegate.sourceController
+        let appDelegate = AppDelegate.shared
+        sourceController = AppDelegate.shared.sourceController
         sourceController.delegate = self
 
         title = "StatusPanel"
@@ -440,8 +439,7 @@ extension ViewController: DataSourceControllerDelegate {
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase]) {
         self.renderAndUpload(data: data, completion: { (changes: Bool) -> Void in
                 DispatchQueue.main.async {
-                    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                    appDelegate.fetchCompleted(hasChanged: changes)
+                    AppDelegate.shared.fetchCompleted(hasChanged: changes)
                     self.fetchDidComplete()
                 }
             })

@@ -63,6 +63,7 @@
 		D8E285AF271A45CE001738A8 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E285AE271A45CE001738A8 /* Device.swift */; };
 		D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6839B270DF11800504B5E /* DataSourceType.swift */; };
 		D8E6D673271FBD3300AB6452 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6D672271FBD3300AB6452 /* Color.swift */; };
+		D8EBFCC8272099B0000E120F /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */; };
 		D8EED7F12630EF19009E2166 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = D8EED7F02630EF19009E2166 /* Sodium */; };
 		D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F57FE9271A009200847C67 /* QRCodeViewController.swift */; };
 		DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB17F92E249E3BAD008CD83E /* CGExtensions.swift */; };
@@ -81,7 +82,6 @@
 		DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B35F26F5FA4600BC5FF0 /* BitmapFontCache.swift */; };
 		DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987C2143E2920084B710 /* AppDelegate.swift */; };
 		DBCA987F2143E2920084B710 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987E2143E2920084B710 /* ViewController.swift */; };
-		DBCA98822143E2920084B710 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBCA98802143E2920084B710 /* Main.storyboard */; };
 		DBCA98842143E2920084B710 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DBCA98832143E2920084B710 /* Assets.xcassets */; };
 		DBCA98872143E2920084B710 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBCA98852143E2920084B710 /* LaunchScreen.storyboard */; };
 		DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B02143F2B30084B710 /* TFLDataSource.swift */; };
@@ -164,6 +164,7 @@
 		D8E285AE271A45CE001738A8 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		D8E6839B270DF11800504B5E /* DataSourceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceType.swift; sourceTree = "<group>"; };
 		D8E6D672271FBD3300AB6452 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		D8EED7EF2630EEFF009E2166 /* swift-sodium */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "swift-sodium"; sourceTree = "<group>"; };
 		D8F57FE9271A009200847C67 /* QRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeViewController.swift; sourceTree = "<group>"; };
 		DB17F92E249E3BAD008CD83E /* CGExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
@@ -185,7 +186,6 @@
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBCA987C2143E2920084B710 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DBCA987E2143E2920084B710 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		DBCA98812143E2920084B710 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DBCA98832143E2920084B710 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DBCA98862143E2920084B710 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DBCA98882143E2920084B710 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -350,6 +350,7 @@
 				D8D252B227146ED800C68EF9 /* Value1TableViewCell.swift */,
 				D82366EB2718B2D500086538 /* DatePickerTableViewCell.swift */,
 				D8C20D2A271CC1E600F3F22A /* FontLabelTableViewCell.swift */,
+				D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */,
 			);
 			path = Controls;
 			sourceTree = "<group>";
@@ -439,7 +440,6 @@
 				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
 				D862BF3D271B99450086BE48 /* Licenses */,
 				D8C20D20271C2A6200F3F22A /* Localizable.strings */,
-				DBCA98802143E2920084B710 /* Main.storyboard */,
 				DBCA987A2143E2920084B710 /* Products */,
 				D8DD98FD271EF8A8004088CD /* Styles */,
 				D81DA7BE2712952D0052D32C /* Utilities */,
@@ -527,7 +527,6 @@
 				D8C20D1E271C2A6200F3F22A /* Localizable.strings in Resources */,
 				DBCA98842143E2920084B710 /* Assets.xcassets in Resources */,
 				D8DC8D8126E1ADAF004B081D /* Debug.xcconfig in Resources */,
-				DBCA98822143E2920084B710 /* Main.storyboard in Resources */,
 				D8DAED7026E3EAA90002F388 /* configuration.json in Resources */,
 				D862BF3F271B99700086BE48 /* Swift-Sodium in Resources */,
 				D8DC8D8326E1ADAF004B081D /* Release.xcconfig in Resources */,
@@ -551,6 +550,7 @@
 				D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */,
 				D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */,
 				D82366EC2718B2D500086538 /* DatePickerTableViewCell.swift in Sources */,
+				D8EBFCC8272099B0000E120F /* TextFieldTableViewCell.swift in Sources */,
 				D81252382709400E00C9D80A /* LicenseRow.swift in Sources */,
 				D848A19E270D213800681F62 /* FlagsSection.swift in Sources */,
 				D8293A0C26F787D3008CE13B /* URL.swift in Sources */,
@@ -626,14 +626,6 @@
 				D8C20D21271C2B0D00F3F22A /* en-GB */,
 			);
 			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-		DBCA98802143E2920084B710 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				DBCA98812143E2920084B710 /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		DBCA98852143E2920084B710 /* LaunchScreen.storyboard */ = {
