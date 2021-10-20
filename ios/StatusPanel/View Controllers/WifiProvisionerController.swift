@@ -107,7 +107,7 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
 
         navigationItem.leftBarButtonItem = cancelButtonItem
         navigationItem.rightBarButtonItem = nextButtonItem
-        title = "Setup WiFi"
+        title = LocalizedString("setup_wifi_title")
 
         tableView.allowsSelection = false
 
@@ -170,7 +170,7 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "Network Details"
+            return LocalizedString("setup_wifi_network_details_section_title")
         default:
             break
         }
@@ -180,7 +180,7 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "Your StatusPanel will use this WiFI network to check for updates."
+            return LocalizedString("setup_wifi_network_details_section_footer")
         default:
             break
         }
