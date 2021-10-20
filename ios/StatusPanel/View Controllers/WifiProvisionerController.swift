@@ -24,7 +24,6 @@ import NetworkExtension
 import Network
 
 // TODO: Actual provisioner
-// TODO: AppDelegate
 
 // Thanks https://stackoverflow.com/questions/56583650/cncopycurrentnetworkinfo-with-ios-13
 func GetCurrentSSID() -> String? {
