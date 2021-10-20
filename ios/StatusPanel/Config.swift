@@ -19,23 +19,114 @@
 // SOFTWARE.
 
 import Foundation
+import Network
 
 class Config {
 
-    private enum Key: String {
-        case activeCalendars = "activeCalendars"
-        case activeTFLLines = "activeTFLLines"
-        case darkMode = "darkMode"
-        case displaySingleColumn = "displaySingleColumn"
-        case dummyData = "dummyData"
-        case font = "font"
-        case lastBackgroundUpdate = "lastBackgroundUpdate"
-        case maxLines = "maxLines"
-        case privacyMode = "privacyMode"
-        case showCalendarLocations = "showCalendarLocations"
-        case showUrlsInCalendarLocations = "showUrlsInCalendarLocations"
-        case trainRoutes = "trainRoutes"
-        case updateTime = "updateTime"
+    private enum Key: RawRepresentable {
+
+        case activeCalendars
+        case activeTFLLines
+        case darkMode
+        case displaySingleColumn
+        case dummyData
+        case titleFont
+        case bodyFont
+        case lastBackgroundUpdate
+        case maxLines
+        case privacyMode
+        case showCalendarLocations
+        case showUrlsInCalendarLocations
+        case trainRoutes
+        case updateTime
+        case showIcons
+        case dataSources
+        case settings(UUID)
+
+        static let settingsPrefix = "Settings-"
+
+        init?(rawValue: String) {
+            switch rawValue {
+            case "activeCalendars":
+                self = .activeCalendars
+            case "activeTFLLines":
+                self = .activeTFLLines
+            case "darkMode":
+                self = .darkMode
+            case "displaySingleColumn":
+                self = .displaySingleColumn
+            case "dummyData":
+                self = .dummyData
+            case "titleFont":
+                self = .titleFont
+            case "font":
+                self = .bodyFont
+            case "lastBackgroundUpdate":
+                self = .lastBackgroundUpdate
+            case "maxLines":
+                self = .maxLines
+            case "privacyMode":
+                self = .privacyMode
+            case "showCalendarLocations":
+                self = .showCalendarLocations
+            case "showUrlsInCalendarLocations":
+                self = .showUrlsInCalendarLocations
+            case "trainRoutes":
+                self = .trainRoutes
+            case "updateTime":
+                self = .updateTime
+            case "showIcons":
+                self = .showIcons
+            case "dataSources":
+                self = .dataSources
+            case _ where rawValue.starts(with: Self.settingsPrefix):
+                guard let uuid = UUID(uuidString: String(rawValue.dropFirst(Self.settingsPrefix.count))) else {
+                    return nil
+                }
+                self = .settings(uuid)
+            default:
+                return nil
+            }
+        }
+
+        var rawValue: String {
+            switch self {
+            case .activeCalendars:
+                return "activeCalendars"
+            case .activeTFLLines:
+                return "activeTFLLines"
+            case .darkMode:
+                return "darkMode"
+            case .displaySingleColumn:
+                return "displaySingleColumn"
+            case .dummyData:
+                return "dummyData"
+            case .titleFont:
+                return "titleFont"
+            case .bodyFont:
+                return "font"
+            case .lastBackgroundUpdate:
+                return "lastBackgroundUpdate"
+            case .maxLines:
+                return "maxLines"
+            case .privacyMode:
+                return "privacyMode"
+            case .showCalendarLocations:
+                return "showCalendarLocations"
+            case .showUrlsInCalendarLocations:
+                return "showUrlsInCalendarLocations"
+            case .trainRoutes:
+                return "trainRoutes"
+            case .updateTime:
+                return "updateTime"
+            case .showIcons:
+                return "showIcons"
+            case .dataSources:
+                return "dataSources"
+            case .settings(let uuid):
+                return "Settings-\(uuid.uuidString)"
+            }
+        }
     }
 
     struct TrainRoute {
@@ -69,8 +160,18 @@ class Config {
         return self.userDefaults.integer(forKey: key.rawValue)
     }
 
-    private func bool(for key: Key) -> Bool {
-        return self.userDefaults.bool(forKey: key.rawValue)
+    private func bool(for key: Key, default defaultValue: Bool = false) -> Bool {
+        guard let value = self.userDefaults.object(forKey: key.rawValue) as? Bool else {
+            return defaultValue
+        }
+        return value
+    }
+
+    private func decodeObject<T: Codable>(for key: Key) throws -> T? {
+        guard let data = self.userDefaults.object(forKey: key.rawValue) as? Data else {
+            return nil
+        }
+        return try JSONDecoder().decode(T.self, from: data)
     }
 
     private func set(_ value: Any?, for key: Key) {
@@ -83,6 +184,11 @@ class Config {
 
     private func set(_ value: Bool, for key: Key) {
         self.userDefaults.set(value, forKey: key.rawValue)
+    }
+
+    private func set<T: Codable>(codable: T, for key: Key) throws {
+        let data = try JSONEncoder().encode(codable)
+        self.userDefaults.set(data, forKey: key.rawValue)
     }
 
     var activeCalendars: [String] {
@@ -110,6 +216,15 @@ class Config {
         }
         set {
             self.set(newValue, for: .updateTime)
+        }
+    }
+
+    var showIcons: Bool {
+        get {
+            self.bool(for: .showIcons, default: true)
+        }
+        set {
+            self.set(newValue, for: .showIcons)
         }
     }
 
@@ -220,12 +335,21 @@ class Config {
         }
     }
 
-    var font: String {
+    var titleFont: String {
         get {
-            self.string(for: .font) ?? availableFonts[0].configName
+            self.string(for: .titleFont) ?? availableFonts[0].configName
         }
         set {
-            self.set(newValue, for: .font)
+            self.set(newValue, for: .titleFont)
+        }
+    }
+
+    var bodyFont: String {
+        get {
+            self.string(for: .bodyFont) ?? availableFonts[0].configName
+        }
+        set {
+            self.set(newValue, for: .bodyFont)
         }
     }
 
@@ -256,16 +380,14 @@ class Config {
         }
     }
 
-    #if DEBUG
-        var showDummyData: Bool {
-            get {
-                self.bool(for: .dummyData)
-            }
-            set {
-                self.set(newValue, for: .dummyData)
-            }
+    var showDummyData: Bool {
+        get {
+            self.bool(for: .dummyData)
         }
-    #endif
+        set {
+            self.set(newValue, for: .dummyData)
+        }
+    }
 
     var showCalendarLocations: Bool {
         get {
@@ -327,6 +449,12 @@ class Config {
         return self.userDefaults.string(forKey: Config.getLastUploadHashKey(for: deviceid))
     }
 
+    func clearUploadHashes() {
+        for (deviceid, _) in devices {
+            setLastUploadHash(for: deviceid, to: nil)
+        }
+    }
+
     var lastBackgroundUpdate: Date? {
         get {
             self.object(for: .lastBackgroundUpdate) as? Date
@@ -335,4 +463,25 @@ class Config {
             self.set(newValue, for: .lastBackgroundUpdate)
         }
     }
+
+    func dataSources() throws -> [DataSourceInstance.Details]? {
+        return try self.decodeObject(for: .dataSources)
+    }
+
+    func set(dataSources: [DataSourceInstance.Details]) throws {
+        try self.set(codable: dataSources, for: .dataSources)
+    }
+
+    func settings<T: DataSourceSettings>(for instanceId: UUID) throws -> T? {
+        guard let data = object(for: .settings(instanceId)) as? Data else {
+            return nil
+        }
+        return try JSONDecoder().decode(T.self, from: data as Data)
+    }
+
+    func save<T: DataSourceSettings>(settings: T, instanceId: UUID) throws {
+        let data = try JSONEncoder().encode(settings)
+        set(data, for: .settings(instanceId))
+    }
+
 }

@@ -35,15 +35,22 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
 
     let ButtonSection = 1
 
-    private var loc = CLLocationManager()
+    private var locationManager = CLLocationManager()
     private var spot = NEHotspotConfigurationManager.shared
     private var hotspotSsid: String?
     private var hotspotPassword: String?
     private var configuredHotspotCredentials: NEHotspotConfiguration?
-    var panelIdentifer: String?
-    var panelPubkey: String?
+    var device: Device?
     private var connecting = false
     private var networkProvisioner: NetworkProvisioner!
+
+    static func newInstance(device: Device, ssid: String) -> WifiProvisionerController {
+        let viewController = (UIStoryboard.main.instantiateViewController(withIdentifier: "WifiProvisionerController")
+                              as! WifiProvisionerController)
+        viewController.device = device
+        viewController.setHotspotCredentials(ssid: ssid, password: device.publicKey)
+        return viewController
+    }
 
     func setHotspotCredentials(ssid: String, password: String) {
         print("Hotspot credentials ssid=\(ssid) password=\(password)")
@@ -67,21 +74,21 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
                     case .success:
                         print("Successfully configured network!")
                         let delegate = UIApplication.shared.delegate as! AppDelegate
-                        delegate.addDevice(id: self.panelIdentifer!, pubkey: self.panelPubkey!)
+                        delegate.addDevice(self.device!)
                         // addDevice will dismiss us, so we're done!
                     case .failure(let error):
                         print("Failed to configure network with error '\(error)'.")
                         if error as? NetworkProvisionerError == .badCredentials {
                             self.showError("Panel was unable to connect with these credentials. Is the password correct?")
                         } else {
-                            self.showError(String(describing: error))
+                            self.showError(error.localizedDescription)
                         }
                         self.disconnectHotspot()
                         self.updateButton()
                     }
                 }
             } else {
-                self.showError("Failed to connect, \(String(describing: err))")
+                self.showError("Failed to connect to StatusPanel: \(err!.localizedDescription)")
             }
             self.updateButton()
         }
@@ -124,7 +131,7 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
         ssidField.isUserInteractionEnabled = enableEditing
         passwordField.isUserInteractionEnabled = enableEditing
         buttonCell.isUserInteractionEnabled = enableButton
-        button.textColor = enableButton ? .label : .secondaryLabel
+        button.textColor = enableButton ? UIColor(named: "TintColor") : .secondaryLabel
     }
 
     @IBAction func cancel() {
@@ -134,15 +141,15 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         networkProvisioner = NetworkProvisioner(address: "192.168.4.1", port: 9001)
-        loc.delegate = self
+        locationManager.delegate = self
         ssidField.delegate = self
         passwordField.delegate = self
         tableView.tableHeaderView = headerView
         tableView.tableFooterView = footerView
 
-        let status = CLLocationManager.authorizationStatus()
+        let status = locationManager.authorizationStatus
         if status == .notDetermined {
-            loc.requestWhenInUseAuthorization()
+            locationManager.requestWhenInUseAuthorization()
         } else if status == .authorizedWhenInUse {
             setSSID()
         }
@@ -163,9 +170,9 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // panelLabel.text = panelIdentifer
+        passwordField.becomeFirstResponder()
         updateButton()
-        ssidField.becomeFirstResponder()
+
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -195,9 +202,6 @@ class WifiProvisionerController: UITableViewController, CLLocationManagerDelegat
         // Better way to do this?
         ssidField.resignFirstResponder()
         passwordField.resignFirstResponder()
-
-//        hotspotSsid = "SSID"
-//        hotspotPassword = "PASSWORD"
 
         if hotspotSsid != nil && hotspotPassword != nil {
             connectToHotspot()

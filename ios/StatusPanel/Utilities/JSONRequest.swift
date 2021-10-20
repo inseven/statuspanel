@@ -22,12 +22,11 @@ import Foundation
 
 class JSONRequest {
 
-    static func makeRequest<T>(url: URL, session: URLSession? = nil, onCompletion: @escaping (T?, Error?) -> Void) -> URLSessionDataTask where T : Decodable {
-        let session = session ?? URLSession.shared
-        let task = session.dataTask(with: url) { (data: Data?, response: URLResponse?, err: Error?) in
+    static func makeRequest<T>(url: URL, completion: @escaping (T?, Error?) -> Void) where T : Decodable {
+        let task = URLSession.shared.dataTask(with: url) { (data: Data?, response: URLResponse?, err: Error?) in
             if let err = err {
                 print("Error fetching \(url): \(err)")
-                onCompletion(nil, err)
+                completion(nil, err)
                 return
             }
             guard let httpResponse = response as? HTTPURLResponse,
@@ -35,20 +34,21 @@ class JSONRequest {
                 let data = data
                 else {
                     print("Server errored! resp = \(response!)")
-                    let err = NSError(domain: NSURLErrorDomain, code: URLError.badServerResponse.rawValue, userInfo: ["response": response!])
-                    onCompletion(nil, err)
+                    let err = NSError(domain: NSURLErrorDomain,
+                                      code: URLError.badServerResponse.rawValue,
+                                      userInfo: ["response": response!])
+                    completion(nil, err)
                     return
             }
             do {
                 let obj = try JSONDecoder().decode(T.self, from: data)
-                onCompletion(obj, nil)
+                completion(obj, nil)
             } catch {
                 print("Failed to decode obj from \(data)")
-                onCompletion(nil, error)
+                completion(nil, error)
             }
         }
         task.resume()
-        return task
     }
 }
 

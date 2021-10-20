@@ -22,8 +22,10 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+
     private var background = false
     private var blockUpdates = false
+
     var window: UIWindow?
     var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
     var sourceController = DataSourceController()
@@ -34,25 +36,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         client = Client(baseUrl: "https://api.statuspanel.io/")
-
-        let configuration = try! Bundle.main.configuration()
-        sourceController.add(dataSource:TFLDataSource(configuration: configuration))
-        sourceController.add(dataSource:NationalRailDataSource(configuration: configuration))
-        sourceController.add(dataSource:CalendarSource())
-        #if DEBUG
-            sourceController.add(dataSource:DummyDataSource())
-        #endif
-        sourceController.add(dataSource:CalendarSource(forDayOffset: 1, header: "Tomorrow:"))
-        #if DEBUG
-            sourceController.add(dataSource:DummyDataSource())
-        #endif
-
         application.registerForRemoteNotifications()
 
+        let viewController = ViewController()
+        viewController.view.backgroundColor = .secondarySystemBackground
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.navigationBar.prefersLargeTitles = true
+
+        window = UIWindow()
+        window?.rootViewController = navigationController
         window?.tintColor = UIColor(named: "TintColor")
-        if let navigationController = window?.rootViewController as? UINavigationController {
-            navigationController.navigationBar.prefersLargeTitles = true
-        }
+        window?.makeKeyAndVisible()
 
         return true
     }
@@ -84,53 +78,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      open url: URL,
                      options: [UIApplication.OpenURLOptionsKey : Any] = [:] ) -> Bool {
-        // Process the URL.
-        guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
-            let operation = components.path,
-            let params = components.queryItems else {
-                print("Invalid URL or operation missing")
-                return false
-            }
-        var map: [String : String] = [:]
-        for kv in params {
-            if let val = kv.value {
-                map[kv.name] = val
-            }
-        }
-        // print("op:\(operation) params:\(params)")
-        if operation != "r" || map["id"] == nil || map["pk"] == nil {
-            print("Unrecognised operation \(operation)")
+
+        guard let operation = ExternalOperation(url: url) else {
+            print("Failed to parse URL '\(url)'.")
             return false
         }
-        let deviceid = map["id"]!
-        let pubkey = map["pk"]!
 
-        // Now try and provision the panel
-        if let panelSsid = map["s"] {
-            // If the panel is telling us about an SSID, it's in AP mode and needs wifi credentials
-            let storyboard = window?.rootViewController?.storyboard
-            let navvc = storyboard?.instantiateViewController(identifier: "WifiProvisionerController") as! UINavigationController
-
-            let vc = navvc.topViewController as! WifiProvisionerController
-            vc.panelIdentifer = deviceid
-            vc.panelPubkey = pubkey
-            vc.setHotspotCredentials(ssid: panelSsid, password: pubkey)
-            window?.rootViewController?.present(navvc, animated: true, completion: nil)
-            return true
-        } else {
-            addDevice(id: deviceid, pubkey: pubkey)
-            return true
+        switch operation {
+        case .registerDevice(let device):
+            addDevice(device)
+        case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
+            let viewController: WifiProvisionerController = .newInstance(device: device, ssid: ssid)
+            let navigationController = UINavigationController(rootViewController: viewController)
+            window?.rootViewController?.present(navigationController, animated: true)
         }
+        return true
     }
 
-    func addDevice(id: String, pubkey: String) {
+    func addDevice(_ device: Device) {
         let config = Config()
         var devices = config.devices
-        devices.append((id, pubkey))
+        devices.append((device.id, device.publicKey))
         config.devices = devices
-        let alert = UIAlertController(title: "Device added", message: "Device \(id) has been added.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default, handler: {
-            (action: UIAlertAction) in
+        let alert = UIAlertController(title: "Device added",
+                                      message: "Device \(device.id) has been added.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"),
+                                      style: .default,
+                                      handler: { action in
             // Sneakily delay fetching data until the user taps ok, to give wifi more time to come back up
             self.blockUpdates = false
             self.update()

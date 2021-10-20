@@ -20,111 +20,104 @@
 
 import Foundation
 import EventKit
-
-class CalendarHeader : DataItemBase {
-    init(for date: Date) {
-        self.date = date
-    }
-
-    func getPrefix() -> String {
-        return ""
-    }
-
-    func getText(checkFit: (String) -> Bool) -> String {
-        let df = DateFormatter()
-        df.setLocalizedDateFormatFromTemplate("yMMMMdEEEE")
-        let val = df.string(from: date)
-        if !checkFit(val) {
-            // Too long, shorten the day name
-            df.setLocalizedDateFormatFromTemplate("yMMMMdEEE")
-            return df.string(from: date)
-        } else {
-            return val
-        }
-    }
-
-    func getSubText() -> String? {
-        return nil
-    }
-
-    func getFlags() -> Set<DataItemFlag> {
-        return [.header]
-    }
-
-    let date: Date
-}
+import UIKit
 
 class CalendarItem : DataItemBase {
-    init(time: String?, title: String, location: String?, flags: Set<DataItemFlag> = []) {
+
+    let time: String?
+    let icon: String?
+    let title: String
+    let location: String?
+    let flags: DataItemFlags
+
+    init(time: String?, icon: String?, title: String, location: String?, flags: DataItemFlags = []) {
         self.time = time
+        self.icon = icon
         self.title = title
         self.location = location
         self.flags = flags
     }
-    init(title: String, location: String?) {
-        self.time = nil
-        self.title = title
-        self.location = location
-        self.flags = []
+
+    convenience init(time: String?, title: String, location: String?) {
+        self.init(time: time, icon: nil, title: title, location: location, flags: [])
     }
 
-    func getFlags() -> Set<DataItemFlag> {
-        return flags
+    convenience init(icon: String?, title: String, location: String?) {
+        self.init(time: nil, icon: icon, title: title, location: location, flags: [])
     }
 
-    func getPrefix() -> String {
-        return time ?? ""
-    }
+    var prefix: String { time ?? "" }
+
+    var subText: String? { location }
 
     func getText(checkFit: (String) -> Bool) -> String {
         return title
     }
 
-    func getSubText() -> String? {
-        return location
-    }
-
-    let time: String?
-    let title: String
-    let location: String?
-    let flags: Set<DataItemFlag>
 }
 
-class CalendarSource : DataSource {
-    let eventStore: EKEventStore
-    let header : String?
-    let dayOffset: Int
+final class CalendarSource : DataSource {
 
-    init(forDayOffset dayOffset: Int = 0, header: String? = nil) {
-        eventStore = EKEventStore()
-        self.header = header
-        self.dayOffset = dayOffset
+    struct Settings: DataSourceSettings {
+
+        var showLocations: Bool
+        var showUrls: Bool
+        var offset: Int
+
+        var calendarNames: String {
+            let eventStore = EKEventStore()
+            let calendarNames = Config().activeCalendars.compactMap { eventStore.calendar(withIdentifier:$0)?.title }
+            guard calendarNames.count > 0 else {
+                return "No Calendars Selected"
+            }
+            return calendarNames.joined(separator: ", ")
+        }
+
     }
 
-    func fetchData(onCompletion: @escaping Callback) {
+    let id: DataSourceType = .calendar
+    let name = "Calendar"
+    let image = UIImage(systemName: "calendar", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
+
+    let configurable = true
+
+    let eventStore: EKEventStore
+
+    var defaults: Settings {
+        return Settings(showLocations: false,
+                        showUrls: false,
+                        offset: 0)
+    }
+
+    init() {
+        eventStore = EKEventStore()
+    }
+
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
         eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
             if (granted) {
-                self.getData(callback: onCompletion)
+                self.getData(settings: settings, callback: completion)
             } else {
-                onCompletion(self, [], err)
+                completion([], err)
             }
-            // print("Granted EKEventStore access \(granted) err \(String(describing: err))")
         }
     }
 
-    func getData(callback: Callback) {
+    func getData(settings: Settings, callback: ([DataItemBase], Error?) -> Void) {
         let df = DateFormatter()
         df.timeStyle = DateFormatter.Style.short
         let timeZoneFormatter = DateFormatter()
         timeZoneFormatter.dateFormat = "z"
 
         let activeCalendars = Config().activeCalendars
-        let calendars = eventStore.calendars(for: .event).filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
+        let calendars = eventStore
+            .calendars(for: .event)
+            .filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
         if calendars.count == 0 {
             // predicateForEvents treats calendars:[] the same as calendars:nil
             // which matches against _all_ calendars, which we definitely don't
             // want, so we have to return early here.
-            callback(self, [], nil)
+            callback([], nil)
             return
         }
 
@@ -132,19 +125,12 @@ class CalendarSource : DataSource {
         let cal = Calendar.current
         let dayComponents = cal.dateComponents([.year, .month, .day], from: now)
         let todayStart = cal.date(from: dayComponents)!
-        let dayStart = cal.date(byAdding: DateComponents(day: dayOffset), to: todayStart)!
+        let dayStart = cal.date(byAdding: DateComponents(day: settings.offset), to: todayStart)!
         let tz = cal.timeZone
         let dayEnd = cal.date(byAdding: DateComponents(day: 1, second: -1), to: dayStart)!
         let pred = eventStore.predicateForEvents(withStart: dayStart, end: dayEnd, calendars: calendars)
         let events = eventStore.events(matching: pred)
         var results = [DataItemBase]()
-        if (header != nil) {
-            results.append(DataItem(self.header!, flags: [.header]))
-        }
-
-        let config = Config()
-        let showLocations = config.showCalendarLocations
-        let shouldRedactUrls = !config.showUrlsInCalendarLocations
 
         for event in events {
 
@@ -183,19 +169,16 @@ class CalendarSource : DataSource {
                 continue
             }
 
-            // Prefix birthday calendars with a present.
-            if event.calendar.type == .birthday {
-                title = "🎁 \(title)"
-            }
-
-            var location = showLocations ? event.location : nil
-            if location != nil && shouldRedactUrls {
+            var location = settings.showLocations ? event.location : nil
+            if location != nil && !settings.showUrls {
                 location = redactUrls(location!)
             }
 
             let allDay = event.isAllDay || (event.startDate <= dayStart && event.endDate >= dayEnd)
             if allDay {
-                results.append(CalendarItem(title: title, location: location))
+                results.append(CalendarItem(icon: event.calendar.type == .birthday ? "🎁" : "🗓",
+                                            title: title,
+                                            location: location))
             } else {
                 var relevantTime: Date = event.startDate
                 var timeStr = df.string(from: relevantTime)
@@ -216,7 +199,7 @@ class CalendarSource : DataSource {
                 results.append(CalendarItem(time: timeStr, title: title, location: location))
             }
         }
-        callback(self, results, nil)
+        callback(results, nil)
     }
 
     func redactUrls(_ value: String) -> String {
@@ -224,7 +207,7 @@ class CalendarSource : DataSource {
         var result = value
         for urlString in urls {
             if let url = URL(string: urlString), let scheme = url.scheme, let host = url.host {
-                let newUrl = "\(scheme)://\(host)/▒▒▒▒▒▒▒▒▒▒▒▒▒"
+                let newUrl = "\(scheme)://\(host)/…"
                 result = result.replacingOccurrences(of: urlString, with: newUrl)
             } else {
                 result = result.replacingOccurrences(of: urlString, with: "▒▒▒▒▒▒▒▒▒▒▒▒▒")
@@ -233,11 +216,12 @@ class CalendarSource : DataSource {
         return result
     }
 
-    static func getHeader() -> DataItemBase {
-        // "Wednesday, 26 February 2020" is a nice long date
-        // let date = Calendar(identifier: .gregorian).date(from: DateComponents(year: 2020, month: 2, day: 26))!
-        let date = Date()
-        return CalendarHeader(for: date)
+    func summary(settings: Settings) -> String? {
+        return "\(LocalizedOffset(settings.offset)): \(settings.calendarNames)"
     }
-}
 
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
+        return CalendarViewController(config: Config(), store: store, settings: settings)
+    }
+
+}

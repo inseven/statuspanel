@@ -18,16 +18,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import UIKit
+import SwiftUI
 
-class FontInfoController : UIViewController {
-    @IBOutlet weak var textView: UITextView!
-    var font: Config.Font!
+struct ColoredCheckbox: ToggleStyle {
 
-    override func viewWillAppear(_ animated: Bool) {
-        textView.text = font.attribution
-        self.navigationItem.title = font.humanReadableName
+    var color: Color
 
-        super.viewWillAppear(animated)
+    func makeBody(configuration: Self.Configuration) -> some View {
+        Button {
+            configuration.isOn.toggle()
+        } label: {
+            HStack {
+                if configuration.isOn {
+                    Image(systemName: "checkmark.circle.fill")
+                        .imageScale(.large)
+                        .foregroundColor(color)
+                } else {
+                    Image(systemName: "circle")
+                        .imageScale(.large)
+                        .foregroundColor(color)
+                }
+                configuration.label
+                    .foregroundColor(.primary)
+            }
+        }
     }
+
 }

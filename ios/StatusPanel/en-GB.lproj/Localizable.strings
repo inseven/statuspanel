@@ -1,0 +1,58 @@
+// Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+"error_missing_configuration" = "Missing configuration.";
+"error_invalid_response" = "Invalid response.";
+"error_invalid_url" = "Invalid URL.";
+"error_invalid_date" = "Invalid date.";
+"error_corrupt_settings" = "Corrupt settings.";
+"error_unknown_data_source" = "Unknown data source (%@).";
+"error_internal_inconsistency" = "Internal inconsistency.";
+"error_incorrect_settings_type" = "Incorrect settings type.";
+
+"settings_last_background_update_label" = "Last Background Update";
+"settings_last_background_update_value_never" = "Never";
+
+"settings_no_devices_label" = "No Devices";
+"settings_add_dummy_device_label" = "Add Dummy Device...";
+
+"maximum_lines_title" = "Maximum Lines";
+"maximum_lines_unlimited_label" = "Unlimited";
+
+"dark_mode_title" = "Dark Mode";
+
+"dark_mode_config_off" = "Off";
+"dark_mode_config_on" = "On";
+"dark_mode_config_system" = "Use System";
+
+"calendar_calendars_label" = "Calendars";
+"calendar_day_label" = "Day";
+"calendar_show_locations_label" =  "Show Locations";
+"calendar_show_urls_label" = "Show Full URLs in Locations";
+
+"calendar_picker_title" = "Calendars";
+
+"privacy_mode_title" = "Privacy Mode";
+
+"flags_section_style_label" = "Style";
+"flags_section_style_value_body" = "Body";
+"flags_section_style_value_title" = "Title";
+"flags_section_prefers_empty_column_label" = "Prefers Empty Column";
+"flags_section_spans_columns_label" = "Spans Columns";

@@ -21,5 +21,39 @@
 import Foundation
 
 enum StatusPanelError: Error {
+
     case missingConfiguration
+    case invalidResponse
+    case invalidUrl
+    case invalidDate
+    case corruptSettings
+    case unknownDataSource(DataSourceType)
+    case internalInconsistency
+    case incorrectSettingsType
+
+}
+
+extension StatusPanelError: LocalizedError {
+
+    var errorDescription: String? {
+        switch self {
+        case .missingConfiguration:
+            return LocalizedString("error_missing_configuration")
+        case .invalidResponse:
+            return LocalizedString("error_invalid_response")
+        case .invalidUrl:
+            return LocalizedString("error_invalid_url")
+        case .invalidDate:
+            return LocalizedString("error_invalid_date")
+        case .corruptSettings:
+            return LocalizedString("error_corrupt_settings")
+        case .unknownDataSource(let dataSource):
+            return String(format: LocalizedString("error_unknown_data_source"), dataSource.rawValue)
+        case .internalInconsistency:
+            return LocalizedString("error_internal_inconsistency")
+        case .incorrectSettingsType:
+            return LocalizedString("error_incorrect_settings_type")
+        }
+    }
+
 }

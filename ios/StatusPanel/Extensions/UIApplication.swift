@@ -20,23 +20,46 @@
 
 import UIKit
 
-class UpdateTimeController: UIViewController {
+extension UIApplication {
 
-    @IBOutlet weak var datePicker: UIDatePicker!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    var version: String? {
+        return Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        datePicker.timeZone = TimeZone(secondsFromGMT: 0)
-        datePicker.date = Date.init(timeIntervalSinceReferenceDate: Config().updateTime)
+    var build: String? {
+        return Bundle.main.infoDictionary?["CFBundleVersion"] as? String
     }
 
-    @IBAction func timeChanged(sender: UIDatePicker, forEvent event: UIEvent) {
-        let newTime = sender.date.timeIntervalSinceReferenceDate
-        Config().updateTime = newTime
+    var utcBuildDate: Date? {
+        guard let build = self.build,
+              build.count == 18
+        else {
+            return nil
+        }
+        let dateString = String(build.prefix(10))
+        let inputDateFormatter = DateFormatter()
+        inputDateFormatter.dateFormat = "yyMMddHHmm"
+        inputDateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        return inputDateFormatter.date(from: dateString)
+    }
+
+    var commit: String? {
+        guard let build = self.build,
+              build.count == 18
+        else {
+            return nil
+        }
+        guard let shaValue = Int(String(build.suffix(8))) else {
+            return nil
+        }
+        return String(format: "%02x", shaValue)
+    }
+
+    var commitUrl: URL? {
+        guard let sha = self.commit else {
+            return nil
+        }
+        return URL(string: "https://github.com/inseven/statuspanel/commit")?.appendingPathComponent(sha)
     }
 
 }

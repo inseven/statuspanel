@@ -19,43 +19,18 @@
 // SOFTWARE.
 
 import Foundation
+import UIKit
 
-class NationalRailDataSource : DataSource {
+final class NationalRailDataSource : DataSource {
     // See https://wiki.openraildata.com/index.php/NRE_Darwin_Web_Service_(Public)
     // and https://lite.realtime.nationalrail.co.uk/OpenLDBWS/
     // As implemented by https://huxley.unop.uk/ because the raw national rail API is so bad
 
-    let configuration: Configuration
+    struct Settings: DataSourceSettings {
 
-    var targetCrs: String?
-    var sourceCrs: String?
+        var from: String?
+        var to: String?
 
-    var dataItems = [DataItem]()
-    var completion: DataSource.Callback?
-    var task: URLSessionTask?
-
-    init(configuration: Configuration) {
-        self.configuration = configuration
-    }
-
-    func get<T>(_ what: String, onCompletion: @escaping (T?, Error?) -> Void) -> URLSessionTask where T : Decodable {
-        let sep = what.contains("?") ? "&" : "?"
-        let url = URL(string: "https://huxley.apphb.com/" + what + sep + "accessToken=\(configuration.nationalRailApiToken)")!
-        return JSONRequest.makeRequest(url: url, onCompletion: onCompletion)
-    }
-
-    func fetchData(onCompletion: @escaping Callback) {
-        task?.cancel()
-        let route = Config().trainRoute
-        sourceCrs = route.from
-        targetCrs = route.to
-
-        if let sourceCrs = sourceCrs, let targetCrs = targetCrs {
-            completion = onCompletion
-            task = get("delays/\(sourceCrs)/to/\(targetCrs)/10", onCompletion: gotDelays)
-        } else {
-            onCompletion(self, [], nil)
-        }
     }
 
     struct Delays: Decodable {
@@ -71,40 +46,96 @@ class NationalRailDataSource : DataSource {
         }
     }
 
-    func gotDelays(data: Delays?, err: Error?) {
-        task = nil
-        dataItems = []
-        guard let data = data else {
-            completion?(self, dataItems, err)
+    let id: DataSourceType = .nationalRail
+    let name = "National Rail"
+    let image = UIImage(systemName: "tram.fill", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
+    let configurable = true
+
+    let configuration: Configuration
+
+    var defaults: Settings {
+        return Settings()
+    }
+
+    init(configuration: Configuration) {
+        self.configuration = configuration
+    }
+
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
+
+        guard let sourceCrs = settings.from,
+              let targetCrs = settings.to else {
+                  completion([], nil)
+                  return
+        }
+
+        let url = URL(string: "https://huxley.apphb.com")?
+            .appendingPathComponent("delays")
+            .appendingPathComponent(sourceCrs)
+            .appendingPathComponent("to")
+            .appendingPathComponent(targetCrs)
+            .appendingPathComponent("10")
+            .settingQueryItems([
+                URLQueryItem(name: "accessToken", value: configuration.nationalRailApiToken)
+            ])
+
+        guard let safeUrl = url else {
+            completion([], StatusPanelError.invalidUrl)
             return
         }
 
-        if data.delayedTrains.count == 0 {
-            dataItems.append(DataItem("\(sourceCrs!) to \(targetCrs!) trains: Good Service"))
-        }
-
-        for delay in data.delayedTrains {
-            // If we don't force a line break here, UILabel breaks the line after the "to"
-            // which makes the resulting text look a bit unbalanced. But it only does this
-            // when using the Amiga Forever font in non-editing mode (!?)
-            var text = "\(delay.std) \(sourceCrs!) to \(targetCrs!):\u{2028}"
-            if delay.isCancelled {
-                text += "Cancelled"
-            } else {
-                let df = DateFormatter()
-                df.dateFormat = "HH:mm"
-                let std = df.date(from: delay.std)
-                let etd = df.date(from: delay.etd)
-                if (std != nil && etd != nil) {
-                    let mins = Int(etd!.timeIntervalSince(std!) / 60)
-                    text += "\(mins) mins late"
-                } else {
-                    text += "Delayed"
-                }
+        let gotDelays: (Delays?, Error?) -> Void = { data, error in
+            var dataItems = [DataItem]()
+            guard let data = data else {
+                completion(dataItems, error)
+                return
             }
-            dataItems.append(DataItem(text, flags: [DataItemFlag.warning]))
-        }
-        completion?(self, dataItems, err)
-    }
-}
 
+            if data.delayedTrains.count == 0 {
+                dataItems.append(DataItem(icon: "🚊", text: "\(sourceCrs) to \(targetCrs) trains: Good Service"))
+            }
+
+            for delay in data.delayedTrains {
+                var text = "\(delay.std) \(sourceCrs) to \(targetCrs): "
+                if delay.isCancelled {
+                    text += "Cancelled"
+                } else {
+                    let df = DateFormatter()
+                    df.dateFormat = "HH:mm"
+                    let std = df.date(from: delay.std)
+                    let etd = df.date(from: delay.etd)
+                    if (std != nil && etd != nil) {
+                        let mins = Int(etd!.timeIntervalSince(std!) / 60)
+                        text += "\(mins) mins late"
+                    } else {
+                        text += "Delayed"
+                    }
+                }
+                dataItems.append(DataItem(icon: "🚊", text: text, flags: [.warning]))
+            }
+            completion(dataItems, error)
+        }
+
+        JSONRequest.makeRequest(url: safeUrl, completion: gotDelays)
+    }
+
+    func summary(settings: Settings) -> String? {
+        guard let from = settings.from,
+              let to = settings.to else {
+            return "Not configured"
+        }
+        return "\(from) to \(to)"
+    }
+
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
+        let viewController = NationalRailSettingsController()
+//        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
+//                as? NationalRailSettingsController else {
+//            return nil
+//        }
+        viewController.store = store
+        viewController.settings = settings
+        return viewController
+    }
+
+}

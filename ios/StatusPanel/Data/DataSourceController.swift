@@ -21,50 +21,174 @@
 import Foundation
 
 protocol DataSourceControllerDelegate: AnyObject {
+
     // Always called in context of main thread
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase])
+    func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error)
 }
 
 class DataSourceController {
-    weak var delegate: DataSourceControllerDelegate?
-    var sources: [DataSource] = []
-    var completed: [ObjectIdentifier: [DataItemBase]] = [:]
-    var lock = NSLock()
 
-    func add(dataSource: DataSource) {
-        sources.append(dataSource)
+    weak var delegate: DataSourceControllerDelegate?
+
+    var sources: [AnyDataSource] = []
+    var instances: [DataSourceInstance] = []
+    var syncQueue = DispatchQueue(label: "DataSourceController.syncQueue")
+
+    init() {
+
+        let configuration = try! Bundle.main.configuration()
+        sources = [
+            CalendarSource().anyDataSource(),
+            CalendarHeaderSource().anyDataSource(),
+            DummyDataSource().anyDataSource(),
+            NationalRailDataSource(configuration: configuration).anyDataSource(),
+            TextDataSource().anyDataSource(),
+            TFLDataSource(configuration: configuration).anyDataSource(),
+            ZenQuotesDataSource().anyDataSource(),
+        ]
+
+        let config = Config()
+
+        do {
+            let instances = try Config().dataSources() ?? []
+            do {
+                for instance in instances {
+                    try add(type: instance.type, uuid: instance.id)
+                }
+            } catch {
+                print("Failed to load data source details with error \(error).")
+            }
+        } catch {
+            print("Failed to load data sources with error \(error).")
+        }
+
+        // Restore the default configuration if there are none configured.
+        if instances.isEmpty {
+            do {
+                try add(type: .calendarHeader,
+                        settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                                                shortFormat: "yMMMMdEEE",
+                                                                offset: 0,
+                                                                flags: [.header, .spansColumns]))
+                try add(type: .transportForLondon,
+                        settings: TFLDataSource.Settings(lines: Set(config.activeTFLLines)))
+                try add(type: .nationalRail,
+                        settings: NationalRailDataSource.Settings(from: config.trainRoute.from, to: config.trainRoute.to))
+                try add(type: .calendar,
+                        settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
+                                                          showUrls: config.showUrlsInCalendarLocations,
+                                                          offset: 0))
+                try add(type: .text,
+                        settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
+                                                          text: "Tomorrow:"))
+                try add(type: .calendar,
+                        settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
+                                                          showUrls: config.showUrlsInCalendarLocations,
+                                                          offset: 1))
+                try save()
+            } catch {
+                print("Failed to add default data sources with error \(error).")
+            }
+        }
+
+    }
+
+    private func add(type: DataSourceType, uuid: UUID = UUID()) throws {
+        dispatchPrecondition(condition: .onQueue(.main))
+        guard let dataSource = sources.first(where: { $0.id == type }) else {
+            throw StatusPanelError.unknownDataSource(type)
+        }
+        instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
+    }
+
+    func add(_ details: DataSourceInstance.Details) throws {
+        try self.add(type: details.type, uuid: details.id)
+    }
+
+    private func add<T: DataSourceSettings>(type: DataSourceType, settings: T) throws {
+        dispatchPrecondition(condition: .onQueue(.main))
+        guard let dataSource = sources.first(where: { $0.id == type }) else {
+            throw StatusPanelError.unknownDataSource(type)
+        }
+        let uuid = UUID()
+        if !dataSource.validate(settings: settings) {
+            throw StatusPanelError.incorrectSettingsType
+        }
+        try Config().save(settings: settings, instanceId: uuid)
+        instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
+    }
+
+    func add(_ dataSource: AnyDataSource) throws {
+        dispatchPrecondition(condition: .onQueue(.main))
+        try self.add(type: dataSource.id)
+    }
+
+    func remove(instance: DataSourceInstance) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        let index = instances.firstIndex(of: instance)!
+        instances.remove(at: index)
+    }
+
+    func save() throws {
+        dispatchPrecondition(condition: .onQueue(.main))
+        try Config().set(dataSources: self.instances.map { $0.details })
     }
 
     func fetch() {
-        print("Fetching")
-        completed.removeAll()
-        for source in sources {
-            source.fetchData(onCompletion: gotData)
-        }
-    }
+        dispatchPrecondition(condition: .onQueue(.main))
+        let sources = Array(self.instances)  // Capture the ordered sources in case they change.
+        syncQueue.async {
 
-    func gotData(source: DataSource, data:[DataItemBase], error: Error?) {
-        let obj = ObjectIdentifier(source)
-        lock.lock()
-        completed[obj] = data
-        // TODO something with error
+            let dispatchGroup = DispatchGroup()
 
-        let allCompleted = (completed.count == sources.count)
-        var items = [DataItemBase]()
-        // We always want the calendar data source header as the first item
-        items.append(CalendarSource.getHeader())
+            var results: [UUID: Result<[DataItemBase], Error>] = [:]  // Synchronized on syncQueue.
+            for source in sources {
+                dispatchGroup.enter()
+                source.fetch { data, error in
+                    self.syncQueue.async {
+                        if let error = error {
+                            results[source.id] = .failure(error)
+                        } else if let data = data {
+                            results[source.id] = .success(data)
+                        } else {
+                            results[source.id] = .failure(StatusPanelError.internalInconsistency)
+                        }
+                        dispatchGroup.leave()
+                    }
+                }
+            }
 
-        // Use the ordering of sources, not completedItems
-        for source in sources {
-            let completedItems = completed[ObjectIdentifier(source)]
-            items += completedItems ?? []
-        }
-        lock.unlock()
-
-        if (allCompleted) {
-            DispatchQueue.main.async {
-                self.delegate?.dataSourceController(self, didUpdateData: items)
+            dispatchGroup.notify(queue: self.syncQueue) {
+                let orderedResults = sources.compactMap { results[$0.id] }
+                let errors = orderedResults.compactMap { result -> Error? in
+                    switch result {
+                    case .success:
+                        return nil
+                    case .failure(let error):
+                        return error
+                    }
+                }
+                if let error = errors.first {
+                    DispatchQueue.main.async {
+                        self.delegate?.dataSourceController(self, didFailWithError: error)
+                    }
+                    return
+                }
+                let items = orderedResults.compactMap { result -> [DataItemBase]? in
+                    switch result {
+                    case .success(let items):
+                        return items
+                    case .failure:
+                        return nil
+                    }
+                }.reduce([], +)
+                DispatchQueue.main.async {
+                    self.delegate?.dataSourceController(self, didUpdateData: items)
+                }
             }
         }
+
     }
+
 }

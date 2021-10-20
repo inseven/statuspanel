@@ -22,7 +22,17 @@ import UIKit
 
 class PrivacyModeController : UITableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
 
-    private let config = Config()
+    private let config: Config
+
+    init(config: Config) {
+        self.config = config
+        super.init(style: .grouped)
+        title = LocalizedString("privacy_mode_title")
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         return true
@@ -36,9 +46,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
             picker.delegate = self
             picker.sourceType = .photoLibrary
             picker.modalPresentationStyle = .popover
-            present(picker, animated: true) {
-                // print("Finished presenting?")
-            }
+            present(picker, animated: true)
         } else {
             let prevMode = config.privacyMode
             let prevIndexPath = IndexPath(row: prevMode.rawValue, section: 0)
@@ -57,7 +65,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
                 } else if prevMode == .customImage && newMode != .customImage{
                     tableView.deleteRows(at: [imgCellIndexPath], with: .automatic)
                 }
-            }, completion: nil)
+            })
         }
     }
 
@@ -80,19 +88,19 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-
         if indexPath.row < 2 {
-            let frame = cell.contentView.bounds.insetBy(dx: cell.separatorInset.left, dy: 0)
             let redactMode: RedactMode = (indexPath.row == 0) ? .redactLines : .redactWords
-            let label = ViewController.getLabel(frame: frame, font: Config().font, redactMode: redactMode)
-            label.text = "Redact text good"
-            label.sizeToFit()
-            label.frame = label.frame.offsetBy(dx: 0, dy: (frame.height - label.bounds.height) / 2)
-            cell.contentView.addSubview(label)
+            let cell = FontLabelTableViewCell(font: config.getFont(named: config.bodyFont), redactMode: redactMode)
+            cell.label.text = "Redact text good"
+            cell.accessoryType = indexPath.row == config.privacyMode.rawValue ? .checkmark : .none
+            return cell
         } else if (indexPath.row == 2) {
-            cell.textLabel?.text = "Use custom image"
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            cell.textLabel?.text = "Custom Image"
+            cell.accessoryType = indexPath.row == config.privacyMode.rawValue ? .checkmark : .none
+            return cell
         } else if (indexPath.row == 3) {
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.contentView.bounds = cell.contentView.bounds.rectWithDifferentHeight(kImageRowHeight)
             cell.accessoryType = .disclosureIndicator
             let frame = cell.contentView.bounds.insetBy(left: cell.separatorInset.left, right: 35, top: 10, bottom: 10)
@@ -101,15 +109,13 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
             imgView.contentMode = .scaleAspectFit
             imgView.frame = frame
             cell.contentView.addSubview(imgView)
+            return cell
         }
-
-        if indexPath.row == Config().privacyMode.rawValue {
-            cell.accessoryType = .checkmark
-        }
-        return cell
+        fatalError("Unknown index path")
     }
 
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         var image = info[.editedImage] as? UIImage
         if image == nil {
             image = info[.originalImage] as? UIImage
@@ -127,7 +133,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
              let imgdata = image.pngData()
              try imgdata?.write(to: dir.appendingPathComponent("customPrivacyImage.png"))
          } catch {
-             print("meh")
+             present(error: error)
          }
     }
 }

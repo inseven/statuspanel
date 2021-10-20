@@ -18,28 +18,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import UIKit
+import Foundation
 
-class DarkModeController : UITableViewController {
+class DataSourceSettingsStore<T: DataSourceSettings> {
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updateTickMark(Config().darkMode.rawValue)
+    var config: Config
+    var instanceId: UUID
+
+    init(config: Config, uuid: UUID) {
+        self.config = config
+        self.instanceId = uuid
     }
 
-    func updateTickMark(_ selected: Int) {
-        for mode in Config.DarkModeConfig.allCases {
-            let i = mode.rawValue
-            let cell = self.tableView.cellForRow(at: IndexPath(row: i, section: 0))
-            cell?.accessoryType = (i == selected) ? .checkmark : .none
-        }
+    func save(settings: T) throws {
+        try config.save(settings: settings, instanceId: instanceId)
     }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        Config().darkMode = Config.DarkModeConfig(rawValue: indexPath.row)!
-        tableView.performBatchUpdates({
-            tableView.deselectRow(at: indexPath, animated: true)
-            updateTickMark(indexPath.row)
-        })
-    }
 }

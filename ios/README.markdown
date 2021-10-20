@@ -27,6 +27,14 @@ You can obtain development API keys at:
 - [National Rail Live Departure Boards](https://realtime.nationalrail.co.uk/OpenLDBWSRegistration/Registration)
 - [Transport for London](https://api.tfl.gov.uk/)
 
+### Style Guide
+
+Swift does a pretty good job of encouraging good style, but we also have a few explicit guidelines of our own. Healthy debate around these guidelines is encouraged but, until updates are agreed by the community, these should be adhered to.
+
+- use explicit `return` statements in functions and computed properties _except_ when writing SwiftUI
+
+  While Swift permits implicit returns (statements that omit the `return` keyword) in single-line functions and computed properties, these can be confusing to those coming from other languages. We prefer explicit `return` statements to reduce ambiguity. An exception is made for SwiftUI as it is designed to be strongly declarative and leverage these implicit returns in computed properties and view builders.
+
 ### Build Numbers
 
 The iOS app uses auto-generated build numbers that attempt to encode the build timestamp, along with some details of the commit used. They follow the format:

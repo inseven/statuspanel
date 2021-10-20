@@ -19,91 +19,110 @@
 // SOFTWARE.
 
 import Foundation
+import UIKit
 
-protocol DataSource : AnyObject {
-    typealias Callback = (DataSource, [DataItemBase], Error?) -> Void
-    func fetchData(onCompletion:@escaping Callback)
+protocol DataSourceSettings: Codable {
+
 }
 
-enum DataItemFlag {
-    case warning
-    case header
+protocol DataSource: AnyObject, Identifiable {
+
+    typealias Store = DataSourceSettingsStore<Settings>
+
+    associatedtype Settings: DataSourceSettings
+
+    var id: DataSourceType { get }
+
+    var name: String { get }
+    var image: UIImage { get }
+    var configurable: Bool { get }
+
+    var defaults: Settings { get }
+
+    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void)
+
+    func summary(settings: Settings) -> String?
+
+    func settingsViewController(store: Store, settings: Settings) -> UIViewController?
+
+}
+
+extension DataSource {
+
+    func settings(for instanceId: UUID) throws -> Settings {
+        guard let settings: Settings = try Config().settings(for: instanceId) else {
+            return defaults
+        }
+        return settings
+    }
+
+}
+
+struct DataItemFlags: OptionSet, Codable {
+
+    let rawValue: Int
+
+    static let warning = DataItemFlags(rawValue: 1 << 0)
+    static let header = DataItemFlags(rawValue: 1 << 1)
+    static let prefersEmptyColumn = DataItemFlags(rawValue: 1 << 2)
+    static let spansColumns = DataItemFlags(rawValue: 1 << 3)
 }
 
 protocol DataItemBase : AnyObject {
-    func getPrefix() -> String
+
+    var icon: String? { get }
+    var prefix: String { get }
+    var flags: DataItemFlags { get }
+    var subText: String? { get }
+
     func getText(checkFit: (String) -> Bool) -> String
-    func getSubText() -> String?
-    func getFlags() -> Set<DataItemFlag>
+}
+
+extension DataItemBase {
+
+    var iconAndPrefix: String {
+        var elements: [String] = []
+        if let icon = self.icon {
+            elements.append(icon)
+        }
+        let prefix = self.prefix
+        if !prefix.isEmpty {
+            elements.append(prefix)
+        }
+        return elements.joined(separator: " ")
+    }
+
 }
 
 class DataItem : Equatable, DataItemBase {
-    init(_ text: String, flags: Set<DataItemFlag> = Set()) {
+
+    let icon: String?
+    let text: String
+    let flags: DataItemFlags
+
+    init(icon: String?, text: String, flags: DataItemFlags = []) {
+        self.icon = icon
         self.text = text
         self.flags = flags
     }
 
-    let text: String
-    let flags: Set<DataItemFlag>
+    convenience init(text: String, flags: DataItemFlags = []) {
+        self.init(icon: nil, text: text, flags: flags)
+    }
 
-    func getPrefix() -> String {
+    var prefix: String {
         return ""
+    }
+
+    var subText: String? {
+        nil
     }
 
     func getText(checkFit: (String) -> Bool) -> String {
         return text
     }
 
-    func getFlags() -> Set<DataItemFlag> {
-        return flags
-    }
-
-    func getSubText() -> String? {
-        return nil
-    }
-
     static func == (lhs: DataItem, rhs: DataItem) -> Bool {
         return lhs.text == rhs.text && lhs.flags == rhs.flags
-    }
-}
-
-class DummyDataSource : DataSource {
-    func fetchData(onCompletion:@escaping Callback) {
-        var data: [DataItemBase] = []
-        #if DEBUG
-        if Config().showDummyData {
-            var specialChars: [String] = []
-            let images = Bundle.main.urls(forResourcesWithExtension: "png", subdirectory: "fonts/font6x10") ?? []
-            for imgName in images.map({$0.lastPathComponent}).sorted() {
-                let parts = StringUtils.regex(imgName, pattern: #"U\+([0-9A-Fa-f]+)(?:_U\+([0-9A-Fa-f]+))*(?:@[2-4])?\.png"#)
-                if parts.count == 0 {
-                    continue
-                }
-                var scalars: [UnicodeScalar] = []
-                for part in parts {
-                    if let num = UInt32(part, radix: 16) {
-                        if let scalar = UnicodeScalar(num) {
-                            scalars.append(scalar)
-                        }
-                    }
-                }
-                if scalars.count != parts.count {
-                    continue // Some weirdly formatted img name?
-                }
-                let str = String(String.UnicodeScalarView(scalars))
-                specialChars.append(str)
-            }
-            let specialCharsStr = specialChars.joined(separator: "")
-            let dummyData: [DataItemBase] = [
-                CalendarItem(title: specialCharsStr, location: specialCharsStr),
-                CalendarItem(time: "06:00", title: "Something that has really long text that needs to wrap. Like, really really long!", location: "A place that is also really really lengthy"),
-                DataItem("Northern line: part suspended", flags: [.warning]),
-                DataItem("07:44 to CBG:\u{2028}Cancelled", flags: [.warning]),
-                CalendarItem(time: "09:40", title: "Some text wot is multiline", location: nil),
-            ]
-            data.append(contentsOf: dummyData)
-        }
-        #endif
-        onCompletion(self, data, nil)
     }
 }

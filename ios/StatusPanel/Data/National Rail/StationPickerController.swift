@@ -22,12 +22,22 @@ import UIKit
 
 class StationPickerController: UITableViewController, UISearchResultsUpdating {
 
+    static let valueCellReuseIdentifier = "ValueCell"
+
     var searchController: UISearchController!
 
     var stations: [Station]!
     var stationsByLetter: [[Station]] = []
     var filteredStations: [Station]?
     var selectedStation: Station?
+
+    init() {
+        super.init(style: .grouped)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         stations = StationsList.get()
@@ -43,33 +53,17 @@ class StationPickerController: UITableViewController, UISearchResultsUpdating {
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
         searchController.searchBar.autocapitalizationType = .none
-        searchController.searchBar.placeholder = "Select a station"
-        searchController.obscuresBackgroundDuringPresentation = false // The default is true.
+        searchController.obscuresBackgroundDuringPresentation = false
+        navigationItem.hidesSearchBarWhenScrolling = false
 
-        if #available(iOS 11.0, *) {
-            // For iOS 11 and later, place the search bar in the navigation bar.
-            navigationItem.searchController = searchController
+        navigationItem.searchController = searchController
 
-            // Make the search bar always visible.
-            navigationItem.hidesSearchBarWhenScrolling = false
-        } else {
-            // For iOS 10 and earlier, place the search controller's search bar in the table view's header.
-            tableView.tableHeaderView = searchController.searchBar
-        }
-
-        searchController.obscuresBackgroundDuringPresentation = false // The default is true.
         definesPresentationContext = true
         searchController.isActive = true
 
+        tableView.register(Value1TableViewCell.self, forCellReuseIdentifier: Self.valueCellReuseIdentifier)
+
         super.viewDidLoad()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        // Make sure the seach box always starts out with the keyboard up
-        // TODO: Why doesn't this work?
-        // searchController.searchBar.becomeFirstResponder()
-
-        super.viewDidAppear(animated)
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -109,32 +103,22 @@ class StationPickerController: UITableViewController, UISearchResultsUpdating {
         }
     }
 
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if filteredStations == nil {
-            return 24 // Looks about right (!)
-        } else {
-            return 0
-        }
-    }
-
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if filteredStations == nil {
             let name = String(UnicodeScalar(Int(Character("A").asciiValue!) + section)!)
-            let label = UILabel()
-            label.text = name
-            label.font = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize)
-            label.backgroundColor = UIColor.systemGroupedBackground
-            return label
+            return name
         } else {
             // No section headers in filtered list
             return nil
         }
+
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: Self.valueCellReuseIdentifier, for: indexPath)
         let station = stationForIndexPath(indexPath)
-        cell.textLabel?.text = station.nameAndCode
+        cell.textLabel?.text = station.name
+        cell.detailTextLabel?.text = station.code
         return cell
     }
 
