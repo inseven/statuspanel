@@ -23,8 +23,6 @@ import CoreLocation
 import NetworkExtension
 import Network
 
-// TODO: Actual provisioner
-
 // Thanks https://stackoverflow.com/questions/56583650/cncopycurrentnetworkinfo-with-ios-13
 func GetCurrentSSID() -> String? {
     let interfaces = CNCopySupportedInterfaces() as? [String]
@@ -34,9 +32,9 @@ func GetCurrentSSID() -> String? {
 
 func GetInterfaceInfo(_ interface: String) -> String? {
     guard let interfaceInfo = CNCopyCurrentNetworkInfo(interface as CFString) as? [String: AnyObject],
-        let ssid = interfaceInfo[kCNNetworkInfoKeySSID as String] as? String
-        else {
-            return nil
+          let ssid = interfaceInfo[kCNNetworkInfoKeySSID as String] as? String
+    else {
+        return nil
     }
     return ssid
 }
