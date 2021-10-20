@@ -59,4 +59,7 @@
 
 "setup_wifi_title" = "Setup Wi-Fi";
 "setup_wifi_network_details_section_title" = "Network Details";
+"setup_wifi_next_button_title" = "Next";
 "setup_wifi_network_details_section_footer" = "Your new device will use this WiFI network to check for updates.";
+"setup_wifi_ssid_placeholder" = "Name";
+"setup_wifi_password_placeholder" = "Password";

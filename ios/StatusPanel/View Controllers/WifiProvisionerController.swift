@@ -31,7 +31,8 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
 
     private lazy var ssidCell: TextFieldTableViewCell = {
         let cell = TextFieldTableViewCell()
-        cell.textField.placeholder = "Name"
+        cell.textField.placeholder = LocalizedString("setup_wifi_ssid_placeholder")
+        cell.textField.clearButtonMode = .whileEditing
         cell.textField.autocapitalizationType = .none
         cell.textField.autocorrectionType = .no
         cell.textField.returnKeyType = .next
@@ -40,7 +41,8 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
 
     private lazy var passwordCell: TextFieldTableViewCell = {
         let cell = TextFieldTableViewCell()
-        cell.textField.placeholder = "Password"
+        cell.textField.placeholder = LocalizedString("setup_wifi_password_placeholder")
+        cell.textField.clearButtonMode = .whileEditing
         cell.textField.isSecureTextEntry = true
         cell.textField.autocapitalizationType = .none
         cell.textField.autocorrectionType = .no
@@ -55,7 +57,10 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
     }()
 
     private lazy var nextButtonItem: UIBarButtonItem = {
-        return UIBarButtonItem(title: "Next", style: .plain, target: self, action: #selector(nextTapped(sender:)))
+        return UIBarButtonItem(title: LocalizedString("setup_wifi_next_button_title"),
+                               style: .done,
+                               target: self,
+                               action: #selector(nextTapped(sender:)))
     }()
 
     private lazy var connectingActivityIndicatorItem: UIBarButtonItem = {
