@@ -28,6 +28,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import zipfile
 
 import pick
 import serial
@@ -101,19 +102,8 @@ def command_erase(options):
                     "--after", "hard_reset",
                     "erase_flash"])
 
-
-@cli.command("flash", help="flash device firmware", arguments=[
-    DeviceArgument(),
-    cli.Argument("--path", help="firmware to use to flash the device (may be a directory or zip file)")
-])
-def command_flash(options):
-    device = get_device(options)
-
-    firmware_directory = ESP32_DIRECTORY
-    if options.path is not None:
-        firmware_directory = os.path.abspath(options.path)
-
-    logging.info("Flashing latest firmware...")
+def flash_firmware(device, path):
+    logging.info("Flashing firmware...")
     run([ESPTOOL_PATH,
          "--chip", "esp32",
          "--port", device,
@@ -126,13 +116,33 @@ def command_flash(options):
          "--flash_freq", "40m",
          "--flash_size", "detect",
          "0x1000",
-         os.path.join(firmware_directory, "bootloader.bin"),
+         os.path.join(path, "bootloader.bin"),
          "0x10000",
-         os.path.join(firmware_directory, "NodeMCU.bin"),
+         os.path.join(path, "NodeMCU.bin"),
          "0x8000",
-         os.path.join(firmware_directory, "partitions.bin"),
+         os.path.join(path, "partitions.bin"),
          "0x190000",
-         os.path.join(firmware_directory, "lfs.img")])
+         os.path.join(path, "lfs.img")])
+
+
+@cli.command("flash", help="flash device firmware", arguments=[
+    DeviceArgument(),
+    cli.Argument("--path", help="firmware to use to flash the device (may be a directory or zip file)")
+])
+def command_flash(options):
+    device = get_device(options)
+
+    firmware_path = ESP32_DIRECTORY
+    if options.path is not None:
+        firmware_path = os.path.abspath(options.path)
+    if os.path.isdir(firmware_path):
+        flash_firmware(device, firmware_path)
+    else:
+        with tempfile.TemporaryDirectory() as directory:
+            with zipfile.ZipFile(firmware_path) as zip:
+                logging.info("Extracting zip...")
+                zip.extractall(directory)
+                flash_firmware(device, directory)
 
 
 @cli.command("upload", help="upload the latest Lua scripts", arguments=[
