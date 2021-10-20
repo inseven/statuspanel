@@ -61,7 +61,7 @@ final class TFLDataSource: DataSource {
 
         init(store: DataSourceSettingsStore<TFLDataSource.Settings>, settings: TFLDataSource.Settings) {
             self.store = store
-            self.settings = settings
+            _settings = State(wrappedValue: settings)
             self.lines = TFLDataSource.lines.sorted()
         }
 
