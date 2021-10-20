@@ -59,4 +59,4 @@
 
 "setup_wifi_title" = "Setup Wi-Fi";
 "setup_wifi_network_details_section_title" = "Network Details";
-"setup_wifi_network_details_section_footer" = "Your StatusPanel will use this WiFI network to check for updates.";
+"setup_wifi_network_details_section_footer" = "Your new device will use this WiFI network to check for updates.";

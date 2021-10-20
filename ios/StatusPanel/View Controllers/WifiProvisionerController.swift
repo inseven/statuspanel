@@ -34,6 +34,7 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
         cell.textField.placeholder = "Name"
         cell.textField.autocapitalizationType = .none
         cell.textField.autocorrectionType = .no
+        cell.textField.returnKeyType = .next
         return cell
     }()
 
@@ -43,6 +44,7 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
         cell.textField.isSecureTextEntry = true
         cell.textField.autocapitalizationType = .none
         cell.textField.autocorrectionType = .no
+        cell.textField.returnKeyType = .done
         return cell
     }()
 
