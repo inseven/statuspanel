@@ -20,20 +20,69 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 // See https://api-portal.tfl.gov.uk/admin/applications/1409617922524
 final class TFLDataSource: DataSource {
 
-    struct Settings: DataSourceSettings {
+    struct Line: Identifiable, Comparable {
 
-        var lines: [String]
+        static func < (lhs: TFLDataSource.Line, rhs: TFLDataSource.Line) -> Bool {
+            return lhs.title < rhs.title
+        }
 
-        init(lines: [String]) {
+        var id: String
+        var title: String
+        var color: Color
+
+    }
+
+    struct Settings: DataSourceSettings & Equatable {
+
+        var lines: Set<String>
+
+        init(lines: Set<String>) {
             self.lines = lines
         }
 
         init() {
             self.init(lines: [])
+        }
+
+    }
+
+    struct SettingsView: View {
+
+        var store: DataSourceSettingsStore<TFLDataSource.Settings>
+        @State var settings: TFLDataSource.Settings
+
+        private var lines: [TFLDataSource.Line]
+        @State var error: Error? = nil
+
+        init(store: DataSourceSettingsStore<TFLDataSource.Settings>, settings: TFLDataSource.Settings) {
+            self.store = store
+            _settings = State(wrappedValue: settings)
+            self.lines = TFLDataSource.lines.sorted()
+        }
+
+        var body: some View {
+            Form {
+                ForEach(lines) { line in
+                    Toggle(line.title, isOn: $settings.lines.binding(for: line.id))
+                        .toggleStyle(ColoredCheckbox(color: line.color))
+                }
+            }
+            .alert(isPresented: $error.mappedToBool()) {
+                Alert(error: error)
+            }
+            .onChange(of: settings) { newValue in
+                do {
+                    try store.save(settings: newValue)
+                } catch {
+                    self.error = error
+                }
+            }
+
         }
 
     }
@@ -49,20 +98,21 @@ final class TFLDataSource: DataSource {
         }
     }
 
-    // Key is the line id in the API, value is the human-readable name
-    static let lines = [
-        "bakerloo": "Bakerloo Line",
-        "circle": "Circle Line",
-        "central": "Central Line",
-        "district": "District Line",
-        "hammersmith-city": "Hammersmith & City Line",
-        "jubilee": "Jubilee Line",
-        "metropolitan": "Metropolitan Line",
-        "northern": "Northern Line",
-        "piccadilly": "Piccadilly Line",
-        "victoria": "Victoria Line",
-        "waterloo-city": "Waterloo & City Line",
+    static var lines = [
+        Line(id: "bakerloo", title: "Bakerloo Line", color: Color(hex: 0xb36305)),
+        Line(id: "central", title: "Central Line", color: Color(hex: 0xe32017)),
+        Line(id: "circle", title: "Circle Line", color: Color(hex: 0xffd300)),
+        Line(id: "district", title: "District Line", color: Color(hex: 0x00782a)),
+        Line(id: "hammersmith-city", title: "Hammersmith & City Line", color: Color(hex: 0xf3a9bb)),
+        Line(id: "jubilee", title: "Jubilee Line", color: Color(hex: 0xa0a5a9)),
+        Line(id: "metropolitan", title: "Metropolitan Line", color: Color(hex: 0x9b0056)),
+        Line(id: "northern", title: "Northern Line", color: Color(hex: 0x000000)),
+        Line(id: "piccadilly", title: "Piccadilly Line", color: Color(hex: 0x003688)),
+        Line(id: "victoria", title: "Victoria Line", color: Color(hex: 0x0098d4)),
+        Line(id: "waterloo-city", title: "Waterloo & City Line", color: Color(hex: 0x95cdba)),
     ]
+
+    private var linesById: [String: Line] = [:]
 
     let id: DataSourceType = .transportForLondon
     let name = "London Underground"
@@ -77,12 +127,13 @@ final class TFLDataSource: DataSource {
 
     init(configuration: Configuration) {
         self.configuration = configuration
+        linesById = Self.lines.reduce(into: [String: Line]()) {  $0[$1.id] = $1 }
     }
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
 
         // Remove any unknown lines.
-        let lines = settings.lines.filter({ Self.lines[$0] != nil })
+        let lines = settings.lines.filter { self.linesById[$0] != nil }
 
         guard !lines.isEmpty else {
             completion([], nil)
@@ -117,7 +168,7 @@ final class TFLDataSource: DataSource {
                     flags.insert(.warning)
                 }
 
-                guard let name = Self.lines[line.id] else {
+                guard let name = self.linesById[line.id]?.title else {
                     completion([], StatusPanelError.invalidResponse)
                     return
                 }
@@ -131,15 +182,15 @@ final class TFLDataSource: DataSource {
     }
 
     func summary(settings: Settings) -> String? {
-        let lineNames = settings.lines.compactMap { TFLDataSource.lines[$0] }
-        guard !lineNames.isEmpty else {
+        let activeLines = settings.lines.compactMap { linesById[$0] }.sorted()
+        guard !activeLines.isEmpty else {
             return "None"
         }
-        return lineNames.joined(separator: ", ")
+        return activeLines.map { $0.title }.joined(separator: ", ")
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        return TFLSettingsController(store: store, settings: settings)
+        return UIHostingController(rootView: SettingsView(store: store, settings: settings))
     }
 
 }

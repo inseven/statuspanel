@@ -62,6 +62,7 @@
 		D8E285AD271A4547001738A8 /* ExternalOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E285AC271A4547001738A8 /* ExternalOperation.swift */; };
 		D8E285AF271A45CE001738A8 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E285AE271A45CE001738A8 /* Device.swift */; };
 		D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6839B270DF11800504B5E /* DataSourceType.swift */; };
+		D8E6D673271FBD3300AB6452 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6D672271FBD3300AB6452 /* Color.swift */; };
 		D8EED7F12630EF19009E2166 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = D8EED7F02630EF19009E2166 /* Sodium */; };
 		D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F57FE9271A009200847C67 /* QRCodeViewController.swift */; };
 		DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB17F92E249E3BAD008CD83E /* CGExtensions.swift */; };
@@ -162,6 +163,7 @@
 		D8E285AC271A4547001738A8 /* ExternalOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalOperation.swift; sourceTree = "<group>"; };
 		D8E285AE271A45CE001738A8 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		D8E6839B270DF11800504B5E /* DataSourceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceType.swift; sourceTree = "<group>"; };
+		D8E6D672271FBD3300AB6452 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		D8EED7EF2630EEFF009E2166 /* swift-sodium */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "swift-sodium"; sourceTree = "<group>"; };
 		D8F57FE9271A009200847C67 /* QRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeViewController.swift; sourceTree = "<group>"; };
 		DB17F92E249E3BAD008CD83E /* CGExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
@@ -356,17 +358,18 @@
 			isa = PBXGroup;
 			children = (
 				D8B9874A270FF88D00EC2BA4 /* Alert.swift */,
+				D8DD9900271EF971004088CD /* Binding.swift */,
 				D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */,
 				D8DAED7626E3F3D40002F388 /* Bundle.swift */,
 				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
+				D8E6D672271FBD3300AB6452 /* Color.swift */,
 				D8C20D22271C6C1500F3F22A /* EKCalendar.swift */,
 				D862BF3B271B98F90086BE48 /* String.swift */,
+				D8DD98FB271EE98A004088CD /* UIApplication.swift */,
 				D83CC5212707543E00260DC1 /* UIStoryboard.swift */,
 				D89104842707B99F0020A2CF /* UIViewController.swift */,
 				DB981489270887590029BA0A /* UnicodeExtensions.swift */,
 				D8293A0B26F787D3008CE13B /* URL.swift */,
-				D8DD98FB271EE98A004088CD /* UIApplication.swift */,
-				D8DD9900271EF971004088CD /* Binding.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -563,6 +566,7 @@
 				D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */,
 				D8B3B3A827182BB000DD3148 /* AddDataSourceController.swift in Sources */,
 				D8C20D27271C7A6E00F3F22A /* CalendarPickerController.swift in Sources */,
+				D8E6D673271FBD3300AB6452 /* Color.swift in Sources */,
 				D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */,
 				D8DAED7226E3F3320002F388 /* Configuration.swift in Sources */,
 				D81DA7C3271297460052D32C /* ZenQuotesDataSource.swift in Sources */,
