@@ -84,6 +84,8 @@ The device run-loop will automatically start if the auto switch is on (GPIO 14 h
   ```lua
   file.remove("deviceid") -- remove the unique device identifier
   file.remove("sk") -- remove the device secret used to encrypt updates
+  wifi.sta.config({auto = false, ssid = "", pwd = ""}, true) -- clear the WiFi details
+  file.remove("last_modified") -- remove details of the last cached update
   ```
 
   N.B. If you remove just `"deviceid"`, you'll initiate new device registration but with the same keys as before, which probably isn't desirable.
