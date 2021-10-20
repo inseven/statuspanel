@@ -21,23 +21,6 @@
 import UIKit
 import CoreLocation
 import NetworkExtension
-import Network
-
-// Thanks https://stackoverflow.com/questions/56583650/cncopycurrentnetworkinfo-with-ios-13
-func GetCurrentSSID() -> String? {
-    let interfaces = CNCopySupportedInterfaces() as? [String]
-    let interface = interfaces?.compactMap { GetInterfaceInfo($0) }.first
-    return interface
-}
-
-func GetInterfaceInfo(_ interface: String) -> String? {
-    guard let interfaceInfo = CNCopyCurrentNetworkInfo(interface as CFString) as? [String: AnyObject],
-          let ssid = interfaceInfo[kCNNetworkInfoKeySSID as String] as? String
-    else {
-        return nil
-    }
-    return ssid
-}
 
 class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
 
