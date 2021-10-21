@@ -36,6 +36,7 @@
 		D89104852707B9A00020A2CF /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104842707B99F0020A2CF /* UIViewController.swift */; };
 		D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104862707BAD50020A2CF /* DataSourceInstance.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
+		D89FF2372721037B0028EC16 /* ExternalOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89FF2362721037B0028EC16 /* ExternalOperationTests.swift */; };
 		D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */; };
 		D8B3B3A827182BB000DD3148 /* AddDataSourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B3B3A727182BB000DD3148 /* AddDataSourceController.swift */; };
 		D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */; };
@@ -96,6 +97,16 @@
 		DBFCBB7C24B8B6AD00E3B3D3 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D89FF2382721037B0028EC16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBCA98712143E2920084B710 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DBCA98782143E2920084B710;
+			remoteInfo = StatusPanel;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		D8EED7EE2630EE8F009E2166 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -138,6 +149,8 @@
 		D89104842707B99F0020A2CF /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		D89104862707BAD50020A2CF /* DataSourceInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceInstance.swift; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		D89FF2342721037B0028EC16 /* StatusPanelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StatusPanelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D89FF2362721037B0028EC16 /* ExternalOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalOperationTests.swift; sourceTree = "<group>"; };
 		D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderSource.swift; sourceTree = "<group>"; };
 		D8B3B3A727182BB000DD3148 /* AddDataSourceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDataSourceController.swift; sourceTree = "<group>"; };
 		D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+mappedToBool.swift"; sourceTree = "<group>"; };
@@ -206,6 +219,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D89FF2312721037B0028EC16 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DBCA98762143E2920084B710 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -350,6 +370,14 @@
 			path = Dummy;
 			sourceTree = "<group>";
 		};
+		D89FF2352721037B0028EC16 /* StatusPanelTests */ = {
+			isa = PBXGroup;
+			children = (
+				D89FF2362721037B0028EC16 /* ExternalOperationTests.swift */,
+			);
+			path = StatusPanelTests;
+			sourceTree = "<group>";
+		};
 		D8D252B127146EB700C68EF9 /* Controls */ = {
 			isa = PBXGroup;
 			children = (
@@ -408,6 +436,7 @@
 				D8EED7EF2630EEFF009E2166 /* swift-sodium */,
 				DBCA987B2143E2920084B710 /* StatusPanel */,
 				DB1EB9052427E1F900050A08 /* fonts */,
+				D89FF2352721037B0028EC16 /* StatusPanelTests */,
 				DBB2D354217C9AC3009F7549 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -416,6 +445,7 @@
 			isa = PBXGroup;
 			children = (
 				DBCA98792143E2920084B710 /* StatusPanel.app */,
+				D89FF2342721037B0028EC16 /* StatusPanelTests.xctest */,
 			);
 			name = Products;
 			path = ..;
@@ -458,6 +488,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		D89FF2332721037B0028EC16 /* StatusPanelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D89FF23C2721037B0028EC16 /* Build configuration list for PBXNativeTarget "StatusPanelTests" */;
+			buildPhases = (
+				D89FF2302721037B0028EC16 /* Sources */,
+				D89FF2312721037B0028EC16 /* Frameworks */,
+				D89FF2322721037B0028EC16 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D89FF2392721037B0028EC16 /* PBXTargetDependency */,
+			);
+			name = StatusPanelTests;
+			productName = StatusPanelTests;
+			productReference = D89FF2342721037B0028EC16 /* StatusPanelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		DBCA98782143E2920084B710 /* StatusPanel */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DBCA988B2143E2920084B710 /* Build configuration list for PBXNativeTarget "StatusPanel" */;
@@ -486,10 +534,14 @@
 		DBCA98712143E2920084B710 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0920;
+				LastSwiftUpdateCheck = 1300;
 				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Tom Sutcliffe";
 				TargetAttributes = {
+					D89FF2332721037B0028EC16 = {
+						CreatedOnToolsVersion = 13.0;
+						TestTargetID = DBCA98782143E2920084B710;
+					};
 					DBCA98782143E2920084B710 = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1140;
@@ -519,11 +571,19 @@
 			projectRoot = "";
 			targets = (
 				DBCA98782143E2920084B710 /* StatusPanel */,
+				D89FF2332721037B0028EC16 /* StatusPanelTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		D89FF2322721037B0028EC16 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DBCA98772143E2920084B710 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -544,6 +604,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D89FF2302721037B0028EC16 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D89FF2372721037B0028EC16 /* ExternalOperationTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DBCA98752143E2920084B710 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -626,6 +694,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		D89FF2392721037B0028EC16 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DBCA98782143E2920084B710 /* StatusPanel */;
+			targetProxy = D89FF2382721037B0028EC16 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		D8C20D20271C2A6200F3F22A /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
@@ -647,6 +723,59 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		D89FF23A2721037B0028EC16 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S4WXAUZQEV;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.inseven.StatusPanelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StatusPanel.app/StatusPanel";
+			};
+			name = Debug;
+		};
+		D89FF23B2721037B0028EC16 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S4WXAUZQEV;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.inseven.StatusPanelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StatusPanel.app/StatusPanel";
+			};
+			name = Release;
+		};
 		DBCA98892143E2920084B710 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */;
@@ -823,6 +952,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D89FF23C2721037B0028EC16 /* Build configuration list for PBXNativeTarget "StatusPanelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D89FF23A2721037B0028EC16 /* Debug */,
+				D89FF23B2721037B0028EC16 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		DBCA98742143E2920084B710 /* Build configuration list for PBXProject "StatusPanel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

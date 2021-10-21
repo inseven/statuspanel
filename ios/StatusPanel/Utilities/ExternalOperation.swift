@@ -20,7 +20,7 @@
 
 import Foundation
 
-enum ExternalOperation {
+enum ExternalOperation: Equatable {
 
     case registerDevice(Device)
     case registerDeviceAndConfigureWiFi(Device, ssid: String)

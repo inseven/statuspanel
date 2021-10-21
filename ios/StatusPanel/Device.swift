@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct Device: Identifiable {
+struct Device: Identifiable, Equatable {
 
     var id: String
     var publicKey: String
