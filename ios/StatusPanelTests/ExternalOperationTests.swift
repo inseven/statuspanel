@@ -22,6 +22,17 @@ import XCTest
 
 @testable import StatusPanel
 
+extension String {
+
+    func asUrl() throws -> URL {
+        guard let url = URL(string: self) else {
+            throw StatusPanelError.invalidUrl
+        }
+        return url
+    }
+
+}
+
 class ExternalOperationTests: XCTestCase {
 
     func testEquality() {
@@ -31,16 +42,34 @@ class ExternalOperationTests: XCTestCase {
                           ExternalOperation.registerDevice(Device(id: "b", publicKey: "b")))
         XCTAssertNotEqual(ExternalOperation.registerDevice(Device(id: "a", publicKey: "b")),
                           ExternalOperation.registerDevice(Device(id: "a", publicKey: "c")))
+
+        XCTAssertEqual(ExternalOperation.registerDeviceAndConfigureWiFi(Device(id: "a", publicKey: "b"), ssid: "d"),
+                       ExternalOperation.registerDeviceAndConfigureWiFi(Device(id: "a", publicKey: "b"), ssid: "d"))
+        XCTAssertNotEqual(ExternalOperation.registerDeviceAndConfigureWiFi(Device(id: "a", publicKey: "b"), ssid: "d"),
+                          ExternalOperation.registerDeviceAndConfigureWiFi(Device(id: "a", publicKey: "b"), ssid: "e"))
+        XCTAssertNotEqual(ExternalOperation.registerDeviceAndConfigureWiFi(Device(id: "a", publicKey: "b"), ssid: "d"),
+                          ExternalOperation.registerDeviceAndConfigureWiFi(Device(id: "c", publicKey: "b"), ssid: "d"))
+
+        XCTAssertNotEqual(ExternalOperation.registerDevice(Device(id: "a", publicKey: "b")),
+                          ExternalOperation.registerDeviceAndConfigureWiFi(Device(id: "a", publicKey: "b"), ssid: "d"))
     }
 
-    func testRegisterDevice() {
-        guard let url = URL(string: "statuspanel:r?id=bob&pk=cheese") else {
-            XCTFail("Failed to construct URL")
-            return
-        }
-        let operation = ExternalOperation(url: url)
-        XCTAssertNotNil(operation)
-        XCTAssertTrue(operation == ExternalOperation.registerDevice(Device(id: "bob", publicKey: "cheese")))
+    func testRegisterDevice() throws {
+        XCTAssertEqual(ExternalOperation(url: try "statuspanel:r?id=bob&pk=cheese".asUrl()),
+                       ExternalOperation.registerDevice(Device(id: "bob", publicKey: "cheese")))
+    }
+
+    func testRegisterDeviceAndConfigureWifi() throws {
+        XCTAssertEqual(ExternalOperation(url: try "statuspanel:r?id=bob&pk=cheese&s=hi".asUrl()),
+                       ExternalOperation.registerDeviceAndConfigureWiFi(Device(id: "bob", publicKey: "cheese"), ssid: "hi"))
+    }
+
+    func testUrlRoundTrip() {
+        let operation1 = ExternalOperation.registerDevice(Device(id: "a", publicKey: "b"))
+        XCTAssertEqual(operation1, ExternalOperation(url: operation1.url))
+
+        let operation2 = ExternalOperation.registerDeviceAndConfigureWiFi(Device(id: "a", publicKey: "b"), ssid: "d")
+        XCTAssertEqual(operation2, ExternalOperation(url: operation2.url))
     }
 
 }
