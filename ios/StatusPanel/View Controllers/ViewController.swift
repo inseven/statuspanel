@@ -114,7 +114,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let appDelegate = AppDelegate.shared
         sourceController = AppDelegate.shared.sourceController
         sourceController.delegate = self
 
@@ -123,23 +122,19 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         navigationItem.rightBarButtonItems = [addButtonItem, refreshButtonItem]
 
         view.addSubview(imageView)
-
         NSLayoutConstraint.activate([
-
             imageView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
             imageView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
             imageView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
-
         ])
 
         imageView.addGestureRecognizer(longPressGestureRecognizer)
+    }
 
-        if appDelegate.shouldFetch() {
-            fetch()
-        } else {
-            print("ViewController.vieWDidLoad: App delegate said not to fetch")
-        }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        fetch()
     }
 
     @objc func settingsTapped(sender: Any) {
@@ -155,10 +150,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     @objc func addTapped(sender: Any) {
-        let viewController = QRCodeViewController(scheme: "statuspanel")
-        viewController.delegate = self
-        let navigationController = UINavigationController(rootViewController: viewController)
-        present(navigationController, animated: true)
+        let viewController = AddViewController()
+        viewController.addDelegate = self
+        present(viewController, animated: true)
     }
 
     @objc func imageTapped(recognizer: UIGestureRecognizer) {
@@ -452,19 +446,16 @@ extension ViewController: DataSourceControllerDelegate {
 
 }
 
-
-extension ViewController: QRCodeViewConrollerDelegate {
-
-    func qrCodeViewController(_ qrCodeViewController: QRCodeViewController, didDetectURL url: URL) {
-        dispatchPrecondition(condition: .onQueue(.main))
-        dismiss(animated: true) {
-            UIApplication.shared.open(url, options: [:])
-        }
+extension ViewController: AddViewControllerDelegate {
+    
+    func addViewControllerDidCancel(_ addViewController: AddViewController) {
+        addViewController.dismiss(animated: true)
     }
 
-    func qrCodeViewControllerDidCancel(_ qrCodeViewController: QRCodeViewController) {
-        dispatchPrecondition(condition: .onQueue(.main))
-        dismiss(animated: true)
+    func addViewController(_ addViewController: AddViewController, didConfigureDevice device: Device) {
+        addViewController.dismiss(animated: true) {
+            AppDelegate.shared.addDevice(device)
+        }
     }
 
 }

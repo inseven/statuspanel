@@ -66,7 +66,7 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         navigationItem.scrollEdgeAppearance = appearance
         navigationItem.compactAppearance = appearance
 
-        title = "Add Device"
+        title = "Scan Code"
         navigationItem.leftBarButtonItem = cancelButtonItem
 
         do {
