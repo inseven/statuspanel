@@ -90,6 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             addDevice(device)
         case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
             let viewController = WifiProvisionerController(device: device, ssid: ssid)
+            viewController.delegate = self
             let navigationController = UINavigationController(rootViewController: viewController)
             window?.rootViewController?.present(navigationController, animated: true)
         }
@@ -160,4 +161,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             backgroundFetchCompletionFn = nil
         }
     }
+}
+
+extension AppDelegate: WifiProvisionerControllerDelegate {
+
+    func wifiProvisionerController(_ wifiProvisionerController: WifiProvisionerController, didConfigureDevice device: Device) {
+        wifiProvisionerController.navigationController?.dismiss(animated: true) {
+            self.addDevice(device)
+        }
+    }
+
+    func wifiProvisionerControllerDidCancel(_ wifiProvisionerController: WifiProvisionerController) {
+        wifiProvisionerController.navigationController?.dismiss(animated: true)
+    }
+
 }

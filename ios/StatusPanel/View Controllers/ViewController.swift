@@ -450,13 +450,13 @@ extension ViewController: DataSourceControllerDelegate {
 extension ViewController: AddViewControllerDelegate {
     
     func addViewControllerDidCancel(_ addViewController: AddViewController) {
-        dispatchPrecondition(condition: .onQueue(.main))
-        dismiss(animated: true)
+        addViewController.dismiss(animated: true)
     }
 
     func addViewController(_ addViewController: AddViewController, didConfigureDevice device: Device) {
-        dismiss(animated: true)
-        AppDelegate.shared.addDevice(device)
+        addViewController.dismiss(animated: true) {
+            AppDelegate.shared.addDevice(device)
+        }
     }
 
 }

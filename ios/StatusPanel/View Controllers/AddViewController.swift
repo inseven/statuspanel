@@ -67,7 +67,10 @@ extension AddViewController: QRCodeViewConrollerDelegate {
     }
 
     func qrCodeViewControllerDidCancel(_ qrCodeViewController: QRCodeViewController) {
-        addDelegate?.addViewControllerDidCancel(self)
+        dismiss(animated: true) {
+            self.addDelegate?.addViewControllerDidCancel(self)
+        }
+
     }
 
 }
@@ -76,11 +79,11 @@ extension AddViewController: WifiProvisionerControllerDelegate {
 
     func wifiProvisionerController(_ wifiProvisionerController: WifiProvisionerController,
                                    didConfigureDevice device: Device) {
-        addDelegate?.addViewController(self, didConfigureDevice: device)
+        self.addDelegate?.addViewController(self, didConfigureDevice: device)
     }
 
     func wifiProvisionerControllerDidCancel(_ wifiProvisionerController: WifiProvisionerController) {
-        addDelegate?.addViewControllerDidCancel(self)
+        self.addDelegate?.addViewControllerDidCancel(self)
     }
 
 }
