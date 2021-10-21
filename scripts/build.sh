@@ -112,7 +112,7 @@ xcode_project -list
 # Smoke test builds.
 
 # iOS
-build_scheme "StatusPanel" clean build \
+build_scheme "StatusPanel"  clean build build-for-testing test \
     -sdk iphonesimulator \
     -destination "$IPHONE_DESTINATION"
 
