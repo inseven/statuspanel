@@ -32,6 +32,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var apnsToken: Data?
     var client: Client!
 
+    static var shared: AppDelegate {
+        return UIApplication.shared.delegate as! AppDelegate
+    }
+
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
@@ -88,7 +92,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         case .registerDevice(let device):
             addDevice(device)
         case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
-            let viewController: WifiProvisionerController = .newInstance(device: device, ssid: ssid)
+            let viewController = WifiProvisionerController(device: device, ssid: ssid)
             let navigationController = UINavigationController(rootViewController: viewController)
             window?.rootViewController?.present(navigationController, animated: true)
         }
