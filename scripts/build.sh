@@ -109,6 +109,9 @@ sudo xcode-select --switch "$IOS_XCODE_PATH"
 # List the available schemes.
 xcode_project -list
 
+# List the available simulators.
+xcrun simctl list devices available
+
 # Smoke test builds.
 
 # iOS
