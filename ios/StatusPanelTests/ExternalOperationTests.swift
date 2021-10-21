@@ -18,11 +18,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
+import XCTest
 
-struct Device: Identifiable, Equatable {
+@testable import StatusPanel
 
-    var id: String
-    var publicKey: String
+class ExternalOperationTests: XCTestCase {
+
+    func testEquality() {
+        XCTAssertEqual(ExternalOperation.registerDevice(Device(id: "a", publicKey: "b")),
+                       ExternalOperation.registerDevice(Device(id: "a", publicKey: "b")))
+        XCTAssertNotEqual(ExternalOperation.registerDevice(Device(id: "a", publicKey: "b")),
+                          ExternalOperation.registerDevice(Device(id: "b", publicKey: "b")))
+        XCTAssertNotEqual(ExternalOperation.registerDevice(Device(id: "a", publicKey: "b")),
+                          ExternalOperation.registerDevice(Device(id: "a", publicKey: "c")))
+    }
+
+    func testRegisterDevice() {
+        guard let url = URL(string: "statuspanel:r?id=bob&pk=cheese") else {
+            XCTFail("Failed to construct URL")
+            return
+        }
+        let operation = ExternalOperation(url: url)
+        XCTAssertNotNil(operation)
+        XCTAssertTrue(operation == ExternalOperation.registerDevice(Device(id: "bob", publicKey: "cheese")))
+    }
 
 }
