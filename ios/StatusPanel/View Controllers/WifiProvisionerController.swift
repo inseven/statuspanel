@@ -22,6 +22,14 @@ import UIKit
 import CoreLocation
 import NetworkExtension
 
+protocol WifiProvisionerControllerDelegate: AnyObject {
+
+    func wifiProvisionerController(_ wifiProvisionerController: WifiProvisionerController,
+                                   didConfigureDevice device: Device)
+    func wifiProvisionerControllerDidCancel(_ wifiProvisionerController: WifiProvisionerController)
+
+}
+
 class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
 
     struct NetworkDetails {
@@ -78,6 +86,8 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
         }
         return NetworkDetails(ssid: ssid, password: password)
     }
+
+    weak var delegate: WifiProvisionerControllerDelegate?
 
     private var device: Device
     private var hotspotSsid: String
@@ -152,11 +162,6 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
 
     override func viewDidDisappear(_ animated: Bool) {
         disconnectHotspot()
-        if AppDelegate.shared.shouldFetch() {
-            AppDelegate.shared.update()
-        } else {
-            print("Not fetching from WifiProvisionerController.viewDidDisappear")
-        }
         super.viewDidDisappear(animated)
     }
 
@@ -237,7 +242,9 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
                 switch result {
                 case .success:
                     print("Successfully configured network!")
-                    AppDelegate.shared.addDevice(self.device)  // addDevice will dismiss us, so we're done!
+                    DispatchQueue.main.async {
+                        self.delegate?.wifiProvisionerController(self, didConfigureDevice: self.device)
+                    }
                 case .failure(let error):
                     print("Failed to configure network with error '\(error)'.")
                     self.present(error: error)
@@ -264,7 +271,7 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
     }
 
     @objc func cancelTapped(sender: UIBarButtonItem) {
-        self.dismiss(animated: true, completion: nil)
+        delegate?.wifiProvisionerControllerDidCancel(self)
     }
 
     @objc func nextTapped(sender: UIBarButtonItem) {
