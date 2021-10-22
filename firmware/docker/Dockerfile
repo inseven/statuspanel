@@ -12,5 +12,3 @@ RUN rm -rf /root
 RUN ln -s /tmp /root
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# CMD ["/opt/cmd.sh"]
