@@ -127,7 +127,7 @@ final class ZenQuotesDataSource: DataSource {
                 return
             }
 
-            let text = "\"\(quote.quote)\"—\(quote.author)"
+            let text = "\"\(quote.quote.trimmingCharacters(in: .whitespacesAndNewlines))\"—\(quote.author)"
             completion([DataItem(icon: "💬", text: text, flags: [])], nil)
         }
     }
