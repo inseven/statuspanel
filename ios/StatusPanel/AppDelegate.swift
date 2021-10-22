@@ -24,13 +24,16 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private var background = false
-    private var blockUpdates = false
 
     var window: UIWindow?
     var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
     var sourceController = DataSourceController()
     var apnsToken: Data?
     var client: Client!
+
+    static var shared: AppDelegate {
+        return UIApplication.shared.delegate as! AppDelegate
+    }
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -66,9 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
         if (background) {
             background = false
-            if shouldFetch() {
-                update()
-            }
+            update()
         }
     }
 
@@ -88,7 +89,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         case .registerDevice(let device):
             addDevice(device)
         case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
-            let viewController: WifiProvisionerController = .newInstance(device: device, ssid: ssid)
+            let viewController = WifiProvisionerController(device: device, ssid: ssid)
+            viewController.delegate = self
             let navigationController = UINavigationController(rootViewController: viewController)
             window?.rootViewController?.present(navigationController, animated: true)
         }
@@ -104,27 +106,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                       message: "Device \(device.id) has been added.",
                                       preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"),
-                                      style: .default,
-                                      handler: { action in
-            // Sneakily delay fetching data until the user taps ok, to give wifi more time to come back up
-            self.blockUpdates = false
+                                      style: .default) { action in
             self.update()
-        }))
-        let root = window?.rootViewController
-        let ops = { () -> Void in
-            root?.present(alert, animated: true, completion: nil)
-        }
-        if root?.presentedViewController != nil {
-            blockUpdates = true // So the dismissal of the WifiProvisionerController itself doesn't trigger an update
-            root?.dismiss(animated: false, completion: ops)
-        } else {
-            ops()
-        }
-    }
-
-    func shouldFetch() -> Bool {
-        // Don't do extraneous fetches when settings or Wifi Provisioner are showing
-        return !blockUpdates && window?.rootViewController?.presentedViewController == nil
+        })
+        window?.rootViewController?.present(alert, animated: true)
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -137,16 +122,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("Aww, no APNS for us. Error: " + error.localizedDescription)
     }
 
-
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable : Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("didReceiveRemoteNotification")
         Config().lastBackgroundUpdate = Date()
         backgroundFetchCompletionFn = completionHandler
-        if shouldFetch() {
-            sourceController.fetch()
-        } else {
-            print("Not fetching on remote notification")
-        }
+        sourceController.fetch()
 
         // Re-register the device to ensure it doesn't time out on the server.
         if let deviceToken = apnsToken {
@@ -179,4 +161,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             backgroundFetchCompletionFn = nil
         }
     }
+}
+
+extension AppDelegate: WifiProvisionerControllerDelegate {
+
+    func wifiProvisionerController(_ wifiProvisionerController: WifiProvisionerController, didConfigureDevice device: Device) {
+        wifiProvisionerController.navigationController?.dismiss(animated: true) {
+            self.addDevice(device)
+        }
+    }
+
+    func wifiProvisionerControllerDidCancel(_ wifiProvisionerController: WifiProvisionerController) {
+        wifiProvisionerController.navigationController?.dismiss(animated: true)
+    }
+
 }

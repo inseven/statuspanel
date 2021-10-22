@@ -122,8 +122,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     var dataSourceController: DataSourceController {
-        let delegate = UIApplication.shared.delegate as! AppDelegate
-        return delegate.sourceController
+        return AppDelegate.shared.sourceController
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
