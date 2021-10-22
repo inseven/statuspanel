@@ -9,4 +9,5 @@ xcuserdata
 .env*
 /.local
 /build
+/firmware/build
 /ios/StatusPanel/configuration.json
