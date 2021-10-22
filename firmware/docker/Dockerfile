@@ -7,7 +7,6 @@ RUN apt-get install -y --no-install-recommends wget unzip git make python3-seria
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
 WORKDIR /opt
-RUN mkdir -p /opt/statuspanel
 
 RUN rm -rf /root
 RUN ln -s /tmp /root
