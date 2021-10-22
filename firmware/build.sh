@@ -35,16 +35,11 @@ SDKCONFIG_PATH="${NODEMCU_ESP32_BUILD_DIRECTORY}/sdkconfig"
 
 # Process the command line arguments.
 POSITIONAL=()
-CHECKOUT=${CHECKOUT:-false}
 UPDATE=${UPDATE:-false}
 while [[ $# -gt 0 ]]
 do
     key="$1"
     case $key in
-        -c|--checkout)
-        CHECKOUT=true
-        shift
-        ;;
         -u|--update)
         UPDATE=true
         shift
@@ -66,19 +61,6 @@ function volume-flag {
     echo "--volume ${1}:${2}${VOLUME_FLAGS}"
 }
 
-# Checkout the source.
-# TODO: Add the NodeMCU firmware as a git submodule #98
-#       https://github.com/inseven/statuspanel/issues/98
-if $CHECKOUT ; then
-    cd "${FIRMWARE_DIRECTORY}"
-    if [ -d nodemcu-firmware ] ; then
-        rm -rf nodemcu-firmware
-    fi
-    git clone --branch tomsci_dev_esp32 https://github.com/tomsci/nodemcu-firmware.git --depth 1
-    cd nodemcu-firmware
-    git submodule update --init --recursive --depth 1
-fi
-
 cd "${NODEMCU_FIRMWARE_DIRECTORY}"
 cp "$SDKCONFIG_PATH" .
 
@@ -90,16 +72,22 @@ if [ -t 1 ]; then
 fi
 
 # Ensure the Docker container is up-to-date.
-if $CHECKOUT ; then
+if $UPDATE ; then
     docker pull marcelstoer/nodemcu-build
 fi
 
 # Build the firmware and LFS.
 docker run --rm $DOCKER_INTERACTIVE_FLAGS \
+    --env GIT_DIR=/opt/statuspanel/firmware/nodemcu-firmware/.git \
+    --env GIT_WORK_TREE=/opt/nodemcu-firmware \
+    `volume-flag "${ROOT_DIRECTORY}" /opt/statuspanel` \
     `volume-flag "${NODEMCU_FIRMWARE_DIRECTORY}" /opt/nodemcu-firmware` \
     marcelstoer/nodemcu-build build
 docker run --rm $DOCKER_INTERACTIVE_FLAGS \
     -v `pwd`:/opt/nodemcu-firmware \
+    --env GIT_DIR=/opt/statuspanel/firmware/nodemcu-firmware/.git \
+    --env GIT_WORK_TREE=/opt/nodemcu-firmware \
+    `volume-flag "${ROOT_DIRECTORY}" /opt/statuspanel` \
     `volume-flag "${NODEMCU_FIRMWARE_DIRECTORY}" /opt/nodemcu-firmware` \
     `volume-flag "${NODEMCU_DIRECTORY}" /opt/lua` \
     -v "${FIRMWARE_DIRECTORY}/make-lfs.sh:/opt/make-lfs.sh" \
