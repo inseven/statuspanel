@@ -25,8 +25,16 @@ set -o pipefail
 set -x
 set -u
 
-FIRMWARE_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-ROOT_DIRECTORY="$( cd "$( dirname "${FIRMWARE_DIRECTORY}" )" &> /dev/null && pwd )"
+DOCKER_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+ROOT_DIRECTORY="$DOCKER_DIRECTORY"/../..
 
-cd "$ROOT_DIRECTORY"
-firmware/docker/docker-build.sh
+DOCKER_IMAGE_TAG=statuspanel-nodemcu-build
+
+cd "$DOCKER_DIRECTORY"
+
+# Build the docker image.
+docker build . -t $DOCKER_IMAGE_TAG
+IMAGE_ID=$( docker images -q $DOCKER_IMAGE_TAG )
+
+# Build the firmware.
+docker run --volume ~/Projects/statuspanel:/opt/statuspanel -it $IMAGE_ID /opt/statuspanel/firmware/docker/build.sh
