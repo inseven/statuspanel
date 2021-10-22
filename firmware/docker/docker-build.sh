@@ -37,4 +37,4 @@ docker build . -t $DOCKER_IMAGE_TAG
 IMAGE_ID=$( docker images -q $DOCKER_IMAGE_TAG )
 
 # Build the firmware.
-docker run --volume ~/Projects/statuspanel:/opt/statuspanel $IMAGE_ID /opt/statuspanel/firmware/docker/build.sh
+docker run --volume ~/Projects/statuspanel:/opt/statuspanel $IMAGE_ID /bin/bash /opt/statuspanel/firmware/docker/build.sh
