@@ -129,7 +129,10 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
 
     func savePrivacyImage(_ image: UIImage) {
          do {
-             let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+             let dir = try FileManager.default.url(for: .documentDirectory,
+                                                      in: .userDomainMask,
+                                                      appropriateFor: nil,
+                                                      create: true)
              let imgdata = image.pngData()
              try imgdata?.write(to: dir.appendingPathComponent("customPrivacyImage.png"))
          } catch {
