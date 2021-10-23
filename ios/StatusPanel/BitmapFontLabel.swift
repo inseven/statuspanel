@@ -30,8 +30,17 @@ class BitmapFontLabel: UILabel {
     let maxFullSizeLines = Int.max
     var redactMode: RedactMode
 
-    init(frame: CGRect, font: Fonts.Font, scale: Int = 1, redactMode: RedactMode = .none) {
-        self.style = BitmapFontCache.Style(font: font.bitmapInfo!, scale: scale, darkMode: false)
+    init(frame: CGRect, bitmapFont: Fonts.BitmapInfo, scale: Int = 1, redactMode: RedactMode = .none) {
+        self.style = BitmapFontCache.Style(font: bitmapFont, scale: scale, darkMode: false)
+        self.redactMode = redactMode
+        super.init(frame: frame)
+        isAccessibilityElement = true
+        accessibilityTraits = UIAccessibilityTraits.staticText
+        isOpaque = false
+    }
+
+    init(frame: CGRect, uiFont: UIFont, redactMode: RedactMode = .none) {
+        self.style = BitmapFontCache.Style(uifont: uiFont, darkMode: false)
         self.redactMode = redactMode
         super.init(frame: frame)
         isAccessibilityElement = true
@@ -76,8 +85,9 @@ class BitmapFontLabel: UILabel {
         return lines
     }
 
-    private func getTextWidth<T>(_ text: T, forScale scale: Int? = nil) -> Int where T : StringProtocol {
-        let style = BitmapFontCache.Style(font: self.style.font, scale: scale ?? self.scale, darkMode: self.style.darkMode)
+    private func getTextWidth<T>(_ text: T, forScale newScale: Int? = nil) -> Int where T : StringProtocol {
+        let targetScale = newScale ?? self.scale
+        let style = targetScale == self.scale ? self.style : self.style.withScale(targetScale)
         return BitmapFontCache.shared.getTextWidth(text, forStyle: style)
     }
 
@@ -129,7 +139,7 @@ class BitmapFontLabel: UILabel {
         ctx.setFillColor(textColor.cgColor)
 
         // Dark mode may have changed, update style
-        self.style = BitmapFontCache.Style(font: self.style.font, scale: scale, darkMode: shouldUseDarkMode())
+        self.style = self.style.withDarkMode(shouldUseDarkMode())
 
         let lines = flow(text: self.text, width: self.bounds.width)
         let numFullsizeLines = min(lines.count, maxFullSizeLines)

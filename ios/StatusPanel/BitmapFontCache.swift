@@ -23,16 +23,37 @@ import CoreImage
 
 class BitmapFontCache {
 
-    // Contains all the info required to render and cache a character: the font bitmap to use, the scale, and the dark mode
+    // Contains all the info required to render and cache a character: the font
+    // bitmap (or UIFont) to use, the scale, and the dark mode
     struct Style {
         let font: Fonts.BitmapInfo
+        let uifont: UIFont?
         let scale: Int
         let darkMode: Bool
+
         init(font: Fonts.BitmapInfo, scale: Int, darkMode: Bool) {
             self.font = font
+            self.uifont = nil
             self.scale = scale
             self.darkMode = darkMode
         }
+
+        init(uifont: UIFont, darkMode: Bool) {
+            // The charw here is only an approximation and won't actually be
+            // used for anything (since we have no characters actually in the
+            // "image")
+            let w = NSString("n").size(withAttributes: [.font: uifont]).width
+            self.font = Fonts.BitmapInfo(bitmap: "UIFont_\(uifont.fontName)_\(uifont.pointSize)",
+                                         charWidth: Int(w),
+                                         charHeight: Int(uifont.pointSize),
+                                         capHeight: Int(uifont.capHeight),
+                                         descent: Int(uifont.descender),
+                                         startIndex: "\0")
+            self.uifont = uifont
+            self.scale = 1
+            self.darkMode = darkMode
+        }
+
         func toString() -> String {
             let theme = (darkMode ? "dark" : "light")
             return "\(font.bitmapName)_\(scale)_\(theme)"
@@ -53,6 +74,20 @@ class BitmapFontCache {
         var scaledCapHeight : Int {
             return self.font.capHeight * self.scale
         }
+        func withScale(_ newScale: Int) -> Style {
+            if self.uifont != nil {
+                fatalError("Cannot request a different scale for a UIFont-based style!")
+            } else {
+                return Style(font: self.font, scale: newScale, darkMode: self.darkMode)
+            }
+        }
+        func withDarkMode(_ newMode: Bool) -> Style {
+            if let uifont = self.uifont {
+                return Style(uifont: uifont, darkMode: newMode)
+            } else {
+                return Style(font: self.font, scale: self.scale, darkMode: newMode)
+            }
+        }
     }
 
     private class ImagesDict {
@@ -70,15 +105,19 @@ class BitmapFontCache {
 
         init(forKey key: Style) {
             self.style = key
-            let image = CIImage(image: UIImage(named: "fonts/" + key.font.bitmapName)!)!
-            if key.darkMode {
-                self.image = image.applyingFilter("CIColorInvert")
+            if key.uifont != nil {
+                self.image = CIImage.empty()
             } else {
-                self.image = image
+                let image = CIImage(image: UIImage(named: "fonts/" + key.font.bitmapName)!)!
+                if key.darkMode {
+                    self.image = image.applyingFilter("CIColorInvert")
+                } else {
+                    self.image = image
+                }
             }
             imagew = Int(image.extent.width)
             imageh = Int(image.extent.height)
-            assert(imagew % charsPerRow == 0 && imageh % numRows == 0,
+            assert((imagew == 0 && imageh == 0) || (imagew % charsPerRow == 0 && imageh % numRows == 0),
                    "Image size \(imagew)x\(imageh) must be a multiple of the char width \(charw) and the char height \(charh)")
         }
 
@@ -192,6 +231,13 @@ class BitmapFontCache {
         }
 
         private func createImageForChar(_ ch: Character) -> CGImage? {
+            if let uifont = style.uifont {
+                if let img = uifont.renderCharacter(ch) {
+                    // Ugh, why is everything stored in the image cache upside down...
+                    return Self.scaleUp(image: img, factor: 1)
+                }
+            }
+
             if charInImage(ch) {
                 // Get from main image
                 let charIdx = ch.unicodeScalars.first!.value - font.startIndex.value
