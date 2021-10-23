@@ -4,6 +4,12 @@ The firmware is responsible for managing the StatusPanel device itself. It handl
 
 The device runs Lua using [NodeMCU](https://nodemcu.readthedocs.io/en/release/). We the [`tomsci_dev_esp32`](https://github.com/tomsci/nodemcu-firmware/tree/tomsci_dev_esp32) branch of NodeMCU which provides some additional features that have not yet been accepted upstream.
 
+## Usage
+
+## Status LED
+
+- **Continuous Flashs=ing** -- the device is in pairing / hotspot mode
+
 ## Development
 
 ### Installing dependencies
