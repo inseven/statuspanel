@@ -247,7 +247,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             print("meh")
             return blankPanelImage()
         }
-        guard let source = UIImage(contentsOfFile: path!.path)?.scale(to: panelSize)?.dither() else {
+        guard let source = UIImage(contentsOfFile: path!.path)?.scaleAndDither(to: panelSize) else {
             return blankPanelImage()
         }
         return source

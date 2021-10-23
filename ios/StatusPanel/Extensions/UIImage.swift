@@ -22,35 +22,22 @@ import UIKit
 
 extension UIImage {
 
-    func dither() -> UIImage? {
+    func scaleAndDither(to size:CGSize) -> UIImage? {
         guard let cgImage = self.cgImage else {
             return nil
         }
+        var image = CIImage(cgImage: cgImage)
+        image = image.applyingFilter("CILanczosScaleTransform", parameters: [
+            kCIInputAspectRatioKey: size.width / size.height,
+            kCIInputScaleKey: size.width / image.extent.width,
+        ])
+        image = image.applyingFilter("CIDither", parameters: [ kCIInputIntensityKey: 2.0 ])
 
-        let image = CIImage(cgImage: cgImage)
-        let filterParameters: [String: Any] = [
-            kCIInputImageKey: image,
-            kCIInputIntensityKey: 2.0
-        ]
-        guard let ditherFilter = CIFilter(name: "CIDither", parameters: filterParameters),
-              let outputImage = ditherFilter.outputImage
-        else {
-            return nil
-        }
         let context = CIContext(options: nil)
-        guard let imageRef = context.createCGImage(outputImage, from: image.extent) else {
+        guard let imageRef = context.createCGImage(image, from: CGRect(origin: CGPoint(), size: size)) else {
             return nil
         }
         return UIImage(cgImage: imageRef)
-    }
-
-    func scale(to size: CGSize) -> UIImage? {
-        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-        defer {
-            UIGraphicsEndImageContext()
-        }
-        draw(in: CGRect(origin: .zero, size: size))
-        return UIGraphicsGetImageFromCurrentImageContext()
     }
 
 }
