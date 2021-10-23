@@ -213,9 +213,16 @@ def command_reset(options):
     device = get_device(options)
     execute_lua(device, """
 
+function Set (list)
+  local set = {}
+  for _, l in ipairs(list) do set[l] = true end
+  return set
+end
+
 -- remove the files, preserving init.lua and root.pem
+persist = Set { "init.lua", "root.pem" }
 for k,v in pairs(file.list()) do
-    if not ((k == "init.lua") or (k == "root.pem")) then
+    if not persist[k] then
         file.remove(k)
     end
 end
