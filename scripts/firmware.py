@@ -49,6 +49,40 @@ verbose = '--verbose' in sys.argv[1:] or '-v' in sys.argv[1:]
 logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO, format="[%(levelname)s] %(message)s")
 
 
+class DeviceArgument(cli.Argument):
+
+    def __init__(self):
+        super().__init__("--device", help="USB serial device")
+
+
+class Directory(object):
+
+    def __init__(self, path):
+        self.path = path
+
+    def __enter__(self):
+        return self.path
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+
+class Zip(object):
+
+    def __init__(self, path):
+        self.path = os.path.abspath(path)
+
+    def __enter__(self):
+        self.directory = tempfile.TemporaryDirectory()
+        with zipfile.ZipFile(self.path) as zip:
+                logging.info("Extracting zip...")
+                zip.extractall(self.directory.name)
+        return self.directory.name
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.directory.cleanup()
+
+
 def run(command):
     return subprocess.run(command)
 
@@ -75,17 +109,15 @@ def get_device(options):
 
 
 def execute_lua(device, command):
-    with serial.Serial(port=device, baudrate=115200, bytesize=8, parity='N') as ser:
+    with serial.Serial(port=device, baudrate=115200, bytesize=8, parity='N', timeout=0.2) as ser:
         time.sleep(1)
         for line in command.strip().split("\n"):
             ser.write(('%s\n' % line).encode('utf-8'))
-            print(ser.readline().decode('utf-8'))
-
-
-class DeviceArgument(cli.Argument):
-
-    def __init__(self):
-        super().__init__("--device", help="USB serial device")
+            while True:
+                response = ser.readline().decode('utf-8')
+                if not response:
+                    break
+                print(response.strip())
 
 
 @cli.command("erase", help="erase device flash", arguments=[
@@ -94,71 +126,62 @@ class DeviceArgument(cli.Argument):
 def command_erase(options):
     device = get_device(options)
     logging.info("Erasing device...")
-    subprocess.run([ESPTOOL_PATH,
-                    "--chip", "esp32",
-                    "--port", device,
-                    "--baud", "921600",
-                    "--before", "default_reset",
-                    "--after", "hard_reset",
-                    "erase_flash"])
-
-def flash_firmware(device, path):
-    logging.info("Flashing firmware...")
     run([ESPTOOL_PATH,
          "--chip", "esp32",
          "--port", device,
          "--baud", "921600",
          "--before", "default_reset",
          "--after", "hard_reset",
-         "write_flash",
-         "-z",
-         "--flash_mode", "dio",
-         "--flash_freq", "40m",
-         "--flash_size", "detect",
-         "0x1000",
-         os.path.join(path, "bootloader.bin"),
-         "0x10000",
-         os.path.join(path, "NodeMCU.bin"),
-         "0x8000",
-         os.path.join(path, "partitions.bin"),
-         "0x190000",
-         os.path.join(path, "lfs.img")])
+         "erase_flash"])
 
 
 @cli.command("flash", help="flash device firmware", arguments=[
     DeviceArgument(),
-    cli.Argument("--path", help="firmware to use to flash the device (may be a directory or zip file)")
+    cli.Argument("path", help="firmware to use to flash the device (may be a directory or zip file)"),
+    cli.Argument("--skip-spiffs", action="store_true", default=False, help="skip SPIFFS update"),
 ])
 def command_flash(options):
     device = get_device(options)
 
-    firmware_path = ESP32_DIRECTORY
-    if options.path is not None:
-        firmware_path = os.path.abspath(options.path)
-    if os.path.isdir(firmware_path):
-        flash_firmware(device, firmware_path)
-    else:
-        with tempfile.TemporaryDirectory() as directory:
-            with zipfile.ZipFile(firmware_path) as zip:
-                logging.info("Extracting zip...")
-                zip.extractall(directory)
-                flash_firmware(device, directory)
+    path = os.path.abspath(options.path)
+    firmware = Directory(path)
+    if not os.path.isdir(path):
+        firmware = Zip(path)
 
+    with firmware as path:
 
-@cli.command("upload", help="upload the latest Lua scripts", arguments=[
-    DeviceArgument(),
-])
-def command_upload(options):
-    device = get_device(options)
-    logging.info("Uploading Lua scripts...")
-    run([sys.executable,
-         NODEMCU_UPLOADER_PATH,
-         "--port", device,
-         "--baud", "115200",
-         "--start_baud", "115200",
-         "upload",
-         "%s:init.lua" % (os.path.join(NODEMCU_DIRECTORY, "init.lua"), ),
-         "%s:root.pem" % (os.path.join(NODEMCU_DIRECTORY, "root.pem", ))])
+        logging.info("Flashing firmware...")
+        run([ESPTOOL_PATH,
+             "--chip", "esp32",
+             "--port", device,
+             "--baud", "921600",
+             "--before", "default_reset",
+             "--after", "hard_reset",
+             "write_flash",
+             "-z",
+             "--flash_mode", "dio",
+             "--flash_freq", "40m",
+             "--flash_size", "detect",
+             "0x1000",
+             os.path.join(path, "bootloader.bin"),
+             "0x10000",
+             os.path.join(path, "NodeMCU.bin"),
+             "0x8000",
+             os.path.join(path, "partitions.bin"),
+             "0x190000",
+             os.path.join(path, "lfs.img")])
+
+        if not options.skip_spiffs:
+            logging.info("Updating SPIFFS...")
+            time.sleep(5)
+            run([sys.executable,
+                 NODEMCU_UPLOADER_PATH,
+                 "--port", device,
+                 "--baud", "115200",
+                 "--start_baud", "115200",
+                 "upload",
+                 "%s:init.lua" % (os.path.join(path, "init.lua"), ),
+                 "%s:root.pem" % (os.path.join(path, "root.pem", ))])
 
 
 @cli.command("console", help="connect to the device console using minicom", arguments=[
@@ -189,11 +212,44 @@ def command_configure_wifi(options):
 def command_reset(options):
     device = get_device(options)
     execute_lua(device, """
-file.remove("deviceid")
-file.remove("sk")
-wifi.sta.config({auto = false, ssid = "", pwd = ""}, true)
-file.remove("last_modified")
+
+function Set (list)
+  local set = {}
+  for _, l in ipairs(list) do set[l] = true end
+  return set
+end
+
+-- remove the files, preserving init.lua and root.pem
+persist = Set { "init.lua", "root.pem" }
+for k,v in pairs(file.list()) do
+    if not persist[k] then
+        file.remove(k)
+    end
+end
+
+-- reset the wifi
+wifi.stop()
+wifi.mode(wifi.STATION)
+wifi.sta.config({ssid="", auto=false}, true)
 """)
+
+
+@cli.command("script", help="run a Lua script on the device", arguments=[
+    DeviceArgument(),
+    cli.Argument("path", help="path to the script to run"),
+])
+def command_script(options):
+    device = get_device(options)
+    with open(options.path) as fh:
+        execute_lua(device, fh.read())
+
+
+@cli.command("ls", help="list device files", arguments=[
+    DeviceArgument(),
+])
+def command_ls(options):
+    device = get_device(options)
+    execute_lua(device, "for k,v in pairs(file.list()) do print(k,v) end")
 
 
 def main():
