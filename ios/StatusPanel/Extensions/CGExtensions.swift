@@ -91,7 +91,7 @@ extension UIImage {
 
     var center: CGPoint {
         get {
-            return CGRect(origin: CGPoint(), size: self.size).center
+            return CGRect(origin: .zero, size: self.size).center
         }
     }
 }
