@@ -278,22 +278,26 @@ function go()
     end
 end
 
+function Set (list)
+  local set = {}
+  for _, l in ipairs(list) do set[l] = true end
+  return set
+end
+
 function resetDeviceState()
-    local files = {
-        "deviceid",
-        "pk",
-        "sk",
-        "last_modified",
-        "img_1",
-        "img_1_hash",
-        "img_2",
-        "img_2_hash",
-    }
-    for _, name in ipairs(files) do
-        file.remove(name)
+
+    -- reset the wifi
+    wifi.stop()
+    wifi.mode(wifi.STATION)
+    wifi.sta.config({ssid="", auto=false}, true)
+
+    -- remove the files, preserving init.lua and root.pem
+    persist = Set { "init.lua", "root.pem" }
+    for k,v in pairs(file.list()) do
+        if not persist[k] then
+            file.remove(k)
+        end
     end
-    setCurrentDisplayIdentifier(nil)
-    network.setDeviceId(nil)
 end
 
 provisioningSocket = nil
