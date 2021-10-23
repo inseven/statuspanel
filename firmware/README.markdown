@@ -8,7 +8,7 @@ The device runs Lua using [NodeMCU](https://nodemcu.readthedocs.io/en/release/).
 
 ## Status LED
 
-- **Continuous Flashs=ing** -- the device is in pairing / hotspot mode
+- **Flashing** -- the device is in pairing / hotspot mode
 
 ## Development
 
