@@ -47,8 +47,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         case subText
     }
 
-    static let panelWidth: CGFloat = 640.0
-    static let panelHeight: CGFloat = 384.0
+    static let panelSize = CGSize(width: 640.0, height: 384.0)
     static let panelStatusBarHeight: CGFloat = 20.0
 
     private var image: UIImage?
@@ -231,7 +230,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     static func blankPanelImage() -> UIImage {
         let fmt = UIGraphicsImageRendererFormat()
         fmt.scale = 1.0
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: panelWidth, height: panelHeight), format: fmt)
+        let renderer = UIGraphicsImageRenderer(size: panelSize, format: fmt)
         let uiImage = renderer.image {(uictx: UIGraphicsImageRendererContext) in }
         return uiImage
     }
@@ -239,25 +238,23 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     static func cropCustomRedactImageToPanelSize() -> UIImage {
         var path: URL?
         do {
-            let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            let dir = try FileManager.default.url(for: .documentDirectory,
+                                                  in: .userDomainMask,
+                                                  appropriateFor: nil,
+                                                  create: true)
             path = dir.appendingPathComponent("customPrivacyImage.png")
         } catch {
             print("meh")
             return blankPanelImage()
         }
-        guard let source = UIImage(contentsOfFile: path!.path), let cgImage = source.cgImage else {
+        guard let source = UIImage(contentsOfFile: path!.path)?.scale(to: panelSize)?.dither() else {
             return blankPanelImage()
         }
-        let rect = CGRect(center: source.center, size: CGSize(width: panelWidth, height: panelHeight))
-        if let cgCrop = cgImage.cropping(to: rect) {
-            return UIImage(cgImage: cgCrop)
-        } else {
-            return blankPanelImage()
-        }
+        return source
     }
 
     static func renderToImage(data: [DataItemBase], shouldRedact: Bool, darkMode: Bool) -> UIImage {
-        let contentView = UIView(frame: CGRect(x: 0, y: 0, width: Self.panelWidth, height: Self.panelHeight))
+        let contentView = UIView(frame: CGRect(origin: .zero, size: panelSize))
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
