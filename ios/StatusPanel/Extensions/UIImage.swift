@@ -34,7 +34,7 @@ extension UIImage {
         image = image.applyingFilter("CIDither", parameters: [ kCIInputIntensityKey: 2.0 ])
 
         let context = CIContext(options: nil)
-        guard let imageRef = context.createCGImage(image, from: CGRect(origin: CGPoint(), size: size)) else {
+        guard let imageRef = context.createCGImage(image, from: CGRect(origin: .zero, size: size)) else {
             return nil
         }
         return UIImage(cgImage: imageRef)
