@@ -27,7 +27,7 @@ StatusPanel uses end-to-end encryption to ensure your data remains private to yo
 
 StatusPanel can optionally show a privacy image or redact content at the touch of a button if you're worried who might see your calendar.
 
-### Getting One
+### Getting StatusPanel
 
 StatusPanel is an open source project in the fairly early stages of development. We're planning to submit our [iOS app](ios/README,markdown) to the app store in the coming months and would love to manufacture a small batch of PCBs to make it easy for people to assemble their own. (It's 2021 though, so that might take longer than usual.)
 
