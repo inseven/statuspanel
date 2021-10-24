@@ -173,6 +173,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
+        let blankImage = Self.blankPanelImage()
+        self.imageView.image = blankImage
+        self.image = blankImage
+        self.redactedImage = blankImage
         self.navigationItem.setRightBarButtonItems([addButtonItem, refreshActivityIndicatorItem], animated: true)
         sourceController.fetch()
     }
@@ -231,7 +235,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let fmt = UIGraphicsImageRendererFormat()
         fmt.scale = 1.0
         let renderer = UIGraphicsImageRenderer(size: panelSize, format: fmt)
-        let uiImage = renderer.image {(uictx: UIGraphicsImageRendererContext) in }
+        let uiImage = renderer.image { context in
+            UIColor.white.setFill()
+            context.fill(CGRect(origin: .zero, size: panelSize))
+        }
         return uiImage
     }
 
