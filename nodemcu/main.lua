@@ -279,21 +279,13 @@ function go()
 end
 
 function resetDeviceState()
-    local files = {
-        "deviceid",
-        "pk",
-        "sk",
-        "last_modified",
-        "img_1",
-        "img_1_hash",
-        "img_2",
-        "img_2_hash",
-    }
-    for _, name in ipairs(files) do
+    -- Now that we don't rely on anything being pre-installed on the SPIFFS, we
+    -- can just nuke everything
+    for name in pairs(file.list()) do
         file.remove(name)
     end
-    setCurrentDisplayIdentifier(nil)
     network.setDeviceId(nil)
+    forgetWifiCredentials()
 end
 
 statusLedFlashTimer = nil
@@ -357,7 +349,6 @@ function forgetWifiCredentials()
     wifi.stop()
     wifi.mode(wifi.STATION)
     wifi.sta.config({ssid="", auto=false}, true)
-    node.restart()
 end
 
 local function connectToProvisionedCredsSucceeded(eventName, event)
