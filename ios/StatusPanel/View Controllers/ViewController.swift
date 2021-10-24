@@ -189,23 +189,22 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     static func getLabel(frame: CGRect, font fontName: String, style: LabelStyle, redactMode: RedactMode = .none) -> UILabel {
         let font = Config().getFont(named: fontName)
         let size = (style == .header) ? font.headerSize : (style == .subText) ? font.subTextSize : font.textSize
-        if font.bitmapInfo != nil {
-            return BitmapFontLabel(frame: frame, font: font, scale: size, redactMode: redactMode)
-        } else {
-            let label = UILabel(frame: frame)
-            label.lineBreakMode = .byWordWrapping
-            if let uifont = UIFont(name: font.uifontName!, size: CGFloat(size)) {
-                label.font = uifont
-            } else {
-                print("No UIFont found for \(font.uifontName!)!")
-                for family in UIFont.familyNames {
-                    for fontName in UIFont.fontNames(forFamilyName: family) {
-                        print("Candidate: \(fontName)")
-                    }
-                }
-            }
-            return label
+        if let bitmapInfo = font.bitmapInfo {
+            return BitmapFontLabel(frame: frame, bitmapFont: bitmapInfo, scale: size, redactMode: redactMode)
+        } else if let uifont = UIFont(name: font.uifontName!, size: CGFloat(size)) {
+            return BitmapFontLabel(frame: frame, uiFont: uifont, redactMode: redactMode)
         }
+
+        // Otherwise, a plain old label (this code path now only used if we fail to find a font)
+        let label = UILabel(frame: frame)
+        label.lineBreakMode = .byWordWrapping
+        print("No UIFont found for \(font.uifontName!)!")
+        for family in UIFont.familyNames {
+            for fontName in UIFont.fontNames(forFamilyName: family) {
+                print("Candidate: \(fontName)")
+            }
+        }
+        return label
     }
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
