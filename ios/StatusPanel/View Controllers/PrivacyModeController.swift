@@ -133,8 +133,11 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
                                                       in: .userDomainMask,
                                                       appropriateFor: nil,
                                                       create: true)
-             let imgdata = image.pngData()
-             try imgdata?.write(to: dir.appendingPathComponent("customPrivacyImage.png"))
+             guard let data = image.jpegData(compressionQuality: 1.0) else {
+                 print("Failed to get image data")
+                 return
+             }
+             try data.write(to: dir.appendingPathComponent("customPrivacyImage.jpg"))
          } catch {
              present(error: error)
          }

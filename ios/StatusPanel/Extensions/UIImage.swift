@@ -20,24 +20,119 @@
 
 import UIKit
 
+class DataView {
+
+    let pointer: UnsafeMutableRawPointer
+    let bytesPerPixel: Int
+    let height: Int
+    let width: Int
+
+    init(pointer: UnsafeMutableRawPointer, bytesPerPixel: Int, width: Int, height: Int) {
+        self.pointer = pointer
+        self.bytesPerPixel = bytesPerPixel
+        self.width = width
+        self.height = height
+    }
+
+    func map(transform: (UInt8, UInt8, UInt8) -> (UInt8, UInt8, UInt8)) {
+        for index in 0 ..< width * height {
+            let offset = index * bytesPerPixel
+            let red = pointer.load(fromByteOffset: offset, as: UInt8.self)
+            let green = pointer.load(fromByteOffset: offset + 1, as: UInt8.self)
+            let blue = pointer.load(fromByteOffset: offset + 2, as: UInt8.self)
+
+            let (newRed, newGreen, newBlue) = transform(red, green, blue)
+            pointer.storeBytes(of: newRed, toByteOffset: offset, as: UInt8.self)
+            pointer.storeBytes(of: newGreen, toByteOffset: offset + 1, as: UInt8.self)
+            pointer.storeBytes(of: newBlue, toByteOffset: offset + 2, as: UInt8.self)
+        }
+    }
+
+}
+
 extension UIImage {
 
-    func scaleAndDither(to size:CGSize) -> UIImage? {
+    public func normalizeOrientation() -> UIImage? {
+        UIGraphicsBeginImageContext(size)
+        defer {
+            UIGraphicsEndImageContext()
+        }
+        draw(in: CGRect(origin: .zero, size: size))
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+
+    func atkinsonDither() -> UIImage? {
+
         guard let cgImage = self.cgImage else {
             return nil
         }
-        var image = CIImage(cgImage: cgImage)
-        image = image.applyingFilter("CILanczosScaleTransform", parameters: [
-            kCIInputAspectRatioKey: size.width / size.height,
-            kCIInputScaleKey: size.width / image.extent.width,
-        ])
-        image = image.applyingFilter("CIDither", parameters: [ kCIInputIntensityKey: 2.0 ])
+
+        let width = cgImage.width
+        let height = cgImage.height
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let rawdata = calloc(height*width*4, MemoryLayout<CUnsignedChar>.size)!
+        defer {
+            free(rawdata)
+        }
+        let bytesPerPixel = 4
+        let bytesPerRow = bytesPerPixel * width
+        let bitsPerComponent = 8
+        let bitmapInfo: UInt32 = CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
+
+        guard let context = CGContext(data: rawdata,
+                                      width: width,
+                                      height: height,
+                                      bitsPerComponent: bitsPerComponent,
+                                      bytesPerRow: bytesPerRow,
+                                      space: colorSpace,
+                                      bitmapInfo: bitmapInfo) else {
+            return nil
+        }
+
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+        var slidingErrorWindow: [CGFloat] = Array(repeating: 0, count: 2 * width)
+        let mask = [0, 1, width - 2, width - 1, width, (2 * width) - 1]
+
+        let pixels = DataView(pointer: rawdata, bytesPerPixel: bytesPerPixel, width: width, height: height)
+        pixels.map { red, green, blue in
+
+            let pixel: CGFloat = CGFloat(red) / 255.0
+
+            let value = pixel + slidingErrorWindow.removeFirst()
+            slidingErrorWindow.append(0)
+            let color: CGFloat = value > 0.5 ? 1.0 : 0.0
+            let error: CGFloat = (pixel - color) / 8.0
+            for offset in mask {
+                slidingErrorWindow[offset] = slidingErrorWindow[offset] + error
+            }
+
+            let newRed = UInt8(255.0 * color)
+            return (newRed, newRed, newRed)
+        }
+
+        let resultImage = UIImage(cgImage: context.makeImage()!)
+
+        return resultImage
+    }
+
+    func scaleAndDither(to size: CGSize) -> UIImage? {
+        guard let cgImage = self.cgImage else {
+            return nil
+        }
+        let image = CIImage(cgImage: cgImage)
+            .applyingFilter("CILanczosScaleTransform", parameters: [
+                kCIInputAspectRatioKey: 1.0,
+                kCIInputScaleKey: size.width / self.size.width,
+            ])
+            .applyingFilter("CIPhotoEffectMono", parameters: [:])
 
         let context = CIContext(options: nil)
         guard let imageRef = context.createCGImage(image, from: CGRect(origin: .zero, size: size)) else {
             return nil
         }
         return UIImage(cgImage: imageRef)
+            .atkinsonDither()
     }
 
 }

@@ -242,12 +242,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                                                   in: .userDomainMask,
                                                   appropriateFor: nil,
                                                   create: true)
-            path = dir.appendingPathComponent("customPrivacyImage.png")
+            path = dir.appendingPathComponent("customPrivacyImage.jpg")
         } catch {
             print("meh")
             return blankPanelImage()
         }
-        guard let source = UIImage(contentsOfFile: path!.path)?.scaleAndDither(to: panelSize) else {
+        guard let source = UIImage(contentsOfFile: path!.path)?
+                .normalizeOrientation()?
+                .scaleAndDither(to: panelSize) else {
             return blankPanelImage()
         }
         return source
