@@ -101,8 +101,8 @@ extension UIImage {
 
             let value = pixel + slidingErrorWindow.removeFirst()
             slidingErrorWindow.append(0)
-            let color = value > 0.5 ? CGFloat(1.0) : CGFloat(0.0)
-            let error = (pixel - color) / 8
+            let color: CGFloat = value > 0.5 ? 1.0 : 0.0
+            let error: CGFloat = (pixel - color) / 8.0
             for offset in mask {
                 slidingErrorWindow[offset] = slidingErrorWindow[offset] + error
             }
