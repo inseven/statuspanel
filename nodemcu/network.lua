@@ -139,13 +139,25 @@ function getSecretKey()
     return assert(readFile("sk", 32))
 end
 
+--[[
+Register v1 format:
+statuspanel:r?id=<deviceid>&pk=<pk>[&s=<ssid>]
+
+Register v2 format:
+statuspanel:s?id=<deviceid>&pk=<pk>[&s=<ssid>]
+
+Is used to indicate root certs need to also be supplied. The reason for
+introducing a new version here is so that and old iOS client will not attempt
+to pair it (because it doesn't know how to supply all the data the v2 device
+requires).
+]]
 function getQRCodeURL(includeSsid)
     local id = getDeviceId()
     local ssid = getApSSID()
     local pk = getPublicKey()
     -- toBase64 doesn't URL-encode the unsafe chars, so do that too
     local pkstr = encoder.toBase64(pk):gsub("[/%+%=]", function(ch) return string.format("%%%02X", ch:byte()) end)
-    local result = string.format("statuspanel:r?id=%s&pk=%s", id, pkstr)
+    local result = string.format("statuspanel:s?id=%s&pk=%s", id, pkstr)
     if includeSsid then
         result = result.."&s="..getApSSID()
     end
