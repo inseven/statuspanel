@@ -237,8 +237,10 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
             }
             print("Connected to \(hotspotConfiguration.ssid)!")
             self.configuredHotspotCredentials = hotspotConfiguration
+            let rootCerts = String(data: NSDataAsset(name: "TlsCertificates")!.data, encoding: .utf8)!
             self.networkProvisioner.configure(ssid: networkDetails.ssid,
-                                              password: networkDetails.password) { result in
+                                              password: networkDetails.password,
+                                              certificates: rootCerts) { result in
                 switch result {
                 case .success:
                     print("Successfully configured network!")
