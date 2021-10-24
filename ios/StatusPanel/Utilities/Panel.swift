@@ -120,7 +120,7 @@ class Panel {
         return result
     }
 
-    private static func imgToARGBData(_ image:UIImage) -> (Data, UIImage) {
+    private static func imgToARGBData(_ image: UIImage) -> (Data, UIImage) {
         // From https://stackoverflow.com/questions/448125/how-to-get-pixel-data-from-a-uiimage-cocoa-touch-or-cgimage-core-graphics
 
         var result = Data()
