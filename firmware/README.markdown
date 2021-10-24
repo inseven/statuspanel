@@ -12,7 +12,7 @@ The device runs Lua using [NodeMCU](https://nodemcu.readthedocs.io/en/release/).
 
 ## Development
 
-### Installing dependencies
+### Installing Dependencies
 
 StatusPanel uses a shared script for installing and managing dependencies. Follow the instructions [here](/README.markdown#installing-dependencies).
 
@@ -25,19 +25,19 @@ sudo apt install \
     libpq-dev
 ```
 
-### Flashing pre-built firmware (updating your device)
+### Flashing Pre-Built Firmware (Updating Your Device)
 
-1. Ensure the device is **not** set to auto.
+1. Download the latest `main` branch firmware build from [GitHub Actions](https://github.com/inseven/statuspanel/actions/workflows/build.yaml).
 
-2. Flash the latest firmware.
+2. Ensure the device is **not** set to auto.
+
+3. Flash the latest firmware:
 
    ```bash
-   scripts/firmware flash
+   scripts/firmware flash ~/Downloads/Firmware.zip
    ```
-
-   The USB device can be customized by specifying `--device` on the command line, or setting the `STATUSPANEL_DEVICE` environment variable.
-
-### Debugging and troubleshooting
+   
+### Debugging and Troubleshooting
 
 The serial console is your first port of call when trying to work out why something isn't working correctly; log output is directed here, and you call [execute Lua code directly on-device](#running-code-on-device) if you really need to poke things to see what's going on. You have lots of options for how to connect to the serial console...
 
@@ -57,7 +57,7 @@ The serial console is your first port of call when trying to work out why someth
 
   The Arduino IDE can also be a convenient way to communicate with the device. You can find out more about setting this up on the [Adafruit website](https://learn.adafruit.com/adafruit-huzzah32-esp32-feather/using-with-arduino-ide).
 
-### Running code on-device
+### Running Code On-Device
 
 The device run-loop will automatically start if the auto switch is on (GPIO 14 held high). If you wish to run Lua code on-device and manually step through the lifecycle to investigate problems, disable this and connect to the StatusPanel with a [console](#debugging-and-troubleshooting).
 
@@ -94,16 +94,15 @@ The device run-loop will automatically start if the auto switch is on (GPIO 14 h
   file.remove("last_modified") -- remove details of the last cached update
   ```
 
-  N.B. If you remove just `"deviceid"`, you'll initiate new device registration but with the same keys as before, which probably isn't desirable.
+## Building Firmware
 
-## Building firmware
+The easiest way to build the firmware is to use the Docker-based build script:
 
-https://github.com/marcelstoer/docker-nodemcu-build
+```bash
+firmware/docker/docker-build.sh
+```
 
-Drop sdkconfig in, run `make MORE_CFLAGS="-DLUA_NUMBER_INTEGRAL"`.
-To rebuild LFS, run `make_lfs.sh` (although that is configured for my cross-VM-mountpointed setup).
-
----
+You can find the build output in `firmware/docker/build`. Build times on macOS are terrible (2 hours vs. 4 minutes on Linux) so you may find it easiest to set up a Linux VM if you're running macOS and plan to do any signifiant firmware development.
 
 ## Firmware
 
