@@ -40,7 +40,7 @@ If you can't wait to try it out, have a little technical experience, and don't m
 StatusPanel comprises a number of different components:
 
 - [Firmware](firmware/README.markdown)
-- [PCB](pcb/README.markdown)
+- [Device](pcb/README.markdown)
 - [iOS app](ios/README.markdown)
 - [Service](service/README.markdown)
 
