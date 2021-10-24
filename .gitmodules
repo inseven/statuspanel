@@ -2,10 +2,10 @@
 	path = nodemcu-uploader
 	url = git@github.com:jbmorley/nodemcu-uploader.git
 [submodule "pcb/libraries/Eagle-Libraries"]
-	path = pcb/libraries/Eagle-Libraries
+	path = device/libraries/Eagle-Libraries
 	url = git@github.com:chiengineer/Eagle-Libraries.git
 [submodule "pcb/libraries/SparkFun-Eagle-Libraries"]
-	path = pcb/libraries/SparkFun-Eagle-Libraries
+	path = device/libraries/SparkFun-Eagle-Libraries
 	url = git@github.com:sparkfun/SparkFun-Eagle-Libraries.git
 [submodule "esptool"]
 	path = esptool
