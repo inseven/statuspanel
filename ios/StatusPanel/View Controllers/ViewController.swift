@@ -77,10 +77,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                                action: #selector(addTapped(sender:)))
     }()
 
-    private lazy var refreshActivityIndicatorItem: UIBarButtonItem = {
+    private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView()
-        activityIndicator.startAnimating()
-        return UIBarButtonItem(customView: activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        return activityIndicator
     }()
 
     private lazy var imageView: UIImageView = {
@@ -118,11 +119,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         navigationItem.rightBarButtonItems = [addButtonItem, refreshButtonItem]
 
         view.addSubview(imageView)
+        imageView.addSubview(activityIndicator)
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
             imageView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
             imageView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
         ])
 
         imageView.addGestureRecognizer(longPressGestureRecognizer)
@@ -171,16 +175,32 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
         let blankImage = Panel.blankImage()
-        self.imageView.image = blankImage
         self.image = blankImage
         self.redactedImage = blankImage
-        self.navigationItem.setRightBarButtonItems([addButtonItem, refreshActivityIndicatorItem], animated: true)
+        UIView.transition(with: self.imageView,
+                          duration: 0.3,
+                          options: .transitionCrossDissolve) {
+            self.imageView.image = blankImage
+        }
+        self.refreshButtonItem.isEnabled = false
+        activityIndicator.startAnimating()
         sourceController.fetch()
+    }
+
+    func fetchDidUpdate(image: UIImage, privacyImage: UIImage) {
+        self.image = image
+        self.redactedImage = privacyImage
+        UIView.transition(with: self.imageView,
+                          duration: 0.3,
+                          options: .transitionCrossDissolve) {
+            self.imageView.image = image
+        }
     }
 
     func fetchDidComplete() {
         dispatchPrecondition(condition: .onQueue(.main))
-        self.navigationItem.setRightBarButtonItems([addButtonItem, refreshButtonItem], animated: true)
+        self.refreshButtonItem.isEnabled = true
+        activityIndicator.stopAnimating()
     }
 
     static func getLabel(frame: CGRect, font fontName: String, style: LabelStyle, redactMode: RedactMode = .none) -> UILabel {
@@ -215,9 +235,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         DispatchQueue.global().async {
             let payloads = Panel.rlePayloads(for: [image, privacyImage])
             DispatchQueue.main.sync {
-                self.image = payloads[0].1
-                self.redactedImage = payloads[1].1
-                self.imageView.image = image
+                self.fetchDidUpdate(image: payloads[0].1, privacyImage: payloads[1].1)
             }
             client.upload(image: payloads[0].0, privacyImage: payloads[1].0) { anythingChanged in
                 print("Changes: \(anythingChanged)")
