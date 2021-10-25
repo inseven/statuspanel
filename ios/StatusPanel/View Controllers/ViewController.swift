@@ -47,9 +47,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         case subText
     }
 
-    static let panelSize = CGSize(width: 640.0, height: 384.0)
-    static let panelStatusBarHeight: CGFloat = 20.0
-
     private var image: UIImage?
     private var redactedImage: UIImage?
 
@@ -233,10 +230,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     static func blankPanelImage() -> UIImage {
         let fmt = UIGraphicsImageRendererFormat()
         fmt.scale = 1.0
-        let renderer = UIGraphicsImageRenderer(size: panelSize, format: fmt)
+        let renderer = UIGraphicsImageRenderer(size: Panel.size, format: fmt)
         let uiImage = renderer.image { context in
             UIColor.white.setFill()
-            context.fill(CGRect(origin: .zero, size: panelSize))
+            context.fill(CGRect(origin: .zero, size: Panel.size))
         }
         return uiImage
     }
@@ -255,14 +252,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
         guard let source = UIImage(contentsOfFile: path!.path)?
                 .normalizeOrientation()?
-                .scaleAndDither(to: panelSize) else {
+                .scaleAndDither(to: Panel.size) else {
             return blankPanelImage()
         }
         return source
     }
 
     static func renderToImage(data: [DataItemBase], shouldRedact: Bool, darkMode: Bool) -> UIImage {
-        let contentView = UIView(frame: CGRect(origin: .zero, size: panelSize))
+        let contentView = UIView(frame: CGRect(origin: .zero, size: Panel.size))
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
@@ -404,7 +401,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 switch divider {
                 case .vertical(let originY):
                     context.move(to: CGPoint(x: midx, y: originY))
-                    context.addLine(to: CGPoint(x: midx, y: rect.height - Self.panelStatusBarHeight))
+                    context.addLine(to: CGPoint(x: midx, y: rect.height - Panel.statusBarHeight))
                 case .horizontal(let originY):
                     context.move(to: CGPoint(x: x, y: originY))
                     context.addLine(to: CGPoint(x: rect.width - x, y: originY))
