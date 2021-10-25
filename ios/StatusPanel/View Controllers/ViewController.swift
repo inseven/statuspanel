@@ -80,6 +80,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView()
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.color = .systemGray
         activityIndicator.hidesWhenStopped = true
         return activityIndicator
     }()
@@ -107,6 +108,15 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 imageView.image = image
             }
         }
+    }
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        view.backgroundColor = .systemGroupedBackground
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
@@ -190,6 +200,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     func fetchDidUpdate(image: UIImage, privacyImage: UIImage) {
         self.image = image
         self.redactedImage = privacyImage
+        activityIndicator.stopAnimating()
         UIView.transition(with: self.imageView,
                           duration: 0.3,
                           options: .transitionCrossDissolve) {
@@ -200,7 +211,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     func fetchDidComplete() {
         dispatchPrecondition(condition: .onQueue(.main))
         self.refreshButtonItem.isEnabled = true
-        activityIndicator.stopAnimating()
     }
 
     static func getLabel(frame: CGRect, font fontName: String, style: LabelStyle, redactMode: RedactMode = .none) -> UILabel {

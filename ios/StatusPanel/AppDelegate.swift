@@ -42,7 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.registerForRemoteNotifications()
 
         let viewController = ViewController()
-        viewController.view.backgroundColor = .secondarySystemBackground
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.navigationBar.prefersLargeTitles = true
 
