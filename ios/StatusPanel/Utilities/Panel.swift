@@ -26,6 +26,10 @@ class Panel {
     static let size = CGSize(width: 640.0, height: 384.0)
     static let statusBarHeight: CGFloat = 20.0
 
+    static func blankImage() -> UIImage {
+        return UIImage.blankImage(size: Panel.size, scale: 1.0)
+    }
+
     private static func ARGBtoPanel(_ data: Data) -> Data {
         let Black: UInt8 = 0, Colored: UInt8 = 1, White: UInt8 = 2
         var result = Data()
