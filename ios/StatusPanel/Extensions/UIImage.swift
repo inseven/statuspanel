@@ -52,6 +52,17 @@ class DataView {
 
 extension UIImage {
 
+    static func blankImage(size: CGSize, scale: CGFloat) -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+        let renderer = UIGraphicsImageRenderer(size: Panel.size, format: format)
+        let image = renderer.image { context in
+            UIColor.white.setFill()
+            context.fill(CGRect(origin: .zero, size: Panel.size))
+        }
+        return image
+    }
+
     public func normalizeOrientation() -> UIImage? {
         UIGraphicsBeginImageContext(size)
         defer {

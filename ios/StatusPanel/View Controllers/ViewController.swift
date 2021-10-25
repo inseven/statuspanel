@@ -170,7 +170,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
-        let blankImage = Self.blankPanelImage()
+        let blankImage = Panel.blankImage()
         self.imageView.image = blankImage
         self.image = blankImage
         self.redactedImage = blankImage
@@ -227,17 +227,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     }
 
-    static func blankPanelImage() -> UIImage {
-        let fmt = UIGraphicsImageRendererFormat()
-        fmt.scale = 1.0
-        let renderer = UIGraphicsImageRenderer(size: Panel.size, format: fmt)
-        let uiImage = renderer.image { context in
-            UIColor.white.setFill()
-            context.fill(CGRect(origin: .zero, size: Panel.size))
-        }
-        return uiImage
-    }
-
     static func cropCustomRedactImageToPanelSize() -> UIImage {
         var path: URL?
         do {
@@ -248,12 +237,13 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             path = dir.appendingPathComponent("customPrivacyImage.jpg")
         } catch {
             print("meh")
-            return blankPanelImage()
+            return Panel.blankImage()
         }
         guard let source = UIImage(contentsOfFile: path!.path)?
                 .normalizeOrientation()?
-                .scaleAndDither(to: Panel.size) else {
-            return blankPanelImage()
+                .scaleAndDither(to: Panel.size)
+        else {
+            return Panel.blankImage()
         }
         return source
     }
