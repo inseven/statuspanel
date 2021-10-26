@@ -12,6 +12,9 @@
 		D81252382709400E00C9D80A /* LicenseRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81252372709400E00C9D80A /* LicenseRow.swift */; };
 		D812523A2709403C00C9D80A /* LicenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81252392709403C00C9D80A /* LicenseView.swift */; };
 		D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523B2709875600C9D80A /* FontPickerViewController.swift */; };
+		D8166551272773AC005BDA9E /* ImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8166550272773AC005BDA9E /* ImageTableViewCell.swift */; };
+		D816655327277407005BDA9E /* UIActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D816655227277407005BDA9E /* UIActivityIndicatorView.swift */; };
+		D816655527277632005BDA9E /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D816655427277632005BDA9E /* FileManager.swift */; };
 		D81DA7C02712953D0052D32C /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81DA7BF2712953D0052D32C /* Localization.swift */; };
 		D81DA7C3271297460052D32C /* ZenQuotesDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81DA7C2271297460052D32C /* ZenQuotesDataSource.swift */; };
 		D81DE20326E19F9200504703 /* Clibsodium in Frameworks */ = {isa = PBXBuildFile; productRef = D81DE20226E19F9200504703 /* Clibsodium */; };
@@ -128,6 +131,9 @@
 		D81252372709400E00C9D80A /* LicenseRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseRow.swift; sourceTree = "<group>"; };
 		D81252392709403C00C9D80A /* LicenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseView.swift; sourceTree = "<group>"; };
 		D812523B2709875600C9D80A /* FontPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPickerViewController.swift; sourceTree = "<group>"; };
+		D8166550272773AC005BDA9E /* ImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTableViewCell.swift; sourceTree = "<group>"; };
+		D816655227277407005BDA9E /* UIActivityIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorView.swift; sourceTree = "<group>"; };
+		D816655427277632005BDA9E /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 		D81DA7BF2712953D0052D32C /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		D81DA7C2271297460052D32C /* ZenQuotesDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZenQuotesDataSource.swift; sourceTree = "<group>"; };
 		D82366EB2718B2D500086538 /* DatePickerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerTableViewCell.swift; sourceTree = "<group>"; };
@@ -385,10 +391,11 @@
 		D8D252B127146EB700C68EF9 /* Controls */ = {
 			isa = PBXGroup;
 			children = (
-				D8D252B227146ED800C68EF9 /* Value1TableViewCell.swift */,
 				D82366EB2718B2D500086538 /* DatePickerTableViewCell.swift */,
 				D8C20D2A271CC1E600F3F22A /* FontLabelTableViewCell.swift */,
+				D8166550272773AC005BDA9E /* ImageTableViewCell.swift */,
 				D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */,
+				D8D252B227146ED800C68EF9 /* Value1TableViewCell.swift */,
 			);
 			path = Controls;
 			sourceTree = "<group>";
@@ -404,13 +411,15 @@
 				D8E6D672271FBD3300AB6452 /* Color.swift */,
 				D8C20D22271C6C1500F3F22A /* EKCalendar.swift */,
 				D862BF3B271B98F90086BE48 /* String.swift */,
+				D816655227277407005BDA9E /* UIActivityIndicatorView.swift */,
 				D8DD98FB271EE98A004088CD /* UIApplication.swift */,
+				DBFAEA83272446C5005B9E21 /* UIFont.swift */,
+				D8D29BC92723E2F400125927 /* UIImage.swift */,
 				D83CC5212707543E00260DC1 /* UIStoryboard.swift */,
 				D89104842707B99F0020A2CF /* UIViewController.swift */,
 				DB981489270887590029BA0A /* UnicodeExtensions.swift */,
 				D8293A0B26F787D3008CE13B /* URL.swift */,
-				D8D29BC92723E2F400125927 /* UIImage.swift */,
-				DBFAEA83272446C5005B9E21 /* UIFont.swift */,
+				D816655427277632005BDA9E /* FileManager.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -642,6 +651,8 @@
 				D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
 				D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */,
+				D816655327277407005BDA9E /* UIActivityIndicatorView.swift in Sources */,
+				D816655527277632005BDA9E /* FileManager.swift in Sources */,
 				DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */,
 				D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */,
 				D8B3B3A827182BB000DD3148 /* AddDataSourceController.swift in Sources */,
@@ -691,6 +702,7 @@
 				D8DD98FC271EE98A004088CD /* UIApplication.swift in Sources */,
 				DB62F333224F89C200CA5E64 /* StationPickerController.swift in Sources */,
 				DBFAEA84272446C5005B9E21 /* UIFont.swift in Sources */,
+				D8166551272773AC005BDA9E /* ImageTableViewCell.swift in Sources */,
 				D81DA7C02712953D0052D32C /* Localization.swift in Sources */,
 				D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */,
 				D8C20D2D271D2C8300F3F22A /* ValueRow.swift in Sources */,

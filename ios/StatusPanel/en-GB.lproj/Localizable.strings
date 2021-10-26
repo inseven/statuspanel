@@ -26,6 +26,7 @@
 "error_unknown_data_source" = "Unknown data source (%@).";
 "error_internal_inconsistency" = "Internal inconsistency.";
 "error_incorrect_settings_type" = "Incorrect settings type.";
+"error_invalid_image" = "Invalid image.";
 
 "settings_last_background_update_label" = "Last Background Update";
 "settings_last_background_update_value_never" = "Never";

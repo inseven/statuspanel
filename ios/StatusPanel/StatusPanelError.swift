@@ -30,6 +30,7 @@ enum StatusPanelError: Error {
     case unknownDataSource(DataSourceType)
     case internalInconsistency
     case incorrectSettingsType
+    case invalidImage
 
 }
 
@@ -53,6 +54,8 @@ extension StatusPanelError: LocalizedError {
             return LocalizedString("error_internal_inconsistency")
         case .incorrectSettingsType:
             return LocalizedString("error_incorrect_settings_type")
+        case .invalidImage:
+            return LocalizedString("error_invalid_image")
         }
     }
 
