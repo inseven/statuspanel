@@ -54,10 +54,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     var sourceController: DataSourceController!
 
-    var client: Client {
-        return AppDelegate.shared.client
-    }
-
     private lazy var settingsButtonItem: UIBarButtonItem = {
         return UIBarButtonItem(title: "Settings",
                                style: .plain,
@@ -242,7 +238,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                             ? ViewController.loadPrivacyImage()
                             : Self.renderToImage(data: data, shouldRedact: true, darkMode: darkMode))
 
-        let client = self.client
+        let client = AppDelegate.shared.client
         DispatchQueue.global().async {
             let payloads = Panel.rlePayloads(for: [image, privacyImage])
             DispatchQueue.main.sync {

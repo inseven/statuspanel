@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var config = Config()
     var sourceController = DataSourceController()
     var apnsToken: Data?
-    var client: Client!
+    var client: Client = Client(baseUrl: "https://api.statuspanel.io/")
 
     static var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
@@ -39,7 +39,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        client = Client(baseUrl: "https://api.statuspanel.io/")
         application.registerForRemoteNotifications()
 
         do {
@@ -64,8 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        // Setting a flag here means we can avoid taking action on temporary
-        // interruptions
+        // Setting a flag here means we can avoid taking action on temporary interruptions.
         background = true
     }
 
@@ -171,7 +169,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: WifiProvisionerControllerDelegate {
 
-    func wifiProvisionerController(_ wifiProvisionerController: WifiProvisionerController, didConfigureDevice device: Device) {
+    func wifiProvisionerController(_ wifiProvisionerController: WifiProvisionerController,
+                                   didConfigureDevice device: Device) {
         wifiProvisionerController.navigationController?.dismiss(animated: true) {
             self.addDevice(device)
         }
