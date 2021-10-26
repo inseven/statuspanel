@@ -67,10 +67,7 @@ extension AddViewController: QRCodeViewConrollerDelegate {
     }
 
     func qrCodeViewControllerDidCancel(_ qrCodeViewController: QRCodeViewController) {
-        dismiss(animated: true) {
-            self.addDelegate?.addViewControllerDidCancel(self)
-        }
-
+        self.addDelegate?.addViewControllerDidCancel(self)
     }
 
 }
