@@ -137,12 +137,25 @@ class Fonts {
     static let guiConsFont = BitmapInfo(bitmap: "font6x10", charWidth: 6, charHeight: 10, capHeight: 7, descent: 2, startIndex: " ")
     static let unifont = BitmapInfo(bitmap: "unifont-13.0.06", charWidth: 16, charHeight: 16, capHeight: 10, descent: 2, startIndex: "\0", minWidth: 7)
 
+    class FontName {
+        static let guicons = "font6x10_2"
+        static let unifont16 = "unifont"
+        static let unifont32 = "unifont_2"
+        static let amiga4Ever = "amiga4ever"
+        static let heroineSword = "heroinesword"
+        static let jinxedWizards = "jinxedwizards"
+        static let robotY = "roboty"
+        static let pixelByzantine = "pixelbyzantine"
+        static let chiKareGo = "chikarego"
+        static let chiKareGo2 = "chikarego2"
+    }
+
     static let availableFonts = [
-        Font(configName: "font6x10_2", humanName: "Guicons Font", bitmapInfo: guiConsFont, subTextScale: 1, textScale: 2, headerScale: 2, author: "",
+        Font(configName: FontName.guicons, humanName: "Guicons Font", bitmapInfo: guiConsFont, subTextScale: 1, textScale: 2, headerScale: 2, author: "",
              attribution: "Guicons font taken from https://sourceforge.net/p/fshell/code/ci/default/tree/plugins/consoles/guicons/data/font_6x10.PNG licensed under the EPL. Original author uncertain."),
-        Font(configName: "unifont", humanName: "Unifont 16pt", bitmapInfo: unifont, subTextScale: 1, textScale: 1, headerScale: 1, author: "Unifoundry", attribution: unifontAttribution),
-        Font(configName: "unifont_2", humanName: "Unifont 32pt", bitmapInfo: unifont, subTextScale: 1, textScale: 2, headerScale: 2, author: "Unifoundry", attribution: unifontAttribution),
-        Font(configName: "amiga4ever", humanName: "Amiga Forever", uifont: "Amiga Forever", subTextSize: 8, textSize: 16, headerSize: 24, author: "ck! [Freaky Fonts]", attribution: """
+        Font(configName: FontName.unifont16, humanName: "Unifont 16pt", bitmapInfo: unifont, subTextScale: 1, textScale: 1, headerScale: 1, author: "Unifoundry", attribution: unifontAttribution),
+        Font(configName: FontName.unifont32, humanName: "Unifont 32pt", bitmapInfo: unifont, subTextScale: 1, textScale: 2, headerScale: 2, author: "Unifoundry", attribution: unifontAttribution),
+        Font(configName: FontName.amiga4Ever, humanName: "Amiga Forever", uifont: "Amiga Forever", subTextSize: 8, textSize: 16, headerSize: 24, author: "ck! [Freaky Fonts]", attribution: """
             "Amiga 4ever" Truetype Font
             Copyright (c) 2001 by ck! [Freaky Fonts]. All rights reserved.
 
@@ -172,16 +185,16 @@ class Fonts {
             This font includes some dingbats, cut & paste: ƒ„…†‡ˆ
             All trademarks are property of their respective owners.
             """),
-        Font(configName: "heroinesword", humanName: "Heroine Sword", uifont: "8x8BoldWideMono", subTextSize: 16, textSize: 32, headerSize: 48, author: "castpixel", attribution: castpixelAttributionHeroineSword),
-        Font(configName: "jinxedwizards", humanName: "Jinxed Wizards", uifont: "JinxedWizards", subTextSize: 16, textSize: 16, headerSize: 16, author: "castpixel", attribution: castpixelAttribution),
-        Font(configName: "roboty", humanName: "RobotY", uifont: "RobotY", subTextSize: 16, textSize: 32, headerSize: 32, author: "castpixel", attribution: castpixelAttribution),
-        Font(configName: "pixelbyzantine", humanName: "PixelByzantine", uifont: "PixelByzantine", subTextSize: 16, textSize: 32, headerSize: 32, author: "castpixel", attribution: castpixelAttribution),
-        Font(configName: "chikarego", humanName: "ChiKareGo", uifont: "ChiKareGo", subTextSize: 16, textSize: 32, headerSize: 48, author: "Giles Booth", attribution: """
+        Font(configName: FontName.heroineSword, humanName: "Heroine Sword", uifont: "8x8BoldWideMono", subTextSize: 16, textSize: 32, headerSize: 48, author: "castpixel", attribution: castpixelAttributionHeroineSword),
+        Font(configName: FontName.jinxedWizards, humanName: "Jinxed Wizards", uifont: "JinxedWizards", subTextSize: 16, textSize: 16, headerSize: 16, author: "castpixel", attribution: castpixelAttribution),
+        Font(configName: FontName.robotY, humanName: "RobotY", uifont: "RobotY", subTextSize: 16, textSize: 32, headerSize: 32, author: "castpixel", attribution: castpixelAttribution),
+        Font(configName: FontName.pixelByzantine, humanName: "PixelByzantine", uifont: "PixelByzantine", subTextSize: 16, textSize: 32, headerSize: 32, author: "castpixel", attribution: castpixelAttribution),
+        Font(configName: FontName.chiKareGo, humanName: "ChiKareGo", uifont: "ChiKareGo", subTextSize: 16, textSize: 32, headerSize: 48, author: "Giles Booth", attribution: """
             ChiKareGo by Giles Booth
             http://www.pentacom.jp/pentacom/bitfontmaker2/gallery/?id=3778
             License: Creative Commons Attribution
             """),
-        Font(configName: "chikarego2", humanName: "ChiKareGo 2", uifont: "ChiKareGo2", subTextSize: 16, textSize: 32, headerSize: 48, author: "Giles Booth", attribution: """
+        Font(configName: FontName.chiKareGo2, humanName: "ChiKareGo 2", uifont: "ChiKareGo2", subTextSize: 16, textSize: 32, headerSize: 48, author: "Giles Booth", attribution: """
             ChiKareGo2 by Giles Booth
             http://www.pentacom.jp/pentacom/bitfontmaker2/gallery/?id=3780
             License: Creative Commons Attribution
