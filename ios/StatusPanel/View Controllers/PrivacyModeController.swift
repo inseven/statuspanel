@@ -27,6 +27,8 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
 
     private let config: Config
 
+    private var firstRun = true
+
     private var privacyImage: UIImage? = nil {
         didSet {
             dispatchPrecondition(condition: .onQueue(.main))
@@ -51,6 +53,14 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        loadPrivacyImage()
+    }
+
+    func loadPrivacyImage() {
+        if !firstRun {
+            return
+        }
+        firstRun = false
         DispatchQueue.global(qos: .userInteractive).async {
             let image = try? self.config.privacyImage() ?? Panel.blankImage()
             DispatchQueue.main.async {
