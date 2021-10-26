@@ -387,7 +387,7 @@ class Config {
 
     var titleFont: String {
         get {
-            self.string(for: .titleFont) ?? availableFonts[0].configName
+            self.string(for: .titleFont) ?? Fonts.FontName.chiKareGo2
         }
         set {
             self.set(newValue, for: .titleFont)
@@ -396,7 +396,7 @@ class Config {
 
     var bodyFont: String {
         get {
-            self.string(for: .bodyFont) ?? availableFonts[0].configName
+            self.string(for: .bodyFont) ?? Fonts.FontName.unifont16
         }
         set {
             self.set(newValue, for: .bodyFont)
