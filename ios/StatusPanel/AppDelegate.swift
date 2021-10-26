@@ -27,6 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
+    var config = Config()
     var sourceController = DataSourceController()
     var apnsToken: Data?
     var client: Client!
@@ -40,6 +41,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         client = Client(baseUrl: "https://api.statuspanel.io/")
         application.registerForRemoteNotifications()
+
+        do {
+            try config.migrate()
+        } catch {
+            print("Failed to migrate settings with error \(error)")
+        }
 
         let viewController = ViewController()
         let navigationController = UINavigationController(rootViewController: viewController)

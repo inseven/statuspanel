@@ -20,22 +20,43 @@
 
 import UIKit
 
-class PrivacyModeController : UITableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+class PrivacyModeController : UITableViewController, UINavigationControllerDelegate {
+
+    private static var imageCellReuseIdentifier = "ImageCell"
+    private let kImageRowHeight: CGFloat = 200
 
     private let config: Config
+
+    private var privacyImage: UIImage? = nil {
+        didSet {
+            dispatchPrecondition(condition: .onQueue(.main))
+            guard self.config.privacyMode == .customImage else {
+                return
+            }
+            self.tableView.reloadRows(at: [IndexPath(row: 3, section: 0)], with: .fade)
+        }
+    }
 
     init(config: Config) {
         self.config = config
         super.init(style: .grouped)
         title = LocalizedString("privacy_mode_title")
+        tableView.register(ImageViewTableViewCell.self, forCellReuseIdentifier: Self.imageCellReuseIdentifier)
+        tableView.allowsSelection = true
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return true
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        DispatchQueue.global(qos: .userInteractive).async {
+            let image = try? self.config.privacyImage() ?? Panel.blankImage()
+            DispatchQueue.main.async {
+                self.privacyImage = image
+            }
+        }
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -56,7 +77,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
                 return
             }
             config.privacyMode = Config.PrivacyMode(rawValue: indexPath.row)!
-            tableView.performBatchUpdates({
+            tableView.performBatchUpdates {
                 tableView.deselectRow(at: indexPath, animated: true)
                 let imgCellIndexPath = IndexPath(row: 3, section: 0)
                 tableView.reloadRows(at: [indexPath, prevIndexPath], with: .fade)
@@ -65,7 +86,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
                 } else if prevMode == .customImage && newMode != .customImage{
                     tableView.deleteRows(at: [imgCellIndexPath], with: .automatic)
                 }
-            })
+            }
         }
     }
 
@@ -76,8 +97,6 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return config.privacyMode == .customImage ? 4 : 3
     }
-
-    private let kImageRowHeight: CGFloat = 200
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.row == 3 {
@@ -100,46 +119,49 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
             cell.accessoryType = indexPath.row == config.privacyMode.rawValue ? .checkmark : .none
             return cell
         } else if (indexPath.row == 3) {
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.contentView.bounds = cell.contentView.bounds.rectWithDifferentHeight(kImageRowHeight)
+            let cell = tableView.dequeueReusableCell(withIdentifier: Self.imageCellReuseIdentifier,
+                                                     for: indexPath) as! ImageViewTableViewCell
             cell.accessoryType = .disclosureIndicator
-            let frame = cell.contentView.bounds.insetBy(left: cell.separatorInset.left, right: 35, top: 10, bottom: 10)
-            let img = ViewController.cropCustomRedactImageToPanelSize()
-            let imgView = UIImageView(image: img)
-            imgView.contentMode = .scaleAspectFit
-            imgView.frame = frame
-            cell.contentView.addSubview(imgView)
+            cell.contentImageView.contentMode = .scaleAspectFit
+            cell.contentImageView.image = privacyImage ?? Panel.blankImage()
+            cell.activityIndicatorView.setAnimating(privacyImage == nil)
             return cell
         }
         fatalError("Unknown index path")
     }
 
+}
+
+extension PrivacyModeController: UIImagePickerControllerDelegate {
+
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        var image = info[.editedImage] as? UIImage
-        if image == nil {
-            image = info[.originalImage] as? UIImage
-        }
-        if let image = image {
-            savePrivacyImage(image)
-            tableView.reloadRows(at: [IndexPath(row: 3, section: 0)], with: .none)
-        }
         dismiss(animated: true)
+        guard let image = (info[.editedImage] as? UIImage) ?? (info[.originalImage] as? UIImage) else {
+            print("Failed to get an updated image.")
+            return
+        }
+        self.privacyImage = nil
+        Panel.privacyImage(from: image) { result in
+            switch result {
+            case .success(let image):
+                do {
+                    try self.config.setPrivacyImage(image)
+                    DispatchQueue.main.async {
+                        self.privacyImage = image
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        self.present(error: error)
+                    }
+                    return
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    self.present(error: error)
+                }
+            }
+        }
     }
 
-    func savePrivacyImage(_ image: UIImage) {
-         do {
-             let dir = try FileManager.default.url(for: .documentDirectory,
-                                                      in: .userDomainMask,
-                                                      appropriateFor: nil,
-                                                      create: true)
-             guard let data = image.jpegData(compressionQuality: 1.0) else {
-                 print("Failed to get image data")
-                 return
-             }
-             try data.write(to: dir.appendingPathComponent("customPrivacyImage.jpg"))
-         } catch {
-             present(error: error)
-         }
-    }
 }

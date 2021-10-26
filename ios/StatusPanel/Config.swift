@@ -20,6 +20,7 @@
 
 import Foundation
 import Network
+import UIKit
 
 class Config {
 
@@ -189,6 +190,55 @@ class Config {
     private func set<T: Codable>(codable: T, for key: Key) throws {
         let data = try JSONEncoder().encode(codable)
         self.userDefaults.set(data, forKey: key.rawValue)
+    }
+
+    func migrate() throws {
+        let fileManager = FileManager.default
+        let documentsUrl = try fileManager.documentsUrl()
+
+        let privacyImageV1 = documentsUrl.appendingPathComponent("customPrivacyImage.png")
+        let privacyImageV2 = documentsUrl.appendingPathComponent("customPrivacyImage.jpg")
+        let privacyImageV3 = documentsUrl.appendingPathComponent(Self.privacyImageFilename)
+
+        let hasPrivacyImageV1 = fileManager.fileExists(at: privacyImageV1)
+        let hasPrivacyImageV2 = fileManager.fileExists(at: privacyImageV2)
+        let hasPrivacyImageV3 = fileManager.fileExists(at: privacyImageV3)
+
+        let needsPrivacyImageMigration = hasPrivacyImageV1 || hasPrivacyImageV2
+        if needsPrivacyImageMigration {
+
+            // If the user hasn't already set a new privacy image...
+            if !hasPrivacyImageV3 {
+
+                // ... first migrate the v1 privacy image if it exists...
+                if hasPrivacyImageV1 {
+                    print("Migrating v1 privacy image...")
+                    if let image = UIImage(contentsOfFile: privacyImageV1.path) {
+                        try setPrivacyImage(try Panel.privacyImage(from: image))
+                    } else {
+                        print("Failed to load v1 privacy image.")
+                    }
+                }
+
+                // ... then migrate the second privacy image if it exists.
+                if hasPrivacyImageV2 {
+                    print("Migrating v2 privacy image...")
+                    if let image = UIImage(contentsOfFile: privacyImageV2.path) {
+                        try setPrivacyImage(try Panel.privacyImage(from: image))
+                    } else {
+                        print("Failed to load v2 privacy image.")
+                    }
+                }
+
+            }
+
+            // Once we've migrated the images, we can safely delete them.
+            print("Removing old privacy images...")
+            if hasPrivacyImageV1 { try fileManager.removeItem(at: privacyImageV1) }
+            if hasPrivacyImageV2 { try fileManager.removeItem(at: privacyImageV2) }
+
+        }
+
     }
 
     var activeCalendars: [String] {
@@ -430,6 +480,28 @@ class Config {
         set {
             self.set(newValue.rawValue, for: .privacyMode)
         }
+    }
+
+    static let privacyImageFilename = "privacy-image.png"
+
+    func privacyImage() throws -> UIImage? {
+        let url = try FileManager.default.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
+        return UIImage(contentsOfFile: url.path)
+    }
+
+    func setPrivacyImage(_ image: UIImage?) throws {
+        let fileManager = FileManager.default
+        let url = try fileManager.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
+        guard let image = image else {
+            if fileManager.fileExists(at: url) {
+                try fileManager.removeItem(at: url)
+            }
+            return
+        }
+        guard let data = image.pngData() else {
+            throw StatusPanelError.invalidImage
+        }
+        try data.write(to: url, options: [.atomic])
     }
 
     private static func getLastUploadHashKey(for deviceid: String) -> String {

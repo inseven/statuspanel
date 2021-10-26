@@ -237,8 +237,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
         let darkMode = shouldBeDark()
         let image = Self.renderToImage(data: data, shouldRedact: false, darkMode: darkMode)
+
         let privacyImage = ((Config().privacyMode == .customImage)
-                            ? ViewController.cropCustomRedactImageToPanelSize()
+                            ? ViewController.loadPrivacyImage()
                             : Self.renderToImage(data: data, shouldRedact: true, darkMode: darkMode))
 
         let client = self.client
@@ -255,25 +256,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     }
 
-    static func cropCustomRedactImageToPanelSize() -> UIImage {
-        var path: URL?
-        do {
-            let dir = try FileManager.default.url(for: .documentDirectory,
-                                                  in: .userDomainMask,
-                                                  appropriateFor: nil,
-                                                  create: true)
-            path = dir.appendingPathComponent("customPrivacyImage.jpg")
-        } catch {
-            print("meh")
-            return Panel.blankImage()
-        }
-        guard let source = UIImage(contentsOfFile: path!.path)?
-                .normalizeOrientation()?
-                .scaleAndDither(to: Panel.size)
-        else {
-            return Panel.blankImage()
-        }
-        return source
+    static func loadPrivacyImage() -> UIImage {
+        return (try? Config().privacyImage()) ?? Panel.blankImage()
     }
 
     static func renderToImage(data: [DataItemBase], shouldRedact: Bool, darkMode: Bool) -> UIImage {
@@ -452,11 +436,11 @@ extension ViewController: DataSourceControllerDelegate {
 
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase]) {
         self.renderAndUpload(data: data, completion: { (changes: Bool) -> Void in
-                DispatchQueue.main.async {
-                    AppDelegate.shared.fetchCompleted(hasChanged: changes)
-                    self.fetchDidComplete()
-                }
-            })
+            DispatchQueue.main.async {
+                AppDelegate.shared.fetchCompleted(hasChanged: changes)
+                self.fetchDidComplete()
+            }
+        })
     }
 
     func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error) {
