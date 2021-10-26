@@ -71,10 +71,6 @@ class DataSourceController {
                                                                 shortFormat: "yMMMMdEEE",
                                                                 offset: 0,
                                                                 flags: [.header, .spansColumns]))
-                try add(type: .transportForLondon,
-                        settings: TFLDataSource.Settings(lines: Set(config.activeTFLLines)))
-                try add(type: .nationalRail,
-                        settings: NationalRailDataSource.Settings(from: config.trainRoute.from, to: config.trainRoute.to))
                 try add(type: .calendar,
                         settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
                                                           showUrls: config.showUrlsInCalendarLocations,
