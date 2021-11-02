@@ -22,3 +22,6 @@
 [submodule "firmware/nodemcu-firmware"]
 	path = firmware/nodemcu-firmware
 	url = https://github.com/tomsci/nodemcu-firmware.git
+[submodule "ios/diligence"]
+	path = ios/diligence
+	url = git@github.com:inseven/diligence.git

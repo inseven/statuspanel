@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		D80380AB23E9B6D2002606C7 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Client.swift */; };
 		D812523627093C4500C9D80A /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523527093C4500C9D80A /* AboutView.swift */; };
-		D81252382709400E00C9D80A /* LicenseRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81252372709400E00C9D80A /* LicenseRow.swift */; };
-		D812523A2709403C00C9D80A /* LicenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81252392709403C00C9D80A /* LicenseView.swift */; };
 		D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523B2709875600C9D80A /* FontPickerViewController.swift */; };
 		D8166551272773AC005BDA9E /* ImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8166550272773AC005BDA9E /* ImageTableViewCell.swift */; };
 		D816655327277407005BDA9E /* UIActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D816655227277407005BDA9E /* UIActivityIndicatorView.swift */; };
@@ -34,9 +32,9 @@
 		D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A197270C8DB100681F62 /* TextDataSource.swift */; };
 		D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A199270D16AD00681F62 /* AddDataSourceView.swift */; };
 		D848A19E270D213800681F62 /* FlagsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A19D270D213800681F62 /* FlagsSection.swift */; };
-		D862BF3C271B98F90086BE48 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D862BF3B271B98F90086BE48 /* String.swift */; };
 		D862BF3F271B99700086BE48 /* Swift-Sodium in Resources */ = {isa = PBXBuildFile; fileRef = D862BF3E271B99700086BE48 /* Swift-Sodium */; };
 		D862BF41271B9B620086BE48 /* Binding+mappedToBool in Resources */ = {isa = PBXBuildFile; fileRef = D862BF40271B9B620086BE48 /* Binding+mappedToBool */; };
+		D87439032730C3E400B676A5 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D87439022730C3E400B676A5 /* Diligence */; };
 		D89104852707B9A00020A2CF /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104842707B99F0020A2CF /* UIViewController.swift */; };
 		D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104862707BAD50020A2CF /* DataSourceInstance.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
@@ -50,7 +48,6 @@
 		D8C20D25271C7A2000F3F22A /* CalendarPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */; };
 		D8C20D27271C7A6E00F3F22A /* CalendarPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D26271C7A6E00F3F22A /* CalendarPickerController.swift */; };
 		D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D2A271CC1E600F3F22A /* FontLabelTableViewCell.swift */; };
-		D8C20D2D271D2C8300F3F22A /* ValueRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D2C271D2C8300F3F22A /* ValueRow.swift */; };
 		D8CC37B12717887A00938C5D /* Panel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CC37B02717887A00938C5D /* Panel.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
 		D8D252B327146ED800C68EF9 /* Value1TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D252B227146ED800C68EF9 /* Value1TableViewCell.swift */; };
@@ -63,7 +60,6 @@
 		D8DC8D8126E1ADAF004B081D /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */; };
 		D8DC8D8226E1ADAF004B081D /* Common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */; };
 		D8DC8D8326E1ADAF004B081D /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D8DC8D8026E1ADAF004B081D /* Release.xcconfig */; };
-		D8DD98FC271EE98A004088CD /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD98FB271EE98A004088CD /* UIApplication.swift */; };
 		D8DD98FF271EF8CD004088CD /* ColoredCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD98FE271EF8CD004088CD /* ColoredCheckbox.swift */; };
 		D8DD9901271EF971004088CD /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD9900271EF971004088CD /* Binding.swift */; };
 		D8E285AD271A4547001738A8 /* ExternalOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E285AC271A4547001738A8 /* ExternalOperation.swift */; };
@@ -129,8 +125,6 @@
 /* Begin PBXFileReference section */
 		D80380AA23E9B6D2002606C7 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		D812523527093C4500C9D80A /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
-		D81252372709400E00C9D80A /* LicenseRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseRow.swift; sourceTree = "<group>"; };
-		D81252392709403C00C9D80A /* LicenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseView.swift; sourceTree = "<group>"; };
 		D812523B2709875600C9D80A /* FontPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPickerViewController.swift; sourceTree = "<group>"; };
 		D8166550272773AC005BDA9E /* ImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTableViewCell.swift; sourceTree = "<group>"; };
 		D816655227277407005BDA9E /* UIActivityIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorView.swift; sourceTree = "<group>"; };
@@ -154,9 +148,9 @@
 		D848A197270C8DB100681F62 /* TextDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDataSource.swift; sourceTree = "<group>"; };
 		D848A199270D16AD00681F62 /* AddDataSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDataSourceView.swift; sourceTree = "<group>"; };
 		D848A19D270D213800681F62 /* FlagsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagsSection.swift; sourceTree = "<group>"; };
-		D862BF3B271B98F90086BE48 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		D862BF3E271B99700086BE48 /* Swift-Sodium */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Swift-Sodium"; sourceTree = "<group>"; };
 		D862BF40271B9B620086BE48 /* Binding+mappedToBool */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Binding+mappedToBool"; sourceTree = "<group>"; };
+		D87439012730C3A100B676A5 /* diligence */ = {isa = PBXFileReference; lastKnownFileType = folder; path = diligence; sourceTree = "<group>"; };
 		D89104842707B99F0020A2CF /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		D89104862707BAD50020A2CF /* DataSourceInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceInstance.swift; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
@@ -172,7 +166,6 @@
 		D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPicker.swift; sourceTree = "<group>"; };
 		D8C20D26271C7A6E00F3F22A /* CalendarPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPickerController.swift; sourceTree = "<group>"; };
 		D8C20D2A271CC1E600F3F22A /* FontLabelTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontLabelTableViewCell.swift; sourceTree = "<group>"; };
-		D8C20D2C271D2C8300F3F22A /* ValueRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueRow.swift; sourceTree = "<group>"; };
 		D8CC37B02717887A00938C5D /* Panel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panel.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		D8D252B227146ED800C68EF9 /* Value1TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Value1TableViewCell.swift; sourceTree = "<group>"; };
@@ -185,7 +178,6 @@
 		D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
 		D8DC8D8026E1ADAF004B081D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
-		D8DD98FB271EE98A004088CD /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		D8DD98FE271EF8CD004088CD /* ColoredCheckbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoredCheckbox.swift; sourceTree = "<group>"; };
 		D8DD9900271EF971004088CD /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		D8E285AC271A4547001738A8 /* ExternalOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalOperation.swift; sourceTree = "<group>"; };
@@ -245,6 +237,7 @@
 			files = (
 				D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */,
 				D81DE20326E19F9200504703 /* Clibsodium in Frameworks */,
+				D87439032730C3E400B676A5 /* Diligence in Frameworks */,
 				D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */,
 				D8EED7F12630EF19009E2166 /* Sodium in Frameworks */,
 			);
@@ -261,9 +254,6 @@
 				D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */,
 				D8383EBB270FB8E20007EBB7 /* DayPicker.swift */,
 				D848A19D270D213800681F62 /* FlagsSection.swift */,
-				D81252372709400E00C9D80A /* LicenseRow.swift */,
-				D81252392709403C00C9D80A /* LicenseView.swift */,
-				D8C20D2C271D2C8300F3F22A /* ValueRow.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -375,6 +365,14 @@
 			path = Licenses;
 			sourceTree = "<group>";
 		};
+		D87439002730C3A100B676A5 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				D87439012730C3A100B676A5 /* diligence */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 		D89104882707BB3D0020A2CF /* Dummy */ = {
 			isa = PBXGroup;
 			children = (
@@ -413,9 +411,7 @@
 				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
 				D8E6D672271FBD3300AB6452 /* Color.swift */,
 				D8C20D22271C6C1500F3F22A /* EKCalendar.swift */,
-				D862BF3B271B98F90086BE48 /* String.swift */,
 				D816655227277407005BDA9E /* UIActivityIndicatorView.swift */,
-				D8DD98FB271EE98A004088CD /* UIApplication.swift */,
 				DBFAEA83272446C5005B9E21 /* UIFont.swift */,
 				D8D29BC92723E2F400125927 /* UIImage.swift */,
 				D83CC5212707543E00260DC1 /* UIStoryboard.swift */,
@@ -448,6 +444,7 @@
 		DBCA98702143E2920084B710 = {
 			isa = PBXGroup;
 			children = (
+				D87439002730C3A100B676A5 /* Packages */,
 				D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */,
 				D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */,
 				D8DC8D8026E1ADAF004B081D /* Release.xcconfig */,
@@ -542,6 +539,7 @@
 			packageProductDependencies = (
 				D8EED7F02630EF19009E2166 /* Sodium */,
 				D81DE20226E19F9200504703 /* Clibsodium */,
+				D87439022730C3E400B676A5 /* Diligence */,
 			);
 			productName = StatusPanel;
 			productReference = DBCA98792143E2920084B710 /* StatusPanel.app */;
@@ -645,7 +643,6 @@
 				D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */,
 				D82366EC2718B2D500086538 /* DatePickerTableViewCell.swift in Sources */,
 				D8EBFCC8272099B0000E120F /* TextFieldTableViewCell.swift in Sources */,
-				D81252382709400E00C9D80A /* LicenseRow.swift in Sources */,
 				D848A19E270D213800681F62 /* FlagsSection.swift in Sources */,
 				D8293A0C26F787D3008CE13B /* URL.swift in Sources */,
 				D8DD98FF271EF8CD004088CD /* ColoredCheckbox.swift in Sources */,
@@ -671,7 +668,6 @@
 				DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */,
 				D8D29BCA2723E2F400125927 /* UIImage.swift in Sources */,
 				D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */,
-				D862BF3C271B98F90086BE48 /* String.swift in Sources */,
 				D8D252B327146ED800C68EF9 /* Value1TableViewCell.swift in Sources */,
 				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
@@ -683,7 +679,6 @@
 				D83B6C35271A8E4800F48FB2 /* AddViewController.swift in Sources */,
 				D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */,
 				D8383EBE270FBA1B0007EBB7 /* DataSourceSettingsStore.swift in Sources */,
-				D812523A2709403C00C9D80A /* LicenseView.swift in Sources */,
 				D8B9874B270FF88D00EC2BA4 /* Alert.swift in Sources */,
 				D8E285AF271A45CE001738A8 /* Device.swift in Sources */,
 				DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */,
@@ -704,13 +699,11 @@
 				D8DD9901271EF971004088CD /* Binding.swift in Sources */,
 				D8E285AD271A4547001738A8 /* ExternalOperation.swift in Sources */,
 				DBCA98B52144421F0084B710 /* DataSource.swift in Sources */,
-				D8DD98FC271EE98A004088CD /* UIApplication.swift in Sources */,
 				DB62F333224F89C200CA5E64 /* StationPickerController.swift in Sources */,
 				DBFAEA84272446C5005B9E21 /* UIFont.swift in Sources */,
 				D8166551272773AC005BDA9E /* ImageTableViewCell.swift in Sources */,
 				D81DA7C02712953D0052D32C /* Localization.swift in Sources */,
 				D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */,
-				D8C20D2D271D2C8300F3F22A /* ValueRow.swift in Sources */,
 				D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
 				D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */,
@@ -1019,6 +1012,10 @@
 		D81DE20226E19F9200504703 /* Clibsodium */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Clibsodium;
+		};
+		D87439022730C3E400B676A5 /* Diligence */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Diligence;
 		};
 		D8EED7F02630EF19009E2166 /* Sodium */ = {
 			isa = XCSwiftPackageProductDependency;

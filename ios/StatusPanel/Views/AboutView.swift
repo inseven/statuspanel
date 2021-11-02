@@ -20,86 +20,49 @@
 
 import SwiftUI
 
-extension String: Identifiable {
-    public var id: String { self }
+import Diligence
+
+extension Fonts.Font {
+
+    var license: License {
+        return License(name: humanReadableName, author: author, text: attribution)
+    }
+
 }
 
 struct AboutView: View {
 
     @Environment(\.presentationMode) var presentationMode
 
-    private static let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        dateFormatter.timeStyle = .short
-        return dateFormatter
-    }()
-
-    private var date: String? {
-        guard let date = UIApplication.shared.utcBuildDate else {
-            return nil
-        }
-        return Self.dateFormatter.string(from: date)
-    }
-
-    private var contributors = [
-        "Jason Morley",
-        "Tom Sutcliffe",
-    ]
-
-    private var people = [
-        "Lukas Fittl",
-        "Pavlos Vinieratos",
-    ]
-
-    private var fonts: [Fonts.Font] {
-        Config().availableFonts.sorted { $0.humanReadableName < $1.humanReadableName }
+    private var fonts: [License] {
+        return Config()
+            .availableFonts
+            .sorted { $0.humanReadableName < $1.humanReadableName }
+            .map { $0.license }
     }
 
     var body: some View {
         NavigationView {
             Form {
-                Section {
-                    ValueRow(text: "Version", detailText: UIApplication.shared.version ?? "")
-                    ValueRow(text: "Build", detailText: UIApplication.shared.build ?? "")
-                    ValueRow(text: "Date", detailText: date ?? "")
-                    Button {
-                        guard let url = UIApplication.shared.commitUrl else {
-                            return
-                        }
-                        UIApplication.shared.open(url, options: [:])
-                    } label: {
-                        ValueRow(text: "Commit", detailText: UIApplication.shared.commit ?? "")
-                    }
-                }
-                Section(header: Text("Contributors")) {
-                    ForEach(contributors) { person in
-                        Text(person)
-                    }
-                }
-                Section(header: Text("Thanks")) {
-                    ForEach(people) { person in
-                        Text(person)
-                    }
-                }
-                Section(header: Text("Fonts")) {
-                    ForEach(fonts) { font in
-                        LicenseRow(name: font.humanReadableName, author: font.author, license: font.attribution)
-                    }
-                }
-                Section(header: Text("Licenses")) {
-                    LicenseRow(name: "Binding+mappedToBool",
-                               author: "Joseph Duffy",
-                               license: String(contentsOfBundleFile: "Binding+mappedToBool") ?? "missing file")
-                    LicenseRow(name: "Swift-Sodium",
-                               author: "Frank Denis",
-                               license: String(contentsOfBundleFile: "Swift-Sodium") ?? "missing file")
-                }
+                BuildSection()
+                CreditSection("Contributors", [
+                    "Jason Morley",
+                    "Tom Sutcliffe",
+                ])
+                CreditSection("Thanks", [
+                    "Lukas Fittl",
+                    "Pavlos Vinieratos",
+                ])
+                LicenseSection("Fonts", fonts)
+                LicenseSection("Licenses", [
+                    License(name: "Binding+mappedToBool", author: "Joseph Duffy", filename: "Binding+mappedToBool"),
+                    License(name: "Swift-Sodium", author: "Frank Denis", filename: "Swift-Sodium"),
+                ])
             }
             .navigationBarTitle("About", displayMode: .inline)
-            .navigationBarItems(leading: Button(action: {
+            .navigationBarItems(leading: Button {
                 presentationMode.wrappedValue.dismiss()
-            }) {
+            } label: {
                 Text("Done")
                     .fontWeight(.regular)
             })
