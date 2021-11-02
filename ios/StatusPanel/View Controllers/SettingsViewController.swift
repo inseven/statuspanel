@@ -62,8 +62,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.leftBarButtonItem = doneButtonItem
-        navigationItem.rightBarButtonItem = editButtonItem
+        navigationItem.leftBarButtonItem = editButtonItem
+        navigationItem.rightBarButtonItem = doneButtonItem
         tableView.allowsSelectionDuringEditing = true
         title = "Settings"
 
@@ -82,13 +82,13 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         }
         super.setEditing(editing, animated: animated)
         if editing {
-            self.navigationItem.setLeftBarButton(nil, animated: true)
+            self.navigationItem.setRightBarButton(nil, animated: true)
             tableView.performBatchUpdates {
                 tableView.deleteSections([1, 2, 3, 4, 5, 6], with: .fade)
                 tableView.insertSections([1], with: .fade)
             }
         } else {
-            self.navigationItem.setLeftBarButton(doneButtonItem, animated: true)
+            self.navigationItem.setRightBarButton(doneButtonItem, animated: true)
             tableView.performBatchUpdates {
                 tableView.deleteSections([1], with: .fade)
                 tableView.insertSections([1, 2, 3, 4, 5, 6], with: .fade)
