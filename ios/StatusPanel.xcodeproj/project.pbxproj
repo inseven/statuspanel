@@ -361,9 +361,9 @@
 		D862BF3D271B99450086BE48 /* Licenses */ = {
 			isa = PBXGroup;
 			children = (
-				D862BF3E271B99700086BE48 /* Swift-Sodium */,
 				D862BF40271B9B620086BE48 /* Binding+mappedToBool */,
 				D87439042731006800B676A5 /* Diligence */,
+				D862BF3E271B99700086BE48 /* Swift-Sodium */,
 			);
 			path = Licenses;
 			sourceTree = "<group>";
