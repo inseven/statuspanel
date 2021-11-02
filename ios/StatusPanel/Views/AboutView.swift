@@ -44,7 +44,7 @@ struct AboutView: View {
     var body: some View {
         NavigationView {
             Form {
-                BuildSection()
+                BuildSection("inseven/statuspanel")
                 CreditSection("Contributors", [
                     "Jason Morley",
                     "Tom Sutcliffe",
