@@ -32,8 +32,11 @@ struct LicenseRow: View {
         NavigationLink(destination: LicenseView(name: name, license: license), isActive: $isShowingDetails) {
             HStack {
                 Text(name)
+                    .lineLimit(1)
+                    .layoutPriority(1)
                 Spacer()
                 Text(author)
+                    .lineLimit(1)
                     .foregroundColor(.secondary)
             }
         }
