@@ -35,6 +35,7 @@
 		D862BF3F271B99700086BE48 /* Swift-Sodium in Resources */ = {isa = PBXBuildFile; fileRef = D862BF3E271B99700086BE48 /* Swift-Sodium */; };
 		D862BF41271B9B620086BE48 /* Binding+mappedToBool in Resources */ = {isa = PBXBuildFile; fileRef = D862BF40271B9B620086BE48 /* Binding+mappedToBool */; };
 		D87439032730C3E400B676A5 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D87439022730C3E400B676A5 /* Diligence */; };
+		D87439052731006800B676A5 /* Diligence in Resources */ = {isa = PBXBuildFile; fileRef = D87439042731006800B676A5 /* Diligence */; };
 		D89104852707B9A00020A2CF /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104842707B99F0020A2CF /* UIViewController.swift */; };
 		D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104862707BAD50020A2CF /* DataSourceInstance.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
@@ -151,6 +152,7 @@
 		D862BF3E271B99700086BE48 /* Swift-Sodium */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Swift-Sodium"; sourceTree = "<group>"; };
 		D862BF40271B9B620086BE48 /* Binding+mappedToBool */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Binding+mappedToBool"; sourceTree = "<group>"; };
 		D87439012730C3A100B676A5 /* diligence */ = {isa = PBXFileReference; lastKnownFileType = folder; path = diligence; sourceTree = "<group>"; };
+		D87439042731006800B676A5 /* Diligence */ = {isa = PBXFileReference; lastKnownFileType = text; path = Diligence; sourceTree = "<group>"; };
 		D89104842707B99F0020A2CF /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		D89104862707BAD50020A2CF /* DataSourceInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceInstance.swift; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
@@ -361,6 +363,7 @@
 			children = (
 				D862BF3E271B99700086BE48 /* Swift-Sodium */,
 				D862BF40271B9B620086BE48 /* Binding+mappedToBool */,
+				D87439042731006800B676A5 /* Diligence */,
 			);
 			path = Licenses;
 			sourceTree = "<group>";
@@ -610,6 +613,7 @@
 				D8C20D1E271C2A6200F3F22A /* Localizable.strings in Resources */,
 				D81665582727B7D1005BDA9E /* Localizable.stringsdict in Resources */,
 				DBCA98842143E2920084B710 /* Assets.xcassets in Resources */,
+				D87439052731006800B676A5 /* Diligence in Resources */,
 				D8DC8D8126E1ADAF004B081D /* Debug.xcconfig in Resources */,
 				D8DAED7026E3EAA90002F388 /* configuration.json in Resources */,
 				D862BF3F271B99700086BE48 /* Swift-Sodium in Resources */,
