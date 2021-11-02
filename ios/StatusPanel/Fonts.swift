@@ -151,7 +151,7 @@ class Fonts {
     }
 
     static let availableFonts = [
-        Font(configName: FontName.guicons, humanName: "Guicons Font", bitmapInfo: guiConsFont, subTextScale: 1, textScale: 2, headerScale: 2, author: "",
+        Font(configName: FontName.guicons, humanName: "Guicons Font", bitmapInfo: guiConsFont, subTextScale: 1, textScale: 2, headerScale: 2, author: "Unknown",
              attribution: "Guicons font taken from https://sourceforge.net/p/fshell/code/ci/default/tree/plugins/consoles/guicons/data/font_6x10.PNG licensed under the EPL. Original author uncertain."),
         Font(configName: FontName.unifont16, humanName: "Unifont 16pt", bitmapInfo: unifont, subTextScale: 1, textScale: 1, headerScale: 1, author: "Unifoundry", attribution: unifontAttribution),
         Font(configName: FontName.unifont32, humanName: "Unifont 32pt", bitmapInfo: unifont, subTextScale: 1, textScale: 2, headerScale: 2, author: "Unifoundry", attribution: unifontAttribution),
