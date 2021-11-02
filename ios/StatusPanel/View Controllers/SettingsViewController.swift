@@ -321,8 +321,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return cell
         case AboutSection:
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = "About StatusPanel"
-            cell.textLabel?.textColor = UIColor(named: "TintColor")
+            cell.textLabel?.text = "About StatusPanel..."
             return cell
         default:
             return UITableViewCell(style: .default, reuseIdentifier: nil)
