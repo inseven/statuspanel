@@ -48,14 +48,6 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     init(scheme: String) {
         self.scheme = scheme
         super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
         view.backgroundColor = .systemBackground
 
         let appearance = UINavigationBarAppearance()
@@ -68,6 +60,14 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
 
         title = "Scan Code"
         navigationItem.leftBarButtonItem = cancelButtonItem
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
         do {
             guard let captureDevice = AVCaptureDevice.default(for: .video) else {

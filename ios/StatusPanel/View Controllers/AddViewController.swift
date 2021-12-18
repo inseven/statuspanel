@@ -18,7 +18,119 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import SwiftUI
 import UIKit
+
+protocol IntroductionViewModel {
+
+    func addDummyDevice()
+    func next()
+
+}
+
+struct IntroductionView: View {
+
+    var model: IntroductionViewModel
+
+    var body: some View {
+        VStack {
+            Image("AddDeviceHeader")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+            VStack {
+                Text("Add a StatusPanel")
+                    .font(.headline)
+                    .padding(.bottom)
+                Text("Scan the QR code on your new StatusPanel to connect your calendar and set up other content sources.\n\nIf you don't have a StatusPanel and would like to try the app out, try the Demo Mode.")
+                    .multilineTextAlignment(.center)
+            }
+            .padding()
+            Spacer()
+            if #available(iOS 15.0, *) {
+                Button {
+                    model.addDummyDevice()
+                } label: {
+                    Text("Demo Mode")
+                        .frame(minWidth: 300)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                Button {
+                    model.next()
+                } label: {
+                    Text("Continue")
+                        .frame(minWidth: 300)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .keyboardShortcut(.defaultAction)
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+        .edgesIgnoringSafeArea(.top)
+//        .padding()
+    }
+
+}
+
+protocol IntroductionViewControllerDelegate: AnyObject {
+
+    func introductionViewControllerDidCancel(_ introductionViewController: IntroductionViewController)
+    func introductionViewControllerDidAddDummyDevice(_ introductionViewController: IntroductionViewController)
+    func introductionViewControllerDidContinue(_ introductionViewController: IntroductionViewController)
+
+}
+
+class IntroductionViewController: UIHostingController<IntroductionView> {
+
+    class Model: IntroductionViewModel {
+
+        weak var viewController: IntroductionViewController? = nil
+
+        func addDummyDevice() {
+            viewController?.add()
+        }
+
+        func next() {
+            viewController?.next()
+        }
+    }
+
+    let model = Model()
+
+    lazy var cancelBarButtonItem: UIBarButtonItem = {
+        let barButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
+                                            target: self,
+                                            action: #selector(cancelTapped(sender:)))
+        return barButtonItem
+    }()
+
+    var delegate: IntroductionViewControllerDelegate?
+
+    init() {
+        super.init(rootView: IntroductionView(model: model))
+        navigationItem.leftBarButtonItem = cancelBarButtonItem
+        model.viewController = self
+    }
+
+    @objc required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc func cancelTapped(sender: UIBarButtonItem) {
+        delegate?.introductionViewControllerDidCancel(self)
+    }
+
+    func add() {
+        delegate?.introductionViewControllerDidAddDummyDevice(self)
+    }
+
+    func next() {
+        delegate?.introductionViewControllerDidContinue(self)
+    }
+
+}
 
 protocol AddViewControllerDelegate: AnyObject {
 
@@ -31,16 +143,34 @@ class AddViewController: UINavigationController {
 
     weak var addDelegate: AddViewControllerDelegate? = nil
 
-    private var qrCodeViewController: QRCodeViewController
-
     init() {
-        qrCodeViewController = QRCodeViewController(scheme: "statuspanel")
-        super.init(rootViewController: qrCodeViewController)
-        qrCodeViewController.delegate = self
+        let introductionViewController = IntroductionViewController()
+        super.init(rootViewController: introductionViewController)
+        introductionViewController.delegate = self
+
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+}
+
+extension AddViewController: IntroductionViewControllerDelegate {
+
+    func introductionViewControllerDidCancel(_ introductionViewController: IntroductionViewController) {
+        self.addDelegate?.addViewControllerDidCancel(self)
+    }
+
+    func introductionViewControllerDidContinue(_ introductionViewController: IntroductionViewController) {
+        let qrCodeViewController = QRCodeViewController(scheme: "statuspanel")
+        qrCodeViewController.delegate = self
+        qrCodeViewController.navigationItem.leftBarButtonItem = nil
+        pushViewController(qrCodeViewController, animated: true)
+    }
+
+    func introductionViewControllerDidAddDummyDevice(_ introductionViewController: IntroductionViewController) {
+        print("Add dummy device")
     }
 
 }
