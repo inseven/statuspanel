@@ -21,59 +21,6 @@
 import SwiftUI
 import UIKit
 
-protocol IntroductionViewModel {
-
-    func addDummyDevice()
-    func next()
-
-}
-
-struct IntroductionView: View {
-
-    var model: IntroductionViewModel
-
-    var body: some View {
-        VStack {
-            Image("AddDeviceHeader")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-            VStack {
-                Text("Add a StatusPanel")
-                    .font(.headline)
-                    .padding(.bottom)
-                Text("Scan the QR code on your new StatusPanel to connect your calendar and set up other content sources.\n\nIf you don't have a StatusPanel and would like to try the app out, try the Demo Mode.")
-                    .multilineTextAlignment(.center)
-            }
-            .padding()
-            Spacer()
-            if #available(iOS 15.0, *) {
-                Button {
-                    model.addDummyDevice()
-                } label: {
-                    Text("Demo Mode")
-                        .frame(minWidth: 300)
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.large)
-                Button {
-                    model.next()
-                } label: {
-                    Text("Continue")
-                        .frame(minWidth: 300)
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .keyboardShortcut(.defaultAction)
-            } else {
-                // Fallback on earlier versions
-            }
-        }
-        .edgesIgnoringSafeArea(.top)
-//        .padding()
-    }
-
-}
-
 protocol IntroductionViewControllerDelegate: AnyObject {
 
     func introductionViewControllerDidCancel(_ introductionViewController: IntroductionViewController)
