@@ -67,7 +67,7 @@ struct AboutView: View {
                     License(name: "Swift-Sodium", author: "Frank Denis", filename: "Swift-Sodium"),
                 ])
             }
-            .navigationBarTitle("", displayMode: .inline)
+            .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(trailing: Button {
                 presentationMode.wrappedValue.dismiss()
             } label: {
