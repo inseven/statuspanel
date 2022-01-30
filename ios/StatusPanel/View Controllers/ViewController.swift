@@ -55,7 +55,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     var sourceController: DataSourceController!
 
     private lazy var settingsButtonItem: UIBarButtonItem = {
-        return UIBarButtonItem(title: "Settings",
+        return UIBarButtonItem(image: UIImage(systemName: "gear"),
                                style: .plain,
                                target: self,
                                action: #selector(settingsTapped(sender:)))
