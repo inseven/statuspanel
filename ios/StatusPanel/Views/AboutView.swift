@@ -45,7 +45,8 @@ struct AboutView: View {
         NavigationView {
             Form {
                 HeaderSection {
-                    IconView(uiImage: UIImage(named: "Icon")!)
+                    Icon("Icon")
+                    ApplicationNameTitle()
                 }
                 BuildSection("inseven/statuspanel")
                 Section {
