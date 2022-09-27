@@ -134,7 +134,7 @@ function cleanup {
 trap cleanup EXIT
 
 # Determine the version and build number.
-VERSION_NUMBER=`changes --scope macOS version`
+VERSION_NUMBER=`changes --scope ios version`
 BUILD_NUMBER=`build-tools generate-build-number`
 
 # Import the certificates into our dedicated keychain.
@@ -179,4 +179,5 @@ if $RELEASE ; then
         --exec "${RELEASE_SCRIPT_PATH}" \
         "${IPA_PATH}" "${ZIP_PATH}"
     unlink "$API_KEY_PATH"
+
 fi
