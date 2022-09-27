@@ -13,7 +13,7 @@ jobs:
   build-app:
 
     name: Build app
-    runs-on: macos-monterey
+    runs-on: macos-ventura
 
     steps:
 
@@ -40,8 +40,7 @@ jobs:
 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-        ARCHIVE: true
-        TESTFLIGHT_UPLOAD: ${{ github.ref == 'refs/heads/main' }}
+        RELEASE: ${{ github.ref == 'refs/heads/main' }}
 
       run: |
         scripts/build.sh
