@@ -34,7 +34,7 @@ APP_DIRECTORY="${ROOT_DIRECTORY}/ios"
 
 KEYCHAIN_PATH="${TEMPORARY_DIRECTORY}/temporary.keychain"
 ARCHIVE_PATH="${BUILD_DIRECTORY}/StatusPanel.xcarchive"
-FASTLANE_ENV_PATH="${APP_DIRECTORY}/fastlane/.env"
+ENV_PATH="${APP_DIRECTORY}/.env"
 
 CHANGES_DIRECTORY="${SCRIPTS_DIRECTORY}/changes"
 BUILD_TOOLS_DIRECTORY="${SCRIPTS_DIRECTORY}/build-tools"
@@ -72,10 +72,10 @@ IPHONE_DESTINATION="platform=iOS Simulator,name=iPhone 14 Pro"
 # Generate a random string to secure the local keychain.
 export TEMPORARY_KEYCHAIN_PASSWORD=`openssl rand -base64 14`
 
-# Source the Fastlane .env file if it exists to make local development easier.
-if [ -f "$FASTLANE_ENV_PATH" ] ; then
+# Source the .env file if it exists to make local development easier.
+if [ -f "$ENV_PATH" ] ; then
     echo "Sourcing .env..."
-    source "$FASTLANE_ENV_PATH"
+    source "$ENV_PATH"
 fi
 
 function xcode_project {

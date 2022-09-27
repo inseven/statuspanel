@@ -42,8 +42,3 @@ PIPENV_PIPFILE="$root_directory/Pipfile" pipenv install
 PIPENV_PIPFILE="$changes_directory/Pipfile" pipenv install
 PIPENV_PIPFILE="$build_tools_directory/Pipfile" pipenv install
 PIPENV_PIPFILE="$nodemcu_directory/Pipfile" pipenv install
-
-# Install the Ruby dependencies
-cd "$ios_directory"
-gem install bundler
-bundle install
