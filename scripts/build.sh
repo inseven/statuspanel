@@ -49,13 +49,13 @@ which gh || (echo "GitHub cli (gh) not available on the path." && exit 1)
 
 # Process the command line arguments.
 POSITIONAL=()
-TESTFLIGHT_UPLOAD=${TESTFLIGHT_UPLOAD:-false}
+RELEASE=${RELEASE:-false}
 while [[ $# -gt 0 ]]
 do
     key="$1"
     case $key in
-        -t|--testflight-upload)
-        TESTFLIGHT_UPLOAD=true
+        -r|--release)
+        RELEASE=true
         shift
         ;;
         *)
@@ -158,11 +158,18 @@ xcodebuild \
     -exportPath "$BUILD_DIRECTORY" \
     -exportOptionsPlist "${APP_DIRECTORY}/ExportOptions.plist"
 
-IPA_BASENAME="StatusPanel.ipa"
-IPA_PATH="$BUILD_DIRECTORY/$IPA_BASENAME"
+if $RELEASE ; then
 
-# Upload the build to TestFlight
-if $TESTFLIGHT_UPLOAD ; then
+    IPA_BASENAME="StatusPanel.ipa"
+    IPA_PATH="$BUILD_DIRECTORY/$IPA_BASENAME"
+
+    # Archive the build directory.
+    ZIP_BASENAME="build-${VERSION_NUMBER}-${BUILD_NUMBER}.zip"
+    ZIP_PATH="${BUILD_DIRECTORY}/${ZIP_BASENAME}"
+    pushd "${BUILD_DIRECTORY}"
+    zip -r "${ZIP_BASENAME}" .
+    popd
+
     API_KEY_PATH="${TEMPORARY_DIRECTORY}/AuthKey.p8"
     echo -n "$APPLE_API_KEY" | base64 --decode --output "$API_KEY_PATH"
     bundle exec fastlane upload \
