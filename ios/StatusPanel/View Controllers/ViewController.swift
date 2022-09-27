@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -55,7 +55,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     var sourceController: DataSourceController!
 
     private lazy var settingsButtonItem: UIBarButtonItem = {
-        return UIBarButtonItem(title: "Settings",
+        return UIBarButtonItem(image: UIImage(systemName: "gear"),
                                style: .plain,
                                target: self,
                                action: #selector(settingsTapped(sender:)))

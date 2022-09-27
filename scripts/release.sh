@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
+# Copyright (c) 2021-2022 Jason Morley, Tom Sutcliffe
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,38 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
+set -e
+set -o pipefail
+set -x
 
-JWT_PRIVATE_KEY_PATH="${ROOT_DIRECTORY}/apns.p8"
-JWT_PRIVATE_KEY=`cat "${JWT_PRIVATE_KEY_PATH}"`
+# This script expects the iOS IPA to be passed as the first argument, and any additional files to be attached to the
+# GitHub release to be passed as subsequent arguments.
 
-APNS_TEAM_ID=S4WXAUZQEV
-APNS_BUNDLE_ID=uk.co.inseven.status-panel
-ANPS_KEY_ID=V5XKL2D8B9
-APNS_KEY=$JWT_PRIVATE_KEY
+# Validate and upload the iOS build.
+xcrun altool --validate-app \
+    -f "$1" \
+    --apiKey "$APPLE_API_KEY_ID" \
+    --apiIssuer "$APPLE_API_KEY_ISSUER_ID" \
+    --output-format json \
+    --type ios
+xcrun altool --upload-app \
+    -f "$1" \
+    --primary-bundle-id "uk.co.inseven.status-panel" \
+    --apiKey "$APPLE_API_KEY_ID" \
+    --apiIssuer "$APPLE_API_KEY_ISSUER_ID" \
+    --type ios
 
-heroku buildpacks:clear --app $1
-heroku buildpacks:set heroku/python --app $1
+# Actually make the release.
+FLAGS=()
+if $CHANGES_INITIAL_DEVELOPMENT ; then
+    FLAGS+=("--prerelease")
+elif $CHANGES_PRE_RELEASE ; then
+    FLAGS+=("--prerelease")
+fi
+gh release create "$CHANGES_TAG" --title "$CHANGES_QUALIFIED_TITLE" --notes-file "$CHANGES_NOTES_FILE" "${FLAGS[@]}"
 
-heroku config:set "JWT_PRIVATE_KEY=$JWT_PRIVATE_KEY" --app $1
-heroku config:set "APNS_TEAM_ID=$APNS_TEAM_ID" --app $1
-heroku config:set "APNS_BUNDLE_ID=$APNS_BUNDLE_ID" --app $1
-heroku config:set "ANPS_KEY_ID=$ANPS_KEY_ID" --app $1
-heroku config:set "APNS_KEY=$APNS_KEY" --app $1
+# Upload the attachments.
+for attachment in "$@"
+do
+    gh release upload "$CHANGES_TAG" "$attachment"
+done

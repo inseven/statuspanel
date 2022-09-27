@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,10 +44,18 @@ struct AboutView: View {
     var body: some View {
         NavigationView {
             Form {
+                HeaderSection {
+                    Icon("Icon")
+                    ApplicationNameTitle()
+                }
                 BuildSection("inseven/statuspanel")
+                Section {
+                    Link("InSeven Limited", url: URL(string: "https://inseven.co.uk")!)
+                    Link("GitHub", url: URL(string: "https://github.com/inseven/statuspanel")!)
+                }
                 CreditSection("Contributors", [
-                    "Jason Morley",
-                    "Tom Sutcliffe",
+                    Credit("Jason Morley", url: URL(string: "https://jbmorley.co.uk")),
+                    Credit("Tom Sutcliffe", url: URL(string: "https://github.com/tomsci")),
                 ])
                 CreditSection("Thanks", [
                     "Lukas Fittl",
@@ -55,12 +63,13 @@ struct AboutView: View {
                 ])
                 LicenseSection("Fonts", fonts)
                 LicenseSection("Licenses", [
-                    License(name: "Binding+mappedToBool", author: "Joseph Duffy", filename: "Binding+mappedToBool"),
-                    License(name: "Diligence", author: "InSeven Limited", filename: "Diligence"),
-                    License(name: "Swift-Sodium", author: "Frank Denis", filename: "Swift-Sodium"),
+                    License(name: "Binding+mappedToBool", author: "Joseph Duffy", filename: "Binding+mappedToBool.txt"),
+                    License(name: "Diligence", author: "InSeven Limited", filename: "Diligence.txt"),
+                    License(name: "StatusPanel", author: "Jason Morley, Tom Sutcliffe", filename: "StatusPanel.txt"),
+                    License(name: "Swift-Sodium", author: "Frank Denis", filename: "Swift-Sodium.txt"),
                 ])
             }
-            .navigationBarTitle("About", displayMode: .inline)
+            .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(trailing: Button {
                 presentationMode.wrappedValue.dismiss()
             } label: {

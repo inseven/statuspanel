@@ -46,6 +46,8 @@ StatusPanel comprises a number of different components:
 
 ## Development
 
+StatusPanel follows the version numbering, build and signing conventions for InSeven Limited apps. Further details can be found [here](https://github.com/inseven/build-documentation).
+
 ### Installing Dependencies
 
 StatusPanel uses [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so before doing anything else, you'll need to do:
