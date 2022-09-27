@@ -1,4 +1,4 @@
-name: Build
+name: build
 
 on:
   pull_request:
@@ -12,7 +12,7 @@ on:
 jobs:
   build-app:
 
-    name: Build app
+    name: build-app
     runs-on: macos-ventura
 
     steps:
@@ -47,7 +47,7 @@ jobs:
 
   build-firmware:
 
-    name: Build firmware
+    name: build-firmware
     runs-on: ubuntu-latest
 
     steps:
