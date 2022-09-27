@@ -33,7 +33,7 @@ TEMPORARY_DIRECTORY="${ROOT_DIRECTORY}/temp"
 APP_DIRECTORY="${ROOT_DIRECTORY}/ios"
 
 KEYCHAIN_PATH="${TEMPORARY_DIRECTORY}/temporary.keychain"
-ARCHIVE_PATH="${BUILD_DIRECTORY}/Bookmarks.xcarchive"
+ARCHIVE_PATH="${BUILD_DIRECTORY}/StatusPanel.xcarchive"
 FASTLANE_ENV_PATH="${APP_DIRECTORY}/fastlane/.env"
 
 CHANGES_DIRECTORY="${SCRIPTS_DIRECTORY}/changes"
@@ -49,16 +49,11 @@ which gh || (echo "GitHub cli (gh) not available on the path." && exit 1)
 
 # Process the command line arguments.
 POSITIONAL=()
-ARCHIVE=${ARCHIVE:-false}
 TESTFLIGHT_UPLOAD=${TESTFLIGHT_UPLOAD:-false}
 while [[ $# -gt 0 ]]
 do
     key="$1"
     case $key in
-        -a|--archive)
-        ARCHIVE=true
-        shift
-        ;;
         -t|--testflight-upload)
         TESTFLIGHT_UPLOAD=true
         shift
@@ -148,24 +143,20 @@ echo "$APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD" | build-tools import-base64-cert
 # Install the provisioning profiles.
 build-tools install-provisioning-profile "${APP_DIRECTORY}/StatusPanel_App_Store_Profile.mobileprovision"
 
-if $ARCHIVE || $TESTFLIGHT_UPLOAD ; then
-
-    # Build and archive the iOS project.
-    xcode_project \
-        -scheme "StatusPanel" \
-        -config Release \
-        -archivePath "$ARCHIVE_PATH" \
-        OTHER_CODE_SIGN_FLAGS="--keychain=\"${KEYCHAIN_PATH}\"" \
-        BUILD_NUMBER=$BUILD_NUMBER \
-        MARKETING_VERSION=$VERSION_NUMBER \
-        clean archive
-    xcodebuild \
-        -archivePath "$ARCHIVE_PATH" \
-        -exportArchive \
-        -exportPath "$BUILD_DIRECTORY" \
-        -exportOptionsPlist "${APP_DIRECTORY}/ExportOptions.plist"
-
-fi
+# Build and archive the iOS project.
+xcode_project \
+    -scheme "StatusPanel" \
+    -config Release \
+    -archivePath "$ARCHIVE_PATH" \
+    OTHER_CODE_SIGN_FLAGS="--keychain=\"${KEYCHAIN_PATH}\"" \
+    BUILD_NUMBER=$BUILD_NUMBER \
+    MARKETING_VERSION=$VERSION_NUMBER \
+    clean archive
+xcodebuild \
+    -archivePath "$ARCHIVE_PATH" \
+    -exportArchive \
+    -exportPath "$BUILD_DIRECTORY" \
+    -exportOptionsPlist "${APP_DIRECTORY}/ExportOptions.plist"
 
 IPA_BASENAME="StatusPanel.ipa"
 IPA_PATH="$BUILD_DIRECTORY/$IPA_BASENAME"

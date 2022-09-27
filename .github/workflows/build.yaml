@@ -40,7 +40,6 @@ jobs:
 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-        ARCHIVE: true
         TESTFLIGHT_UPLOAD: ${{ github.ref == 'refs/heads/main' }}
 
       run: |
