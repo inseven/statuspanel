@@ -57,7 +57,12 @@ function getImages()
 end
 
 function readFile(name, maxSize)
-    local f = file.open(name, "r")
+    local f
+    if idf_v4 then
+        f = io.open(name, "r")
+    else
+        f = file.open(name, "r")
+    end
     if f then
         local contents = f:read(maxSize)
         f:close()
@@ -69,9 +74,18 @@ end
 
 function writeFile(name, contents)
     if contents == nil then
-        file.remove(name)
+        if idf_v4 then
+            os.remove(name)
+        else
+            file.remove(name)
+        end
     else
-        local f = assert(file.open(name, "w"))
+        local f
+        if idf_v4 then
+            f = assert(io.open(name, "w"))
+        else
+            f = assert(file.open(name, "w"))
+        end
         assert(f:write(contents))
         f:close()
     end

@@ -2,24 +2,27 @@
 
 -- Some globals needed by everything before they're require'd
 
-esp32 = (gpio.mode == nil)
-assert(esp32, "ESP8266 is no longer supported!")
+idf_v4 = node.LFS ~= nil
 
-OriginalBusy = 13
-NewBusy = 22 -- aka SCL
-Reset = 27
-DC = 33
-CS = 15
-Sck = 5
-Mosi = 18
-SpiId = 1 -- HSPI (doesn't place any restriction on pins)
-StatusLed = 21
-AutoPin = 14
-VBat = 7 -- That is, ADC1_CH7 aka GPIO 35 (internally connected to BAT)
-UnpairPin = 32
-UsbDetect = 39 -- aka A3
+function isFeatherTft()
+    return idf_v4 -- TODO something smarter
+end
 
-function configurePins()
+function configurePins_eink()
+    OriginalBusy = 13
+    NewBusy = 22 -- aka SCL
+    Reset = 27
+    DC = 33
+    CS = 15
+    Sck = 5
+    Mosi = 18
+    SpiId = 1 -- HSPI (doesn't place any restriction on pins)
+    StatusLed = 21
+    AutoPin = 14
+    VBat = 7 -- That is, ADC1_CH7 aka GPIO 35 (internally connected to BAT)
+    UnpairPin = 32
+    UsbDetect = 39 -- aka A3
+
     gpio.config({
         gpio = { Reset, DC, StatusLed },
         dir = gpio.OUT,
@@ -53,6 +56,36 @@ function configurePins()
     end
 end
 
+function configurePins_tft()
+    TFT_POWER = 21
+    TFT_CS = 7
+    TFT_DC = 39
+    TFT_RESET = 40
+    TFT_BL = 45
+    TFT_MOSI = 35
+    TFT_SCLK = 36
+    UnpairPin = 0
+
+    gpio.config({
+        gpio = { TFT_RESET, TFT_DC, TFT_BL, TFT_POWER, TFT_CS },
+        dir = gpio.OUT,
+    }, {
+        gpio = { UnpairPin },
+        dir = gpio.IN,
+        pull = gpio.PULL_UP,
+    })
+
+    local spimaster = spi.master(1, {
+        sclk = TFT_SCLK,
+        mosi = TFT_MOSI,
+        max_transfer_sz = 0,
+    }, 1) -- 1 means enable DMA
+    spidevice = spimaster:device({
+        mode = 0,
+        freq = 20*1000*1000, -- ie 20 MHz
+    })
+end
+
 -- Assumes pin is configured without pullups/downs
 function inputIsConnected(pin)
     gpio.config { gpio = pin, dir = gpio.IN, pull = gpio.PULL_DOWN }
@@ -65,44 +98,54 @@ function inputIsConnected(pin)
     return not(pulledUp and pulledDown)
 end
 
-local flashindex = node.flashindex
-local lfs_t = {
-      __index = function(_, name)
-        local fn_ut, base, mapped, size, modules = flashindex(name)
-        if not base then
-            return fn_ut
-        elseif name == '_time' then
-            return fn_ut
-        elseif name == '_config' then
-            local fs_ma, fs_size = file.fscfg()
-            return {
-                lfs_base = base, lfs_mapped = mapped, lfs_size = size,
-                fs_mapped = fs_ma, fs_size = fs_size
-            }
-        elseif name == '_list' then
-            return modules
-        else
-            return nil
-        end
-    end,
-
-    __newindex = function(_, name, value)
-        error("LFS is readonly. Invalid write to LFS." .. name, 2)
-    end,
-}
-
 function init()
     -- Why is the default allocation limit set to 4KB? Why even is there one?
     node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
 
-    -- Configure LFS
-    _G.LFS = setmetatable(lfs_t, lfs_t)
-    package.loaders[3] = function(module) -- loader_flash
-        local fn, base = flashindex(module)
-        return base and "\n\tModule not in LFS" or fn
+    if idf_v4 then
+        package.loaders[3] = function(module) -- loader_flash
+            local fn = node.LFS.get(module)
+            return fn or "\n\tModule not in LFS"
+        end
+    else
+        local flashindex = node.flashindex
+        local lfs_t = {
+              __index = function(_, name)
+                local fn_ut, base, mapped, size, modules = flashindex(name)
+                if not base then
+                    return fn_ut
+                elseif name == '_time' then
+                    return fn_ut
+                elseif name == '_config' then
+                    local fs_ma, fs_size = file.fscfg()
+                    return {
+                        lfs_base = base, lfs_mapped = mapped, lfs_size = size,
+                        fs_mapped = fs_ma, fs_size = fs_size
+                    }
+                elseif name == '_list' then
+                    return modules
+                else
+                    return nil
+                end
+            end,
+
+            __newindex = function(_, name, value)
+                error("LFS is readonly. Invalid write to LFS." .. name, 2)
+            end,
+        }
+        _G.LFS = setmetatable(lfs_t, lfs_t)
+        -- Configure LFS
+        package.loaders[3] = function(module) -- loader_flash
+            local fn, base = flashindex(module)
+            return base and "\n\tModule not in LFS" or fn
+        end
     end
 
-    configurePins()
+    if isFeatherTft() then
+        configurePins_tft()
+    else
+        configurePins_eink()
+    end
 
     require("main")
     main()

@@ -1,4 +1,8 @@
-panel = require "panel"
+if isFeatherTft() then
+    tft = require "tft"
+else
+    panel = require "panel"
+end
 network = require "network"
 
 local readFile, writeFile = network.readFile, network.writeFile
@@ -224,6 +228,11 @@ function startNetworking()
 end
 
 function main()
+    if isFeatherTft() then
+        costart(tft.initp)
+        return
+    end
+
     local autoMode = gpio.read(AutoPin) == 1
     local wokeByUsb, wokeByUnpair
     local reason, ext, pinslo, pinshi = node.bootreason()
