@@ -1,8 +1,4 @@
-if isFeatherTft() then
-    tft = require "tft"
-else
-    panel = require "panel"
-end
+panel = require "panel"
 network = require "network"
 
 local readFile, writeFile = network.readFile, network.writeFile
@@ -229,11 +225,10 @@ end
 
 function main()
     if isFeatherTft() then
-        costart(tft.initp)
-        return
+        costart(panel.init)
     end
 
-    local autoMode = gpio.read(AutoPin) == 1
+    local autoMode = AutoPin ~= nil and gpio.read(AutoPin) == 1
     local wokeByUsb, wokeByUnpair
     local reason, ext, pinslo, pinshi = node.bootreason()
     if ext == 5 then -- Deep sleep wake
@@ -349,7 +344,7 @@ function enterHotspotMode()
     wifi.start()
 
     local url = network.getQRCodeURL(true)
-    initAndDisplay(url, network.displayQRCode, url)
+    initAndDisplay(url, panel.displayQRCode, url)
     print("Finished displayQRCode")
     flashStatusLed(1000)
 end
@@ -466,7 +461,7 @@ function fetch()
 
     if status == 404 then
         local url = network.getQRCodeURL(false)
-        initAndDisplay(url, network.displayQRCode, url)
+        initAndDisplay(url, panel.displayQRCode, url)
         retry()
     elseif status == 200 then
         processRawImage(result.lastModified)
@@ -492,18 +487,13 @@ function getCurrentDisplayIdentifier()
 end
 
 function setCurrentDisplayIdentifier(id)
-    if id then
-        local f = assert(file.open("current_display_identifier", "w"))
-        f:write(id)
-        f:close()
-    else
-        file.remove("current_display_identifier")
-    end
+    writeFile("current_display_identifier", id)
 end
 
 function initAndDisplay(id, displayFn, ...)
     assert(coroutine.running())
-    if id and id == getCurrentDisplayIdentifier() then
+    -- only the eink display has persistence, so this check makes no sense on a TFT display
+    if not isFeatherTft() and id and id == getCurrentDisplayIdentifier() then
         print("Requested contents are already on screen, doing nothing")
         return
     else
@@ -640,8 +630,8 @@ function getDisplayStatusLineFn(customText, isErrText)
     end
     local err = batteryLow or isErrText
     local statusText = table.concat(statusTable, " | ")
-    local fg = panel.BLACK
-    local bg = err and panel.COLOURED or panel.WHITE
+    local fg = panel.FG
+    local bg = err and panel.COLOURED or panel.BG
     return panel.getTextPixelFn(statusText, fg, bg)
 end
 
@@ -672,7 +662,7 @@ function displayLineFormatFile(filename, statusLine)
     if statusLine == true then
         statusLineFn = panel.pixelFnToLineFn(getDisplayStatusLineFn())
     elseif statusLine then
-        statusLineFn = panel.pixelFnToLineFn(panel.getTextPixelFn(statusLine, panel.BLACK, panel.WHITE))
+        statusLineFn = panel.pixelFnToLineFn(panel.getTextPixelFn(statusLine, panel.FG, panel.BG))
     end
 
     local function readLine(y)

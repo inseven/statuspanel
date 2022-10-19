@@ -74,11 +74,7 @@ end
 
 function writeFile(name, contents)
     if contents == nil then
-        if idf_v4 then
-            os.remove(name)
-        else
-            file.remove(name)
-        end
+        file.remove(name)
     else
         local f
         if idf_v4 then
@@ -176,34 +172,6 @@ function getQRCodeURL(includeSsid)
         result = result.."&s="..getApSSID()
     end
     return result
-end
-
-function displayQRCode(url)
-    assert(coroutine.running())
-    local font = require("font")
-    local BLACK, WHITE, w, h = panel.BLACK, panel.WHITE, panel.w, panel.h
-    local urlWidth = #url * font.charw
-    local data = qrcodegen.encodeText(url)
-    local sz = qrcodegen.getSize(data)
-    local scale = 8
-    local startx = math.floor((w - sz * scale) / 2)
-    local starty = math.floor((h - sz * scale) / 2)
-    local textPixel = panel.getTextPixelFn(url)
-    local texty = 20
-    local textStart = math.floor((w - urlWidth) / 2)
-    local function getPixel(x, y)
-        if y >= texty and y < texty + font.charh then
-            return textPixel(x - textStart, y - texty)
-        end
-        local codex = math.floor((x - startx) / scale)
-        local codey = math.floor((y - starty) / scale)
-        if codex >= 0 and codex < sz and codey >= 0 and codey < sz then
-            return qrcodegen.getPixel(data, codex, codey) and BLACK or WHITE
-        else
-            return WHITE
-        end
-    end
-    panel.display(getPixel)
 end
 
 function parseImgHeader(data)
