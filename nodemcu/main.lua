@@ -129,7 +129,7 @@ function sleepFor(delta)
     wifi.stop()
     printf("Sleeping for %d secs (~%d hours)", delta, math.floor(delta / (60*60)))
     local shouldUsbDetect = true
-    if gpio.read(UsbDetect) == 1 then
+    if UsbDetect == nil or gpio.read(UsbDetect) == 1 then
         -- Don't wake for USB if USB is actually attached when we sleep, because
         -- that would mean we'd wake immediately.
         shouldUsbDetect = false
