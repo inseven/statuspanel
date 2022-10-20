@@ -41,11 +41,11 @@ enum ExternalOperation: Equatable {
         }
 
         switch operation {
-        case "r", "s":
+        case "r", "r2":
             // r = Register v1, URL has id, pk and optionally s (for ssid)
             // And the hotspot connect expects <ssid>\0<password>
             //
-            // s = Register v2, same args as v1 the only difference being
+            // r2 = Register v2, same args as v1 the only difference being
             // v2 clients require root.pem to also be sent, as:
             // <ssid>\0<password>\0<certs>\0
             //
@@ -70,15 +70,17 @@ enum ExternalOperation: Equatable {
 
     }
 
+    // NOTE(tomsci): This only appears to be needed to support dummydevices
+    // so doesn't really matter what register API version it returns
     var url: URL {
         switch self {
         case .registerDevice(let device):
-            return URL(string: "statuspanel:s")!.settingQueryItems([
+            return URL(string: "statuspanel:r")!.settingQueryItems([
                 URLQueryItem(name: "id", value: device.id),
                 URLQueryItem(name: "pk", value: device.publicKey),
             ])!
         case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
-            return URL(string: "statuspanel:s")!.settingQueryItems([
+            return URL(string: "statuspanel:r")!.settingQueryItems([
                 URLQueryItem(name: "id", value: device.id),
                 URLQueryItem(name: "pk", value: device.publicKey),
                 URLQueryItem(name: "s", value: ssid),

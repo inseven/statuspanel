@@ -157,7 +157,7 @@ function getQRCodeURL(includeSsid)
     local pk = getPublicKey()
     -- toBase64 doesn't URL-encode the unsafe chars, so do that too
     local pkstr = encoder.toBase64(pk):gsub("[/%+%=]", function(ch) return string.format("%%%02X", ch:byte()) end)
-    local result = string.format("statuspanel:s?id=%s&pk=%s", id, pkstr)
+    local result = string.format("statuspanel:r2?id=%s&pk=%s", id, pkstr)
     if includeSsid then
         result = result.."&s="..getApSSID()
     end
