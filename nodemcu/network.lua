@@ -144,7 +144,7 @@ Register v1 format:
 statuspanel:r?id=<deviceid>&pk=<pk>[&s=<ssid>]
 
 Register v2 format:
-statuspanel:s?id=<deviceid>&pk=<pk>[&s=<ssid>]
+statuspanel:r2?id=<deviceid>&pk=<pk>[&s=<ssid>]
 
 Is used to indicate root certs need to also be supplied. The reason for
 introducing a new version here is so that and old iOS client will not attempt
