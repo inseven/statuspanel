@@ -208,9 +208,9 @@ function startNetworking()
 
     local ok, err = pcall(wifi.sta.connect)
     if ok then
-        -- Whatever state we end up in, if we don't get an IP address in 10 seconds it's an error
+        -- Whatever state we end up in, if we don't get an IP address in 30 seconds it's an error
         connectTimer = tmr.create()
-        connectTimer:alarm(10000, tmr.ALARM_SINGLE, function(timer)
+        connectTimer:alarm(30000, tmr.ALARM_SINGLE, function(timer)
             print("Timed out waiting for an IP address")
             if connectStarted then
                 connectStarted = false
@@ -378,6 +378,7 @@ end
 
 local function connectToProvisionedCredsFailed(eventName, event)
     assert(provisioningSocket, "Unexpected callback when provisioningSocket==nil")
+    print("disconnected", eventName, event.reason)
     print("Bad creds")
     provisioningSocket:send("NO", closeSocket)
     provisioningSocket = nil
@@ -418,7 +419,12 @@ function listen()
             wifi.sta.on("got_ip", connectToProvisionedCredsSucceeded)
             wifi.sta.on("disconnected", connectToProvisionedCredsFailed)
             wifi.sta.config({ ssid=ssid, pwd=pass, auto=false }, true)
-            -- we should now get a got_ip or disconnected callback (despite auto=false...)
+            print("Waiting for got_ip/disconnected...")
+            if idf_v4 then
+                wifi.sta.connect()
+            else
+                -- we should now get a got_ip or disconnected callback (despite auto=false...)
+            end
         else
             -- We might get the rest of the data in a subsequent packet
         end
