@@ -10,6 +10,7 @@ if isFeatherTft() then
     BG = BLACK
     w = tft.TFT_HEIGHT -- rotated
     h = tft.TFT_WIDTH
+    displayLines = tft.displayEinkFormatLines
 else
     eink = require("eink")
     WHITE = eink.WHITE
@@ -20,6 +21,7 @@ else
     w = eink.w
     h = eink.h
     pixelFnToLineFn = eink.pixelFnToLineFn
+    displayLines = eink.displayLines
 end
 
 function init()

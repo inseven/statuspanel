@@ -8,7 +8,7 @@ local DC_CMD = 0
 local DC_DATA = 1
 
 local gpio_write = gpio.write
-local ch = string.char
+local ch, string_byte = string.char, string.byte
 local bor, band, lshift, rshift = bit.bor, bit.band, bit.lshift, bit.rshift
 
 --  color modes
@@ -156,6 +156,10 @@ function colourToStr(colour)
     return ch(band(rshift(colour, 8), 0xFF), band(colour, 0xFF))
 end
 
+function colour2ToStr(colour1, colour2)
+    return ch(band(rshift(colour1, 8), 0xFF), band(colour1, 0xFF), band(rshift(colour2, 8), 0xFF), band(colour2, 0xFF))
+end
+
 function fill_rect(x, y, w, h, colour)
     local right = x + w - 1
     local bottom = y + h - 1
@@ -189,6 +193,34 @@ function set_window(x0, y0, x1, y1)
     cmd(ST7789_CASET, rshift(x0 + colstart, 8), band(x0 + colstart, 0xFF), rshift(x1 + colstart, 8), band(x1 + colstart, 0xFF))
     cmd(ST7789_RASET, rshift(y0 + rowstart, 8), band(y0 + rowstart, 0xFF), rshift(y1 + rowstart, 8), band(y1 + rowstart, 0xFF))
     cmd(ST7789_RAMWR)
+end
+
+local einkToTftColour = {
+    [3] = WHITE,
+    [4] = YELLOW,
+    [0] = BLACK,
+}
+
+function displayEinkFormatLines(lineFn)
+    local w = width()
+    local h = height()
+    set_window(0, 0, w - 1, h - 1)
+    gpio_write(TFT_CS, 0)
+    gpio_write(TFT_DC, DC_DATA)
+    for y = 0, h - 1 do
+        -- data is in 4bpp, whereas our native screen format is 16bpp, so we have to translate
+        local data = lineFn(y)
+        local buf = {}
+        for i = 1, (w / 2) do
+            local pixels = string_byte(data, i, i)
+            local a = einkToTftColour[rshift(pixels, 4)] or BLACK
+            local b = einkToTftColour[band(pixels, 0xF)] or BLACK
+            buf[i] = colour2ToStr(a, b)
+        end
+        local line = table.concat(buf)
+        spidevice:transfer(line)
+    end    
+    gpio_write(TFT_CS, 1)
 end
 
 function display(getPixelFn)

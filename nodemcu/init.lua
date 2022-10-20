@@ -65,9 +65,12 @@ function configurePins_tft()
     TFT_MOSI = 35
     TFT_SCLK = 36
     UnpairPin = 0
+    StatusLed = 13
+    NeoPixelPin = 33
+    NeoPixelPowerPin = 34
 
     gpio.config({
-        gpio = { TFT_RESET, TFT_DC, TFT_BL, TFT_POWER, TFT_CS },
+        gpio = { TFT_RESET, TFT_DC, TFT_BL, TFT_POWER, TFT_CS, StatusLed, NeoPixelPin, NeoPixelPowerPin },
         dir = gpio.OUT,
     }, {
         gpio = { UnpairPin },
@@ -107,6 +110,7 @@ function init()
             local fn = node.LFS.get(module)
             return fn or "\n\tModule not in LFS"
         end
+        file_open = io.open
     else
         local flashindex = node.flashindex
         local lfs_t = {
@@ -139,6 +143,7 @@ function init()
             local fn, base = flashindex(module)
             return base and "\n\tModule not in LFS" or fn
         end
+        file_open = file.open
     end
 
     if isFeatherTft() then
@@ -172,12 +177,16 @@ function printf(...)
 end
 
 function getBatteryVoltage()
-    -- At 11db attenuation and 12 bits width, 4095 = VDD_A
-    local val = adc.read(adc.ADC1, VBat)
-    print("Raw ADC val", val)
-    -- In theory result in mV should be (val * 3.3 * 2) / 4.096
-    -- In practice, calibration seems off so we use a bigger number (~3.5)
-    return math.floor((val * 6973) / 4096)
+    if isFeatherTft() then
+        return 4000 --TODO
+    else
+        -- At 11db attenuation and 12 bits width, 4095 = VDD_A
+        local val = adc.read(adc.ADC1, VBat)
+        print("Raw ADC val", val)
+        -- In theory result in mV should be (val * 3.3 * 2) / 4.096
+        -- In practice, calibration seems off so we use a bigger number (~3.5)
+        return math.floor((val * 6973) / 4096)
+    end
 end
 
 function getBatteryVoltageStatus()

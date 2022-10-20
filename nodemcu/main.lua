@@ -9,6 +9,9 @@ local readFile, writeFile = network.readFile, network.writeFile
 LongPressTime = 2000 -- milliseconds
 unpairPressTimer = nil
 
+DefaultLineFormatFileWidth = 640 -- regardless of what panel.w is
+DefaultLineFormatFileHeight = 384 -- regardless of what panel.h is
+
 -- We never check for unpair during operation (only at wake-from-sleep) so we
 -- can be sure there'll never be anything else going on at this point
 function unpairPressed()
@@ -224,10 +227,6 @@ function startNetworking()
 end
 
 function main()
-    if isFeatherTft() then
-        costart(panel.init)
-    end
-
     local autoMode = AutoPin ~= nil and gpio.read(AutoPin) == 1
     local wokeByUsb, wokeByUnpair
     local reason, ext, pinslo, pinshi = node.bootreason()
@@ -257,9 +256,12 @@ function main()
         end
     end
 
-    if whatToDo then
-        costart(whatToDo)
-    end
+    costart(function()
+        panel.init()
+        if whatToDo then
+            whatToDo()
+        end
+    end)
 
     -- Despite EGC being disabled at this point (by init.lua), lua.c will reenable it once init.lua is finished!
     -- So that can fsck right noff.
@@ -406,15 +408,11 @@ function listen()
             end
         end
 
-        if not rootPemFile then
-            rootPemFile = file.open("root.pem", "w")
-        end
         local certData, terminator = payload:match("([^%z]*)(%z?)", certsPos)
         print(string.format("Writing %d bytes to root.pem", #certData))
-        rootPemFile:write(certData)
+        writeFile("root.pem", certData)
         if terminator == "\0" then
             print("Completed read of root.pem")
-            rootPemFile:close()
             provisioningSocket = sock
             wifi.mode(wifi.STATIONAP, false)
             wifi.sta.on("got_ip", connectToProvisionedCredsSucceeded)
@@ -521,7 +519,7 @@ function decryptImage(index)
     local sk = network.getSecretKey()
     collectgarbage()
     print(node.heap(), collectgarbage("count"))
-    local f = assert(file.open("img_raw", "r"))
+    local f = assert(file_open("img_raw", "r"))
     local hdr = f:read(32)
     local fileLen = f:seek("end")
     local _, indexes = network.parseImgHeader(hdr)
@@ -555,7 +553,7 @@ function decryptImage(index)
         -- At the end of a decrypt we always want to display, while preserving the currently-selected image if any
         local current = getCurrentDisplayIdentifier()
         local imageToShow = current and current:match("^(img_%d+)") or "img_1"
-        local autoMode = gpio.read(AutoPin) == 1
+        local autoMode = AutoPin and gpio.read(AutoPin) == 1
         showFile(imageToShow, imageToShow == "img_1")
         if autoMode then
             getDateAndSleep()
@@ -585,10 +583,10 @@ local kLookupTable = {
 }
 
 function writeDecryptedRleToLineFormat(decrypted, filename)
-    local outf = assert(file.open(filename, "w"))
+    local outf = assert(file_open(filename, "w"))
     local rle = require("rle")
     local rle_getByte, string_byte, string_char, band, rshift = rle.getByte, string.byte, string.char, bit.band, bit.rshift
-    local w, h = panel.w, panel.h
+    local w, h = DefaultLineFormatFileWidth, DefaultLineFormatFileHeight
 
     local bufIdx = 0
     local function reader()
@@ -652,14 +650,17 @@ end
 
 function displayLineFormatFile(filename, statusLine)
     assert(coroutine.running())
-    local f = assert(file.open(filename, "r"))
+    local f = assert(file_open(filename, "r"))
     local w = panel.w
     local statusLineFn, statusLineStart
     if statusLine then
         statusLineStart = panel.h - require("font").charh
     end
-    -- print("statusLine", statusLine)
-    if statusLine == true then
+    print("statusLine", statusLine)
+    if isFeatherTft() then
+        -- Don't support statusline atm
+        statusLineFn = nil
+    elseif statusLine == true then
         statusLineFn = panel.pixelFnToLineFn(getDisplayStatusLineFn())
     elseif statusLine then
         statusLineFn = panel.pixelFnToLineFn(panel.getTextPixelFn(statusLine, panel.FG, panel.BG))
@@ -669,7 +670,7 @@ function displayLineFormatFile(filename, statusLine)
         if statusLineFn and y >= statusLineStart then
             return statusLineFn(y - statusLineStart)
         else
-            return f:read(w / 2)
+            return f:read(DefaultLineFormatFileWidth / 2)
         end
     end
     panel.displayLines(readLine)

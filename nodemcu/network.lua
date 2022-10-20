@@ -35,7 +35,7 @@ function getImages()
     conn:on("data", function(status, data)
         if status == 200 then
             if f == nil then
-                f = assert(file.open("img_raw", "w"))
+                f = assert(file_open("img_raw", "w"))
             end
             f:write(data)
         end
@@ -57,14 +57,9 @@ function getImages()
 end
 
 function readFile(name, maxSize)
-    local f
-    if idf_v4 then
-        f = io.open(name, "r")
-    else
-        f = file.open(name, "r")
-    end
+    local f = file_open(name, "r")
     if f then
-        local contents = f:read(maxSize)
+        local contents = f:read(maxSize or 32)
         f:close()
         return contents
     else
@@ -76,12 +71,7 @@ function writeFile(name, contents)
     if contents == nil then
         file.remove(name)
     else
-        local f
-        if idf_v4 then
-            f = assert(io.open(name, "w"))
-        else
-            f = assert(file.open(name, "w"))
-        end
+        local f = assert(file_open(name, "w"))
         assert(f:write(contents))
         f:close()
     end
