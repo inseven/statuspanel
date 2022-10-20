@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -72,7 +72,8 @@ class CalendarViewController: UITableViewController {
         case 0:
             let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
             cell.textLabel?.text = LocalizedString("calendar_calendars_label")
-            cell.detailTextLabel?.text = String(format: "%d Calendars", activeCalendars.count)
+            let calendarsCountFormat = LocalizedString("calendar_calendars_count_value")
+            cell.detailTextLabel?.text = String(format: calendarsCountFormat, activeCalendars.count)
             cell.accessoryType = .disclosureIndicator
             return cell
         case 1:

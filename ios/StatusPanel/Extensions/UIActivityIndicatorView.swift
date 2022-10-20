@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,15 +18,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import SwiftUI
+import UIKit
 
-extension String {
+extension UIActivityIndicatorView {
 
-    init?(contentsOfBundleFile filename: String) {
-        guard let path = Bundle.main.path(forResource: filename, ofType: nil) else {
-            return nil
+    func setAnimating(_ animating: Bool) {
+        guard animating != isAnimating else {
+            return
         }
-        try? self.init(contentsOfFile: path)
+        if animating {
+            self.startAnimating()
+        } else {
+            self.stopAnimating()
+        }
     }
 
 }

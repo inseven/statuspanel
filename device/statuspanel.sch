@@ -9,7 +9,7 @@
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
-<layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
+<layer number="2" name="Route2" color="16" fill="1" visible="no" active="no"/>
 <layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
 <layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
 <layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
@@ -22,13 +22,13 @@
 <layer number="12" name="Route12" color="1" fill="5" visible="no" active="no"/>
 <layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
 <layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
-<layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
+<layer number="15" name="Route15" color="23" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
 <layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
-<layer number="21" name="tPlace" color="14" fill="1" visible="no" active="no"/>
+<layer number="20" name="Dimension" color="24" fill="1" visible="no" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
 <layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
 <layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
 <layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
@@ -5319,10 +5319,11 @@ W = angled&lt;p&gt;
 <part name="DISPLAY" library="con-lstb" library_urn="urn:adsk.eagle:library:162" deviceset="MA20-2" device="" package3d_urn="urn:adsk.eagle:package:8338/1"/>
 <part name="AUTO" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="EG1218" device="S" package3d_urn="urn:adsk.eagle:package:6240649/1"/>
 <part name="UNPAIR" library="switch-omron" library_urn="urn:adsk.eagle:library:377" deviceset="10-XX" device="" package3d_urn="urn:adsk.eagle:package:27496/1"/>
-<part name="STAT." library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="LED" device="3MM" package3d_urn="urn:adsk.eagle:package:6240537/1"/>
-<part name="R1" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0411/12" package3d_urn="urn:adsk.eagle:package:6240605/1" value="5.1"/>
-<part name="R2" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0411/12" package3d_urn="urn:adsk.eagle:package:6240605/1" value="4.7K"/>
-<part name="R3" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="0411/12" package3d_urn="urn:adsk.eagle:package:6240605/1" value="4.7K"/>
+<part name="STATUS" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="LED" device="3MM" package3d_urn="urn:adsk.eagle:package:6240537/1"/>
+<part name="R1" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="R0805" package3d_urn="urn:adsk.eagle:package:6240566/1" value="330"/>
+<part name="R2" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="R0805" package3d_urn="urn:adsk.eagle:package:6240566/1" value="4.7K"/>
+<part name="R3" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="R-US_" device="R0805" package3d_urn="urn:adsk.eagle:package:6240566/1" value="4.7K"/>
+<part name="RESET" library="switch-omron" library_urn="urn:adsk.eagle:library:377" deviceset="10-XX" device="" package3d_urn="urn:adsk.eagle:package:27496/1"/>
 </parts>
 <sheets>
 <sheet>
@@ -5342,7 +5343,7 @@ W = angled&lt;p&gt;
 <attribute name="NAME" x="71.12" y="13.97" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="65.405" y="16.51" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="STAT." gate="G$1" x="119.38" y="30.48" smashed="yes" rot="R270">
+<instance part="STATUS" gate="G$1" x="119.38" y="30.48" smashed="yes" rot="R270">
 <attribute name="NAME" x="114.808" y="24.384" size="1.778" layer="95"/>
 <attribute name="VALUE" x="114.808" y="24.765" size="1.778" layer="96"/>
 </instance>
@@ -5357,6 +5358,10 @@ W = angled&lt;p&gt;
 <instance part="R3" gate="G$1" x="106.68" y="15.24" smashed="yes">
 <attribute name="NAME" x="102.87" y="16.7386" size="1.778" layer="95"/>
 <attribute name="VALUE" x="102.87" y="11.938" size="1.778" layer="96"/>
+</instance>
+<instance part="RESET" gate="1" x="68.58" y="0" smashed="yes" rot="R90">
+<attribute name="NAME" x="71.12" y="-6.35" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="65.405" y="-3.81" size="1.778" layer="96" rot="R180"/>
 </instance>
 </instances>
 <busses>
@@ -5518,6 +5523,11 @@ W = angled&lt;p&gt;
 <wire x1="53.34" y1="86.36" x2="55.88" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="55.88" y1="86.36" x2="55.88" y2="68.58" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="RESET" gate="1" pin="P"/>
+<wire x1="73.66" y1="0" x2="76.2" y2="0" width="0.1524" layer="91"/>
+<label x="76.2" y="0" size="0.8128" layer="95" xref="yes"/>
+</segment>
 </net>
 <net name="AUTO" class="0">
 <segment>
@@ -5545,7 +5555,7 @@ W = angled&lt;p&gt;
 </net>
 <net name="STATUS" class="0">
 <segment>
-<pinref part="STAT." gate="G$1" pin="A"/>
+<pinref part="STATUS" gate="G$1" pin="A"/>
 <wire x1="121.92" y1="30.48" x2="124.46" y2="30.48" width="0.1524" layer="91"/>
 <label x="124.46" y="30.48" size="0.8128" layer="95" xref="yes"/>
 </segment>
@@ -5557,7 +5567,7 @@ W = angled&lt;p&gt;
 </net>
 <net name="N$3" class="0">
 <segment>
-<pinref part="STAT." gate="G$1" pin="C"/>
+<pinref part="STATUS" gate="G$1" pin="C"/>
 <wire x1="114.3" y1="30.48" x2="111.76" y2="30.48" width="0.1524" layer="91"/>
 <pinref part="R1" gate="G$1" pin="2"/>
 </segment>
@@ -5588,6 +5598,18 @@ W = angled&lt;p&gt;
 <wire x1="114.3" y1="15.24" x2="111.76" y2="15.24" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="15.24" x2="114.3" y2="12.7" width="0.1524" layer="91"/>
 <label x="114.3" y="12.7" size="0.8128" layer="95" rot="R270" xref="yes"/>
+</segment>
+</net>
+<net name="RST" class="0">
+<segment>
+<pinref part="HUZZAH32" gate="G$1" pin="RST"/>
+<wire x1="134.62" y1="48.26" x2="139.7" y2="48.26" width="0.1524" layer="91"/>
+<label x="139.7" y="48.26" size="0.8128" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="RESET" gate="1" pin="S"/>
+<wire x1="63.5" y1="0" x2="60.96" y2="0" width="0.1524" layer="91"/>
+<label x="60.96" y="0" size="0.8128" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 </nets>

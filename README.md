@@ -31,7 +31,7 @@ StatusPanel can optionally show a privacy image or redact content at the touch o
 
 StatusPanel is an open source project in the fairly early stages of development. We're planning to submit our [iOS app](ios/README,markdown) to the app store in the coming months and would love to manufacture a small batch of PCBs to make it easy for people to assemble their own. (It's 2021 though, so that might take longer than usual.)
 
-If you can't wait to try it out, have a little technical experience, and don't mind getting your hands dirty, check out the [device documentation](pcb/README.markdown) for part listings and PCB schematics. If something's not clear, please reach out; we're happy to help out where we can and always appreciate code and documentation [contributions](#contributing) big or small.
+If you can't wait to try it out, have a little technical experience, and don't mind getting your hands dirty, check out the [device documentation](device/README.markdown) for part listings and PCB schematics. If something's not clear, please reach out; we're happy to help out where we can and always appreciate code and documentation [contributions](#contributing) big or small.
 
 ## Technical Details
 
@@ -40,11 +40,13 @@ If you can't wait to try it out, have a little technical experience, and don't m
 StatusPanel comprises a number of different components:
 
 - [Firmware](firmware/README.markdown)
-- [Device](pcb/README.markdown)
+- [Device](device/README.markdown)
 - [iOS app](ios/README.markdown)
 - [Service](service/README.markdown)
 
 ## Development
+
+StatusPanel follows the version numbering, build and signing conventions for InSeven Limited apps. Further details can be found [here](https://github.com/inseven/build-documentation).
 
 ### Installing Dependencies
 

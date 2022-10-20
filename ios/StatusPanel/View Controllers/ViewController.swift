@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,9 +47,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         case subText
     }
 
-    static let panelSize = CGSize(width: 640.0, height: 384.0)
-    static let panelStatusBarHeight: CGFloat = 20.0
-
     private var image: UIImage?
     private var redactedImage: UIImage?
 
@@ -57,12 +54,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     var sourceController: DataSourceController!
 
-    var client: Client {
-        return AppDelegate.shared.client
-    }
-
     private lazy var settingsButtonItem: UIBarButtonItem = {
-        return UIBarButtonItem(title: "Settings",
+        return UIBarButtonItem(image: UIImage(systemName: "gear"),
                                style: .plain,
                                target: self,
                                action: #selector(settingsTapped(sender:)))
@@ -80,10 +73,12 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                                action: #selector(addTapped(sender:)))
     }()
 
-    private lazy var refreshActivityIndicatorItem: UIBarButtonItem = {
+    private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView()
-        activityIndicator.startAnimating()
-        return UIBarButtonItem(customView: activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.color = .systemGray
+        activityIndicator.hidesWhenStopped = true
+        return activityIndicator
     }()
 
     private lazy var imageView: UIImageView = {
@@ -111,6 +106,15 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
     }
 
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        view.backgroundColor = .systemGroupedBackground
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         sourceController = AppDelegate.shared.sourceController
@@ -121,11 +125,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         navigationItem.rightBarButtonItems = [addButtonItem, refreshButtonItem]
 
         view.addSubview(imageView)
+        imageView.addSubview(activityIndicator)
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
             imageView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
             imageView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
         ])
 
         imageView.addGestureRecognizer(longPressGestureRecognizer)
@@ -173,17 +180,33 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
-        let blankImage = Self.blankPanelImage()
-        self.imageView.image = blankImage
+        let blankImage = Panel.blankImage()
         self.image = blankImage
         self.redactedImage = blankImage
-        self.navigationItem.setRightBarButtonItems([addButtonItem, refreshActivityIndicatorItem], animated: true)
+        UIView.transition(with: self.imageView,
+                          duration: 0.3,
+                          options: .transitionCrossDissolve) {
+            self.imageView.image = blankImage
+        }
+        self.refreshButtonItem.isEnabled = false
+        activityIndicator.startAnimating()
         sourceController.fetch()
+    }
+
+    func fetchDidUpdate(image: UIImage, privacyImage: UIImage) {
+        self.image = image
+        self.redactedImage = privacyImage
+        activityIndicator.stopAnimating()
+        UIView.transition(with: self.imageView,
+                          duration: 0.3,
+                          options: .transitionCrossDissolve) {
+            self.imageView.image = image
+        }
     }
 
     func fetchDidComplete() {
         dispatchPrecondition(condition: .onQueue(.main))
-        self.navigationItem.setRightBarButtonItems([addButtonItem, refreshButtonItem], animated: true)
+        self.refreshButtonItem.isEnabled = true
     }
 
     static func getLabel(frame: CGRect, font fontName: String, style: LabelStyle, redactMode: RedactMode = .none) -> UILabel {
@@ -210,17 +233,16 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
         let darkMode = shouldBeDark()
         let image = Self.renderToImage(data: data, shouldRedact: false, darkMode: darkMode)
+
         let privacyImage = ((Config().privacyMode == .customImage)
-                            ? ViewController.cropCustomRedactImageToPanelSize()
+                            ? ViewController.loadPrivacyImage()
                             : Self.renderToImage(data: data, shouldRedact: true, darkMode: darkMode))
 
-        let client = self.client
+        let client = AppDelegate.shared.client
         DispatchQueue.global().async {
             let payloads = Panel.rlePayloads(for: [image, privacyImage])
             DispatchQueue.main.sync {
-                self.image = payloads[0].1
-                self.redactedImage = payloads[1].1
-                self.imageView.image = image
+                self.fetchDidUpdate(image: payloads[0].1, privacyImage: payloads[1].1)
             }
             client.upload(image: payloads[0].0, privacyImage: payloads[1].0) { anythingChanged in
                 print("Changes: \(anythingChanged)")
@@ -230,39 +252,12 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     }
 
-    static func blankPanelImage() -> UIImage {
-        let fmt = UIGraphicsImageRendererFormat()
-        fmt.scale = 1.0
-        let renderer = UIGraphicsImageRenderer(size: panelSize, format: fmt)
-        let uiImage = renderer.image { context in
-            UIColor.white.setFill()
-            context.fill(CGRect(origin: .zero, size: panelSize))
-        }
-        return uiImage
-    }
-
-    static func cropCustomRedactImageToPanelSize() -> UIImage {
-        var path: URL?
-        do {
-            let dir = try FileManager.default.url(for: .documentDirectory,
-                                                  in: .userDomainMask,
-                                                  appropriateFor: nil,
-                                                  create: true)
-            path = dir.appendingPathComponent("customPrivacyImage.jpg")
-        } catch {
-            print("meh")
-            return blankPanelImage()
-        }
-        guard let source = UIImage(contentsOfFile: path!.path)?
-                .normalizeOrientation()?
-                .scaleAndDither(to: panelSize) else {
-            return blankPanelImage()
-        }
-        return source
+    static func loadPrivacyImage() -> UIImage {
+        return (try? Config().privacyImage()) ?? Panel.blankImage()
     }
 
     static func renderToImage(data: [DataItemBase], shouldRedact: Bool, darkMode: Bool) -> UIImage {
-        let contentView = UIView(frame: CGRect(origin: .zero, size: panelSize))
+        let contentView = UIView(frame: CGRect(origin: .zero, size: Panel.size))
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
@@ -404,7 +399,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 switch divider {
                 case .vertical(let originY):
                     context.move(to: CGPoint(x: midx, y: originY))
-                    context.addLine(to: CGPoint(x: midx, y: rect.height - Self.panelStatusBarHeight))
+                    context.addLine(to: CGPoint(x: midx, y: rect.height - Panel.statusBarHeight))
                 case .horizontal(let originY):
                     context.move(to: CGPoint(x: x, y: originY))
                     context.addLine(to: CGPoint(x: rect.width - x, y: originY))
@@ -437,11 +432,11 @@ extension ViewController: DataSourceControllerDelegate {
 
     func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase]) {
         self.renderAndUpload(data: data, completion: { (changes: Bool) -> Void in
-                DispatchQueue.main.async {
-                    AppDelegate.shared.fetchCompleted(hasChanged: changes)
-                    self.fetchDidComplete()
-                }
-            })
+            DispatchQueue.main.async {
+                AppDelegate.shared.fetchCompleted(hasChanged: changes)
+                self.fetchDidComplete()
+            }
+        })
     }
 
     func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error) {

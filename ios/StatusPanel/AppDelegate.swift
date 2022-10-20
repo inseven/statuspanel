@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,9 +27,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
+    var config = Config()
     var sourceController = DataSourceController()
     var apnsToken: Data?
-    var client: Client!
+    var client: Client = Client(baseUrl: "https://api.statuspanel.io/")
 
     static var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
@@ -38,11 +39,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        client = Client(baseUrl: "https://api.statuspanel.io/")
         application.registerForRemoteNotifications()
 
+        do {
+            try config.migrate()
+        } catch {
+            print("Failed to migrate settings with error \(error)")
+        }
+
         let viewController = ViewController()
-        viewController.view.backgroundColor = .secondarySystemBackground
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.navigationBar.prefersLargeTitles = true
 
@@ -58,8 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        // Setting a flag here means we can avoid taking action on temporary
-        // interruptions
+        // Setting a flag here means we can avoid taking action on temporary interruptions.
         background = true
     }
 
@@ -174,7 +178,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: WifiProvisionerControllerDelegate {
 
-    func wifiProvisionerController(_ wifiProvisionerController: WifiProvisionerController, didConfigureDevice device: Device) {
+    func wifiProvisionerController(_ wifiProvisionerController: WifiProvisionerController,
+                                   didConfigureDevice device: Device) {
         wifiProvisionerController.navigationController?.dismiss(animated: true) {
             self.addDevice(device)
         }

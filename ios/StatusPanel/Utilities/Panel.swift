@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,33 @@ import CoreGraphics
 import UIKit
 
 class Panel {
+
+    static let size = CGSize(width: 640.0, height: 384.0)
+    static let statusBarHeight: CGFloat = 20.0
+
+    static func blankImage() -> UIImage {
+        return UIImage.blankImage(size: Panel.size, scale: 1.0)
+    }
+
+    static func privacyImage(from image: UIImage) throws -> UIImage? {
+        guard let source = image
+                .normalizeOrientation()?
+                .scaleAndDither(to: Panel.size)
+        else {
+            return nil
+        }
+        return source
+    }
+
+    static func privacyImage(from image: UIImage, completion: @escaping (Result<UIImage?, Error>) -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async {
+            do {
+                completion(.success(try privacyImage(from: image)))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
 
     private static func ARGBtoPanel(_ data: Data) -> Data {
         let Black: UInt8 = 0, Colored: UInt8 = 1, White: UInt8 = 2
@@ -104,7 +131,7 @@ class Panel {
             let panelData = ARGBtoPanel(rawdata)
             let rleData = rleEncode(panelData)
             do {
-                let dir = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                let dir = try FileManager.default.documentsUrl()
                 print("GOT DIR! " + dir.absoluteString)
                 let imgdata = panelImage.pngData()
                 let name = "img_\(i)"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+# Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +26,3 @@ ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 export PYTHONUSERBASE="${ROOT_DIRECTORY}/.local/python"
 mkdir -p "$PYTHONUSERBASE"
 export PATH="${PYTHONUSERBASE}/bin":$PATH
-
-export GEM_HOME="${ROOT_DIRECTORY}/.local/ruby"
-mkdir -p "$GEM_HOME"
-export PATH="${GEM_HOME}/bin":$PATH
-
-export GITHUB_CLI_PATH="${ROOT_DIRECTORY}/.local/gh"
-mkdir -p "$GITHUB_CLI_PATH"
-export PATH="${GITHUB_CLI_PATH}/bin":$PATH

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,22 +18,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import SwiftUI
+import Foundation
 
-struct LicenseView: View {
+extension FileManager {
 
-    var name: String
-    var license: String
+    func documentsUrl() throws -> URL {
+        return try url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+    }
 
-    var body: some View {
-        ScrollView {
-            HStack {
-                Text(license)
-                Spacer()
-            }
-            .padding()
-        }
-        .navigationBarTitle(name, displayMode: .inline)
+    func fileExists(at url: URL) -> Bool {
+        return fileExists(atPath: url.path)
     }
 
 }

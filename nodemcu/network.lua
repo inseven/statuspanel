@@ -23,7 +23,7 @@ function getImages()
         },
     }
 
-    local conn = http.createConnection("https://statuspanel.io/api/v2/"..deviceId, http.GET, options)
+    local conn = http.createConnection("https://api.statuspanel.io/api/v2/"..deviceId, http.GET, options)
     local f
     local result = {}
     conn:on("headers", function(status, headers)

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -71,10 +71,6 @@ class DataSourceController {
                                                                 shortFormat: "yMMMMdEEE",
                                                                 offset: 0,
                                                                 flags: [.header, .spansColumns]))
-                try add(type: .transportForLondon,
-                        settings: TFLDataSource.Settings(lines: Set(config.activeTFLLines)))
-                try add(type: .nationalRail,
-                        settings: NationalRailDataSource.Settings(from: config.trainRoute.from, to: config.trainRoute.to))
                 try add(type: .calendar,
                         settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
                                                           showUrls: config.showUrlsInCalendarLocations,

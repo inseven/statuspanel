@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2018-2021 Jason Morley, Tom Sutcliffe
+# Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -33,11 +33,12 @@ TEMPORARY_DIRECTORY="${ROOT_DIRECTORY}/temp"
 APP_DIRECTORY="${ROOT_DIRECTORY}/ios"
 
 KEYCHAIN_PATH="${TEMPORARY_DIRECTORY}/temporary.keychain"
-ARCHIVE_PATH="${BUILD_DIRECTORY}/Bookmarks.xcarchive"
-FASTLANE_ENV_PATH="${APP_DIRECTORY}/fastlane/.env"
+ARCHIVE_PATH="${BUILD_DIRECTORY}/StatusPanel.xcarchive"
+ENV_PATH="${APP_DIRECTORY}/.env"
 
 CHANGES_DIRECTORY="${SCRIPTS_DIRECTORY}/changes"
 BUILD_TOOLS_DIRECTORY="${SCRIPTS_DIRECTORY}/build-tools"
+RELEASE_SCRIPT_PATH="${SCRIPTS_DIRECTORY}/release.sh"
 
 PATH=$PATH:$CHANGES_DIRECTORY
 PATH=$PATH:$BUILD_TOOLS_DIRECTORY
@@ -49,18 +50,13 @@ which gh || (echo "GitHub cli (gh) not available on the path." && exit 1)
 
 # Process the command line arguments.
 POSITIONAL=()
-ARCHIVE=${ARCHIVE:-false}
-TESTFLIGHT_UPLOAD=${TESTFLIGHT_UPLOAD:-false}
+RELEASE=${RELEASE:-false}
 while [[ $# -gt 0 ]]
 do
     key="$1"
     case $key in
-        -a|--archive)
-        ARCHIVE=true
-        shift
-        ;;
-        -t|--testflight-upload)
-        TESTFLIGHT_UPLOAD=true
+        -r|--release)
+        RELEASE=true
         shift
         ;;
         *)
@@ -72,15 +68,15 @@ done
 
 # iPhone to be used for smoke test builds and tests.
 # This doesn't specify the OS version to allow the build script to recover from minor build changes.
-IPHONE_DESTINATION="platform=iOS Simulator,name=iPhone 12 Pro"
+IPHONE_DESTINATION="platform=iOS Simulator,name=iPhone 14 Pro"
 
 # Generate a random string to secure the local keychain.
 export TEMPORARY_KEYCHAIN_PASSWORD=`openssl rand -base64 14`
 
-# Source the Fastlane .env file if it exists to make local development easier.
-if [ -f "$FASTLANE_ENV_PATH" ] ; then
+# Source the .env file if it exists to make local development easier.
+if [ -f "$ENV_PATH" ] ; then
     echo "Sourcing .env..."
-    source "$FASTLANE_ENV_PATH"
+    source "$ENV_PATH"
 fi
 
 function xcode_project {
@@ -130,54 +126,67 @@ mkdir -p "$TEMPORARY_DIRECTORY"
 echo "$TEMPORARY_KEYCHAIN_PASSWORD" | build-tools create-keychain "$KEYCHAIN_PATH" --password
 
 function cleanup {
+
     # Cleanup the temporary files and keychain.
     cd "$ROOT_DIRECTORY"
     build-tools delete-keychain "$KEYCHAIN_PATH"
     rm -rf "$TEMPORARY_DIRECTORY"
+
+    # Clean up any private keys.
+    if [ -f ~/.appstoreconnect/private_keys ]; then
+        rm -r ~/.appstoreconnect/private_keys
+    fi
+
 }
 
 trap cleanup EXIT
 
 # Determine the version and build number.
-VERSION_NUMBER=`changes --scope macOS version`
+VERSION_NUMBER=`changes --scope ios version`
 BUILD_NUMBER=`build-tools generate-build-number`
 
 # Import the certificates into our dedicated keychain.
-echo "$IOS_CERTIFICATE_PASSWORD" | build-tools import-base64-certificate --password "$KEYCHAIN_PATH" "$IOS_CERTIFICATE_BASE64"
+echo "$APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD" | build-tools import-base64-certificate --password "$KEYCHAIN_PATH" "$APPLE_DISTRIBUTION_CERTIFICATE_BASE64"
 
 # Install the provisioning profiles.
 build-tools install-provisioning-profile "${APP_DIRECTORY}/StatusPanel_App_Store_Profile.mobileprovision"
 
-if $ARCHIVE || $TESTFLIGHT_UPLOAD ; then
+# Build and archive the iOS project.
+xcode_project \
+    -scheme "StatusPanel" \
+    -config Release \
+    -archivePath "$ARCHIVE_PATH" \
+    OTHER_CODE_SIGN_FLAGS="--keychain=\"${KEYCHAIN_PATH}\"" \
+    BUILD_NUMBER=$BUILD_NUMBER \
+    MARKETING_VERSION=$VERSION_NUMBER \
+    clean archive
+xcodebuild \
+    -archivePath "$ARCHIVE_PATH" \
+    -exportArchive \
+    -exportPath "$BUILD_DIRECTORY" \
+    -exportOptionsPlist "${APP_DIRECTORY}/ExportOptions.plist"
 
-    # Build and archive the iOS project.
-    xcode_project \
-        -scheme "StatusPanel" \
-        -config Release \
-        -archivePath "$ARCHIVE_PATH" \
-        OTHER_CODE_SIGN_FLAGS="--keychain=\"${KEYCHAIN_PATH}\"" \
-        BUILD_NUMBER=$BUILD_NUMBER \
-        MARKETING_VERSION=$VERSION_NUMBER \
-        clean archive
-    xcodebuild \
-        -archivePath "$ARCHIVE_PATH" \
-        -exportArchive \
-        -exportPath "$BUILD_DIRECTORY" \
-        -exportOptionsPlist "${APP_DIRECTORY}/ExportOptions.plist"
+if $RELEASE ; then
 
-fi
+    IPA_PATH="$BUILD_DIRECTORY/StatusPanel.ipa"
 
-IPA_BASENAME="StatusPanel.ipa"
-IPA_PATH="$BUILD_DIRECTORY/$IPA_BASENAME"
+    # Archive the build directory.
+    ZIP_BASENAME="build-${VERSION_NUMBER}-${BUILD_NUMBER}.zip"
+    ZIP_PATH="${BUILD_DIRECTORY}/${ZIP_BASENAME}"
+    pushd "${BUILD_DIRECTORY}"
+    zip -r "${ZIP_BASENAME}" .
+    popd
 
-# Upload the build to TestFlight
-if $TESTFLIGHT_UPLOAD ; then
-    API_KEY_PATH="${TEMPORARY_DIRECTORY}/AuthKey.p8"
-    echo -n "$APPLE_API_KEY" | base64 --decode --output "$API_KEY_PATH"
-    bundle exec fastlane upload \
-        api_key:"$API_KEY_PATH" \
-        api_key_id:"$APPLE_API_KEY_ID" \
-        api_key_issuer_id:"$APPLE_API_KEY_ISSUER_ID" \
-        ipa:"$IPA_PATH"
-    unlink "$API_KEY_PATH"
+    mkdir -p ~/.appstoreconnect/private_keys/
+    echo -n "$APPLE_API_KEY" | base64 --decode -o ~/".appstoreconnect/private_keys/AuthKey_${APPLE_API_KEY_ID}.p8"
+    ls ~/.appstoreconnect/private_keys/
+    changes \
+        release \
+        --skip-if-empty \
+        --pre-release \
+        --push \
+        --exec "${RELEASE_SCRIPT_PATH}" \
+        "${IPA_PATH}" "${ZIP_PATH}"
+
+
 fi
