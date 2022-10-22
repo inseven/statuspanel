@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		D80380AB23E9B6D2002606C7 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Client.swift */; };
-		D812523627093C4500C9D80A /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523527093C4500C9D80A /* AboutView.swift */; };
 		D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523B2709875600C9D80A /* FontPickerViewController.swift */; };
 		D8166551272773AC005BDA9E /* ImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8166550272773AC005BDA9E /* ImageTableViewCell.swift */; };
 		D816655327277407005BDA9E /* UIActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D816655227277407005BDA9E /* UIActivityIndicatorView.swift */; };
@@ -123,7 +122,6 @@
 
 /* Begin PBXFileReference section */
 		D80380AA23E9B6D2002606C7 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
-		D812523527093C4500C9D80A /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		D812523B2709875600C9D80A /* FontPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPickerViewController.swift; sourceTree = "<group>"; };
 		D8166550272773AC005BDA9E /* ImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTableViewCell.swift; sourceTree = "<group>"; };
 		D816655227277407005BDA9E /* UIActivityIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorView.swift; sourceTree = "<group>"; };
@@ -250,7 +248,6 @@
 		D812523427093BAB00C9D80A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D812523527093C4500C9D80A /* AboutView.swift */,
 				D848A199270D16AD00681F62 /* AddDataSourceView.swift */,
 				D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */,
 				D8383EBB270FB8E20007EBB7 /* DayPicker.swift */,
@@ -686,7 +683,6 @@
 				DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */,
 				DBF15BC72471A61E004AA972 /* WifiProvisionerController.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
-				D812523627093C4500C9D80A /* AboutView.swift in Sources */,
 				D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */,
 				D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */,
 				DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */,
