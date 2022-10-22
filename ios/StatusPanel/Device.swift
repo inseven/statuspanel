@@ -22,6 +22,12 @@ import Foundation
 
 struct Device: Identifiable, Equatable {
 
+    enum Kind: String {
+        case einkV1 = "0"
+        case featherTft = "1"
+    }
+
+    var kind: Kind
     var id: String
     var publicKey: String
 

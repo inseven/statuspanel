@@ -459,7 +459,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DevicesSection:
             let prevCount = devices.count
             if indexPath.row == (prevCount == 0 ? 1 : prevCount) {
-                let device = Device(id: "DummyDevice\(indexPath.row)", publicKey: "")
+                let device = Device(kind: .einkV1, id: "DummyDevice\(indexPath.row)", publicKey: "")
                 devices.append((device.id, device.publicKey))
                 Config().devices = devices
                 tableView.performBatchUpdates {
