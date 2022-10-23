@@ -90,13 +90,13 @@ class Client {
                 if devices.count == 0 {
                     completion(anythingUploaded)
                 } else {
-                    let (id, pubkey) = devices.remove(at: 0)
-                    if pubkey.isEmpty {
+                    let device = devices.remove(at: 0)
+                    if device.publicKey.isEmpty {
                         // Empty keys are used for debugging the UI, and shouldn't cause an upload
                         nextUpload(false)
                         return
                     }
-                    self.uploadImages([image, privacyImage], deviceid: id, publickey: pubkey, completion: nextUpload)
+                    self.uploadImages([image, privacyImage], deviceid: device.id, publickey: device.publicKey, completion: nextUpload)
                 }
             }
             nextUpload(false)
