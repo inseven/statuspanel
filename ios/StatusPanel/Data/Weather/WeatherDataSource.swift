@@ -158,7 +158,7 @@ final class WeatherDataSource: DataSource {
                     emoji = nil
                 }
 
-                let temperatureSummary = String(format: "H:%dº L:%dº",
+                let temperatureSummary = String(format: "H:%d° L:%d°",
                                                 Int(today.highTemperature.value),
                                                 Int(today.lowTemperature.value))
                 let dataItem = DataItem(icon: emoji, text: temperatureSummary, flags: settings.flags)
