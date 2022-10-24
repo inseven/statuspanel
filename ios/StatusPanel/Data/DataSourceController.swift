@@ -48,6 +48,12 @@ class DataSourceController {
             ZenQuotesDataSource().anyDataSource(),
         ]
 
+        if #available(iOS 16.0, *) {
+            sources.append(WeatherDataSource().anyDataSource())
+        }
+
+        sources = sources.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+
         let config = Config()
 
         do {
