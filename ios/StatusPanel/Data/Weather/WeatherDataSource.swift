@@ -84,12 +84,12 @@ final class WeatherDataSource: DataSource {
                     return
                 }
 
-                let emoji: String
+                let emoji: String?
                 switch today.condition {
                 case .blizzard:
                     emoji = "🌨️"
                 case .blowingDust:
-                    emoji = ""
+                    emoji = "💨"
                 case .blowingSnow:
                     emoji = "🌨️"
                 case .breezy:
@@ -99,21 +99,21 @@ final class WeatherDataSource: DataSource {
                 case .cloudy:
                     emoji = "☁️"
                 case .drizzle:
-                    emoji = "Drizzle"
+                    emoji = "🌧️"
                 case .flurries:
-                    emoji = "Flurries"
+                    emoji = "🌨️"
                 case .foggy:
-                    emoji = "Foggy"
+                    emoji = "😶‍🌫️"
                 case .freezingDrizzle:
-                    emoji = "Freezing Drizzle"
+                    emoji = "🌧️"
                 case .freezingRain:
-                    emoji = "Freezing Rain"
+                    emoji = "🌧️"
                 case .frigid:
-                    emoji = "Frigid"
+                    emoji = "🥶"
                 case .hail:
-                    emoji = "Hail"
+                    emoji = "🌨️"
                 case .haze:
-                    emoji = "Haze"
+                    emoji = "😶‍🌫️"
                 case .heavyRain:
                     emoji = "💧"
                 case .heavySnow:
@@ -135,33 +135,34 @@ final class WeatherDataSource: DataSource {
                 case .scatteredThunderstorms:
                     emoji = "🌩️"
                 case .sleet:
-                    emoji = "Sleet"
+                    emoji = "🌨️"
                 case .smoky:
-                    emoji = "Smoky"
+                    emoji = "🔥"
                 case .snow:
                     emoji = "🌨️"
                 case .strongStorms:
-                    emoji = "Strong Storms"
+                    emoji = "⛈️"
                 case .sunFlurries:
-                    emoji = "Sun Flurries"
+                    emoji = "🌦️"
                 case .sunShowers:
-                    emoji = "Sun Showers"
+                    emoji = "🌦️"
                 case .thunderstorms:
                     emoji = "🌩️"
                 case .tropicalStorm:
-                    emoji = "Tropical Storm"
+                    emoji = "🌪️"
                 case .windy:
                     emoji = "💨"
                 case .wintryMix:
                     emoji = "🌨️"
                 @unknown default:
-                    emoji = ""
+                    emoji = nil
                 }
 
-                let temperatureSummary = String(format: "\(emoji) H:%dº L:%dº",
+                let temperatureSummary = String(format: "H:%dº L:%dº",
                                                 Int(today.highTemperature.value),
                                                 Int(today.lowTemperature.value))
-                completion([DataItem(text: temperatureSummary, flags: settings.flags)], nil)
+                let dataItem = DataItem(icon: emoji, text: temperatureSummary, flags: settings.flags)
+                completion([dataItem], nil)
             } catch {
                 print("failed to fetch weather with error \(error)")
                 completion([], error)
