@@ -107,7 +107,7 @@ function init()
     wait(120)
 
     -- cmd(ST7789_MADCTL, 0)
-    set_rotation(90)
+    set_rotation(270)
     cmd(ST7789_COLMOD, bor(COLOR_MODE_65K, COLOR_MODE_16BIT), 1)
     cmd(0xB2, 0x5, 0x5, 0, 0x33, 0x33)
     cmd(0xB7, 0x23)
@@ -187,7 +187,7 @@ function fill_rect(x, y, w, h, colour)
 end
 
 function set_window(x0, y0, x1, y1)
-    -- Hardcoded 135x240 portrait....
+    assert(x1 < width() and y1 < height(), "set_window out of bounds!")
     local colstart = rotations[orientation].colstart
     local rowstart = rotations[orientation].rowstart
     cmd(ST7789_CASET, rshift(x0 + colstart, 8), band(x0 + colstart, 0xFF), rshift(x1 + colstart, 8), band(x1 + colstart, 0xFF))

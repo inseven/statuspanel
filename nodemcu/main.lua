@@ -489,18 +489,27 @@ function fetch()
     end
 end
 
+local _currentDisplayId = nil
+
 function getCurrentDisplayIdentifier()
+    if isFeatherTft() then
+        return _currentDisplayId
+    end
     return readFile("current_display_identifier", 128)
 end
 
 function setCurrentDisplayIdentifier(id)
+    if isFeatherTft() then
+        _currentDisplayId = id
+        return
+    end
     writeFile("current_display_identifier", id)
 end
 
 function initAndDisplay(id, displayFn, ...)
     assert(coroutine_running())
     -- only the eink display has persistence, so this check makes no sense on a TFT display
-    if not isFeatherTft() and id and id == getCurrentDisplayIdentifier() then
+    if id and id == getCurrentDisplayIdentifier() then
         print("Requested contents are already on screen, doing nothing")
         return
     else
