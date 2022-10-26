@@ -63,7 +63,7 @@ function display(getPixelFn)
 end
 
 function displayQRCode(url)
-    assert(coroutine.running())
+    assert(coroutine_running())
     local font = require("font")
     local BG, FG, w, h = BG, FG, w, h
     local urlWidth = #url * font.charw

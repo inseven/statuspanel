@@ -15,7 +15,7 @@ DefaultLineFormatFileHeight = 384 -- regardless of what panel.h is
 -- We never check for unpair during operation (only at wake-from-sleep) so we
 -- can be sure there'll never be anything else going on at this point
 function unpairPressed()
-    assert(coroutine.running())
+    assert(coroutine_running())
     local pressed = gpio.read(UnpairPin) == 1
     if not pressed then
         -- Already released
@@ -55,7 +55,7 @@ end
 
 function shortPressUnpair()
     print("Short press on unpair")
-    assert(coroutine.running())
+    assert(coroutine_running())
 
     local imageToShow
     local id = getCurrentDisplayIdentifier()
@@ -77,7 +77,7 @@ end
 
 function longPressUnpair()
     print("Long press on unpair")
-    assert(coroutine.running())
+    assert(coroutine_running())
     setStatusLed(1)
     resetDeviceState()
     wait(1000)
@@ -85,7 +85,7 @@ function longPressUnpair()
 end
 
 function getDateAndSleep()
-    assert(coroutine.running())
+    assert(coroutine_running())
     -- In lieu of an RTC or proper NTP, just grab the date header from a dumb http request
     if ip or startNetworking() then
         local status, _, headers = http.get("http://statuspanel.io/")
@@ -171,7 +171,7 @@ function rebootAndExecute(fn)
 end
 
 function runBootNext()
-    assert(coroutine.running())
+    assert(coroutine_running())
     local fn = assert(loadfile("boot_next"))
     file.remove("boot_next") -- Do this before executing, don't wanna get stuck in a loop
     fn()
@@ -181,7 +181,7 @@ local connectStarted = false
 local connectTimer
 
 function startNetworking()
-    assert(coroutine.running())
+    assert(coroutine_running())
     assert(not connectStarted, "startNetworking has already been called (somehow)!")
     if ip then
         return
@@ -263,16 +263,18 @@ function main()
         end
     end)
 
-    -- Despite EGC being disabled at this point (by init.lua), lua.c will reenable it once init.lua is finished!
-    -- So that can fsck right noff.
-    tmr.create():alarm(20, tmr.ALARM_SINGLE, function()
-        node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
-    end)
+    if node.egc then
+        -- Despite EGC being disabled at this point (by init.lua), lua.c will reenable it once init.lua is finished!
+        -- So that can fsck right noff.
+        tmr.create():alarm(20, tmr.ALARM_SINGLE, function()
+            node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
+        end)
+    end
 end
 
 -- As a convenience, we'll allow go() to be called not from within a coroutine
 function go()
-    if not coroutine.running() then
+    if not coroutine_running() then
         costart(go)
         return
     end
@@ -315,7 +317,7 @@ function flashStatusLed(interval)
 end
 
 function enterHotspotMode()
-    assert(coroutine.running())
+    assert(coroutine_running())
     if wifi.getmode() == wifi.STATION then
         wifi.stop()
     end
@@ -453,7 +455,7 @@ function getImgHash()
 end
 
 function fetch()
-    assert(coroutine.running())
+    assert(coroutine_running())
     print("Fetching image...")
 
     local result = network.getImages()
@@ -470,7 +472,8 @@ function fetch()
     elseif status == 200 then
         processRawImage(result.lastModified)
     elseif status == 304 then
-        if getCurrentDisplayIdentifier():match("^(img_%d+)") then
+        local currentId = getCurrentDisplayIdentifier()
+        if currentId and currentId:match("^(img_%d+)") then
             -- Nothing to do
             sleepFromDate(result.date)
         else
@@ -495,7 +498,7 @@ function setCurrentDisplayIdentifier(id)
 end
 
 function initAndDisplay(id, displayFn, ...)
-    assert(coroutine.running())
+    assert(coroutine_running())
     -- only the eink display has persistence, so this check makes no sense on a TFT display
     if not isFeatherTft() and id and id == getCurrentDisplayIdentifier() then
         print("Requested contents are already on screen, doing nothing")
@@ -519,7 +522,7 @@ function processRawImage(lastModified)
 end
 
 function decryptImage(index)
-    assert(coroutine.running())
+    assert(coroutine_running())
     printf("Decrypting image number %d...", index)
     local pk = network.getPublicKey()
     local sk = network.getSecretKey()
@@ -640,7 +643,7 @@ function getDisplayStatusLineFn(customText, isErrText)
 end
 
 function displayErrLine(line)
-    assert(coroutine.running())
+    assert(coroutine_running())
     local getTextPixel = getDisplayStatusLineFn(line, true)
     local charh = require("font").charh
     local starth = (panel.h - charh) / 2
@@ -655,7 +658,7 @@ function displayErrLine(line)
 end
 
 function displayLineFormatFile(filename, statusLine)
-    assert(coroutine.running())
+    assert(coroutine_running())
     local f = assert(file_open(filename, "r"))
     local w = panel.w
     local statusLineFn, statusLineStart
@@ -684,7 +687,7 @@ function displayLineFormatFile(filename, statusLine)
 end
 
 function showFile(filename, statusLine)
-    assert(coroutine.running())
+    assert(coroutine_running())
     local id = string.format("%s,%s", filename, readFile(filename.."_hash"))
     initAndDisplay(id, displayLineFormatFile, filename, statusLine)
 end

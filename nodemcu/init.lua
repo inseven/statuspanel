@@ -102,8 +102,11 @@ function inputIsConnected(pin)
 end
 
 function init()
-    -- Why is the default allocation limit set to 4KB? Why even is there one?
-    node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
+    -- Lua 5.3 nodemcu doesn't seem to have a (functional) egc limit
+    if node.egc then
+        -- Why is the default allocation limit set to 4KB? Why even is there one?
+        node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
+    end
 
     if idf_v4 then
         package.loaders[3] = function(module) -- loader_flash
@@ -236,15 +239,26 @@ function costart(fn, ...)
 end
 
 function wait(ms)
-    assert(coroutine.running(), "Attempt to wait not from within costart()!")
+    assert(coroutine_running(), "Attempt to wait not from within costart()!")
     local ret = coroutine.yield("wait", ms)
     assert(ret == "tmr", "Resume was not from timer expiry! "..ret)
 end
 
 -- Manual yield, caller is responsible for calling coresume()
 function yield()
-    assert(coroutine.running(), "Attempt to yield not from within costart()!")
+    assert(coroutine_running(), "Attempt to yield not from within costart()!")
     return coroutine.yield("yield")
+end
+
+-- Why oh why did you change this, Lua 5.3? Without so much as a note in the "Incompatibilities" section...
+function coroutine_running()
+    local co, main = coroutine.running()
+    if main == nil then
+        -- Lua 5.1
+        return co ~= nil
+    else
+        return not main
+    end
 end
 
 local ok, err = pcall(init)
