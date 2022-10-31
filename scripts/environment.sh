@@ -26,3 +26,6 @@ ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 export PYTHONUSERBASE="${ROOT_DIRECTORY}/.local/python"
 mkdir -p "$PYTHONUSERBASE"
 export PATH="${PYTHONUSERBASE}/bin":$PATH
+
+export PATH=$PATH:"${SCRIPTS_DIRECTORY}/changes"
+export PATH=$PATH:"${SCRIPTS_DIRECTORY}/build-tools"
