@@ -1,7 +1,7 @@
 panel = require "panel"
 network = require "network"
 
-local readFile, writeFile = network.readFile, network.writeFile
+readFile, writeFile = network.readFile, network.writeFile
 
 -- It takes about 2 seconds for board to boot so the actual time required to
 -- long press is about LongPressTime plus 2 seconds.
@@ -53,20 +53,34 @@ function unpairReleased()
     end
 end
 
+function imageFilename(idx)
+    local name = string.format("img_%d", idx)
+    if not file.exists(name) then
+        local pngName = name..".png"
+        if file.exists(pngName) then
+            return pngName
+        end
+    end
+    return name
+end
+
 function shortPressUnpair()
     print("Short press on unpair")
     assert(coroutine_running())
 
     local imageToShow
     local id = getCurrentDisplayIdentifier()
-    if id and id:match("^img_1,") then
-        imageToShow = "img_2"
+    if id == nil then
+        go()
+        return
+    elseif id:match("^img_1,") then
+        imageToShow = imageFilename(2)
     else
-        imageToShow = "img_1"
+        imageToShow = imageFilename(1)
     end
 
     if file.exists(imageToShow) then
-        showFile(imageToShow, imageToShow == "img_1")
+        showFile(imageToShow)
         -- Might as well just reboot here, seems easiest
         node.restart()
     else
@@ -249,11 +263,15 @@ function main()
     else
         print("Auto mode off, call go() to get started.")
         if wokeByUsb then
-            print("Woke up by UsbDetect (A3)")
+            print("Woke up by UsbDetect")
         end
         if wokeByUnpair then
-            print("Woke up by UnpairPin (32)")
+            print("Woke up by UnpairPin")
         end
+    end
+
+    if isFeatherTft() then
+        gpio.trig(UnpairPin, gpio.INTR_DOWN, function() costart(unpairPressed) end)
     end
 
     costart(function()
@@ -478,7 +496,7 @@ function fetch()
             sleepFromDate(result.date)
         else
             -- We're currently displaying something else (eg a qrcode, or an error), so we need to fix that
-            showFile("img_1", true)
+            showFile(imageFilename(1))
             getDateAndSleep()
         end
     else
@@ -499,6 +517,7 @@ function getCurrentDisplayIdentifier()
 end
 
 function setCurrentDisplayIdentifier(id)
+    printf("setCurrentDisplayIdentifier %s", id)
     if isFeatherTft() then
         _currentDisplayId = id
         return
@@ -540,7 +559,8 @@ function decryptImage(index)
     local f = assert(file_open("img_raw", "r"))
     local hdr = f:read(32)
     local fileLen = f:seek("end")
-    local _, indexes = network.parseImgHeader(hdr)
+    local _, indexes, flags = network.parseImgHeader(hdr)
+    local isPng = bit.band(flags, network.IMAGE_FLAG_PNG) > 0
 
     local offset = indexes[index]
     f:seek("set", offset)
@@ -552,13 +572,21 @@ function decryptImage(index)
     local decrypted = sodium.crypto_box.seal_open(encrypted, pk, sk)
     printf("Decrypted data len=%d", #decrypted)
     local filename = string.format("img_%d", index)
+    if isPng then
+        filename = filename..".png"
+    end
+
     local hashFilename = filename.."_hash"
     -- The hashes are always of the decrypted data, not of the line format we eventually write to flash
     local existingHash = readFile(hashFilename)
     local newHash = sodium.generichash(decrypted)
     local imageHasChanged = (newHash ~= existingHash)
     if imageHasChanged then
-        writeDecryptedRleToLineFormat(decrypted, string.format("img_%d", index))
+        if isPng then
+            writeFile(filename, decrypted)
+        else
+            writeDecryptedRleToLineFormat(decrypted, filename)
+        end
         writeFile(hashFilename, newHash)
     end
 
@@ -570,9 +598,9 @@ function decryptImage(index)
 
         -- At the end of a decrypt we always want to display, while preserving the currently-selected image if any
         local current = getCurrentDisplayIdentifier()
-        local imageToShow = current and current:match("^(img_%d+)") or "img_1"
+        local imageToShow = current and current:match("^(img_[^,]+)") or imageFilename(1)
         local autoMode = AutoPin and gpio.read(AutoPin) == 1
-        showFile(imageToShow, imageToShow == "img_1")
+        showFile(imageToShow)
         if autoMode then
             getDateAndSleep()
         end
@@ -695,8 +723,13 @@ function displayLineFormatFile(filename, statusLine)
     f:close()
 end
 
-function showFile(filename, statusLine)
+function showFile(filename)
     assert(coroutine_running())
-    local id = string.format("%s,%s", filename, readFile(filename.."_hash"))
-    initAndDisplay(id, displayLineFormatFile, filename, statusLine)
+    local statusLine = not isFeatherTft() and filename == imageFilename(1)
+    local id = string.format("%s,%s", filename, encoder.toBase64(readFile(filename.."_hash")))
+    if filename:match("%.png$") then
+        initAndDisplay(id, panel.displayPngFile, filename, statusLine)
+    else
+        initAndDisplay(id, displayLineFormatFile, filename, statusLine)
+    end
 end

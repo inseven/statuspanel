@@ -222,7 +222,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.textLabel?.textColor = .label
             } else {
                 let device = devices[indexPath.row]
-                cell.textLabel?.text = device.id
+                cell.textLabel?.text = "\(device.id) (\(device.kind))"
                 cell.textLabel?.textColor = .label
             }
             return cell

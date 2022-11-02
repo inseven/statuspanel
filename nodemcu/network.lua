@@ -1,6 +1,8 @@
 -- Network and stuff
 _ENV = module()
 
+IMAGE_FLAG_PNG = 1
+
 function getImages()
     collectgarbage() -- Clear the decks...
     local deviceId = getDeviceId()
@@ -173,6 +175,7 @@ function parseImgHeader(data)
     local headerLen = 0
     local wakeTime = nil
     local imageIndexes = nil
+    local flags = 0
     -- FF 00 is not a valid sequence in our RLE scheme
     if data:sub(1, 2) == "\255\0" then
         headerLen = data:byte(3)
@@ -189,8 +192,11 @@ function parseImgHeader(data)
                 end
             end
         end
+        if headerLen >= 8 and #data >= 8 then
+            flags = struct.unpack("<I2", data, 7)
+        end
     end
-    return wakeTime, imageIndexes
+    return wakeTime, imageIndexes, flags
 end
 
 return _ENV -- Must be last

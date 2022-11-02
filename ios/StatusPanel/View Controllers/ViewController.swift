@@ -232,32 +232,58 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
         let darkMode = shouldBeDark()
-        let image = Self.renderToImage(data: data, shouldRedact: false, darkMode: darkMode)
 
+        // TODO fix this, for now always show eink format in the UI regardless of what devices are enrolled
+        let image = Self.renderToImage(data: data, shouldRedact: false, darkMode: darkMode, deviceType: .einkV1)
         let privacyImage = ((Config().privacyMode == .customImage)
                             ? ViewController.loadPrivacyImage()
-                            : Self.renderToImage(data: data, shouldRedact: true, darkMode: darkMode))
+                            : Self.renderToImage(data: data, shouldRedact: true, darkMode: darkMode, deviceType: .einkV1))
+        let payloads = Panel.rlePayloads(for: [image, privacyImage])
+        self.fetchDidUpdate(image: payloads[0].1, privacyImage: payloads[1].1)
 
-        let client = AppDelegate.shared.client
-        DispatchQueue.global().async {
-            let payloads = Panel.rlePayloads(for: [image, privacyImage])
-            DispatchQueue.main.sync {
-                self.fetchDidUpdate(image: payloads[0].1, privacyImage: payloads[1].1)
+        let config = Config()
+        let devices = config.devices
+        var pendingDevices = Set(devices)
+        var anyChanges = false
+        for device in devices {
+            var images: [UIImage] = []
+            let primary = Self.renderToImage(data: data, shouldRedact: false, darkMode: darkMode, deviceType: device.kind)
+            images.append(primary)
+            if device.kind == .einkV1 {
+                // Privacy image only really makes sense on eink
+                let privacyImage = (config.privacyMode == .customImage)
+                ? ViewController.loadPrivacyImage()
+                : Self.renderToImage(data: data, shouldRedact: true, darkMode: darkMode, deviceType: device.kind)
+                images.append(privacyImage)
+            } else {
+                // TODO support multiple pages, or something
             }
-            client.upload(image: payloads[0].0, privacyImage: payloads[1].0) { anythingChanged in
-                print("Changes: \(anythingChanged)")
-                completion(anythingChanged)
+
+            let client = AppDelegate.shared.client
+            let payloads = Panel.rlePayloads(for: images)
+
+            let completion = { (didUpload: Bool) in
+                DispatchQueue.main.async {
+                    pendingDevices.remove(device)
+                    if didUpload {
+                        anyChanges = true
+                    }
+                    if pendingDevices.isEmpty {
+                        completion(anyChanges)
+                    }
+                }
             }
+            let clientPayloads = device.kind == .einkV1 ? payloads.map { $0.0 } : payloads.map { $0.1.pngData()! }
+            client.uploadImages(clientPayloads, forDevice: device, completion: completion)
         }
-
     }
 
     static func loadPrivacyImage() -> UIImage {
         return (try? Config().privacyImage()) ?? Panel.blankImage()
     }
 
-    static func renderToImage(data: [DataItemBase], shouldRedact: Bool, darkMode: Bool) -> UIImage {
-        let contentView = UIView(frame: CGRect(origin: .zero, size: Panel.size))
+    static func renderToImage(data: [DataItemBase], shouldRedact: Bool, darkMode: Bool, deviceType: Device.Kind) -> UIImage {
+        let contentView = UIView(frame: CGRect(origin: .zero, size: Device.sizeFor(kind: deviceType)))
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns

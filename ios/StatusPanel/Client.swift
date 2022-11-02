@@ -23,6 +23,8 @@ import UIKit
 
 import Sodium
 
+let IMAGE_FLAG_PNG: UInt16 = 1
+
 class Client {
 
     let baseUrl: URL
@@ -70,42 +72,10 @@ class Client {
         }
     }
 
-    func upload(image: Data, privacyImage: Data, completion: @escaping (Bool) -> Void) {
-        DispatchQueue.global().async {
-            print("Uploading new images")
-
-            var devices = Config().devices
-            if devices.count == 0 {
-                print("No keys configured, not uploading")
-                completion(false)
-                return
-            }
-
-            var nextUpload : (Bool) -> Void = { (b: Bool) -> Void in }
-            var anythingUploaded = false
-            nextUpload = { (lastUploadDidUpload: Bool) in
-                if lastUploadDidUpload {
-                    anythingUploaded = true
-                }
-                if devices.count == 0 {
-                    completion(anythingUploaded)
-                } else {
-                    let device = devices.remove(at: 0)
-                    if device.publicKey.isEmpty {
-                        // Empty keys are used for debugging the UI, and shouldn't cause an upload
-                        nextUpload(false)
-                        return
-                    }
-                    self.uploadImages([image, privacyImage], deviceid: device.id, publickey: device.publicKey, completion: nextUpload)
-                }
-            }
-            nextUpload(false)
-        }
-    }
-
-    private func uploadImages(_ images: [Data], deviceid: String, publickey: String, completion: @escaping (Bool) -> Void) {
+    func uploadImages(_ images: [Data], forDevice device: Device, completion: @escaping (Bool) -> Void) {
+        let flags = device.kind == .featherTft ? IMAGE_FLAG_PNG : 0
         let sodium = Sodium()
-        guard let key = sodium.utils.base642bin(publickey, variant: .ORIGINAL) else {
+        guard let key = sodium.utils.base642bin(device.publicKey, variant: .ORIGINAL) else {
             print("Failed to decode key from publickey userdefault!")
             completion(false)
             return
@@ -114,9 +84,9 @@ class Client {
         // We can't just hash the resulting encryptedData because libsodium ensures it is different every time even
         // for identical input data (which normally is a good thing!) so we have to construct a unencrypted blob just
         // for the purposes of calculating the hash.
-        let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(Self.makeMultipartUpload(parts: images)))!, variant: .ORIGINAL)!
-        if hash == Config().getLastUploadHash(for: deviceid) {
-            print("Data for \(deviceid) is the same as before, not uploading")
+        let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(Self.makeMultipartUpload(parts: images, flags: flags)))!, variant: .ORIGINAL)!
+        if hash == Config().getLastUploadHash(for: device.id) {
+            print("Data for \(device.id) is the same as before, not uploading")
             completion(false)
             return
         }
@@ -131,8 +101,8 @@ class Client {
             }
             encryptedParts.append(Data(encryptedDataBytes!))
         }
-        let encryptedData = Self.makeMultipartUpload(parts: encryptedParts)
-        let path = "https://api.statuspanel.io/api/v2/\(deviceid)"
+        let encryptedData = Self.makeMultipartUpload(parts: encryptedParts, flags: flags)
+        let path = "https://api.statuspanel.io/api/v2/\(device.id)"
         guard let url = URL(string: path) else {
             print("Unable to create URL")
             completion(false)
@@ -167,22 +137,29 @@ class Client {
             if let error = error {
                 print(error)
             } else {
-                Config().setLastUploadHash(for: deviceid, to: hash)
+                Config().setLastUploadHash(for: device.id, to: hash)
             }
             completion(true)
         })
         task.resume()
     }
 
-    private static func makeMultipartUpload(parts: [Data]) -> Data {
+    private static func makeMultipartUpload(parts: [Data], flags: UInt16) -> Data {
         let wakeTime = Int(Config.getLocalWakeTime() / 60)
         // Header format is as below. Any fields beyond length can be omitted
         // providing the length is set appropriately.
         // FF 00 - indicating header present
         // NN    - Length of header
-        // TT TT - wakeup time
+        // TT TT - wakeup time (oops this is big endian)
         // CC    - count of images (index immediately follows header)
-        var data = Data([0xFF, 0x00, 0x06, UInt8(wakeTime >> 8), UInt8(wakeTime & 0xFF), UInt8(parts.count)])
+        // GG GG - flags (little endian)
+        // II II II II - file offset of image 1 (little endian)
+        // index of image 2, etc...
+        //
+        // Defined flags:
+        // 1 IMAGE_FLAG_PNG indicates the images are all in PNG format rather than RLE.
+        var data = Data([0xFF, 0x00, 0x08, UInt8(wakeTime >> 8), UInt8(wakeTime & 0xFF), UInt8(parts.count),
+                         UInt8(flags & 0xFF), UInt8(flags >> 8)])
         // I'm sure there's a way to do this with UnsafeRawPointers or something, but eh
         let u32le = { (val: Int) -> Data in
             let u32 = UInt32(val)

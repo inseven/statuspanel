@@ -240,4 +240,25 @@ function display(getPixelFn)
     gpio_write(TFT_CS, 1)
 end
 
+function displayImg(img, w, h)
+    set_window(0, 0, w - 1, h - 1)
+    gpio_write(TFT_CS, 0)
+    gpio_write(TFT_DC, DC_DATA)
+    local i = 1
+    local n = #img
+    local sz = 256
+    while i <= n do
+        local buf = img:sub(i, i + sz - 1)
+        spidevice:transfer(buf)
+        i = i + sz
+    end
+    gpio_write(TFT_CS, 1)
+end
+
+function displayPngFile(filename)
+    local imgData, w, h = assert(lodepng.decode_file(filename, lodepng.RGB_565))
+    displayImg(imgData, w, h)
+end
+
+
 return _ENV -- Must be last

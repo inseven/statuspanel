@@ -5,7 +5,7 @@
 idf_v4 = node.LFS ~= nil
 
 function isFeatherTft()
-    return idf_v4 -- TODO something smarter
+    return node.chipid == nil -- Basically, testing for the esp32s2
 end
 
 function configurePins_eink()
@@ -85,7 +85,7 @@ function configurePins_tft()
     }, 1) -- 1 means enable DMA
     spidevice = spimaster:device({
         mode = 0,
-        freq = 20*1000*1000, -- ie 20 MHz
+        freq = 40*1000*1000, -- ie 40 MHz
     })
 end
 

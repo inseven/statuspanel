@@ -11,6 +11,7 @@ if isFeatherTft() then
     w = tft.TFT_HEIGHT -- rotated
     h = tft.TFT_WIDTH
     displayLines = tft.displayEinkFormatLines
+    displayPngFile = tft.displayPngFile
 else
     eink = require("eink")
     WHITE = eink.WHITE

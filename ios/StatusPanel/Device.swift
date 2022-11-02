@@ -20,7 +20,7 @@
 
 import Foundation
 
-struct Device: Identifiable, Equatable {
+struct Device: Identifiable, Equatable, Hashable {
 
     enum Kind: String {
         case einkV1 = "0"
@@ -31,4 +31,16 @@ struct Device: Identifiable, Equatable {
     var id: String
     var publicKey: String
 
+    static func sizeFor(kind: Kind) -> CGSize {
+        switch (kind) {
+        case .einkV1:
+            return CGSize(width: 640.0, height: 384.0)
+        case .featherTft:
+            return CGSize(width: 240.0, height: 135.0)
+        }
+    }
+
+    var size: CGSize {
+        return Self.sizeFor(kind: self.kind)
+    }
 }
