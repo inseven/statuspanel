@@ -290,7 +290,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         contentView.backgroundColor = darkMode ? UIColor.black : UIColor.white
         let foregroundColor = darkMode ? UIColor.white : UIColor.black
         let config = Config()
-        let twoCols = config.displayTwoColumns
+        let twoCols = contentView.frame.size.width < 500 ? false : config.displayTwoColumns
         let showIcons = config.showIcons
         let rect = contentView.frame
         let maxy = rect.height - 10 // Leave space for status line
@@ -299,7 +299,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         var y : CGFloat = 0
         let colWidth = twoCols ? (rect.width / 2 - x * 2) : rect.width - x
         let bodyFont = config.getFont(named: config.bodyFont)
-        let itemGap = CGFloat(min(10, bodyFont.textHeight / 2)) // ie 50% of the body text line height up to a max of 10px
+        let itemGap = deviceType == .featherTft ? 4 : CGFloat(min(10, bodyFont.textHeight / 2)) // ie 50% of the body text line height up to a max of 10px
         var colStart = y
         var col = 0
         var columnItemCount = 0 // Number of items assigned to the current column
@@ -310,6 +310,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             
             let flags = item.flags
             let font = flags.contains(.header) ? config.titleFont : config.bodyFont
+            let labelStyle = deviceType == .featherTft ? .subText : flags.labelStyle
             let fontDetails = Config().getFont(named: font)
             let w = flags.contains(.spansColumns) ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
@@ -322,7 +323,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             if !prefix.isEmpty {
                 let prefixLabel = ViewController.getLabel(frame: textFrame,
                                                           font: font,
-                                                          style: flags.labelStyle,
+                                                          style: labelStyle,
                                                           redactMode: redactMode)
                 prefixLabel.textColor = foregroundColor
                 prefixLabel.numberOfLines = numPrefixLines
@@ -341,7 +342,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             }
             let label = ViewController.getLabel(frame: textFrame,
                                                 font: font,
-                                                style: flags.labelStyle,
+                                                style: labelStyle,
                                                 redactMode: redactMode)
             label.numberOfLines = 1 // Temporarily while we're using it in checkFit
 
