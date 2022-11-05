@@ -2,7 +2,7 @@
 
 The firmware is responsible for managing the StatusPanel device itself. It handles WiFi setup, encryption keys, device sleep, and scheduling fetching updates, and drawing on the eInk display.
 
-The device runs Lua using [NodeMCU](https://nodemcu.readthedocs.io/en/release/). We the [`tomsci_dev_esp32`](https://github.com/tomsci/nodemcu-firmware/tree/tomsci_dev_esp32) branch of NodeMCU which provides some additional features that have not yet been accepted upstream.
+The device runs Lua using [NodeMCU](https://nodemcu.readthedocs.io/en/release/). We use the [`tomsci-dev-esp32-s2`](https://github.com/tomsci/nodemcu-firmware/tree/tomsci-dev-esp32-s2) branch of NodeMCU which provides some additional features that have not yet been accepted upstream, as well as being based on the latest IDF v4 which supports the esp32s2.
 
 ## Usage
 
