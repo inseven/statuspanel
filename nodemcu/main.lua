@@ -244,7 +244,7 @@ function main()
     local autoMode = AutoPin ~= nil and gpio.read(AutoPin) == 1
     local wokeByUsb, wokeByUnpair
     local reason, ext, pinslo, pinshi = node.bootreason()
-    if ext == 5 then -- Deep sleep wake
+    if ext == 12 then -- Deep sleep wake
         if not pinshi then pinslo, pinshi = 0, 0 end
         if isset64(pinslo, pinshi, UnpairPin) then
             wokeByUnpair = true
