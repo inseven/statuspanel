@@ -9,7 +9,6 @@ local DC_DATA = 1
 
 local gpio_write = gpio.write
 local ch, string_byte = string.char, string.byte
-local bor, band, lshift, rshift = bit.bor, bit.band, bit.lshift, bit.rshift
 
 --  color modes
 COLOR_MODE_65K = 0x50
@@ -108,7 +107,7 @@ function init()
 
     -- cmd(ST7789_MADCTL, 0)
     set_rotation(270)
-    cmd(ST7789_COLMOD, bor(COLOR_MODE_65K, COLOR_MODE_16BIT), 1)
+    cmd(ST7789_COLMOD, COLOR_MODE_65K | COLOR_MODE_16BIT, 1)
     cmd(0xB2, 0x5, 0x5, 0, 0x33, 0x33)
     cmd(0xB7, 0x23)
     cmd(0xBB, 0x22)
@@ -153,11 +152,11 @@ function set_rotation(val)
 end
 
 function colourToStr(colour)
-    return ch(band(rshift(colour, 8), 0xFF), band(colour, 0xFF))
+    return ch((colour >> 8) & 0xFF, colour & 0xFF)
 end
 
 function colour2ToStr(colour1, colour2)
-    return ch(band(rshift(colour1, 8), 0xFF), band(colour1, 0xFF), band(rshift(colour2, 8), 0xFF), band(colour2, 0xFF))
+    return ch((colour1 >> 8) & 0xFF, colour1 & 0xFF, (colour2 >> 8) & 0xFF, colour2 & 0xFF)
 end
 
 function fill_rect(x, y, w, h, colour)
@@ -190,8 +189,8 @@ function set_window(x0, y0, x1, y1)
     assert(x1 < width() and y1 < height(), "set_window out of bounds!")
     local colstart = rotations[orientation].colstart
     local rowstart = rotations[orientation].rowstart
-    cmd(ST7789_CASET, rshift(x0 + colstart, 8), band(x0 + colstart, 0xFF), rshift(x1 + colstart, 8), band(x1 + colstart, 0xFF))
-    cmd(ST7789_RASET, rshift(y0 + rowstart, 8), band(y0 + rowstart, 0xFF), rshift(y1 + rowstart, 8), band(y1 + rowstart, 0xFF))
+    cmd(ST7789_CASET, (x0 + colstart) >> 8, (x0 + colstart) & 0xFF, (x1 + colstart) >> 8, (x1 + colstart) & 0xFF)
+    cmd(ST7789_RASET, (y0 + rowstart) >> 8, (y0 + rowstart) & 0xFF, (y1 + rowstart) >> 8, (y1 + rowstart) & 0xFF)
     cmd(ST7789_RAMWR)
 end
 
@@ -213,8 +212,8 @@ function displayEinkFormatLines(lineFn)
         local buf = {}
         for i = 1, (w / 2) do
             local pixels = string_byte(data, i, i)
-            local a = einkToTftColour[rshift(pixels, 4)] or BLACK
-            local b = einkToTftColour[band(pixels, 0xF)] or BLACK
+            local a = einkToTftColour[pixels >> 4] or BLACK
+            local b = einkToTftColour[pixels & 0xF] or BLACK
             buf[i] = colour2ToStr(a, b)
         end
         local line = table.concat(buf)

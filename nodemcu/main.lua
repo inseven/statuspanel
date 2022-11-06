@@ -167,7 +167,7 @@ function isset64(numlo, numhi, bitnum)
         bitnum = bitnum - 32
         num = numhi
     end
-    return bit.isset(num, bitnum)
+    return (num & (1 << bitnum)) ~= 0
 end
 
 local provisioningSocket = nil
@@ -560,7 +560,7 @@ function decryptImage(index)
     local hdr = f:read(32)
     local fileLen = f:seek("end")
     local _, indexes, flags = network.parseImgHeader(hdr)
-    local isPng = bit.band(flags, network.IMAGE_FLAG_PNG) > 0
+    local isPng = (flags & network.IMAGE_FLAG_PNG) ~= 0
 
     local offset = indexes[index]
     f:seek("set", offset)
@@ -631,7 +631,7 @@ local kLookupTable = {
 function writeDecryptedRleToLineFormat(decrypted, filename)
     local outf = assert(file_open(filename, "w"))
     local rle = require("rle")
-    local rle_getByte, string_byte, string_char, band, rshift = rle.getByte, string.byte, string.char, bit.band, bit.rshift
+    local rle_getByte, string_byte, string_char = rle.getByte, string.byte, string.char
     local w, h = DefaultLineFormatFileWidth, DefaultLineFormatFileHeight
 
     local bufIdx = 0
@@ -647,7 +647,7 @@ function writeDecryptedRleToLineFormat(decrypted, filename)
         local line = {}
         for x = 1, w / 4 do
             local b = rle_getByte(ctx)
-            line[x] = string_char(kLookupTable[band(b, 0xF)], kLookupTable[rshift(b, 4)])
+            line[x] = string_char(kLookupTable[b & 0xF], kLookupTable[b >> 4])
         end
         outf:write(table.concat(line))
     end
