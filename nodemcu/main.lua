@@ -296,6 +296,9 @@ function go()
         costart(go)
         return
     end
+    if isFeatherTft() and file.exists("img_1.png") then
+        showFile(imageFilename(1))
+    end
     local ok = file.exists("root.pem") and startNetworking()
     if ok then
         fetch()
