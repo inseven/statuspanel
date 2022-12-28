@@ -8,6 +8,8 @@
 	<true/>
 	<key>com.apple.developer.networking.wifi-info</key>
 	<true/>
+	<key>com.apple.developer.weatherkit</key>
+	<true/>
 	<key>com.apple.external-accessory.wireless-configuration</key>
 	<true/>
 </dict>

@@ -22,6 +22,8 @@ import EventKit
 import SwiftUI
 import UIKit
 
+import Diligence
+
 protocol SettingsViewControllerDelegate: AnyObject {
 
     func didDismiss(settingsViewController: SettingsViewController) -> Void
@@ -513,9 +515,29 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             }
             return
         case AboutSection:
-            let view = UIHostingController(rootView: AboutView())
+
+            let aboutView = AboutView(copyright: "Copyright © 2018-2022\nJason Morley, Tom Sutcliffe") {
+                Action("InSeven Limited", url: URL(string: "https://inseven.co.uk")!)
+                Action("GitHub", url: URL(string: "https://github.com/inseven/statuspanel")!)
+            } acknowledgements: {
+                Acknowledgements("Developers") {
+                    Credit("Jason Morley", url: URL(string: "https://jbmorley.co.uk"))
+                    Credit("Tom Sutcliffe", url: URL(string: "https://github.com/tomsci"))
+                }
+                Acknowledgements("Thanks") {
+                    Credit("Lukas Fittl")
+                    Credit("Pavlos Vinieratos")
+                }
+            } licenses: {
+                License(name: "Binding+mappedToBool", author: "Joseph Duffy", filename: "Binding+mappedToBool.txt")
+                License(name: "Diligence", author: "InSeven Limited", filename: "Diligence.txt")
+                License(name: "StatusPanel", author: "Jason Morley, Tom Sutcliffe", filename: "StatusPanel.txt")
+                License(name: "Swift-Sodium", author: "Frank Denis", filename: "Swift-Sodium.txt")
+            }
+            let view = UIHostingController(rootView: aboutView)
             present(view, animated: true, completion: nil)
             tableView.deselectRow(at: indexPath, animated: true)
+
         default:
             break
         }
