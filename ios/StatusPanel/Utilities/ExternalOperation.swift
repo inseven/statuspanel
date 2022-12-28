@@ -41,7 +41,18 @@ enum ExternalOperation: Equatable {
         }
 
         switch operation {
-        case "r":
+        case "r", "r2":
+            // r = Register v1, URL has id, pk and optionally s (for ssid)
+            // And the hotspot connect expects <ssid>\0<password>
+            //
+            // r2 = Register v2, same args as v1 the only difference being
+            // v2 clients require root.pem to also be sent, as:
+            // <ssid>\0<password>\0<certs>\0
+            //
+            // v1 clients will accept v2-format data so there's no need to
+            // do anything differently. The reason for the distinction is
+            // only to prevent old StatusPanel.apps from talking to v2
+            // clients.
             guard let id = map["id"],
                   let publicKey = map["pk"] else {
                       return nil
@@ -59,6 +70,8 @@ enum ExternalOperation: Equatable {
 
     }
 
+    // NOTE(tomsci): This only appears to be needed to support dummydevices
+    // so doesn't really matter what register API version it returns
     var url: URL {
         switch self {
         case .registerDevice(let device):

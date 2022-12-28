@@ -270,7 +270,7 @@ function go()
         costart(go)
         return
     end
-    local ok = startNetworking()
+    local ok = file.exists("root.pem") and startNetworking()
     if ok then
         fetch()
     else
@@ -279,24 +279,15 @@ function go()
 end
 
 function resetDeviceState()
-    local files = {
-        "deviceid",
-        "pk",
-        "sk",
-        "last_modified",
-        "img_1",
-        "img_1_hash",
-        "img_2",
-        "img_2_hash",
-    }
-    for _, name in ipairs(files) do
+    -- Now that we don't rely on anything being pre-installed on the SPIFFS, we
+    -- can just nuke everything
+    for name in pairs(file.list()) do
         file.remove(name)
     end
-    setCurrentDisplayIdentifier(nil)
     network.setDeviceId(nil)
+    forgetWifiCredentials()
 end
 
-provisioningSocket = nil
 statusLedFlashTimer = nil
 
 function flashStatusLed(interval)
@@ -358,7 +349,6 @@ function forgetWifiCredentials()
     wifi.stop()
     wifi.mode(wifi.STATION)
     wifi.sta.config({ssid="", auto=false}, true)
-    node.restart()
 end
 
 local function connectToProvisionedCredsSucceeded(eventName, event)
@@ -393,29 +383,47 @@ function listen()
     local port = 9001
     printf("Listening on port %d", port)
     srv = assert(net.createServer())
-    srv:listen(port, function(sock)
-        -- print("listen callback", sock)
-        sock:on("receive", function(sock, payload)
-            local ssid, pass = payload:match("([^%z]+)%z([^%z]*)")
-            -- print("Got data", payload:gsub("%z", " "))
-            -- print("ssid,pass=", ssid, pass)
-            local function sendComplete(sock)
-                print("Closing socket", sock)
-                sock:close()
-            end
-
-            if ssid and pass then
-                provisioningSocket = sock
-                wifi.mode(wifi.STATIONAP, false)
-                wifi.sta.config({ ssid=ssid, pwd=pass, auto=false }, true)
-                wifi.sta.on("got_ip", connectToProvisionedCredsSucceeded)
-                wifi.sta.on("disconnected", connectToProvisionedCredsFailed)
-                -- we should now get a got_ip or disconnected callback (despite auto=false...)
-            else
+    local ssid, pass, rootPemFile
+    local function sendComplete(sock)
+        print("Closing socket", sock)
+        sock:close()
+    end
+    local function gotData(sock, payload)
+        -- Since we changed the QRCode URL format we don't need to try to handle
+        -- clients that don't supply certs
+        local certsPos = 1
+        if not ssid then
+            -- expect ssid\0pass\0certs...
+            ssid, pass, certsPos = payload:match("([^%z]+)%z([^%z]*)%z()")
+            if not ssid then
                 print("Payload not understood")
                 sock:send("NO", sendComplete)
+                return
             end
-        end)
+        end
+
+        if not rootPemFile then
+            rootPemFile = file.open("root.pem", "w")
+        end
+        local certData, terminator = payload:match("([^%z]*)(%z?)", certsPos)
+        print(string.format("Writing %d bytes to root.pem", #certData))
+        rootPemFile:write(certData)
+        if terminator == "\0" then
+            print("Completed read of root.pem")
+            rootPemFile:close()
+            provisioningSocket = sock
+            wifi.mode(wifi.STATIONAP, false)
+            wifi.sta.on("got_ip", connectToProvisionedCredsSucceeded)
+            wifi.sta.on("disconnected", connectToProvisionedCredsFailed)
+            wifi.sta.config({ ssid=ssid, pwd=pass, auto=false }, true)
+            -- we should now get a got_ip or disconnected callback (despite auto=false...)
+        else
+            -- We might get the rest of the data in a subsequent packet
+        end
+    end
+    srv:listen(port, function(sock)
+        -- print("listen callback", sock)
+        sock:on("receive", gotData)
         sock:on("disconnection", function(sock, err)
             print("Disconnect", err)
         end)

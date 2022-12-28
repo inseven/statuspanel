@@ -49,7 +49,7 @@ class NetworkProvisioner {
         syncQueue = DispatchQueue(label: "syncQueue")
     }
 
-    func configure(ssid: String, password: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+    func configure(ssid: String, password: String, certificates: String, completion: @escaping (Result<Bool, Error>) -> Void) {
 
         var completed = false
         let targetQueueCompletion: ((Result<Bool, Error>) -> Void)! = { result in
@@ -88,7 +88,7 @@ class NetworkProvisioner {
                 print("The connection in the process of being established.")
             case .ready:
                 print("The connection is established, and ready to send and receive data.")
-                let payload = "\(ssid)\0\(password)".data(using: .utf8)
+                let payload = "\(ssid)\0\(password)\0\(certificates)\0".data(using: .utf8)
                 connection.send(content: payload!, completion: .contentProcessed( { error in
                     if let error = error {
                         print("Failed to send message with error '\(error)'.")

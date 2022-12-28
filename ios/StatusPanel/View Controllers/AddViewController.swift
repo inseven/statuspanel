@@ -51,6 +51,9 @@ extension AddViewController: QRCodeViewConrollerDelegate {
 
         guard let operation = ExternalOperation(url: url) else {
             print("Failed to parse URL '\(url)'.")
+            dismiss(animated: true) {
+                AppDelegate.shared.qrcodeParseFailed(url)
+            }
             return
         }
 
