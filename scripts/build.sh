@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
+# Copyright (c) 2018-2023 Jason Morley, Tom Sutcliffe
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -35,13 +35,7 @@ APP_DIRECTORY="${ROOT_DIRECTORY}/ios"
 KEYCHAIN_PATH="${TEMPORARY_DIRECTORY}/temporary.keychain"
 ARCHIVE_PATH="${BUILD_DIRECTORY}/StatusPanel.xcarchive"
 ENV_PATH="${APP_DIRECTORY}/.env"
-
-CHANGES_DIRECTORY="${SCRIPTS_DIRECTORY}/changes"
-BUILD_TOOLS_DIRECTORY="${SCRIPTS_DIRECTORY}/build-tools"
 RELEASE_SCRIPT_PATH="${SCRIPTS_DIRECTORY}/release.sh"
-
-PATH=$PATH:$CHANGES_DIRECTORY
-PATH=$PATH:$BUILD_TOOLS_DIRECTORY
 
 source "${SCRIPTS_DIRECTORY}/environment.sh"
 

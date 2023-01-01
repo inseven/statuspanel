@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2023 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -237,8 +237,10 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
             }
             print("Connected to \(hotspotConfiguration.ssid)!")
             self.configuredHotspotCredentials = hotspotConfiguration
+            let rootCerts = String(data: NSDataAsset(name: "TlsCertificates")!.data, encoding: .utf8)!
             self.networkProvisioner.configure(ssid: networkDetails.ssid,
-                                              password: networkDetails.password) { result in
+                                              password: networkDetails.password,
+                                              certificates: rootCerts) { result in
                 switch result {
                 case .success:
                     print("Successfully configured network!")

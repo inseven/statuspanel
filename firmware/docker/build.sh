@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
+# Copyright (c) 2018-2023 Jason Morley, Tom Sutcliffe
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,8 @@ BUILD_DIRECTORY="$PROJECT_ROOT/firmware/build"
 SDKCONFIG_PATH="$PROJECT_ROOT/nodemcu/esp32/sdkconfig"
 LUAC_CROSS_PATH="$NODEMCU_FIRMWARE_ROOT/build/luac_cross/luac.cross"
 
+INIT_SCRIPT="\"(node.flashindex(\\\"init\\\") or (function() print(\\\"No LFS!\\\") end))()\""
+
 # Check that the project is in the expected location.
 if [ ! -d "$PROJECT_ROOT" ] ; then
     echo "Unable to find source at /opt/statuspanel. Did you forget to run the script inside Docker?"
@@ -48,7 +50,7 @@ mkdir -p "$BUILD_DIRECTORY"
 cp -u "$SDKCONFIG_PATH" "$NODEMCU_FIRMWARE_ROOT"
 cd "$NODEMCU_FIRMWARE_ROOT"
 python -m pip install --user -r sdk/esp32-esp-idf/requirements.txt
-make MORE_CFLAGS="-DLUA_NUMBER_INTEGRAL"
+make MORE_CFLAGS="-DLUA_NUMBER_INTEGRAL -DLUA_INIT_STRING='$INIT_SCRIPT'"
 cp "$NODEMCU_FIRMWARE_ROOT"/build/bootloader/bootloader.* "$BUILD_DIRECTORY"
 cp "$NODEMCU_FIRMWARE_ROOT"/build/NodeMCU.* "$BUILD_DIRECTORY"
 cp "$NODEMCU_FIRMWARE_ROOT"/build/partitions.bin "$BUILD_DIRECTORY"
@@ -56,10 +58,6 @@ cp "$NODEMCU_FIRMWARE_ROOT"/build/partitions.bin "$BUILD_DIRECTORY"
 # Build the LFS.
 cd "$LUA_ROOT"
 "$LUAC_CROSS_PATH" -o "$BUILD_DIRECTORY/lfs.img" -a 0x3F440000 -m 0x20000 *.lua
-
-# Copy the SPIFFS files.
-cp "$LUA_ROOT"/bootstrap "$BUILD_DIRECTORY"/init.lua
-cp "$LUA_ROOT"/root.pem "$BUILD_DIRECTORY"
 
 # Compress the build directory.
 cd "$BUILD_DIRECTORY"

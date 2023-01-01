@@ -11,3 +11,7 @@ xcuserdata
 /build
 /firmware/build
 /ios/StatusPanel/configuration.json
+
+# Site
+_site
+.jekyll-cache

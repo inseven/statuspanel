@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2023 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ enum DataSourceType: String, Codable {
     case nationalRail = "io.statuspanel.source.national-rail"
     case text = "io.statuspanel.source.text"
     case transportForLondon = "io.statuspanel.source.transport-for-london"
+    case weather = "io.statuspanel.source.weather"
     case zenQuotes = "io.statuspanel.source.zen-quotes"
 
 }

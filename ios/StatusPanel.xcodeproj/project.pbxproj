@@ -9,12 +9,12 @@
 /* Begin PBXBuildFile section */
 		D80380AB23E9B6D2002606C7 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Client.swift */; };
 		D807721F276EA29C007F405C /* IntroductionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D807721E276EA29C007F405C /* IntroductionView.swift */; };
-		D812523627093C4500C9D80A /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523527093C4500C9D80A /* AboutView.swift */; };
 		D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523B2709875600C9D80A /* FontPickerViewController.swift */; };
 		D8166551272773AC005BDA9E /* ImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8166550272773AC005BDA9E /* ImageTableViewCell.swift */; };
 		D816655327277407005BDA9E /* UIActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D816655227277407005BDA9E /* UIActivityIndicatorView.swift */; };
 		D816655527277632005BDA9E /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D816655427277632005BDA9E /* FileManager.swift */; };
 		D81665582727B7D1005BDA9E /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = D816655A2727B7D1005BDA9E /* Localizable.stringsdict */; };
+		D81CEBBA2906B31300E4B032 /* WeatherDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81CEBB92906B31300E4B032 /* WeatherDataSource.swift */; };
 		D81DA7C02712953D0052D32C /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81DA7BF2712953D0052D32C /* Localization.swift */; };
 		D81DA7C3271297460052D32C /* ZenQuotesDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81DA7C2271297460052D32C /* ZenQuotesDataSource.swift */; };
 		D81DE20326E19F9200504703 /* Clibsodium in Frameworks */ = {isa = PBXBuildFile; productRef = D81DE20226E19F9200504703 /* Clibsodium */; };
@@ -94,7 +94,6 @@
 		DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B6214518EF0084B710 /* DataSourceController.swift */; };
 		DBF15BC72471A61E004AA972 /* WifiProvisionerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */; };
 		DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */; };
-		DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF1C553223D519C0080CADE /* TFLSettingsController.swift */; };
 		DBFAEA84272446C5005B9E21 /* UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFAEA83272446C5005B9E21 /* UIFont.swift */; };
 		DBFCBB7C24B8B6AD00E3B3D3 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */; };
 /* End PBXBuildFile section */
@@ -125,13 +124,13 @@
 /* Begin PBXFileReference section */
 		D80380AA23E9B6D2002606C7 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		D807721E276EA29C007F405C /* IntroductionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionView.swift; sourceTree = "<group>"; };
-		D812523527093C4500C9D80A /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		D812523B2709875600C9D80A /* FontPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPickerViewController.swift; sourceTree = "<group>"; };
 		D8166550272773AC005BDA9E /* ImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTableViewCell.swift; sourceTree = "<group>"; };
 		D816655227277407005BDA9E /* UIActivityIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorView.swift; sourceTree = "<group>"; };
 		D816655427277632005BDA9E /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 		D81665592727B7D1005BDA9E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		D816655B2727B7D5005BDA9E /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "en-GB"; path = "en-GB.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		D81CEBB92906B31300E4B032 /* WeatherDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataSource.swift; sourceTree = "<group>"; };
 		D81DA7BF2712953D0052D32C /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		D81DA7C2271297460052D32C /* ZenQuotesDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZenQuotesDataSource.swift; sourceTree = "<group>"; };
 		D82366EB2718B2D500086538 /* DatePickerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerTableViewCell.swift; sourceTree = "<group>"; };
@@ -221,7 +220,6 @@
 		DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WifiProvisionerController.swift; sourceTree = "<group>"; };
 		DBF15BC82471CAB7004AA972 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalRailDataSource.swift; sourceTree = "<group>"; };
-		DBF1C553223D519C0080CADE /* TFLSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLSettingsController.swift; sourceTree = "<group>"; };
 		DBFAEA83272446C5005B9E21 /* UIFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIFont.swift; sourceTree = "<group>"; };
 		DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -252,7 +250,6 @@
 		D812523427093BAB00C9D80A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D812523527093C4500C9D80A /* AboutView.swift */,
 				D848A199270D16AD00681F62 /* AddDataSourceView.swift */,
 				D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */,
 				D8383EBB270FB8E20007EBB7 /* DayPicker.swift */,
@@ -260,6 +257,14 @@
 				D807721E276EA29C007F405C /* IntroductionView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		D81CEBB82906B2F100E4B032 /* Weather */ = {
+			isa = PBXGroup;
+			children = (
+				D81CEBB92906B31300E4B032 /* WeatherDataSource.swift */,
+			);
+			path = Weather;
 			sourceTree = "<group>";
 		};
 		D81DA7BE2712952D0052D32C /* Utilities */ = {
@@ -310,7 +315,6 @@
 			isa = PBXGroup;
 			children = (
 				DBCA98B02143F2B30084B710 /* TFLDataSource.swift */,
-				DBF1C553223D519C0080CADE /* TFLSettingsController.swift */,
 			);
 			path = TFL;
 			sourceTree = "<group>";
@@ -329,6 +333,7 @@
 				D842A3FE265BE878009C1156 /* National Rail */,
 				D848A196270C8D9A00681F62 /* Text */,
 				D842A3FF265BE8A2009C1156 /* TFL */,
+				D81CEBB82906B2F100E4B032 /* Weather */,
 				D81DA7C1271297260052D32C /* Zen Quotes */,
 			);
 			path = Data;
@@ -654,7 +659,6 @@
 				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
 				D8383EBC270FB8E20007EBB7 /* DayPicker.swift in Sources */,
 				DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */,
-				DBF1C554223D519C0080CADE /* TFLSettingsController.swift in Sources */,
 				D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
 				D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */,
@@ -676,6 +680,7 @@
 				D807721F276EA29C007F405C /* IntroductionView.swift in Sources */,
 				D8D252B327146ED800C68EF9 /* Value1TableViewCell.swift in Sources */,
 				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
+				D81CEBBA2906B31300E4B032 /* WeatherDataSource.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
 				D80380AB23E9B6D2002606C7 /* Client.swift in Sources */,
 				D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */,
@@ -690,7 +695,6 @@
 				DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */,
 				DBF15BC72471A61E004AA972 /* WifiProvisionerController.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
-				D812523627093C4500C9D80A /* AboutView.swift in Sources */,
 				D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */,
 				D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */,
 				DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */,

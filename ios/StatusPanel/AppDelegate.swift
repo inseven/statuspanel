@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2023 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -85,7 +85,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      options: [UIApplication.OpenURLOptionsKey : Any] = [:] ) -> Bool {
 
         guard let operation = ExternalOperation(url: url) else {
-            print("Failed to parse URL '\(url)'.")
+            qrcodeParseFailed(url)
             return false
         }
 
@@ -113,6 +113,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                       style: .default) { action in
             self.update()
         })
+        window?.rootViewController?.present(alert, animated: true)
+    }
+
+    func qrcodeParseFailed(_ url: URL) {
+        let alert = UIAlertController(title: "Device add failed",
+                                      message: "Unable to parse URL \(url)",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"),
+                                      style: .default))
         window?.rootViewController?.present(alert, animated: true)
     }
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
+# Copyright (c) 2018-2023 Jason Morley, Tom Sutcliffe
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -138,7 +138,6 @@ def command_erase(options):
 @cli.command("flash", help="flash device firmware", arguments=[
     DeviceArgument(),
     cli.Argument("path", help="firmware to use to flash the device (may be a directory or zip file)"),
-    cli.Argument("--skip-spiffs", action="store_true", default=False, help="skip SPIFFS update"),
 ])
 def command_flash(options):
     device = get_device(options)
@@ -171,18 +170,6 @@ def command_flash(options):
              "0x190000",
              os.path.join(path, "lfs.img")])
 
-        if not options.skip_spiffs:
-            logging.info("Updating SPIFFS...")
-            time.sleep(5)
-            run([sys.executable,
-                 NODEMCU_UPLOADER_PATH,
-                 "--port", device,
-                 "--baud", "115200",
-                 "--start_baud", "115200",
-                 "upload",
-                 "%s:init.lua" % (os.path.join(path, "init.lua"), ),
-                 "%s:root.pem" % (os.path.join(path, "root.pem", ))])
-
 
 @cli.command("console", help="connect to the device console using minicom", arguments=[
     DeviceArgument(),
@@ -211,27 +198,7 @@ def command_configure_wifi(options):
 ])
 def command_reset(options):
     device = get_device(options)
-    execute_lua(device, """
-
-function Set (list)
-  local set = {}
-  for _, l in ipairs(list) do set[l] = true end
-  return set
-end
-
--- remove the files, preserving init.lua and root.pem
-persist = Set { "init.lua", "root.pem" }
-for k,v in pairs(file.list()) do
-    if not persist[k] then
-        file.remove(k)
-    end
-end
-
--- reset the wifi
-wifi.stop()
-wifi.mode(wifi.STATION)
-wifi.sta.config({ssid="", auto=false}, true)
-""")
+    execute_lua(device, "resetDeviceState()")
 
 
 @cli.command("script", help="run a Lua script on the device", arguments=[

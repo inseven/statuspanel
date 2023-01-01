@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2023 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -128,6 +128,9 @@ extension AddViewController: QRCodeViewConrollerDelegate {
 
         guard let operation = ExternalOperation(url: url) else {
             print("Failed to parse URL '\(url)'.")
+            dismiss(animated: true) {
+                AppDelegate.shared.qrcodeParseFailed(url)
+            }
             return
         }
 

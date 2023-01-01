@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2023 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +47,12 @@ class DataSourceController {
             TFLDataSource(configuration: configuration).anyDataSource(),
             ZenQuotesDataSource().anyDataSource(),
         ]
+
+        if #available(iOS 16.0, *) {
+            sources.append(WeatherDataSource().anyDataSource())
+        }
+
+        sources = sources.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
 
         let config = Config()
 
