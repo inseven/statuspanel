@@ -1,0 +1,417 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D841391429A74772003DD0B7 /* NSImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D841391329A74772003DD0B7 /* NSImage.swift */; };
+		D841391629A74A15003DD0B7 /* RLEDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D841391529A74A15003DD0B7 /* RLEDecoder.swift */; };
+		D88B3D1D29A661F6000DEDE3 /* StatusPanel_SimulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88B3D1C29A661F6000DEDE3 /* StatusPanel_SimulatorApp.swift */; };
+		D88B3D1F29A661F6000DEDE3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88B3D1E29A661F6000DEDE3 /* ContentView.swift */; };
+		D88B3D2129A661F8000DEDE3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D88B3D2029A661F8000DEDE3 /* Assets.xcassets */; };
+		D88B3D2429A661F8000DEDE3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D88B3D2329A661F8000DEDE3 /* Preview Assets.xcassets */; };
+		D88B3D2D29A6623A000DEDE3 /* Clibsodium in Frameworks */ = {isa = PBXBuildFile; productRef = D88B3D2C29A6623A000DEDE3 /* Clibsodium */; };
+		D88B3D2F29A6623A000DEDE3 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = D88B3D2E29A6623A000DEDE3 /* Sodium */; };
+		D88F9FDC29A6960B004ABE73 /* DataStream in Frameworks */ = {isa = PBXBuildFile; productRef = D88F9FDB29A6960B004ABE73 /* DataStream */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		D841391329A74772003DD0B7 /* NSImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSImage.swift; sourceTree = "<group>"; };
+		D841391529A74A15003DD0B7 /* RLEDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLEDecoder.swift; sourceTree = "<group>"; };
+		D88B3D1929A661F6000DEDE3 /* StatusPanel Simulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StatusPanel Simulator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D88B3D1C29A661F6000DEDE3 /* StatusPanel_SimulatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusPanel_SimulatorApp.swift; sourceTree = "<group>"; };
+		D88B3D1E29A661F6000DEDE3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D88B3D2029A661F8000DEDE3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D88B3D2329A661F8000DEDE3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		D88B3D2529A661F8000DEDE3 /* StatusPanel_Simulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatusPanel_Simulator.entitlements; sourceTree = "<group>"; };
+		D88B3D3929A694AE000DEDE3 /* DataStream */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DataStream; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D88B3D1629A661F6000DEDE3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D88F9FDC29A6960B004ABE73 /* DataStream in Frameworks */,
+				D88B3D2D29A6623A000DEDE3 /* Clibsodium in Frameworks */,
+				D88B3D2F29A6623A000DEDE3 /* Sodium in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D841391229A74768003DD0B7 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D841391329A74772003DD0B7 /* NSImage.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		D88B3D1029A661F6000DEDE3 = {
+			isa = PBXGroup;
+			children = (
+				D88B3D3829A694AE000DEDE3 /* Packages */,
+				D88B3D1B29A661F6000DEDE3 /* StatusPanel Simulator */,
+				D88B3D1A29A661F6000DEDE3 /* Products */,
+				D88F9FDA29A6960B004ABE73 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		D88B3D1A29A661F6000DEDE3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D88B3D1929A661F6000DEDE3 /* StatusPanel Simulator.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D88B3D1B29A661F6000DEDE3 /* StatusPanel Simulator */ = {
+			isa = PBXGroup;
+			children = (
+				D841391229A74768003DD0B7 /* Extensions */,
+				D88B3D1C29A661F6000DEDE3 /* StatusPanel_SimulatorApp.swift */,
+				D88B3D1E29A661F6000DEDE3 /* ContentView.swift */,
+				D88B3D2029A661F8000DEDE3 /* Assets.xcassets */,
+				D88B3D2529A661F8000DEDE3 /* StatusPanel_Simulator.entitlements */,
+				D88B3D2229A661F8000DEDE3 /* Preview Content */,
+				D841391529A74A15003DD0B7 /* RLEDecoder.swift */,
+			);
+			path = "StatusPanel Simulator";
+			sourceTree = "<group>";
+		};
+		D88B3D2229A661F8000DEDE3 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				D88B3D2329A661F8000DEDE3 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		D88B3D3829A694AE000DEDE3 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				D88B3D3929A694AE000DEDE3 /* DataStream */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		D88F9FDA29A6960B004ABE73 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D88B3D1829A661F6000DEDE3 /* StatusPanel Simulator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D88B3D2829A661F8000DEDE3 /* Build configuration list for PBXNativeTarget "StatusPanel Simulator" */;
+			buildPhases = (
+				D88B3D1529A661F6000DEDE3 /* Sources */,
+				D88B3D1629A661F6000DEDE3 /* Frameworks */,
+				D88B3D1729A661F6000DEDE3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "StatusPanel Simulator";
+			packageProductDependencies = (
+				D88B3D2C29A6623A000DEDE3 /* Clibsodium */,
+				D88B3D2E29A6623A000DEDE3 /* Sodium */,
+				D88F9FDB29A6960B004ABE73 /* DataStream */,
+			);
+			productName = "StatusPanel Simulator";
+			productReference = D88B3D1929A661F6000DEDE3 /* StatusPanel Simulator.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D88B3D1129A661F6000DEDE3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					D88B3D1829A661F6000DEDE3 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+				};
+			};
+			buildConfigurationList = D88B3D1429A661F6000DEDE3 /* Build configuration list for PBXProject "StatusPanel Simulator" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D88B3D1029A661F6000DEDE3;
+			packageReferences = (
+				D88B3D2B29A6623A000DEDE3 /* XCRemoteSwiftPackageReference "swift-sodium" */,
+			);
+			productRefGroup = D88B3D1A29A661F6000DEDE3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D88B3D1829A661F6000DEDE3 /* StatusPanel Simulator */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D88B3D1729A661F6000DEDE3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D88B3D2429A661F8000DEDE3 /* Preview Assets.xcassets in Resources */,
+				D88B3D2129A661F8000DEDE3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D88B3D1529A661F6000DEDE3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D841391629A74A15003DD0B7 /* RLEDecoder.swift in Sources */,
+				D841391429A74772003DD0B7 /* NSImage.swift in Sources */,
+				D88B3D1F29A661F6000DEDE3 /* ContentView.swift in Sources */,
+				D88B3D1D29A661F6000DEDE3 /* StatusPanel_SimulatorApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D88B3D2629A661F8000DEDE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D88B3D2729A661F8000DEDE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		D88B3D2929A661F8000DEDE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "StatusPanel Simulator/StatusPanel_Simulator.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"StatusPanel Simulator/Preview Content\"";
+				DEVELOPMENT_TEAM = S4WXAUZQEV;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "uk.co.inseven.StatusPanel-Simulator";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D88B3D2A29A661F8000DEDE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "StatusPanel Simulator/StatusPanel_Simulator.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"StatusPanel Simulator/Preview Content\"";
+				DEVELOPMENT_TEAM = S4WXAUZQEV;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "uk.co.inseven.StatusPanel-Simulator";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D88B3D1429A661F6000DEDE3 /* Build configuration list for PBXProject "StatusPanel Simulator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D88B3D2629A661F8000DEDE3 /* Debug */,
+				D88B3D2729A661F8000DEDE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D88B3D2829A661F8000DEDE3 /* Build configuration list for PBXNativeTarget "StatusPanel Simulator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D88B3D2929A661F8000DEDE3 /* Debug */,
+				D88B3D2A29A661F8000DEDE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D88B3D2B29A6623A000DEDE3 /* XCRemoteSwiftPackageReference "swift-sodium" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jedisct1/swift-sodium.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D88B3D2C29A6623A000DEDE3 /* Clibsodium */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D88B3D2B29A6623A000DEDE3 /* XCRemoteSwiftPackageReference "swift-sodium" */;
+			productName = Clibsodium;
+		};
+		D88B3D2E29A6623A000DEDE3 /* Sodium */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D88B3D2B29A6623A000DEDE3 /* XCRemoteSwiftPackageReference "swift-sodium" */;
+			productName = Sodium;
+		};
+		D88F9FDB29A6960B004ABE73 /* DataStream */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DataStream;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = D88B3D1129A661F6000DEDE3 /* Project object */;
+}
