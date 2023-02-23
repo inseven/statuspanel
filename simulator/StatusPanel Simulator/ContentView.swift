@@ -20,15 +20,6 @@
 
 import SwiftUI
 
-struct Device {
-
-    let width: Int
-    let height: Int
-
-    static let v1 = Device(width: 640, height: 384)
-
-}
-
 struct ContentView: View {
 
     @EnvironmentObject var applicationModel: ApplicationModel
