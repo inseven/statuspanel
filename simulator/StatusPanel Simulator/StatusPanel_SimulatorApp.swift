@@ -186,6 +186,11 @@ class ApplicationModel: ObservableObject {
                         data.append(0)
                         data.append(0)
                         data.append(255)
+                    } else if value == 1 {
+                        data.append(255)
+                        data.append(255)
+                        data.append(0)
+                        data.append(255)
                     } else {
                         data.append(255)
                         data.append(255)

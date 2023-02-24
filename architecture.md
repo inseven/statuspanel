@@ -10,6 +10,8 @@ There are three primary components in the StatusPanel architecture:
 
 Unlike many centralised systems, the service has no access to any user data–it simply serves as an asynchronous message exchange mechanism for delivering end-to-end encrypted updates from client to device. Key exchange occurs when initially pairing a device with a client.
 
+## Device Registration
+
 ## Update Format
 
 _Data is encoded in big endian / network endian unless otherwise stated._
@@ -36,15 +38,14 @@ The index is only included if `imageCount` is present in the header. It contains
 
 **Images**
 
-_If `imageCount` is not present in the header, it should be assumed that a single image is present in the update, located immediately after the header (beginning at offset 6) and the length of the remaining update data (update length - 6)._
+Images are stored back-to-back, each starting at the offset defined in the index (or at offset 6 if `imageCount` is not present in the header).
 
-| Field                  | Type         | Available        |
-| ---------------------- | ------------ | ---------------- |
-| `offset[0]`            | Image Format | headerLength > 5 |
-| ...                    | ...          | ...              |
-| `offset[imageCount-1]` | Image Format |                  |
+Images are transmitted in a 2BPP format, encrypted using a [libsodium sealed box](https://doc.libsodium.org/public-key_cryptography/sealed_boxes)  using the device's public key that is provided to **client** at device registration time.
 
+Image values are as follows:
 
+- `0` – black
+- `1` – white
 
 ## Possible Attack Vectors
 
