@@ -90,17 +90,17 @@
 			isa = PBXGroup;
 			children = (
 				D88B3D2529A661F8000DEDE3 /* StatusPanel_Simulator.entitlements */,
+				D81A015C29A96130005EA47A /* ApplicationModel.swift */,
 				D88B3D1E29A661F6000DEDE3 /* ContentView.swift */,
 				D81A015029A75DA6005EA47A /* Device.swift */,
 				D81A015629A95E03005EA47A /* DeviceIdentifier.swift */,
 				D841391529A74A15003DD0B7 /* RLEDecoder.swift */,
 				D81A015829A95E3C005EA47A /* Service.swift */,
-				D81A015429A91FFB005EA47A /* SimulatorError.swift */,
 				D88B3D1C29A661F6000DEDE3 /* SimulatorApp.swift */,
+				D81A015429A91FFB005EA47A /* SimulatorError.swift */,
 				D88B3D2029A661F8000DEDE3 /* Assets.xcassets */,
 				D841391229A74768003DD0B7 /* Extensions */,
 				D88B3D2229A661F8000DEDE3 /* Preview Content */,
-				D81A015C29A96130005EA47A /* ApplicationModel.swift */,
 			);
 			path = "StatusPanel Simulator";
 			sourceTree = "<group>";
