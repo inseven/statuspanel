@@ -94,9 +94,11 @@ class ApplicationModel: ObservableObject {
     }
 
     func refresh() {
-        // TODO: Thread safety!
         Task {
             do {
+                let identifier = await MainActor.run {
+                    return self.identifier
+                }
                 guard let identifier = identifier else {
                     return
                 }
