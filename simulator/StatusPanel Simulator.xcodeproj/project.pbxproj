@@ -10,6 +10,8 @@
 		D81A015129A75DA6005EA47A /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81A015029A75DA6005EA47A /* Device.swift */; };
 		D81A015329A91FD6005EA47A /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81A015229A91FD6005EA47A /* Data.swift */; };
 		D81A015529A91FFB005EA47A /* SimulatorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81A015429A91FFB005EA47A /* SimulatorError.swift */; };
+		D81A015729A95E03005EA47A /* DeviceIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81A015629A95E03005EA47A /* DeviceIdentifier.swift */; };
+		D81A015929A95E3C005EA47A /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81A015829A95E3C005EA47A /* Service.swift */; };
 		D841391429A74772003DD0B7 /* NSImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D841391329A74772003DD0B7 /* NSImage.swift */; };
 		D841391629A74A15003DD0B7 /* RLEDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D841391529A74A15003DD0B7 /* RLEDecoder.swift */; };
 		D88B3D1D29A661F6000DEDE3 /* StatusPanel_SimulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88B3D1C29A661F6000DEDE3 /* StatusPanel_SimulatorApp.swift */; };
@@ -25,6 +27,8 @@
 		D81A015029A75DA6005EA47A /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		D81A015229A91FD6005EA47A /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		D81A015429A91FFB005EA47A /* SimulatorError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorError.swift; sourceTree = "<group>"; };
+		D81A015629A95E03005EA47A /* DeviceIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentifier.swift; sourceTree = "<group>"; };
+		D81A015829A95E3C005EA47A /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		D841391329A74772003DD0B7 /* NSImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSImage.swift; sourceTree = "<group>"; };
 		D841391529A74A15003DD0B7 /* RLEDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLEDecoder.swift; sourceTree = "<group>"; };
 		D88B3D1929A661F6000DEDE3 /* StatusPanel Simulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StatusPanel Simulator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +93,8 @@
 				D88B3D2229A661F8000DEDE3 /* Preview Content */,
 				D81A015229A91FD6005EA47A /* Data.swift */,
 				D81A015429A91FFB005EA47A /* SimulatorError.swift */,
+				D81A015629A95E03005EA47A /* DeviceIdentifier.swift */,
+				D81A015829A95E3C005EA47A /* Service.swift */,
 			);
 			path = "StatusPanel Simulator";
 			sourceTree = "<group>";
@@ -198,6 +204,8 @@
 				D841391629A74A15003DD0B7 /* RLEDecoder.swift in Sources */,
 				D841391429A74772003DD0B7 /* NSImage.swift in Sources */,
 				D81A015329A91FD6005EA47A /* Data.swift in Sources */,
+				D81A015729A95E03005EA47A /* DeviceIdentifier.swift in Sources */,
+				D81A015929A95E3C005EA47A /* Service.swift in Sources */,
 				D88B3D1F29A661F6000DEDE3 /* ContentView.swift in Sources */,
 				D88B3D1D29A661F6000DEDE3 /* StatusPanel_SimulatorApp.swift in Sources */,
 				D81A015129A75DA6005EA47A /* Device.swift in Sources */,

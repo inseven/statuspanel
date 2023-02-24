@@ -33,26 +33,12 @@ extension DataReadStream {
 
 }
 
-struct Update {
-
-    let wakeupTime: Int
-    let images: [NSImage]
-
-}
-
-struct DeviceIdentifier {
-
-    let id: String
-    let keyPair: Box.KeyPair
-
-}
-
 // TODO: MainActor?
 class ApplicationModel: ObservableObject {
 
     @Published var identifier: DeviceIdentifier? = nil
     @Published var code: NSImage? = nil
-    @Published var lastUpdate: Update? = nil
+    @Published var lastUpdate: Service.Update? = nil
     @Published var index: Int = 0
 
     private var cancellables: Set<AnyCancellable> = []
@@ -114,7 +100,7 @@ class ApplicationModel: ObservableObject {
                 guard let identifier = identifier else {
                     return
                 }
-                let update = try await Self.update(identifier: identifier)
+                let update = try await Service.update(identifier: identifier)
                 await MainActor.run {
                     self.lastUpdate = update
                 }
@@ -125,78 +111,9 @@ class ApplicationModel: ObservableObject {
         }
     }
 
-    static func update(identifier: DeviceIdentifier) async throws -> Update {
-
-        let url = URL(string: "https://api.statuspanel.io/api/v2")!
-            .appendingPathComponent(identifier.id)
-
-        let response = try await URLSession.shared.data(from: url)
-        let data = response.0
-
-        let stream = DataReadStream(data: data)
-
-        // Check for a header marker.
-        let marker: UInt16 = try stream.read()
-        guard marker == 0xFF00 else {
-            throw SimulatorError.invalidHeader
-        }
-
-        // Read the header.
-        let headerLength: UInt8 = try stream.read()
-        let wakeupTime: UInt16 = try stream.read()
-        let imageCount: UInt8?
-        if headerLength >= 6 {
-            imageCount = try stream.read()
-        } else {
-            imageCount = nil
-        }
-
-        // If an image count has been defined, then an index immediately follows the
-        // header giving the index of each image.
-        var offsets: [UInt32] = []
-        if let imageCount = imageCount {
-            for _ in 0..<imageCount {
-                offsets.append(try stream.readLE())
-            }
-        } else {
-            offsets = [0]
-        }
-
-        // Convert the offsets to ranges by walking backwards through them and tracking
-        // the previous offset as a length.
-        var ranges: [(UInt32, UInt32)] = []
-        var end: UInt32 = UInt32(data.count)
-        for offset in offsets.reversed() {
-            ranges.insert((offset, end), at: 0)
-            end = offset
-        }
-
-        // Read the images from the stream, decrypt, decode RLE, expand 2BPP representation and convert to images.
-        var images: [NSImage] = []
-        for range in ranges {
-            let length = range.1 - range.0
-            let imageData = try stream.read(count: Int(length))
-            images.append(try imageData
-                .openSodiumSecretBox(keyPair: identifier.keyPair)
-                .decodeRLE()
-                .expand2BPPValues()
-                .rgbaImage())
-        }
-
-        return Update(wakeupTime: Int(wakeupTime), images: images)
-    }
-
     @MainActor func action() {
         guard let lastUpdate else { return }
         index = (index + 1) % lastUpdate.images.count
-    }
-
-}
-
-extension Image {
-
-    init(cgImage: CGImage) {
-        self.init(nsImage: NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height)))
     }
 
 }
