@@ -24,15 +24,6 @@ import SwiftUI
 import DataStream
 import Sodium
 
-extension DataReadStream {
-
-    func readLE() throws -> UInt32 {
-        let value = try readBytes() as UInt32
-        return CFSwapInt32LittleToHost(value)
-    }
-
-}
-
 // TODO: MainActor?
 class ApplicationModel: ObservableObject {
 
@@ -121,7 +112,7 @@ class ApplicationModel: ObservableObject {
 }
 
 @main
-struct StatusPanel_SimulatorApp: App {
+struct SimulatorApp: App {
 
     var applicationModel = ApplicationModel()
 
