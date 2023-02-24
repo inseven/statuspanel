@@ -40,14 +40,19 @@ struct Update {
 
 }
 
+struct DeviceIdentifier {
+
+    let id: String
+    let keyPair: Box.KeyPair
+
+}
+
 // TODO: MainActor?
 class ApplicationModel: ObservableObject {
 
-    // TODO: Tuple of device ID and keypair?
-    let id: String = "aaaaaaaa"
-    @Published var keyPair: Box.KeyPair
+    @Published var identifier: DeviceIdentifier? = nil
     @Published var code: NSImage? = nil
-    @Published var update: Update? = nil
+    @Published var lastUpdate: Update? = nil
     @Published var index: Int = 0
 
     private var cancellables: Set<AnyCancellable> = []
@@ -56,26 +61,31 @@ class ApplicationModel: ObservableObject {
         let userDefaults = UserDefaults.standard
         if let publicKey = userDefaults.object(forKey: "publicKey") as? Data,
            let secretKey = userDefaults.object(forKey: "secretKey") as? Data {
-            keyPair = Box.KeyPair(publicKey: Array(publicKey), secretKey: Array(secretKey))
+            identifier = DeviceIdentifier(id: "aaaaaaaa",
+                                          keyPair: Box.KeyPair(publicKey: Array(publicKey),
+                                                               secretKey: Array(secretKey)))
         } else {
             let sodium = Sodium()
-            keyPair = sodium.box.keyPair()!
+            let keyPair = sodium.box.keyPair()!
             userDefaults.set(Data(keyPair.publicKey), forKey: "publicKey")
             userDefaults.set(Data(keyPair.secretKey), forKey: "secretKey")
+            identifier = DeviceIdentifier(id: "aaaaaaaa", keyPair: keyPair)
         }
 
         start()
+        refresh()
     }
 
     func start() {
 
         // TODO: Update the QR code on a different queue
         // TODO: Handle failures more cleanly.
-        $keyPair
+        $identifier
+            .compactMap { $0 }
             .receive(on: DispatchQueue.main)
-            .map { keyPair in
+            .map { identifier in
                 let sodium = Sodium()
-                let publicKeyBase64 = sodium.utils.bin2base64(keyPair.publicKey, variant: .ORIGINAL)!
+                let publicKeyBase64 = sodium.utils.bin2base64(identifier.keyPair.publicKey, variant: .ORIGINAL)!
 
                 var components = URLComponents()
                 components.scheme = "statuspanel"
@@ -87,7 +97,7 @@ class ApplicationModel: ObservableObject {
 
                 return components.url!
             }
-            .map { url in
+            .map { (url: URL) in
                 return NSImage.generateQRCode(from: url.absoluteString)!
             }
             .sink { [weak self] image in
@@ -97,9 +107,18 @@ class ApplicationModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func update() async throws {
+    func refresh() {
+        Task {
+            // TODO: Handle the error
+            try? await updateAsync()
+        }
+    }
+
+    func updateAsync() async throws {
+        guard let identifier else { return }
+
         let url = URL(string: "https://api.statuspanel.io/api/v2")!
-            .appendingPathComponent(id)
+            .appendingPathComponent(identifier.id)
 
         let response = try await URLSession.shared.data(from: url)
         let data = response.0
@@ -155,7 +174,7 @@ class ApplicationModel: ObservableObject {
             let length = range.1 - range.0
             let imageData = try stream.read(count: Int(length))
             images.append(try imageData
-                .openSodiumSecretBox(keyPair: keyPair)
+                .openSodiumSecretBox(keyPair: identifier.keyPair)
                 .decodeRLE()
                 .expand2BPPValues()
                 .rgbaImage())
@@ -164,11 +183,14 @@ class ApplicationModel: ObservableObject {
         let update = Update(wakeupTime: Int(wakeupTime), images: images)
 
         DispatchQueue.main.sync {
-            self.update = update
-//            self.contents = images[0]
-//            self.security = images[1]
+            self.lastUpdate = update
         }
 
+    }
+
+    @MainActor func action() {
+        guard let lastUpdate else { return }
+        index = (index + 1) % lastUpdate.images.count
     }
 
 }

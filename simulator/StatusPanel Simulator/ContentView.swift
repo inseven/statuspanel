@@ -31,7 +31,7 @@ struct ContentView: View {
             if let image = applicationModel.code {
                 Image(nsImage: image)
             }
-            if let image = applicationModel.update?.images[applicationModel.index] {
+            if let image = applicationModel.lastUpdate?.images[applicationModel.index] {
                 Image(nsImage: image)
             }
         }
@@ -41,19 +41,14 @@ struct ContentView: View {
         .toolbar(id: "main") {
             ToolbarItem(id: "action") {
                 Button {
-                    // TODO: Move into ApplicationModel
-                    guard let update = applicationModel.update else { return }
-                    applicationModel.index = (applicationModel.index + 1) % update.images.count
+                    applicationModel.action()
                 } label: {
                     Label("Action", systemImage: "button.programmable")
                 }
             }
             ToolbarItem(id: "refresh") {
                 Button {
-                    // TODO: This task should be hidden in the model
-                    Task {
-                        try? await applicationModel.update()
-                    }
+                    applicationModel.refresh()
                 } label: {
                     Label("Refresh", systemImage: "arrow.clockwise")
                 }
