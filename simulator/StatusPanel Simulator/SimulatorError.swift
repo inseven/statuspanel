@@ -22,6 +22,7 @@ import Foundation
 
 enum SimulatorError: Error {
 
+    case invalidHeader
     case decryptionFailure
 
 }

@@ -108,14 +108,24 @@ class ApplicationModel: ObservableObject {
     }
 
     func refresh() {
+        // TODO: Thread safety!
         Task {
-            // TODO: Handle the error
-            try? await updateAsync()
+            do {
+                guard let identifier = identifier else {
+                    return
+                }
+                let update = try await Self.update(identifier: identifier)
+                await MainActor.run {
+                    self.lastUpdate = update
+                }
+            } catch {
+                // TODO: Handle the error
+                print("Failed to update with error \(error)")
+            }
         }
     }
 
-    func updateAsync() async throws {
-        guard let identifier else { return }
+    static func update(identifier: DeviceIdentifier) async throws -> Update {
 
         let url = URL(string: "https://api.statuspanel.io/api/v2")!
             .appendingPathComponent(identifier.id)
@@ -128,8 +138,7 @@ class ApplicationModel: ObservableObject {
         // Check for a header marker.
         let marker: UInt16 = try stream.read()
         guard marker == 0xFF00 else {
-            print("Invalid header")
-            return
+            throw SimulatorError.invalidHeader
         }
 
         // Read the header.
@@ -162,12 +171,6 @@ class ApplicationModel: ObservableObject {
             end = offset
         }
 
-
-        print(headerLength)
-        print(wakeupTime)
-        print(imageCount ?? 1)
-        print(ranges)
-
         // Read the images from the stream, decrypt, decode RLE, expand 2BPP representation and convert to images.
         var images: [NSImage] = []
         for range in ranges {
@@ -180,12 +183,7 @@ class ApplicationModel: ObservableObject {
                 .rgbaImage())
         }
 
-        let update = Update(wakeupTime: Int(wakeupTime), images: images)
-
-        DispatchQueue.main.sync {
-            self.lastUpdate = update
-        }
-
+        return Update(wakeupTime: Int(wakeupTime), images: images)
     }
 
     @MainActor func action() {
