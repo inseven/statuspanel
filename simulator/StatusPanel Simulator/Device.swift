@@ -25,6 +25,6 @@ struct Device {
     let width: Int
     let height: Int
 
-    static let v1 = Device(width: 640, height: 384)
+    static let v1 = Device(width: 640, height: 380)
 
 }

@@ -24,6 +24,22 @@ import SwiftUI
 import DataStream
 import Sodium
 
+extension DataReadStream {
+
+    func readLE() throws -> UInt32 {
+        let value = try readBytes() as UInt32
+        return CFSwapInt32LittleToHost(value)
+    }
+
+}
+
+struct Update {
+
+    let wakeupTime: Int
+    let images: [NSImage]
+
+}
+
 // TODO: MainActor?
 class ApplicationModel: ObservableObject {
 
@@ -31,9 +47,8 @@ class ApplicationModel: ObservableObject {
     let id: String = "aaaaaaaa"
     @Published var keyPair: Box.KeyPair
     @Published var code: NSImage? = nil
-
-    @Published var contents: NSImage? = nil
-    @Published var security: NSImage? = nil
+    @Published var update: Update? = nil
+    @Published var index: Int = 0
 
     private var cancellables: Set<AnyCancellable> = []
 
@@ -89,7 +104,6 @@ class ApplicationModel: ObservableObject {
         let response = try await URLSession.shared.data(from: url)
         let data = response.0
 
-        let sodium = Sodium()
         let stream = DataReadStream(data: data)
 
         // Check for a header marker.
@@ -114,7 +128,7 @@ class ApplicationModel: ObservableObject {
         var offsets: [UInt32] = []
         if let imageCount = imageCount {
             for _ in 0..<imageCount {
-                offsets.append(try stream.readle())
+                offsets.append(try stream.readLE())
             }
         } else {
             offsets = [0]
@@ -129,103 +143,40 @@ class ApplicationModel: ObservableObject {
             end = offset
         }
 
+
         print(headerLength)
         print(wakeupTime)
         print(imageCount ?? 1)
         print(ranges)
 
-        // Read the images from the stream and decrypt them.
-        var images: [Bytes] = []
+        // Read the images from the stream, decrypt, decode RLE, expand 2BPP representation and convert to images.
+        var images: [NSImage] = []
         for range in ranges {
-            print(range)
-            print(stream.offset)
             let length = range.1 - range.0
-            print(length)
-
-            // TODO: Make this an extension!
-            // TODO: Convert back to data here.
-            // TODO: Can I just init Array(Data) and Data(Array)
             let imageData = try stream.read(count: Int(length))
-            guard let image = imageData.withUnsafeBytes({ pointer in
-                let bytes = Bytes(pointer)
-                return sodium.box.open(anonymousCipherText: bytes,
-                                       recipientPublicKey: keyPair.publicKey,
-                                       recipientSecretKey: keyPair.secretKey)
-            }) else {
-                print("FAILED TO DECODE IMAGE")
-                return
-            }
-
-            images.append(image)
+            images.append(try imageData
+                .openSodiumSecretBox(keyPair: keyPair)
+                .decodeRLE()
+                .expand2BPPValues()
+                .rgbaImage())
         }
 
-        // Iterate over the images coverting them from RLE.
-
-        var frames: [NSImage] = []
-
-        for image in images {
-            let decoder = RLEDecoder(data: Data(image))
-            let twoBitPerPixelData = try decoder.data()
-
-            let panelStream = DataReadStream(data: twoBitPerPixelData)
-            var values: [UInt8] = []
-            while panelStream.hasBytesAvailable {
-                let value: UInt8 = try panelStream.read()
-                values.append(UInt8((value >> 0) & 3))
-                values.append(UInt8((value >> 2) & 3))
-                values.append(UInt8((value >> 4) & 3))
-                values.append(UInt8((value >> 6) & 3))
-            }
-
-            var data = Data()
-            for i in 0..<(Device.v1.width * Device.v1.height) {
-                if i < values.count {
-                    let value = values[i]
-                    if value == 0 {
-                        data.append(0)
-                        data.append(0)
-                        data.append(0)
-                        data.append(255)
-                    } else if value == 1 {
-                        data.append(255)
-                        data.append(255)
-                        data.append(0)
-                        data.append(255)
-                    } else {
-                        data.append(255)
-                        data.append(255)
-                        data.append(255)
-                        data.append(255)
-                    }
-                } else {
-                    data.append(255)
-                    data.append(0)
-                    data.append(255)
-                    data.append(255)
-                }
-            }
-
-            let dataProvider = CGDataProvider(data: data as NSData)!
-            let cgImage = CGImage(width: Device.v1.width,
-                                  height: Device.v1.height,
-                                  bitsPerComponent: 8,
-                                  bitsPerPixel: 32,
-                                  bytesPerRow: Device.v1.width * 4,
-                                  space: CGColorSpaceCreateDeviceRGB(),
-                                  bitmapInfo: .byteOrderDefault,
-                                  provider: dataProvider,
-                                  decode: nil,
-                                  shouldInterpolate: true,
-                                  intent: .defaultIntent)!
-
-            frames.append(NSImage(cgImage: cgImage, size: NSSize(width: Device.v1.width, height: Device.v1.height)))
-        }
+        let update = Update(wakeupTime: Int(wakeupTime), images: images)
 
         DispatchQueue.main.sync {
-            self.contents = frames[0]
-            self.security = frames[1]
+            self.update = update
+//            self.contents = images[0]
+//            self.security = images[1]
         }
 
+    }
+
+}
+
+extension Image {
+
+    init(cgImage: CGImage) {
+        self.init(nsImage: NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height)))
     }
 
 }

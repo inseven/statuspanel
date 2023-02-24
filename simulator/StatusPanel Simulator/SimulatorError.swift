@@ -18,35 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import AppKit
+import Foundation
 
-extension NSImage {
+enum SimulatorError: Error {
 
-    convenience init(ciImage: CIImage) {
-        let rep = NSCIImageRep(ciImage: ciImage)
-        self.init(size: rep.size)
-        addRepresentation(rep)
-    }
-
-    convenience init(cgImage: CGImage) {
-        self.init(cgImage: cgImage,
-                  size: NSSize(width: Device.v1.width, height: Device.v1.height))
-    }
-
-    // TODO: Better API
-    static func generateQRCode(from string: String) -> NSImage? {
-        let data = string.data(using: String.Encoding.ascii)
-
-        if let filter = CIFilter(name: "CIQRCodeGenerator") {
-            filter.setValue(data, forKey: "inputMessage")
-            let transform = CGAffineTransform(scaleX: 3, y: 3)
-
-            if let output = filter.outputImage?.transformed(by: transform) {
-                return NSImage(ciImage: output)
-            }
-        }
-
-        return nil
-    }
+    case decryptionFailure
 
 }

@@ -31,25 +31,24 @@ struct ContentView: View {
             if let image = applicationModel.code {
                 Image(nsImage: image)
             }
-            if let defaultImage = applicationModel.contents,
-               let privacyImage = applicationModel.security {
-                if !isHidden {
-                    Image(nsImage: defaultImage)
-                } else {
-                    Image(nsImage: privacyImage)
-                }
+            if let image = applicationModel.update?.images[applicationModel.index] {
+                Image(nsImage: image)
             }
         }
         .frame(width: CGFloat(Device.v1.width), height: CGFloat(Device.v1.height))
         .background(.white)
         .padding()
-        .toolbar {
-            ToolbarItem {
-                Toggle(isOn: $isHidden) {
-                    Label("Refresh", systemImage: "eye.slash.fill")
+        .toolbar(id: "main") {
+            ToolbarItem(id: "action") {
+                Button {
+                    // TODO: Move into ApplicationModel
+                    guard let update = applicationModel.update else { return }
+                    applicationModel.index = (applicationModel.index + 1) % update.images.count
+                } label: {
+                    Label("Action", systemImage: "button.programmable")
                 }
             }
-            ToolbarItem {
+            ToolbarItem(id: "refresh") {
                 Button {
                     // TODO: This task should be hidden in the model
                     Task {
