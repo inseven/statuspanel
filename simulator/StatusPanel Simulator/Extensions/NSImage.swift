@@ -30,7 +30,7 @@ extension NSImage {
 
     convenience init(cgImage: CGImage) {
         self.init(cgImage: cgImage,
-                  size: NSSize(width: Device.v1.width, height: Device.v1.height))
+                  size: NSSize(width: cgImage.width, height: cgImage.height))
     }
 
     // TODO: Better API
