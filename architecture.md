@@ -5,8 +5,8 @@ StatusPanel is designed with a simple modular architecture to make individual co
 There are three primary components in the StatusPanel architecture:
 
 - Client (publishes updates; typically a cellphone)
-- Service (pigeon-hole service)
-- Device (renders updates; low power ESP32 eInk)
+- Service (pigeon-hole service; stores updates from clients for devices to pick up on their own schedule)
+- Device (renders updates; lower-power network-attached display)
 
 Unlike many centralised systems, the service has no access to any user data–it simply serves as an asynchronous message exchange mechanism for delivering end-to-end encrypted updates from client to device. Key exchange occurs when initially pairing a device with a client.
 
@@ -46,7 +46,7 @@ _If `imageCount` is not present in the header, it should be assumed that a singl
 
 
 
-## Attack Vectors
+## Possible Attack Vectors
 
 - DoS (systematically overwriting update payloads)
 - Sending too much data to clients / Bomb? / Decryption Bomb?
