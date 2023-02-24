@@ -43,7 +43,6 @@ struct ContentView: View {
                 LabeledContent("Wakeup Time", value: String(update.wakeupTime))
                     .foregroundColor(.secondary)
             }
-
         }
         .toolbar(id: "main") {
             ToolbarItem(id: "action") {

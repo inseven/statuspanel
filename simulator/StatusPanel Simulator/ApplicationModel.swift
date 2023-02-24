@@ -50,7 +50,7 @@ class ApplicationModel: ObservableObject {
         }
 
         start()
-        refresh()
+//        refresh()
     }
 
     func start() {
@@ -80,6 +80,15 @@ class ApplicationModel: ObservableObject {
             .sink { [weak self] image in
                 guard let self else { return }
                 self.code = image
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)
+            .prepend(NSNotification(name: NSApplication.didBecomeActiveNotification, object: NSApplication.shared) as NotificationCenter.Publisher.Output)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.refresh()
             }
             .store(in: &cancellables)
     }
