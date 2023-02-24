@@ -27,17 +27,24 @@ struct ContentView: View {
     @State var isHidden = false
 
     var body: some View {
-        ZStack {
-            if let image = applicationModel.code {
-                Image(nsImage: image)
+        VStack {
+            ZStack {
+                if let image = applicationModel.code {
+                    Image(nsImage: image)
+                }
+                if let image = applicationModel.lastUpdate?.images[applicationModel.index] {
+                    Image(nsImage: image)
+                }
             }
-            if let image = applicationModel.lastUpdate?.images[applicationModel.index] {
-                Image(nsImage: image)
+            .frame(width: CGFloat(Device.v1.width), height: CGFloat(Device.v1.height))
+            .background(.white)
+            .padding()
+            if let update = applicationModel.lastUpdate {
+                LabeledContent("Wakeup Time", value: String(update.wakeupTime))
+                    .foregroundColor(.secondary)
             }
+
         }
-        .frame(width: CGFloat(Device.v1.width), height: CGFloat(Device.v1.height))
-        .background(.white)
-        .padding()
         .toolbar(id: "main") {
             ToolbarItem(id: "action") {
                 Button {
