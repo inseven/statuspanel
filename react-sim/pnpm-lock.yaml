@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@types/eslint': 8.21.1
-  '@types/libsodium-wrappers': ^0.7.10
+  '@types/libsodium-wrappers': 0.7.10
   '@types/node': 18.14.2
   '@types/prettier': 2.7.2
   '@types/react': 18.0.28
@@ -19,7 +19,9 @@ specifiers:
   prettier-plugin-tailwindcss: 0.2.3
   react: 18.2.0
   react-dom: 18.2.0
-  react-qr-code: ^2.0.11
+  react-qr-code: 2.0.11
+  remeda: 1.8.0
+  stream-data-view: 1.7.2
   tailwindcss: 3.2.7
   typescript: 4.9.5
   zod: 3.20.6
@@ -30,6 +32,8 @@ dependencies:
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-qr-code: 2.0.11_react@18.2.0
+  remeda: 1.8.0
+  stream-data-view: 1.7.2
   zod: 3.20.6
 
 devDependencies:
@@ -2300,6 +2304,10 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /remeda/1.8.0:
+    resolution: {integrity: sha512-zhrGQbeIVJhXArg8/USMkZQeD36rr62SAt96bw5aOBjo7V399rOn7FrgQRG5WfxO9zME09vOtOs5nx1UsZ/80A==}
+    dev: false
+
   /resolve-from/4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
     engines: {node: '>=4'}
@@ -2408,6 +2416,10 @@ packages:
     dependencies:
       internal-slot: 1.0.5
     dev: true
+
+  /stream-data-view/1.7.2:
+    resolution: {integrity: sha512-pSNUb9MUQwfTnxA4XBIQt2M+lIVxGflxs8NNsymsrdZkZQYdKS1mPkrutVpaoF+uniUZlQPJh7O1yWzB6ndAjw==}
+    dev: false
 
   /string.prototype.matchall/4.0.8:
     resolution: {integrity: sha512-6zOCOcJ+RJAQshcTvXPHoxoQGONa3e/Lqx90wUA+wEzX78sg5Bo+1tQo4N0pohS0erG9qtCqJDjNCQBjeWVxyg==}
