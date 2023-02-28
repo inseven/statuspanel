@@ -35,9 +35,7 @@ If you can't wait to try it out, have a little technical experience, and don't m
 
 ## Technical Details
 
-### Components
-
-StatusPanel comprises a number of different components:
+- [Architecture](architecture.md)
 
 - [Firmware](firmware/README.markdown)
 - [Device](device/README.markdown)
