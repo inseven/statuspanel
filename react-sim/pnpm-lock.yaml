@@ -1,27 +1,30 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@types/eslint': ^8.21.1
-  '@types/node': ^18.14.0
-  '@types/prettier': ^2.7.2
-  '@types/react': ^18.0.28
-  '@types/react-dom': ^18.0.11
-  '@typescript-eslint/eslint-plugin': ^5.53.0
-  '@typescript-eslint/parser': ^5.53.0
-  autoprefixer: ^10.4.7
-  eslint: ^8.34.0
-  eslint-config-next: ^13.2.1
-  next: ^13.2.1
-  postcss: ^8.4.14
-  prettier: ^2.8.1
-  prettier-plugin-tailwindcss: ^0.2.1
+  '@types/eslint': 8.21.1
+  '@types/libsodium-wrappers': ^0.7.10
+  '@types/node': 18.14.2
+  '@types/prettier': 2.7.2
+  '@types/react': 18.0.28
+  '@types/react-dom': 18.0.11
+  '@typescript-eslint/eslint-plugin': 5.54.0
+  '@typescript-eslint/parser': 5.54.0
+  autoprefixer: 10.4.13
+  eslint: 8.35.0
+  eslint-config-next: 13.2.1
+  libsodium-wrappers: 0.7.11
+  next: 13.2.1
+  postcss: 8.4.21
+  prettier: 2.8.4
+  prettier-plugin-tailwindcss: 0.2.3
   react: 18.2.0
   react-dom: 18.2.0
-  tailwindcss: ^3.2.0
-  typescript: ^4.9.5
-  zod: ^3.20.6
+  tailwindcss: 3.2.7
+  typescript: 4.9.5
+  zod: 3.20.6
 
 dependencies:
+  libsodium-wrappers: 0.7.11
   next: 13.2.1_biqbaboplfbrettd7655fr4n2y
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -29,6 +32,7 @@ dependencies:
 
 devDependencies:
   '@types/eslint': 8.21.1
+  '@types/libsodium-wrappers': 0.7.10
   '@types/node': 18.14.2
   '@types/prettier': 2.7.2
   '@types/react': 18.0.28
@@ -282,6 +286,10 @@ packages:
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+    dev: true
+
+  /@types/libsodium-wrappers/0.7.10:
+    resolution: {integrity: sha512-BqI9B92u+cM3ccp8mpHf+HzJ8fBlRwdmyd6+fz3p99m3V6ifT5O3zmOMi612PGkpeFeG/G6loxUnzlDNhfjPSA==}
     dev: true
 
   /@types/node/18.14.2:
@@ -1755,6 +1763,16 @@ packages:
       prelude-ls: 1.2.1
       type-check: 0.4.0
     dev: true
+
+  /libsodium-wrappers/0.7.11:
+    resolution: {integrity: sha512-SrcLtXj7BM19vUKtQuyQKiQCRJPgbpauzl3s0rSwD+60wtHqSUuqcoawlMDheCJga85nKOQwxNYQxf/CKAvs6Q==}
+    dependencies:
+      libsodium: 0.7.11
+    dev: false
+
+  /libsodium/0.7.11:
+    resolution: {integrity: sha512-WPfJ7sS53I2s4iM58QxY3Inb83/6mjlYgcmZs7DJsvDlnmVUwNinBCi5vBT43P6bHRy01O4zsMU2CoVR6xJ40A==}
+    dev: false
 
   /lilconfig/2.0.6:
     resolution: {integrity: sha512-9JROoBW7pobfsx+Sq2JsASvCo6Pfo6WWoUW79HuB1BCoBXD4PLWJPqDF6fNj67pqBYTbAHkE57M1kS/+L1neOg==}
