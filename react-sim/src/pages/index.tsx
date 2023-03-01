@@ -3,17 +3,47 @@ import { useSodium } from "../utils/sodium"
 import QRCode from "react-qr-code"
 import { StreamDataView } from "stream-data-view"
 import { forEach, pipe, range, reverse } from "remeda"
+import { useLocalStorage } from "react-use"
+import { useEffect, useRef, useState } from "react"
 
 const Home: NextPage = () => {
 	const sodium = useSodium()
+	const [keyPairPub, setKeyPairPub] = useLocalStorageUint8Array(
+		"keyPairPub",
+		undefined
+	)
+	const [keyPairPriv, setKeyPairPriv] = useLocalStorageUint8Array(
+		"keyPairPriv",
+		undefined
+	)
+	const [images, setImages] = useState<Array<Uint8Array>>([])
+
+	const canvasRef = useRef<HTMLCanvasElement>(null)
+
+	useEffect(() => {
+		const canvas = canvasRef.current
+		const ctx = canvas?.getContext("2d")
+		if (!ctx) return
+
+		ctx.fillStyle = "red"
+		ctx.beginPath()
+		ctx.arc(50, 100, 20, 0, 2 * Math.PI)
+		ctx.fill()
+	}, [canvasRef])
 
 	if (sodium === undefined) {
 		return <p>waiting for sodium..</p>
 	}
 
-	const keypair = sodium.crypto_box_keypair()
+	if (keyPairPub === undefined || keyPairPriv === undefined) {
+		const kp = sodium.crypto_box_keypair()
+		setKeyPairPub(kp.publicKey)
+		setKeyPairPriv(kp.privateKey)
+		return <p>generating keypair..</p>
+	}
+
 	const pubBase64 = sodium.to_base64(
-		keypair.publicKey,
+		keyPairPub,
 		sodium.base64_variants.ORIGINAL
 	)
 	const id = "reactidd"
@@ -59,11 +89,15 @@ const Home: NextPage = () => {
 			() => ranges.reverse()
 		)
 
-		const images = []
+		const images: Array<Uint8Array> = []
 		ranges.forEach(([start, end]) => {
 			const length = end - start
 			const imageData = data.getBytes(start, length)
+			const im = sodium.crypto_box_seal_open(imageData, keyPairPub, keyPairPriv)
+			console.log({ im: createImageBitmap(new Blob([im])) })
+			images.push(im)
 		})
+		setImages(images)
 	}
 
 	return (
@@ -72,6 +106,18 @@ const Home: NextPage = () => {
 				<p className="text-white">{url}</p>
 				<QRCode value={url} />
 				<button onClick={() => void update()}>update</button>
+				{images.map((i, idx) => {
+					const width = 100
+					const height = 100
+					return (
+						// eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+						<img
+							key={`${idx}`}
+							src={URL.createObjectURL(new Blob([i], { type: "image/png" }))}
+						/>
+					)
+				})}
+				<canvas ref={canvasRef} />
 			</div>
 		</main>
 	)
@@ -87,3 +133,27 @@ function swap32(val: number) {
 		((val >> 24) & 0xff)
 	)
 }
+
+function bufferToString(buf: Uint8Array) {
+	return String.fromCharCode(...new Uint8Array(buf))
+}
+
+function stringToUint8Array(str: string) {
+	const buf = new ArrayBuffer(str.length)
+	const bufView = new Uint8Array(buf)
+	for (let i = 0, strLen = str.length; i < strLen; i++) {
+		bufView[i] = str.charCodeAt(i)
+	}
+	return bufView
+}
+
+const useLocalStorageUint8Array = (
+	key: string,
+	initialValue: Uint8Array | undefined
+) =>
+	useLocalStorage<Uint8Array | undefined>(key, initialValue, {
+		raw: false,
+		serializer: (kpp) => (kpp === undefined ? "undef" : bufferToString(kpp)),
+		deserializer: (kpp) =>
+			kpp === "undef" ? undefined : stringToUint8Array(kpp),
+	})
