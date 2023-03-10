@@ -10,8 +10,10 @@ specifiers:
   '@typescript-eslint/eslint-plugin': 5.54.0
   '@typescript-eslint/parser': 5.54.0
   autoprefixer: 10.4.13
+  dicom-rle: ^0.0.7
   eslint: 8.35.0
   eslint-config-next: 13.2.1
+  js-rle: ^0.0.4
   libsodium-wrappers: 0.7.11
   next: 13.2.1
   postcss: 8.4.21
@@ -22,12 +24,15 @@ specifiers:
   react-qr-code: 2.0.11
   react-use: 17.4.0
   remeda: 1.8.0
+  rle: ^1.0.2
   stream-data-view: 1.7.2
   tailwindcss: 3.2.7
   typescript: 4.9.5
   zod: 3.20.6
 
 dependencies:
+  dicom-rle: 0.0.7
+  js-rle: 0.0.4
   libsodium-wrappers: 0.7.11
   next: 13.2.1_biqbaboplfbrettd7655fr4n2y
   react: 18.2.0
@@ -35,6 +40,7 @@ dependencies:
   react-qr-code: 2.0.11_react@18.2.0
   react-use: 17.4.0_biqbaboplfbrettd7655fr4n2y
   remeda: 1.8.0
+  rle: 1.0.2
   stream-data-view: 1.7.2
   zod: 3.20.6
 
@@ -842,6 +848,10 @@ packages:
       defined: 1.0.1
       minimist: 1.2.8
     dev: true
+
+  /dicom-rle/0.0.7:
+    resolution: {integrity: sha512-yO19gOD3jveVzZy1v5JcWJ+n0N45bTSJzrEIqRrRvrBRa3zPgHXVtNyDWikvo3mcdKNMEq7NSUVhETbM0VZtEQ==}
+    dev: false
 
   /didyoumean/1.2.2:
     resolution: {integrity: sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==}
@@ -1775,6 +1785,10 @@ packages:
     resolution: {integrity: sha512-HvdH2LzI/EAZcUwA8+0nKNtWHqS+ZmijLA30RwZA0bo7ToCckjK5MkGhjED9KoRcXO6BaGI3I9UIzSA1FKFPOQ==}
     dev: false
 
+  /js-rle/0.0.4:
+    resolution: {integrity: sha512-jSsa7U4vpxMb44n46ByeXA71OPGVuK5CzDA0jdALKvcBwRemJHzrN0jTlSgUBURmU0rvyWKuz0j5iO+xMqZHeQ==}
+    dev: false
+
   /js-sdsl/4.3.0:
     resolution: {integrity: sha512-mifzlm2+5nZ+lEcLJMoBK0/IH/bDg8XnJfd/Wq6IP+xoCjLZsTOnV2QpxlVbX9bMnkl5PdEjNtBJ9Cj1NjifhQ==}
     dev: true
@@ -2461,6 +2475,10 @@ packages:
     dependencies:
       glob: 7.2.3
     dev: true
+
+  /rle/1.0.2:
+    resolution: {integrity: sha512-VYvma4v+89fRoJp5Y0C7sX6jZF5jIC76jhfuG/6gkEB7pE3kIe584c+4z1DRaHL+Y0nUHjcYxN75pbWDqerHMA==}
+    dev: false
 
   /rtl-css-js/1.16.1:
     resolution: {integrity: sha512-lRQgou1mu19e+Ya0LsTvKrVJ5TYUbqCVPAiImX3UfLTenarvPUl1QFdvu5Z3PYmHT9RCcwIfbjRQBntExyj3Zg==}

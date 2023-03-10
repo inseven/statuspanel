@@ -17,19 +17,25 @@ const Home: NextPage = () => {
 		undefined
 	)
 	const [images, setImages] = useState<Array<Uint8Array>>([])
-
-	const canvasRef = useRef<HTMLCanvasElement>(null)
+	const [imagePixels, setImagePixels] = useState<Array<Uint8Array>>([])
+	const [width, setWidth] = useState(1280)
 
 	useEffect(() => {
-		const canvas = canvasRef.current
-		const ctx = canvas?.getContext("2d")
-		if (!ctx) return
-
-		ctx.fillStyle = "red"
-		ctx.beginPath()
-		ctx.arc(50, 100, 20, 0, 2 * Math.PI)
-		ctx.fill()
-	}, [canvasRef])
+		if (images.length < 1) return
+		console.log("effect")
+		const image = images[0]!
+		const buffLen = image.length
+		const hex = new Array(buffLen)
+		for (let i = 0; i < buffLen; i++) {
+			hex[i] = ("0" + image[i].toString(16)).slice(-2)
+		}
+		console.log({ imageL: image.length, image, hex }) // 7070
+		const decodedImage = rleDecoder(image)
+		console.log({ decodedImageL: decodedImage.length, decodedImage }) // 61222
+		const pixels = expand2BPPValues(decodedImage)
+		console.log({ HOW: pixels.length })
+		setImagePixels([pixels])
+	}, [images])
 
 	if (sodium === undefined) {
 		return <p>waiting for sodium..</p>
@@ -94,10 +100,32 @@ const Home: NextPage = () => {
 			const length = end - start
 			const imageData = data.getBytes(start, length)
 			const im = sodium.crypto_box_seal_open(imageData, keyPairPub, keyPairPriv)
-			console.log({ im: createImageBitmap(new Blob([im])) })
 			images.push(im)
 		})
 		setImages(images)
+	}
+
+	const draw = (ctx: CanvasRenderingContext2D, frameCount: number) => {
+		console.log("draw")
+		if (imagePixels.length < 1) return
+		const pixels = imagePixels[0]!
+		const drawPixel = (
+			ctx: CanvasRenderingContext2D,
+			onOff: "on" | "off",
+			x: number,
+			y: number
+		) => {
+			const size = 1
+			ctx.fillStyle = onOff === "on" ? "black" : "white"
+			ctx.fillRect(x * size, y * size, size, size)
+		}
+		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+		ctx.beginPath()
+		pixels
+			// .filter((x, idx) => idx % 4 === 1)
+			.forEach((i, idx) => {
+				drawPixel(ctx, i === 0 ? "on" : "off", idx % width, idx / width)
+			})
 	}
 
 	return (
@@ -106,18 +134,15 @@ const Home: NextPage = () => {
 				<p className="text-white">{url}</p>
 				<QRCode value={url} />
 				<button onClick={() => void update()}>update</button>
-				{images.map((i, idx) => {
-					const width = 100
-					const height = 100
-					return (
-						// eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-						<img
-							key={`${idx}`}
-							src={URL.createObjectURL(new Blob([i], { type: "image/png" }))}
-						/>
-					)
-				})}
-				<canvas ref={canvasRef} />
+				<p>{width}</p>
+				<input
+					type="range"
+					min={1}
+					max={1300}
+					value={width}
+					onChange={(e) => setWidth(Number(e.target.value))}
+				/>
+				<Canvas width={width} height="1380px" draw={draw} />
 			</div>
 		</main>
 	)
@@ -157,3 +182,106 @@ const useLocalStorageUint8Array = (
 		deserializer: (kpp) =>
 			kpp === "undef" ? undefined : stringToUint8Array(kpp),
 	})
+
+const Canvas = ({
+	draw,
+	...restProps
+}: {
+	draw: (ctx: CanvasRenderingContext2D) => void
+}) => {
+	const canvasRef = useRef<HTMLCanvasElement>(null)
+
+	useEffect(() => {
+		const canvas = canvasRef.current!
+		const context = canvas.getContext("2d")!
+		draw(context)
+	}, [draw])
+
+	return <canvas ref={canvasRef} {...restProps} />
+}
+
+const rleDecoder = (input: Uint8Array) => {
+	const data = new StreamDataView(input.buffer, true)
+	const output = new StreamDataView(undefined, true)
+	let offset = 0
+
+	let context = null
+
+	let counter = 0
+	let done = false
+	while (!done) {
+		// const byte = data.getNextUint8()
+		// const count = data.getNextUint8()
+		// for (let i = 0; i < count; i++) {
+		// 	output.setUint8(offset, byte)
+		// 	offset++
+		// }
+
+		if (context === null) {
+			const value = data.getNextUint8()
+			if (value === 255) {
+				const count = data.getNextUint8() - 1
+				const current = data.getNextUint8()
+				if (count > 0) {
+					context = { count, current }
+				}
+				output.setUint8(offset, current)
+			} else {
+				output.setUint8(offset, value)
+			}
+		} else {
+			const count = context.count - 1
+			if (count > 0) {
+				context = { ...context, count }
+				output.setUint8(offset, context.current)
+			} else {
+				output.setUint8(offset, context.current)
+				context = null
+			}
+		}
+		offset++
+
+		counter++
+		if (counter > 30000) done = true
+	}
+	return new Uint8Array(output.getBuffer())
+}
+
+function expand2BPPValues(img: Uint8Array): Uint8Array {
+	const colorMap: Record<number, number> = {
+		0: 0x000000ff,
+		1: 0xffff00ff,
+		2: 0xffffffff,
+	}
+
+	const data = new Uint8Array(img.length * 4 * 4)
+
+	for (let i = 0; i < img.length; i++) {
+		const byte = img[i]!
+		const pixel0 = (byte >> 0) & 3
+		data.set(
+			new Uint8Array(new Uint32Array([colorMap[pixel0] ?? 0xffffffff]).buffer),
+			i * 16
+		)
+
+		const pixel1 = (byte >> 2) & 3
+		data.set(
+			new Uint8Array(new Uint32Array([colorMap[pixel1] ?? 0xffffffff]).buffer),
+			i * 16 + 4
+		)
+
+		const pixel2 = (byte >> 4) & 3
+		data.set(
+			new Uint8Array(new Uint32Array([colorMap[pixel2] ?? 0xffffffff]).buffer),
+			i * 16 + 8
+		)
+
+		const pixel3 = (byte >> 6) & 3
+		data.set(
+			new Uint8Array(new Uint32Array([colorMap[pixel3] ?? 0xffffffff]).buffer),
+			i * 16 + 12
+		)
+	}
+
+	return data
+}

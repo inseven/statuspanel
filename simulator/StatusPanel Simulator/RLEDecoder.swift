@@ -61,7 +61,6 @@ class RLEDecoder {
             } else {
                 return value
             }
-
         }
     }
 

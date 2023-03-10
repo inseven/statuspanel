@@ -68,6 +68,7 @@ extension Data {
             data.append32(colorMap[pixel3] ?? 0xFFFFFFFF)
         }
 
+//        print(data as NSData)
         return data
     }
 
