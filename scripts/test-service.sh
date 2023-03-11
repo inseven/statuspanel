@@ -31,5 +31,5 @@ ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 
 cd "$ROOT_DIRECTORY"
 
-pipenv install
+pipenv sync
 pipenv run python -m unittest discover --verbose --start-directory service/tests
