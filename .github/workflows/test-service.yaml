@@ -12,7 +12,7 @@ on:
 jobs:
   test-service:
 
-    name: build-app
+    name: test-service
     runs-on: ubuntu-latest
 
     steps:
