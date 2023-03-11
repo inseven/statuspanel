@@ -31,5 +31,6 @@ ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 
 cd "$ROOT_DIRECTORY"
 
+# TODO: Consider using --deploy here to let us keep up to date with Python dependencies?
 pipenv sync
 pipenv run python -m unittest discover --verbose --start-directory service/tests
