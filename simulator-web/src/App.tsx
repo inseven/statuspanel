@@ -5,8 +5,7 @@ export function App() {
 
   return (
     <div className="App">
-      <div></div>
-      <h1>Vite + React</h1>
+      <h1 className="bg-red-700 text-green-600">Vite + React</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
