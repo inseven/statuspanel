@@ -18,7 +18,7 @@ const Home: NextPage = () => {
 	)
 	const [images, setImages] = useState<Array<Uint8Array>>([])
 	const [imagePixels, setImagePixels] = useState<Array<Uint8Array>>([])
-	const [width, setWidth] = useState(1280)
+	const [width, setWidth] = useState(640)
 
 	useEffect(() => {
 		if (images.length < 1) return
@@ -128,6 +128,8 @@ const Home: NextPage = () => {
 			})
 	}
 
+	const pixels = imagePixels[0] ?? [[0]]
+
 	return (
 		<main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
 			<div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
@@ -142,7 +144,7 @@ const Home: NextPage = () => {
 					value={width}
 					onChange={(e) => setWidth(Number(e.target.value))}
 				/>
-				<Canvas width={width} height="1380px" draw={draw} />
+				<Canvas width={width} height="380px" draw={draw} pixels={pixels} />
 			</div>
 		</main>
 	)
@@ -184,7 +186,7 @@ const useLocalStorageUint8Array = (
 	})
 
 const Canvas = ({
-	draw,
+	pixels,
 	...restProps
 }: {
 	draw: (ctx: CanvasRenderingContext2D) => void
@@ -193,9 +195,15 @@ const Canvas = ({
 
 	useEffect(() => {
 		const canvas = canvasRef.current!
-		const context = canvas.getContext("2d")!
-		draw(context)
-	}, [draw])
+		const ctx = canvas.getContext("2d")!
+
+		var mc_imageData = ctx.getImageData(0, 0, 640, 380)
+		var mc_px_data = mc_imageData.data
+
+		mc_px_data = new Uint8ClampedArray(pixels)
+		mc_imageData.data.set(mc_px_data)
+		ctx.putImageData(mc_imageData, 0, 0)
+	}, [pixels])
 
 	return <canvas ref={canvasRef} {...restProps} />
 }
@@ -205,44 +213,25 @@ const rleDecoder = (input: Uint8Array) => {
 	const output = new StreamDataView(undefined, true)
 	let offset = 0
 
-	let context = null
-
 	let counter = 0
 	let done = false
 	while (!done) {
-		// const byte = data.getNextUint8()
-		// const count = data.getNextUint8()
-		// for (let i = 0; i < count; i++) {
-		// 	output.setUint8(offset, byte)
-		// 	offset++
-		// }
-
-		if (context === null) {
-			const value = data.getNextUint8()
-			if (value === 255) {
-				const count = data.getNextUint8() - 1
-				const current = data.getNextUint8()
-				if (count > 0) {
-					context = { count, current }
-				}
-				output.setUint8(offset, current)
-			} else {
-				output.setUint8(offset, value)
-			}
+		const value = data.getNextUint8()
+		if (value === 255) {
+			const count = data.getNextUint8()
+			const actualValue = data.getNextUint8()
+			range(0, count).forEach((i) => {
+				output.setUint8(offset, actualValue)
+				offset++
+			})
+			// offset++
 		} else {
-			const count = context.count - 1
-			if (count > 0) {
-				context = { ...context, count }
-				output.setUint8(offset, context.current)
-			} else {
-				output.setUint8(offset, context.current)
-				context = null
-			}
+			output.setUint8(offset, value)
+			offset++
 		}
-		offset++
 
 		counter++
-		if (counter > 30000) done = true
+		if (counter > 4000) done = true
 	}
 	return new Uint8Array(output.getBuffer())
 }
@@ -285,3 +274,51 @@ function expand2BPPValues(img: Uint8Array): Uint8Array {
 
 	return data
 }
+
+// cnt 254
+// cur
+
+// 0: "ff" x
+// 1: "ff"
+// 2: "aa"
+// 3: "ff"
+// 4: "ff"
+// 5: "aa"
+// 6: "ff"
+// 7: "ff"
+// 8: "aa"
+// 9: "ff"
+// 10: "ff"
+// 11: "aa"
+// 12: "ff"
+// 13: "ff"
+// 14: "aa"
+// 15: "ff"
+// 16: "ff"
+// 17: "aa"
+
+// 18: "ff"
+// 19: "47" same but 0x47
+// 20: "aa"
+
+// 21: "02" just copy paste
+// 22: "00" same
+// 23: "00"
+// 24: "00"
+// 25: "80"
+
+// 26: "ff"
+// 27: "06"
+// 28: "aa"
+
+// 29: "0a"
+// 30: "00"
+// 31: "ff"
+// 32: "04"
+// 33: "aa"
+// 34: "0a"
+// 35: "00"
+// 36: "ff"
+// 37: "15"
+// 38: "aa"
+// 39: "00"
