@@ -25,4 +25,11 @@ set -o pipefail
 set -x
 set -u
 
-echo "Hello, World!"
+SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
+
+cd "$ROOT_DIRECTORY"
+
+pipenv install
+pipenv run python -m unittest discover --verbose --start-directory service/tests
