@@ -28,7 +28,7 @@
 "error_incorrect_settings_type" = "Incorrect settings type.";
 "error_invalid_image" = "Invalid image.";
 
-"settings_last_background_update_label" = "Last Background Update";
+"settings_last_background_update_label" = "Last Update";
 "settings_last_background_update_value_never" = "Never";
 
 "settings_no_devices_label" = "No Devices";
