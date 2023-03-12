@@ -24,7 +24,20 @@ import Sodium
 
 struct DeviceIdentifier {
 
-    let id: String
+    let id: UUID
     let keyPair: Box.KeyPair
+
+    var pairingURL: URL {
+        let sodium = Sodium()
+        let publicKeyBase64 = sodium.utils.bin2base64(keyPair.publicKey, variant: .ORIGINAL)!
+        var components = URLComponents()
+        components.scheme = "statuspanel"
+        components.path = "r2"
+        components.queryItems = [
+            URLQueryItem(name: "id", value: id.uuidString),
+            URLQueryItem(name: "pk", value: publicKeyBase64),
+        ]
+        return components.url!
+    }
 
 }
