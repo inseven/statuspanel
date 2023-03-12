@@ -103,6 +103,7 @@ final class TFLDataSource: DataSource {
         Line(id: "central", title: "Central Line", color: Color(hex: 0xe32017)),
         Line(id: "circle", title: "Circle Line", color: Color(hex: 0xffd300)),
         Line(id: "district", title: "District Line", color: Color(hex: 0x00782a)),
+        Line(id: "elizabeth", title: "Elizabeth Line", color: Color(hex: 0x6950a1)),
         Line(id: "hammersmith-city", title: "Hammersmith & City Line", color: Color(hex: 0xf3a9bb)),
         Line(id: "jubilee", title: "Jubilee Line", color: Color(hex: 0xa0a5a9)),
         Line(id: "metropolitan", title: "Metropolitan Line", color: Color(hex: 0x9b0056)),
