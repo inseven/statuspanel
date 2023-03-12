@@ -191,8 +191,8 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200, "Getting the uploaded file succeeds")
         self.assertEqual(response.content, data_2, "Downloaded file matches uploaded file")
 
-    def test_api_v2_uuid_identifier_put_get_success(self):
-        identifier = str(uuid.uuid4())
+    def test_api_v2_lower_uuid_identifier_put_get_success(self):
+        identifier = str(uuid.uuid4()).lower()
         url = '/api/v2/' + identifier
         data = os.urandom(307200)
         response = self._upload(url, data)
@@ -201,13 +201,42 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200, "Getting the uploaded file succeeds")
         self.assertEqual(response.content, data, "Downloaded file matches uploaded file")
 
-    def test_api_v3_uuid_identifier_put_get_success(self):
-        identifier = str(uuid.uuid4())
+    def test_api_v3_lower_uuid_identifier_put_get_success(self):
+        identifier = str(uuid.uuid4()).lower()
         url = '/api/v3/status/' + identifier
         data = os.urandom(307200)
         response = self._upload(url, data)
         self.assertEqual(response.status_code, 200, "Upload succeeds")
         response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, "Getting the uploaded file succeeds")
+        self.assertEqual(response.content, data, "Downloaded file matches uploaded file")
+
+    def test_api_v2_upper_uuid_identifier_put_get_success(self):
+        identifier = str(uuid.uuid4()).upper()
+        url = '/api/v2/' + identifier
+        data = os.urandom(307200)
+        response = self._upload(url, data)
+        self.assertEqual(response.status_code, 200, "Upload succeeds")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, "Getting the uploaded file succeeds")
+        self.assertEqual(response.content, data, "Downloaded file matches uploaded file")
+
+    def test_api_v3_upper_uuid_identifier_put_get_success(self):
+        identifier = str(uuid.uuid4()).upper()
+        url = '/api/v3/status/' + identifier
+        data = os.urandom(307200)
+        response = self._upload(url, data)
+        self.assertEqual(response.status_code, 200, "Upload succeeds")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, "Getting the uploaded file succeeds")
+        self.assertEqual(response.content, data, "Downloaded file matches uploaded file")
+
+    def test_api_v3_case_insensitive_uuid_identifier_put_get_success(self):
+        identifier = str(uuid.uuid4())
+        data = os.urandom(307200)
+        response = self._upload('/api/v3/status/' + identifier.upper(), data)
+        self.assertEqual(response.status_code, 200, "Upload succeeds")
+        response = self.client.get('/api/v3/status/' + identifier.lower())
         self.assertEqual(response.status_code, 200, "Getting the uploaded file succeeds")
         self.assertEqual(response.content, data, "Downloaded file matches uploaded file")
 
