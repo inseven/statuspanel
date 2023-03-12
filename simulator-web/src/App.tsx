@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import QRCode from "react-qr-code"
 import { map, pipe } from "remeda"
 import { Canvas } from "./Canvas"
@@ -7,10 +7,11 @@ import { expand2BPPValues } from "./utils/expand2BPP"
 import { useSodium } from "./utils/sodium"
 import { useLocalStorageUint8Array } from "./utils/storage"
 import { RLEDecoder } from "./utils/RLEDecoder"
+import { useLocalStorage } from "react-use"
 
 export const App = () => {
   const sodium = useSodium()
-  const [id, setId] = useState("reactsim")
+  const [id, setId] = useLocalStorage("id", "reactsim")
   const [keyPairPub, setKeyPairPub] = useLocalStorageUint8Array("keyPairPub", undefined)
   const [keyPairPriv, setKeyPairPriv] = useLocalStorageUint8Array("keyPairPriv", undefined)
 
