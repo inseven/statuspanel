@@ -26,6 +26,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import uuid
 import unittest
 import urllib
 
@@ -189,6 +190,26 @@ class TestAPI(unittest.TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, "Getting the uploaded file succeeds")
         self.assertEqual(response.content, data_2, "Downloaded file matches uploaded file")
+
+    def test_api_v2_uuid_identifier_put_get_success(self):
+        identifier = str(uuid.uuid4())
+        url = '/api/v2/' + identifier
+        data = os.urandom(307200)
+        response = self._upload(url, data)
+        self.assertEqual(response.status_code, 200, "Upload succeeds")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, "Getting the uploaded file succeeds")
+        self.assertEqual(response.content, data, "Downloaded file matches uploaded file")
+
+    def test_api_v3_uuid_identifier_put_get_success(self):
+        identifier = str(uuid.uuid4())
+        url = '/api/v3/status/' + identifier
+        data = os.urandom(307200)
+        response = self._upload(url, data)
+        self.assertEqual(response.status_code, 200, "Upload succeeds")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, "Getting the uploaded file succeeds")
+        self.assertEqual(response.content, data, "Downloaded file matches uploaded file")
 
     def _test_put_get_last_modified(self, url):
         data = os.urandom(307200)
