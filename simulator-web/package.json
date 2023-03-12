@@ -9,10 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "libsodium-wrappers": "^0.7.11",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-qr-code": "^2.0.11",
+    "react-use": "^17.4.0",
+    "remeda": "^1.9.0",
+    "stream-data-view": "^1.7.2"
   },
   "devDependencies": {
+    "@types/libsodium-wrappers": "^0.7.10",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react-swc": "^3.2.0",
