@@ -46,7 +46,9 @@ export const App = () => {
 
   const updateImages = async () => {
     setStatus("Fetching bundle..")
-    const bundle = await (await fetch(`https://api.statuspanel.io/api/v2/${id}`)).arrayBuffer()
+    const bundle = await (
+      await fetch(`https://api.statuspanel.io/api/v3/status/${id}`)
+    ).arrayBuffer()
 
     setStatus("Decoding bundle..")
     const resultingImages = decodeBundle(bundle, (imageData) =>
