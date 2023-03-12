@@ -37,8 +37,10 @@ class ApplicationModel: ObservableObject {
     init() {
         let userDefaults = UserDefaults.standard
         if let publicKey = userDefaults.object(forKey: "publicKey") as? Data,
-           let secretKey = userDefaults.object(forKey: "secretKey") as? Data {
-            identifier = DeviceIdentifier(id: "aaaaaaaa",
+           let secretKey = userDefaults.object(forKey: "secretKey") as? Data,
+           let idString = userDefaults.object(forKey: "id") as? String,
+           let id = UUID(uuidString: idString) {
+            identifier = DeviceIdentifier(id: id,
                                           keyPair: Box.KeyPair(publicKey: Array(publicKey),
                                                                secretKey: Array(secretKey)))
         } else {
@@ -46,11 +48,12 @@ class ApplicationModel: ObservableObject {
             let keyPair = sodium.box.keyPair()!
             userDefaults.set(Data(keyPair.publicKey), forKey: "publicKey")
             userDefaults.set(Data(keyPair.secretKey), forKey: "secretKey")
-            identifier = DeviceIdentifier(id: "aaaaaaaa", keyPair: keyPair)
+            let id = UUID()
+            userDefaults.set(id.uuidString, forKey: "id")
+            identifier = DeviceIdentifier(id: id, keyPair: keyPair)
         }
 
         start()
-//        refresh()
     }
 
     func start() {
@@ -60,20 +63,7 @@ class ApplicationModel: ObservableObject {
         $identifier
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
-            .map { identifier in
-                let sodium = Sodium()
-                let publicKeyBase64 = sodium.utils.bin2base64(identifier.keyPair.publicKey, variant: .ORIGINAL)!
-
-                var components = URLComponents()
-                components.scheme = "statuspanel"
-                components.path = "r2"
-                components.queryItems = [
-                    URLQueryItem(name: "id", value: "aaaaaaaa"),
-                    URLQueryItem(name: "pk", value: publicKeyBase64),
-                ]
-
-                return components.url!
-            }
+            .map { $0.pairingURL }
             .map { (url: URL) in
                 return NSImage.generateQRCode(from: url.absoluteString)!
             }
