@@ -40,7 +40,7 @@ source "$ENVIRONMENT_PATH"
 # TODO: This should install --deploy or sync?
 pip3 install --user pipenv
 PIPENV_PIPFILE="$ROOT_DIRECTORY/Pipfile" pipenv sync
-PIPENV_PIPFILE="$CHANGES_DIRECTORY/Pipfile" pipenv sync
+PIPENV_PIPFILE="$CHANGES_DIRECTORY/Pipfile" pipenv install
 PIPENV_PIPFILE="$BUILD_TOOLS_DIRECTORY/Pipfile" pipenv sync
 PIPENV_PIPFILE="$NODEMCU_DIRECTORY/Pipfile" pipenv sync
 
