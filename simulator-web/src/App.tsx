@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import useWindowFocus from "use-window-focus"
 import QRCode from "react-qr-code"
 import { map, pipe } from "remeda"
 import { Canvas } from "./Canvas"
@@ -7,9 +8,17 @@ import { expand2BPPValues } from "./utils/expand2BPP"
 import { useSodium } from "./utils/sodium"
 import { useLocalStorageUint8Array } from "./utils/storage"
 import { RLEDecoder } from "./utils/RLEDecoder"
-import { useLocalStorage } from "react-use"
+import { useLocalStorage, usePrevious, usePreviousDistinct } from "react-use"
 
 export const App = () => {
+  const windowFocused = useWindowFocus()
+  const prevWindowFocused = usePreviousDistinct(windowFocused)
+  useEffect(() => {
+    if (prevWindowFocused === false && windowFocused === true) {
+      fetchImages()
+    }
+  }, [windowFocused, prevWindowFocused])
+
   const sodium = useSodium()
   const [id, setId] = useLocalStorage("id", "reactsim")
   const [keyPairPub, setKeyPairPub] = useLocalStorageUint8Array("keyPairPub", undefined)
@@ -17,6 +26,16 @@ export const App = () => {
 
   const [images, setImages] = useState<Array<Uint8Array>>([])
   const [status, setStatus] = useState("Ready")
+  const [imageIndex, setImageIndex] = useState<number | null>(null)
+
+  useEffect(() => {
+    setImageIndex(images.length === 0 ? null : 0)
+  }, [images])
+
+  const cycleImages = () => {
+    if (imageIndex === null) return
+    setImageIndex((imageIndex + 1) % images.length)
+  }
 
   const imagePixels = useMemo(() => {
     if (images.length === 0) return []
@@ -43,13 +62,13 @@ export const App = () => {
   }
 
   if (id === undefined) {
-    return <p>id is undefined</p>
+    return <p>should never happen. types are wrong.</p>
   }
 
   const pubBase64 = sodium.to_base64(keyPairPub, sodium.base64_variants.ORIGINAL)
   const url = `statuspanel:r2?id=${id}&pk=${encodeURIComponent(pubBase64)}`
 
-  const updateImages = async () => {
+  const fetchImages = async () => {
     setStatus("Fetching bundle..")
     const bundle = await (
       await fetch(`https://api.statuspanel.io/api/v3/status/${id}`)
@@ -74,11 +93,12 @@ export const App = () => {
           <QRCode value={url} />
         </div>
         <p>{url}</p>
-        <button onClick={() => void updateImages()}>Fetch bundle</button>
+        <button onClick={() => void fetchImages()}>Fetch bundle</button>
         <p>Status: {status}</p>
-        {imagePixels.map((pixels, i) => (
-          <Canvas key={`${i}`} width="640px" height="380px" pixels={pixels} />
-        ))}
+        <button onClick={() => cycleImages()}>Cycle images</button>
+        {imageIndex !== null && (
+          <Canvas width="640px" height="380px" pixels={imagePixels[imageIndex]} />
+        )}
       </div>
     </main>
   )
