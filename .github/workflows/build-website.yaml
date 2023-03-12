@@ -42,6 +42,7 @@ jobs:
     - name: Commit documentation
       uses: stefanzweifel/git-auto-commit-action@v4
       id: auto-commit
+      if: ${{ github.ref == 'refs/heads/main' }}
       with:
         branch: documentation
         create_branch: true
