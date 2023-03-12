@@ -29,7 +29,7 @@ SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 RELEASE_NOTES_TEMPLATE_PATH="${SCRIPTS_DIRECTORY}/release-notes.markdown"
-RELEASE_NOTES_PATH="${ROOT_DIRECTORY}/docs/releases/index.markdown"
+RELEASE_NOTES_PATH="${ROOT_DIRECTORY}/docs/release-notes/index.markdown"
 
 source "${SCRIPTS_DIRECTORY}/environment.sh"
 
