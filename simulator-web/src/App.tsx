@@ -11,14 +11,13 @@ import { RLEDecoder } from "./utils/RLEDecoder"
 import { useLocalStorage, usePrevious, usePreviousDistinct } from "react-use"
 
 export const App = () => {
-  const [fetchOnFocus, setFetchOnFocus] = useLocalStorage("fetchOnFocus", true)
   const windowFocused = useWindowFocus()
   const prevWindowFocused = usePreviousDistinct(windowFocused)
   useEffect(() => {
-    if (fetchOnFocus && prevWindowFocused === false && windowFocused === true) {
+    if (prevWindowFocused === false && windowFocused === true) {
       fetchImages()
     }
-  }, [fetchOnFocus, windowFocused, prevWindowFocused])
+  }, [windowFocused, prevWindowFocused])
 
   const sodium = useSodium()
   const [id, setId] = useLocalStorage("id", "reactsim")
@@ -62,7 +61,7 @@ export const App = () => {
     return <p>Generating keypair..</p>
   }
 
-  if (id === undefined || fetchOnFocus === undefined) {
+  if (id === undefined) {
     return <p>should never happen. types are wrong.</p>
   }
 
@@ -89,15 +88,6 @@ export const App = () => {
         <div className="flex flex-row gap-2">
           <input className="text-black" value={id} onChange={(e) => void setId(e.target.value)} />
           <p className={id.length === 8 ? `text-green-500` : `text-red-500`}>{id.length} chars</p>
-        </div>
-        <div className="flex flex-row gap-2">
-          <p>Fetch on focus:</p>
-          <input
-            type="checkbox"
-            className="text-black"
-            checked={fetchOnFocus}
-            onChange={() => void setFetchOnFocus(!fetchOnFocus)}
-          />
         </div>
         <div className="p-[4px] bg-white">
           <QRCode value={url} />
