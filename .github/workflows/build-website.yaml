@@ -11,7 +11,7 @@ on:
 
 jobs:
 
-  run:
+  build-website:
 
     runs-on: ubuntu-latest
 
