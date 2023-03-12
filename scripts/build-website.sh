@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2016-2022 InSeven Limited
+# Copyright (c) 2018-2023 Jason Morley, Tom Sutcliffe
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,12 +28,15 @@ set -u
 SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
+SIMULATOR_WEB_DIRECTORY="${ROOT_DIRECTORY}/simulator-web"
+
 RELEASE_NOTES_TEMPLATE_PATH="${SCRIPTS_DIRECTORY}/release-notes.markdown"
 RELEASE_NOTES_PATH="${ROOT_DIRECTORY}/docs/release-notes/index.markdown"
 
 source "${SCRIPTS_DIRECTORY}/environment.sh"
 
-
 cd "$ROOT_DIRECTORY"
-
 changes notes --pre-release --all --released --template "$RELEASE_NOTES_TEMPLATE_PATH" > "$RELEASE_NOTES_PATH"
+
+cd "$SIMULATOR_WEB_DIRECTORY"
+npm run build

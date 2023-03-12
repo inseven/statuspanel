@@ -18,7 +18,7 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: recursive
         fetch-depth: 0
@@ -32,12 +32,16 @@ jobs:
       run: |
         python -m pip install --upgrade pipenv wheel
 
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
     - name: Install dependencies
       run: scripts/install-dependencies.sh
 
-    - name: Update release notes
+    - name: Build website
       run: |
-        scripts/update-release-notes.sh
+        scripts/build-website.sh
 
     - name: Commit documentation
       uses: stefanzweifel/git-auto-commit-action@v4
