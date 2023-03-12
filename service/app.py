@@ -63,11 +63,18 @@ def close_database(exception):
         db.close()
 
 
+# Valid identifiers are either 8-character strings comprising 0-9 and a-z, or
+# canonical UUID strings (hex digits structured as 8-4-4-4-12).
+SHORT_IDENTIFIER_REGEX = r"^[0-9a-z]{8}$"
+UUID_IDENTIFIER_REGEX = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+
+
 def check_identifier(fn):
     @functools.wraps(fn)
     def inner(*args, **kwargs):
         logging.info(f"Checking identifier '{kwargs['identifier']}'...")
-        if not re.match(r"^[0-9a-z]{8}$", kwargs['identifier']):
+        if (not re.match(SHORT_IDENTIFIER_REGEX, kwargs['identifier']) and
+            not re.match(UUID_IDENTIFIER_REGEX, kwargs['identifier'])):
             request.stream.read()
             return f"Invalid identifier '{kwargs['identifier']}'", 400
         return fn(*args, **kwargs)
@@ -95,6 +102,7 @@ def download(identifier):
         data, last_modified = get_database().get_data(identifier)
         response = make_response(data)
         response.headers.set('Content-Type', 'application/octet-stream')
+        response.headers.set("Access-Control-Allow-Origin", "*")
         response.last_modified = last_modified
         response.cache_control.max_age = 0
         response.make_conditional(request)
