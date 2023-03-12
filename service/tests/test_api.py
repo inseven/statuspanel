@@ -48,6 +48,7 @@ class DevelopmentClient(object):
     def __init__(self):
         self.container = docker.PostgresContainer()
         self.container.run()
+        os.environ["DATABASE_URL"] = self.container.url
         self.client = app.app.test_client()
 
     def get(self, url, *args, **kwargs):
