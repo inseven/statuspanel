@@ -1,0 +1,30 @@
+name: test-build-simulator-web
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ./simulator-web
+
+jobs:
+  build-simulator-web:
+    name: build-simulator-web
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
