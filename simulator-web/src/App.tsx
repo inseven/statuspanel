@@ -17,6 +17,16 @@ export const App = () => {
 
   const [images, setImages] = useState<Array<Uint8Array>>([])
   const [status, setStatus] = useState("Ready")
+  const [imageIndex, setImageIndex] = useState<number | null>(null)
+
+  useEffect(() => {
+    setImageIndex(images.length === 0 ? null : 0)
+  }, [images])
+
+  const cycleImages = () => {
+    if (imageIndex === null) return
+    setImageIndex((imageIndex + 1) % images.length)
+  }
 
   const imagePixels = useMemo(() => {
     if (images.length === 0) return []
@@ -76,9 +86,10 @@ export const App = () => {
         <p>{url}</p>
         <button onClick={() => void updateImages()}>Fetch bundle</button>
         <p>Status: {status}</p>
-        {imagePixels.map((pixels, i) => (
-          <Canvas key={`${i}`} width="640px" height="380px" pixels={pixels} />
-        ))}
+        <button onClick={() => cycleImages()}>Cycle images</button>
+        {imageIndex !== null && (
+          <Canvas width="640px" height="380px" pixels={imagePixels[imageIndex]} />
+        )}
       </div>
     </main>
   )
