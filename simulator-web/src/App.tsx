@@ -42,6 +42,10 @@ export const App = () => {
     return <p>Generating keypair..</p>
   }
 
+  if (id === undefined) {
+    return <p>id is undefined</p>
+  }
+
   const pubBase64 = sodium.to_base64(keyPairPub, sodium.base64_variants.ORIGINAL)
   const url = `statuspanel:r2?id=${id}&pk=${encodeURIComponent(pubBase64)}`
 
