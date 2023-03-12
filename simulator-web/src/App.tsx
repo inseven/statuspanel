@@ -10,6 +10,7 @@ import { RLEDecoder } from "./utils/RLEDecoder"
 
 export const App = () => {
   const sodium = useSodium()
+  const [id, setId] = useState("reactsim")
   const [keyPairPub, setKeyPairPub] = useLocalStorageUint8Array("keyPairPub", undefined)
   const [keyPairPriv, setKeyPairPriv] = useLocalStorageUint8Array("keyPairPriv", undefined)
 
@@ -41,7 +42,6 @@ export const App = () => {
   }
 
   const pubBase64 = sodium.to_base64(keyPairPub, sodium.base64_variants.ORIGINAL)
-  const id = "reactsim"
   const url = `statuspanel:r2?id=${id}&pk=${encodeURIComponent(pubBase64)}`
 
   const updateImages = async () => {
