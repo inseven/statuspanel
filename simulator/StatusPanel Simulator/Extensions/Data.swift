@@ -47,7 +47,7 @@ extension Data {
 
         let colorMap: [UInt8: UInt32] = [
             0: 0x000000FF,
-            1: 0xFFFF00FF,
+            1: 0x7FFFD4FF,
             2: 0xFFFFFFFF,
         ]
 
