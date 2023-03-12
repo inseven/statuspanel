@@ -95,6 +95,7 @@ def download(identifier):
         data, last_modified = get_database().get_data(identifier)
         response = make_response(data)
         response.headers.set('Content-Type', 'application/octet-stream')
+        response.headers.set("Access-Control-Allow-Origin", "*")
         response.last_modified = last_modified
         response.cache_control.max_age = 0
         response.make_conditional(request)
