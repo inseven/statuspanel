@@ -39,11 +39,14 @@ struct ContentView: View {
             .frame(width: CGFloat(Device.v1.width), height: CGFloat(Device.v1.height))
             .background(.white)
             .padding()
+            if let identifier = applicationModel.identifier {
+                LabeledContent("Identifier", value: identifier.id.uuidString)
+            }
             if let update = applicationModel.lastUpdate {
                 LabeledContent("Wakeup Time", value: String(update.wakeupTime))
-                    .foregroundColor(.secondary)
             }
         }
+        .textSelection(.enabled)
         .toolbar(id: "main") {
             ToolbarItem(id: "action") {
                 Button {

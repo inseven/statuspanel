@@ -33,8 +33,8 @@ struct Service {
 
     static func update(identifier: DeviceIdentifier) async throws -> Update {
 
-        let url = URL(string: "https://api.statuspanel.io/api/v2")!
-            .appendingPathComponent(identifier.id)
+        let url = URL(string: "https://api.statuspanel.io/api/v3/status")!
+            .appendingPathComponent(identifier.id.uuidString)
 
         let response = try await URLSession.shared.data(from: url)
         let data = response.0

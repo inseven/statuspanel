@@ -1,4 +1,4 @@
-name: build
+name: test-service
 
 on:
   pull_request:
