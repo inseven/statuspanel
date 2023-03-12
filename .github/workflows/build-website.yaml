@@ -1,6 +1,8 @@
 name: build-website
 
 on:
+  pull_request:
+    branches: [ main ]
   schedule:
     - cron:  '0 1 * * *'
   workflow_dispatch:
