@@ -242,6 +242,22 @@ class TestAPI(unittest.TestCase):
     def test_api_v3_if_modified_since_header(self):
         self._test_if_modified_since_header('/api/v3/status/poiuytre')
 
+    def test_api_v2_get_cross_origin_header(self):
+        url = '/api/v2/abcdefgh'
+        data = os.urandom(307200)
+        response = self._upload(url, data)
+        self.assertEqual(response.status_code, 200, "Upload succeeds")
+        response = self.client.get(url)
+        self.assertEqual(response.headers["Access-Control-Allow-Origin"], "*")
+
+    def test_api_v3_get_cross_origin_header(self):
+        url = '/api/v3/status/abcdefgh'
+        data = os.urandom(307200)
+        response = self._upload(url, data)
+        self.assertEqual(response.status_code, 200, "Upload succeeds")
+        response = self.client.get(url)
+        self.assertEqual(response.headers["Access-Control-Allow-Origin"], "*")
+
     def test_api_v3_post_device_no_sandbox_implicit(self):
         url = '/api/v3/device/'
         token = '2EDvBde5PThia/q/zS0aSWe4kbnhjEiE9C+q3ykf7cU='
