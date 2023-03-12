@@ -28,15 +28,26 @@ set -u
 SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
+WEBSITE_DIRECTORY="${ROOT_DIRECTORY}/docs"
+WEBSITE_SIMULATOR_DIRECTORY="${ROOT_DIRECTORY}/docs/simulator"
 SIMULATOR_WEB_DIRECTORY="${ROOT_DIRECTORY}/simulator-web"
 
 RELEASE_NOTES_TEMPLATE_PATH="${SCRIPTS_DIRECTORY}/release-notes.markdown"
-RELEASE_NOTES_PATH="${ROOT_DIRECTORY}/docs/release-notes/index.markdown"
+RELEASE_NOTES_DIRECTORY="${ROOT_DIRECTORY}/docs/release-notes"
+RELEASE_NOTES_PATH="${RELEASE_NOTES_DIRECTORY}/index.markdown"
 
 source "${SCRIPTS_DIRECTORY}/environment.sh"
 
 cd "$ROOT_DIRECTORY"
+if [ -d "${RELEASE_NOTES_DIRECTORY}" ]; then
+    rm -r "${RELEASE_NOTES_DIRECTORY}"
+fi
+mkdir -p "${RELEASE_NOTES_DIRECTORY}"
 changes notes --pre-release --all --released --template "$RELEASE_NOTES_TEMPLATE_PATH" > "$RELEASE_NOTES_PATH"
 
 cd "$SIMULATOR_WEB_DIRECTORY"
 npm run build
+if [ -d "${WEBSITE_SIMULATOR_DIRECTORY}" ]; then
+    rm -r "${WEBSITE_SIMULATOR_DIRECTORY}"
+fi
+cp -R dist "${WEBSITE_SIMULATOR_DIRECTORY}"

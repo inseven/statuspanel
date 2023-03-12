@@ -15,3 +15,7 @@ xcuserdata
 # Site
 _site
 .jekyll-cache
+
+# Website
+/docs/simulator
+/docs/release-notes
