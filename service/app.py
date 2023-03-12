@@ -65,19 +65,22 @@ def close_database(exception):
 
 # Valid identifiers are either 8-character strings comprising 0-9 and a-z, or
 # canonical UUID strings (hex digits structured as 8-4-4-4-12).
-SHORT_IDENTIFIER_REGEX = r"^[0-9a-z]{8}$"
-UUID_IDENTIFIER_REGEX = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+SHORT_IDENTIFIER_REGEX = re.compile(r"^[0-9a-z]{8}$")
+UUID_IDENTIFIER_REGEX = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE)
 
 
 def check_identifier(fn):
     @functools.wraps(fn)
     def inner(*args, **kwargs):
         logging.info(f"Checking identifier '{kwargs['identifier']}'...")
-        if (not re.match(SHORT_IDENTIFIER_REGEX, kwargs['identifier']) and
-            not re.match(UUID_IDENTIFIER_REGEX, kwargs['identifier'])):
+        if SHORT_IDENTIFIER_REGEX.match(kwargs['identifier']):
+            return fn(*args, **kwargs)
+        elif UUID_IDENTIFIER_REGEX.match(kwargs['identifier']):
+            kwargs['identifier'] = kwargs['identifier'].lower()
+            return fn(*args, **kwargs)
+        else:
             request.stream.read()
             return f"Invalid identifier '{kwargs['identifier']}'", 400
-        return fn(*args, **kwargs)
     return inner
 
 
