@@ -1,8 +1,8 @@
 export const expand2BPPValues = (img: Uint8Array): Uint8Array => {
   const colorMap: Record<number, number> = {
-    0: 0x000000ff,
-    1: 0xffff00ff,
-    2: 0xffffffff,
+    0: 0x000000ff, // no color
+    1: 0x7fffd4ff, // highlight color
+    2: 0xffffffff, // max contrast color
   }
 
   const data = new Uint8Array(img.length * 4 * 4)
