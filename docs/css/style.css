@@ -9,6 +9,16 @@ body {
     margin: 0;
 }
 
+table {
+    border: 1px solid #ddd;
+    border-collapse: collapse;
+}
+
+table td {
+    border: 1px solid #ddd;
+    padding: 0.5em;
+}
+
 ul.navigation {
     list-style: none;
     margin: 0;

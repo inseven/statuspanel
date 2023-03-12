@@ -35,8 +35,7 @@ If you can't wait to try it out, have a little technical experience, and don't m
 
 ## Technical Details
 
-- [Architecture](architecture.md)
-
+- [Architecture](docs/architecture/index.markdown)
 - [Firmware](firmware/README.markdown)
 - [Device](device/README.markdown)
 - [iOS app](ios/README.markdown)
