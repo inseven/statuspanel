@@ -17,5 +17,6 @@ _site
 .jekyll-cache
 
 # Website
-/docs/simulator
-/docs/release-notes
+# Right now we can't actually ignore these as there's no way to force add them using git-auto-commit.
+# /docs/simulator
+# /docs/release-notes
