@@ -76,7 +76,7 @@ while let pixel = data.read() {
   if pixel == 255 {
     let count = data.read()
     let value = data.read()
-    for _ in range(0, count-1) {
+    for _ in range(0, count) {
       yield value
     }
   } else {
