@@ -39,6 +39,9 @@ struct ContentView: View {
             .frame(width: CGFloat(Device.v1.width), height: CGFloat(Device.v1.height))
             .background(.white)
             .padding()
+            if let pairingURL = applicationModel.identifier?.pairingURL.absoluteString {
+                LabeledContent("Pairing URL", value: pairingURL)
+            }
             if let identifier = applicationModel.identifier {
                 LabeledContent("Identifier", value: identifier.id.uuidString)
             }
