@@ -26,5 +26,5 @@
 	path = ios/diligence
 	url = git@github.com:inseven/diligence.git
 [submodule "simulator/DataStream"]
-	path = simulator/DataStream
+	path = simulator/macos/DataStream
 	url = git@github.com:jbmorley/DataStream.git
