@@ -42,7 +42,6 @@ class DataSourceController {
             CalendarSource().anyDataSource(),
             CalendarHeaderSource().anyDataSource(),
             DummyDataSource().anyDataSource(),
-            NationalRailDataSource(configuration: configuration).anyDataSource(),
             TextDataSource().anyDataSource(),
             TFLDataSource(configuration: configuration).anyDataSource(),
             ZenQuotesDataSource().anyDataSource(),
