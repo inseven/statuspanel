@@ -22,7 +22,7 @@ _Data is encoded in big endian / network endian unless otherwise stated._
 
 Updates are structured as follows:
 
-**Header**
+### Header
 
 | Field          | Type   | Available         | Note                                                         |
 | -------------- | ------ | ----------------- | ------------------------------------------------------------ |
@@ -30,7 +30,7 @@ Updates are structured as follows:
 | `wakeupTime`   | UInt16 | _Always_          | Given as the number of minutes after midnight in device localtime at which the device should be updated. |
 | `imageCount`   | UInt8  | headerLength  > 5 | The number of distinct images in the update. By convention, clients currently expect two images: the first containing the most recent data to display, and the second containing a privacy image to display when in privacy mode. Future device updates might use update the 'privacy' button to toggle through the images leaving privacy policy to the client and allowing for more content images on smaller devices. |
 
-**Index**
+### Index
 
 The index is only included if `imageCount` is present in the header. It contains `imageCount` little endian encoded UInt32 offsets of the different images in the update.
 
@@ -40,11 +40,29 @@ The index is only included if `imageCount` is present in the header. It contains
 | ...                    | ...                    | ...              |
 | `offset[imageCount-1]` | UInt32 (Little Endian) |                  |
 
-**Images**
+### Images
 
 Images are stored back-to-back, each starting at the offset defined in the index (or at offset 6 if `imageCount` is not present in the header).
 
 Images are transmitted in a 2BPP format, encrypted using a [libsodium sealed box](https://doc.libsodium.org/public-key_cryptography/sealed_boxes)  using the device's public key that is provided to **client** at device registration time.
+
+## RLE
+
+```
+while let pixel = data.read() {
+  if pixel == 255 {
+    let count = data.read()
+    let value = data.read()
+    for _ in range(0, count-1) {
+      yield value
+    }
+  } else {
+    yield pixel
+  }
+}
+```
+
+## 2BPP
 
 Image values are as follows:
 
