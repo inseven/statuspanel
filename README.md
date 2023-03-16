@@ -35,10 +35,7 @@ If you can't wait to try it out, have a little technical experience, and don't m
 
 ## Technical Details
 
-### Components
-
-StatusPanel comprises a number of different components:
-
+- [Architecture](docs/architecture/index.markdown)
 - [Firmware](firmware/README.markdown)
 - [Device](device/README.markdown)
 - [iOS app](ios/README.markdown)
@@ -65,6 +62,18 @@ scripts/install-dependencies.sh
 ```
 
 This script installs all dependencies in the `.local` folder within the project root, does not require root, and should not impact your local machine configuration. Scripts that rely on these dependencies source the `scripts/environment.sh` script which configures the path at runtime.
+
+### Website
+
+The website (https://statuspanel.io) is built using Jekyll and hosted on GitHub Pages. If you'd like to edit and serve locally, you run the following commands:
+
+```bash
+cd docs
+bundle install
+bundle exec jekyll serve
+```
+
+Tools versioning for local development can be done with [asdf](http://asdf-vm.com) and `docs/.tool-versions` is already set up correctly.
 
 ## Contributing
 

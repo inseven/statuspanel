@@ -25,20 +25,24 @@ set -o pipefail
 set -x
 set -u
 
-scripts_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-root_directory="${scripts_directory}/.."
-ios_directory="${root_directory}/ios"
-changes_directory="${scripts_directory}/changes"
-build_tools_directory="${scripts_directory}/build-tools"
-nodemcu_directory="${root_directory}/nodemcu"
+SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
+CHANGES_DIRECTORY="${SCRIPTS_DIRECTORY}/changes"
+BUILD_TOOLS_DIRECTORY="${SCRIPTS_DIRECTORY}/build-tools"
+NODEMCU_DIRECTORY="${ROOT_DIRECTORY}/nodemcu"
+SIMULATOR_WEB_DIRECTORY="${ROOT_DIRECTORY}/simulator-web"
 
-environment_path="${scripts_directory}/environment.sh"
+ENVIRONMENT_PATH="${SCRIPTS_DIRECTORY}/environment.sh"
 
-source "$environment_path"
+source "$ENVIRONMENT_PATH"
 
 # Install the Python dependencies
 pip3 install --user pipenv
-PIPENV_PIPFILE="$root_directory/Pipfile" pipenv install
-PIPENV_PIPFILE="$changes_directory/Pipfile" pipenv install
-PIPENV_PIPFILE="$build_tools_directory/Pipfile" pipenv install
-PIPENV_PIPFILE="$nodemcu_directory/Pipfile" pipenv install
+# PIPENV_PIPFILE="$ROOT_DIRECTORY/Pipfile" pipenv sync
+PIPENV_PIPFILE="$CHANGES_DIRECTORY/Pipfile" pipenv install
+PIPENV_PIPFILE="$BUILD_TOOLS_DIRECTORY/Pipfile" pipenv sync
+PIPENV_PIPFILE="$NODEMCU_DIRECTORY/Pipfile" pipenv sync
+
+# Install the JavaScript dependencies
+cd "$SIMULATOR_WEB_DIRECTORY"
+npm install

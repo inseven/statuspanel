@@ -37,6 +37,8 @@ struct AddDataSourceView: View {
                 } label: {
                     HStack(spacing: 0) {
                         Image(uiImage: factory.image)
+                            .renderingMode(.template)
+                            .foregroundColor(.primary)
                             .padding(.trailing)
                         Text(factory.name)
                             .foregroundColor(.primary)
