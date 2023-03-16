@@ -16,6 +16,28 @@ Unlike many centralised systems, the service has no access to any user data–it
 
 ## Device Registration
 
+Device registration and key exchange is performed using a QR code. The QR code encodes a URL containing the device's public key and details and is of the format:
+
+```
+statuspanel:r2?id=<device identifier>&pk=<public key>
+```
+
+Specifically,
+
+- scheme = "statuspanel"
+- path = "r2"
+- query parameters
+  - id = device identifier (canonical UUID4)
+  - pk = device public key (base64 and URL encoded libsodium public key)
+
+## Updates
+
+```
+https://api.statuspanel.io/api/v3/status/<device identifier>
+```
+
+
+
 ## Update Format
 
 _Data is encoded in big endian / network endian unless otherwise stated._
@@ -26,6 +48,7 @@ Updates are structured as follows:
 
 | Field          | Type   | Available         | Note                                                         |
 | -------------- | ------ | ----------------- | ------------------------------------------------------------ |
+| `marker`       | Uint16 | _Always_          | 0xFF00                                                       |
 | `headerLength` | UInt8  | _Always_          | The header layout is expected to be append-only, meaning that the header length serves as a proxy for the data structure version. For example, `imageCount` is only available if `headerLength` is greater than 5.<br />It is safe to assume that `headerLength` will always greater than or equal to 5. |
 | `wakeupTime`   | UInt16 | _Always_          | Given as the number of minutes after midnight in device localtime at which the device should be updated. |
 | `imageCount`   | UInt8  | headerLength  > 5 | The number of distinct images in the update. By convention, clients currently expect two images: the first containing the most recent data to display, and the second containing a privacy image to display when in privacy mode. Future device updates might use update the 'privacy' button to toggle through the images leaving privacy policy to the client and allowing for more content images on smaller devices. |
