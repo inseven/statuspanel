@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import base64
 import enum
 import json
@@ -26,6 +27,12 @@ logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO, format="[%
 
 SETTINGS_PATH = os.path.expanduser("~/.statuspanel")
 
+COLORS = {
+    0: (0, 0, 0, 255),
+    1: (255, 255, 0, 255),
+    2: (255, 255, 255, 255),
+}
+
 
 class MissingUpdate(Exception):
     pass
@@ -51,6 +58,7 @@ class Device(object):
         self.public_key = public_key
         self.secret_key = secret_key
         self.state = State.UNKNOWN
+        self.images = []
 
     @classmethod
     def load(cls, path):
@@ -115,15 +123,15 @@ class Device(object):
 
         # Ensure the header 'version' is high enough for the assumptions in our implementation.
         headerLength = unpack(data, '>B')[0]
-        print(headerLength)
+        logging.debug("Header Length: %d", headerLength)
         if headerLength < 6:
             raise UnsupportedUpdate()
 
         wakeupTime = unpack(data, '>H')[0]
-        print(wakeupTime)
+        logging.debug("Wakeup Time: %d", wakeupTime)
 
         imageCount = unpack(data, '>B')[0]
-        print(imageCount)
+        logging.debug("Image Count: %d", imageCount)
 
         # Seek to the end of the header.
         data.seek(headerLength)
@@ -138,7 +146,7 @@ class Device(object):
             start = offset
         if start is not None:
             offsets.append((start, -1))
-        print(offsets)
+        logging.debug("Offsets: %s", offsets)
 
         # Original dimensions
         (width, height) = (640, 384)
@@ -168,14 +176,6 @@ class Device(object):
                 pass
 
             # Convert the 2BPP representation to 8BPP RGB.
-
-            # TODO: Move this out.
-            COLORS = {
-                0: (0, 0, 0, 255),
-                1: (255, 255, 0, 255),
-                2: (255, 255, 255, 255),
-            }
-
             rgb_data = []
             for byte in pixel_data:
                 rgb_data.append(COLORS[(byte >> 0) & 3])
@@ -183,27 +183,23 @@ class Device(object):
                 rgb_data.append(COLORS[(byte >> 4) & 3])
                 rgb_data.append(COLORS[(byte >> 6) & 3])
 
-            # TODO: Pad the buffer to match the size of the display.
-            #while len(rgb_data) < width * height:
-            #    rgb_data.append((255, 255, 255, 255))
-            print(len(rgb_data), width * height)
-
             images.append(rgb_data)
 
-        print(display.resolution)
+        if self.images == images:
+            logging.info("No changes; ignoring update...")
+            return
+
+        logging.info("Contents updated; drawing...")
+        self.images = images
 
         hack_image = Image.new("RGBA", (width, height), (255, 255, 255, 255))
         hack_image.putdata(images[0])
         
         
         image = Image.new("RGBA", display.resolution, (255, 255, 255, 255))
-        print(image.size)
-        # image.putdata(images[0])
         image.paste(hack_image, (0, 0))
         display.set_image(image.convert("RGB"))  # TODO: Probably unnecessary
         display.show()
-
-        exit()
 
 
 # https://stackoverflow.com/questions/17537071/idiomatic-way-to-struct-unpack-from-bytesio
@@ -214,6 +210,9 @@ def unpack(stream, fmt):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose', action="store_true")
+    options = parser.parse_args()
 
     try:
         device = Device.load(SETTINGS_PATH)
@@ -223,21 +222,25 @@ def main():
         device = Device(id=str(uuid.uuid4()), public_key=public_key, secret_key=secret_key)
         device.save(SETTINGS_PATH)
 
-    print(device.pairing_url)
+    logging.info("Pairing URL: %s", device.pairing_url)
     display = auto(ask_user=True, verbose=True)
 
     while True:
         try:
             logging.info("Fetching update...")
             device.fetch_update(display)
+            logging.info("Sleeping 30s...")
+            time.sleep(30)
         except MissingUpdate:
-            device.show_setup_screen(display)            
+            device.show_setup_screen(display)
+            logging.info("Sleeping 10s...")
+            time.sleep(10)
         except requests.exceptions.ConnectionError as e:
             logging.error("Failed to fetch update with error '%s'", e)
             device.show_error(display, "Connection Error")
-        logging.info("Sleeping...")
-        time.sleep(10)
-    
+            logging.info("Sleeping 10s...")
+            time.sleep(10)
 
+    
 if __name__ == "__main__":
     main()
