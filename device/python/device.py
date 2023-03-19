@@ -123,7 +123,7 @@ class Device(object):
 
         # Ensure the header 'version' is high enough for the assumptions in our implementation.
         headerLength = unpack(data, '>B')[0]
-        print(headerLength)
+        logging.debug("Header Length: %d", headerLength)
         if headerLength < 6:
             raise UnsupportedUpdate()
 
