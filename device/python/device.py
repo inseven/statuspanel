@@ -27,6 +27,12 @@ logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO, format="[%
 
 SETTINGS_PATH = os.path.expanduser("~/.statuspanel")
 
+COLORS = {
+    0: (0, 0, 0, 255),
+    1: (255, 255, 0, 255),
+    2: (255, 255, 255, 255),
+}
+
 
 class MissingUpdate(Exception):
     pass
@@ -170,14 +176,6 @@ class Device(object):
                 pass
 
             # Convert the 2BPP representation to 8BPP RGB.
-
-            # TODO: Move this out.
-            COLORS = {
-                0: (0, 0, 0, 255),
-                1: (255, 255, 0, 255),
-                2: (255, 255, 255, 255),
-            }
-
             rgb_data = []
             for byte in pixel_data:
                 rgb_data.append(COLORS[(byte >> 0) & 3])
