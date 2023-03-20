@@ -7,7 +7,9 @@ import json
 import io
 import logging
 import os
+import signal
 import struct
+import subprocess
 import sys
 import time
 import urllib.parse
@@ -17,9 +19,11 @@ import inky
 import pysodium
 import qrcode
 import requests
+import RPi.GPIO as GPIO
 
 from PIL import Image, ImageOps
 from inky.auto import auto
+
 
 verbose = '--verbose' in sys.argv[1:] or '-v' in sys.argv[1:]
 logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO, format="[%(levelname)s] %(message)s")
@@ -49,6 +53,13 @@ class UnsupportedUpdate(Exception):
 class State(enum.Enum):
     UNKNOWN = 0
     PAIRING = 1
+
+
+class Button(enum.Enum):
+    A = 5
+    B = 6
+    C = 16
+    D = 24
 
 
 class Device(object):
@@ -213,6 +224,28 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', action="store_true")
     options = parser.parse_args()
+
+    # Set up the button callbacks.
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup([Button.A.value, Button.D.value],
+               GPIO.IN,
+               pull_up_down=GPIO.PUD_UP)
+
+    def toggle(pin):
+        logging.info("TOGGLE")
+
+    def shutdown(pin):
+        logging.info("Shutting down...")
+        subprocess.check_call(["sudo", "systemctl", "poweroff"])
+
+    GPIO.add_event_detect(Button.A.value,
+                          GPIO.FALLING,
+                          toggle,
+                          bouncetime=250)
+    GPIO.add_event_detect(Button.D.value,
+                          GPIO.FALLING,
+                          shutdown,
+                          bouncetime=250)
 
     try:
         device = Device.load(SETTINGS_PATH)
