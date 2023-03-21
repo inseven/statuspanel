@@ -53,6 +53,30 @@ class DisplayState:
     index: int
 
 
+class DeviceIdentifier(object):
+
+    def __init__(self, id, public_key, secret_key):
+        self.id = id
+        self.public_key = public_key
+        self.secret_key = secret_key
+
+    @classmethod
+    def generate(cls):
+        public_key, secret_key = pysodium.crypto_box_keypair()
+        return cls(id=str(uuid.uuid4()),
+                   public_key=public_key,
+                   secret_key=secret_key)
+
+    @property
+    def pairing_url(self):
+        public_key = base64.b64encode(self.public_key)
+        parameters = urllib.parse.urlencode({
+            'id': self.id,
+            'pk': public_key,
+        })
+        return "statuspanel:r2?" + parameters
+
+
 DEVICE_SIZE = Size(640, 384)
 
 
@@ -80,82 +104,21 @@ class Button(enum.Enum):
     D = 24
 
 
-class Device(object):
+class Service(object):
 
-    def __init__(self, id, public_key, secret_key):
-
-        self.id = id
-        self.public_key = public_key
-        self.secret_key = secret_key
-
-        self.state = State.UNKNOWN
-
-        self._lock = threading.Lock()
-        self._state = None  # Synchronized on _lock
-        self._requested_state = None  # Synchronized on _lock
-
-    @classmethod
-    def load(cls, path):
-        with open(path) as fh:
-            settings = json.load(fh)
-            id = settings["id"]
-            public_key = base64.b64decode(settings["public_key"])
-            secret_key = base64.b64decode(settings["secret_key"])
-            return cls(id=id, public_key=public_key, secret_key=secret_key)
-
-    def save(self, path):
-        with open(path, "w") as fh:
-            json.dump({
-                'id': self.id,
-                'public_key': base64.b64encode(self.public_key).decode('utf-8'),
-                'secret_key': base64.b64encode(self.secret_key).decode('utf-8'),
-            }, fh)
-
-    @property
-    def pairing_url(self):
-        public_key = base64.b64encode(self.public_key)
-        parameters = urllib.parse.urlencode({
-            'id': self.id,
-            'pk': public_key,
-        })
-        return "statuspanel:r2?" + parameters
+    def __init__(self, identifier):
+        self.identifier = identifier
 
     @property
     def update_url(self):
-        return "https://api.statuspanel.io/api/v3/status/" + self.id
+        return "https://api.statuspanel.io/api/v3/status/" + self.identifier.id
 
-    def toggle(self):
-        with self._lock:
-            # Toggle does nothing if we don't already have a state to work on.
-            if self._requested_state is None:
-                return
-            index = (self._requested_state.index + 1) % len(self._requested_state.images)
-            self._requested_state = DisplayState(self._requested_state.images, index)
-            logging.info("Showing image %d...", self._requested_state.index)
-
-    def show_setup_screen(self, display):
-        if self.state == State.PAIRING:
-            return
-        self.state = State.PAIRING
-        image = Image.new("RGB", display.resolution, (255, 255, 255))
-        code = qrcode.make(self.pairing_url, box_size=6)
-        origin_x = int((image.size[0] - code.size[0]) / 2)
-        origin_y = int((image.size[1] - code.size[1]) / 2)
-        image.paste(code, (origin_x, origin_y))
-        display.set_image(image)
-        display.show()
-
-    def show_error(self, display, message):
-        image = Image.new("RGB", display.resolution, (255, 255, 255))
-        image.paste((255, 0, 255), (0, 0, image.size[0], image.size[1]))
-        display.set_image(image)
-        display.show()
-
-    def fetch_update(self, display):
+    def get_status(self):
         logging.info("Fetching update '%s'...", self.update_url)
         response = requests.get(self.update_url)
         if response.status_code != 200:
-            logging.warning("Failed to fetch update with status code '%s'.", response.status_code)
+            logging.warning("Failed to fetch update with status code '%s'.",
+                            response.status_code)
             raise MissingUpdate()
 
         data = io.BytesIO(response.content)
@@ -164,7 +127,8 @@ class Device(object):
         if unpack(data, '>H')[0] != 0xFF00:
             raise InvalidHeader()
 
-        # Ensure the header 'version' is high enough for the assumptions in our implementation.
+        # Ensure the header 'version' is high enough for the assumptions in our
+        # implementation.
         headerLength = unpack(data, '>B')[0]
         logging.debug("Header Length: %d", headerLength)
         if headerLength < 6:
@@ -179,7 +143,8 @@ class Device(object):
         # Seek to the end of the header.
         data.seek(headerLength)
 
-        # Read the index (given after the header), calculating the lengths as we go.
+        # Read the index (given after the header), calculating the lengths as we
+        # go.
         offsets = []
         start = None
         for _ in range(0, imageCount):
@@ -196,7 +161,9 @@ class Device(object):
         for (offset, size) in offsets:
             assert(data.tell() == offset)
             image = data.read(size)
-            contents = pysodium.crypto_box_seal_open(image, self.public_key, self.secret_key)
+            contents = pysodium.crypto_box_seal_open(image,
+                                                     self.identifier.public_key,
+                                                     self.identifier.secret_key)
 
             # Unpack the RLE data.
             rle_data = io.BytesIO(contents)
@@ -224,6 +191,69 @@ class Device(object):
                 rgb_data.append(PALETTE[(byte >> 6) & 3])
 
             images.append(rgb_data)
+
+        return images
+
+
+class Device(object):
+
+    def __init__(self, identifier):
+        self.identifier = identifier
+        self.service = Service(identifier)
+
+        self.state = State.UNKNOWN
+
+        self._lock = threading.Lock()
+        self._state = None  # Synchronized on _lock
+        self._requested_state = None  # Synchronized on _lock
+
+    @classmethod
+    def load(cls, path):
+        with open(path) as fh:
+            settings = json.load(fh)
+            id = settings["id"]
+            public_key = base64.b64decode(settings["public_key"])
+            secret_key = base64.b64decode(settings["secret_key"])
+            identifier = DeviceIdentifier(id, public_key, secret_key)
+            return cls(identifier=identifier)
+
+    def save(self, path):
+        with open(path, "w") as fh:
+            json.dump({
+                'id': self.identifier.id,
+                'public_key': base64.b64encode(self.identifier.public_key).decode('utf-8'),
+                'secret_key': base64.b64encode(self.identifier.secret_key).decode('utf-8'),
+            }, fh)
+
+    def toggle(self):
+        with self._lock:
+            # Toggle does nothing if we don't already have a state to work on.
+            if self._requested_state is None:
+                return
+            index = (self._requested_state.index + 1) % len(self._requested_state.images)
+            self._requested_state = DisplayState(self._requested_state.images, index)
+            logging.info("Showing image %d...", self._requested_state.index)
+
+    def show_setup_screen(self, display):
+        if self.state == State.PAIRING:
+            return
+        self.state = State.PAIRING
+        image = Image.new("RGB", display.resolution, (255, 255, 255))
+        code = qrcode.make(self.identifier.pairing_url, box_size=4)
+        origin_x = int((image.size[0] - code.size[0]) / 2)
+        origin_y = int((image.size[1] - code.size[1]) / 2)
+        image.paste(code, (origin_x, origin_y))
+        display.set_image(image)
+        display.show()
+
+    def show_error(self, display, message):
+        image = Image.new("RGB", display.resolution, (255, 255, 255))
+        image.paste((255, 0, 255), (0, 0, image.size[0], image.size[1]))
+        display.set_image(image)
+        display.show()
+
+    def fetch_update(self, display):
+        images = self.service.get_status()
 
         with self._lock:
             index = 0 if self._requested_state is None else self._requested_state.index % len(images)
@@ -273,11 +303,10 @@ def main():
         device = Device.load(SETTINGS_PATH)
     except Exception as e:
         logging.error(e)
-        public_key, secret_key = pysodium.crypto_box_keypair()
-        device = Device(id=str(uuid.uuid4()), public_key=public_key, secret_key=secret_key)
+        device = Device(identifier=DeviceIdentifier.generate())
         device.save(SETTINGS_PATH)
 
-    logging.info("Pairing URL: %s", device.pairing_url)
+    logging.info("Pairing URL: %s", device.identifier.pairing_url)
     display = auto(ask_user=True, verbose=True)
 
     # Set up the button callbacks.
