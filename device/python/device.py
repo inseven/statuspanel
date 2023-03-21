@@ -11,9 +11,12 @@ import signal
 import struct
 import subprocess
 import sys
+import threading
 import time
 import urllib.parse
 import uuid
+
+from dataclasses import dataclass
 
 import inky
 import pysodium
@@ -32,10 +35,25 @@ logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO, format="[%
 SETTINGS_PATH = os.path.expanduser("~/.statuspanel")
 
 COLORS = {
-    0: (0, 0, 0, 255),
+    0: (0, 0, 255, 255),
     1: (255, 255, 0, 255),
     2: (255, 255, 255, 255),
 }
+
+
+@dataclass
+class Size:
+    width: int
+    height: int
+
+
+@dataclass
+class DisplayState:
+    images: list
+    index: int
+
+
+DEVICE_SIZE = Size(640, 384)
 
 
 class MissingUpdate(Exception):
@@ -65,11 +83,16 @@ class Button(enum.Enum):
 class Device(object):
 
     def __init__(self, id, public_key, secret_key):
+
         self.id = id
         self.public_key = public_key
         self.secret_key = secret_key
+
         self.state = State.UNKNOWN
-        self.images = []
+
+        self._lock = threading.Lock()
+        self._state = None  # Synchronized on _lock
+        self._requested_state = None  # Synchronized on _lock
 
     @classmethod
     def load(cls, path):
@@ -101,6 +124,15 @@ class Device(object):
     def update_url(self):
         return "https://api.statuspanel.io/api/v3/status/" + self.id
 
+    def toggle(self):
+        with self._lock:
+            # Toggle does nothing if we don't already have a state to work on.
+            if self._requested_state is None:
+                return
+            index = (self._requested_state.index + 1) % len(self._requested_state.images)
+            self._requested_state = DisplayState(self._requested_state.images, index)
+            logging.info("Showing image %d...", self._requested_state.index)
+
     def show_setup_screen(self, display):
         if self.state == State.PAIRING:
             return
@@ -117,7 +149,7 @@ class Device(object):
         image = Image.new("RGB", display.resolution, (255, 255, 255))
         image.paste((255, 0, 255), (0, 0, image.size[0], image.size[1]))
         display.set_image(image)
-        display.show()        
+        display.show()
 
     def fetch_update(self, display):
         logging.info("Fetching update '%s'...", self.update_url)
@@ -125,7 +157,7 @@ class Device(object):
         if response.status_code != 200:
             logging.warning("Failed to fetch update with status code '%s'.", response.status_code)
             raise MissingUpdate()
-        
+
         data = io.BytesIO(response.content)
 
         # Check for a valid update.
@@ -159,9 +191,6 @@ class Device(object):
             offsets.append((start, -1))
         logging.debug("Offsets: %s", offsets)
 
-        # Original dimensions
-        (width, height) = (640, 384)
-
         # Read the images.
         images = []
         for (offset, size) in offsets:
@@ -173,7 +202,7 @@ class Device(object):
             rle_data = io.BytesIO(contents)
             pixel_data = bytearray()
             try:
-                while len(pixel_data) * 4 < width * height:
+                while len(pixel_data) * 4 < DEVICE_SIZE.width * DEVICE_SIZE.height:
                     pixel = unpack(rle_data, 'B')[0]
                     if pixel == 255:
                         count = unpack(rle_data, 'B')[0]
@@ -196,18 +225,37 @@ class Device(object):
 
             images.append(rgb_data)
 
-        if self.images == images:
-            logging.info("No changes; ignoring update...")
+        with self._lock:
+            index = 0 if self._requested_state is None else self._requested_state.index % len(images)
+            self._requested_state = DisplayState(images, index)
+
+        self.display_image_if_necessary(display)
+
+    def display_image_if_necessary(self, display):
+        """
+        Updates the contents of the display if the requested draw state
+        differs from the currently drawn state.
+        """
+        state = None
+        with self._lock:
+            if self._state == self._requested_state:
+                logging.info("No update requested; ignoring...")
+                return
+            self._state = self._requested_state
+            state = self._requested_state
+
+        if state is None:
+            # TODO: This should never happen; perhaps we should assert?
+            logging.info("Requested update is empty; ignoring...")
             return
 
-        logging.info("Contents updated; drawing...")
-        self.images = images
-
-        hack_image = Image.new("RGBA", (width, height), (255, 255, 255, 255))
-        hack_image.putdata(images[0])
-        
-        
-        image = Image.new("RGBA", display.resolution, (255, 255, 255, 255))
+        hack_image = Image.new("RGBA",
+                               (DEVICE_SIZE.width, DEVICE_SIZE.height),
+                               (255, 255, 255, 255))
+        hack_image.putdata(state.images[state.index])
+        image = Image.new("RGBA",
+                          display.resolution,
+                          (255, 255, 255, 255))
         image.paste(hack_image, (0, 0))
         display.set_image(image.convert("RGB"))  # TODO: Probably unnecessary
         display.show()
@@ -225,6 +273,17 @@ def main():
     parser.add_argument('-v', '--verbose', action="store_true")
     options = parser.parse_args()
 
+    try:
+        device = Device.load(SETTINGS_PATH)
+    except Exception as e:
+        logging.error(e)
+        public_key, secret_key = pysodium.crypto_box_keypair()
+        device = Device(id=str(uuid.uuid4()), public_key=public_key, secret_key=secret_key)
+        device.save(SETTINGS_PATH)
+
+    logging.info("Pairing URL: %s", device.pairing_url)
+    display = auto(ask_user=True, verbose=True)
+
     # Set up the button callbacks.
     GPIO.setmode(GPIO.BCM)
     GPIO.setup([Button.A.value, Button.D.value],
@@ -232,7 +291,11 @@ def main():
                pull_up_down=GPIO.PUD_UP)
 
     def toggle(pin):
-        logging.info("TOGGLE")
+        # Select a different image and then schedule the redraw
+        # by sending SIGUSR1.
+        print("toggle")
+        device.toggle()
+        os.kill(os.getpid(), signal.SIGUSR1)
 
     def shutdown(pin):
         logging.info("Shutting down...")
@@ -247,33 +310,50 @@ def main():
                           shutdown,
                           bouncetime=250)
 
-    try:
-        device = Device.load(SETTINGS_PATH)
-    except Exception as e:
-        logging.error(e)
-        public_key, secret_key = pysodium.crypto_box_keypair()
-        device = Device(id=str(uuid.uuid4()), public_key=public_key, secret_key=secret_key)
-        device.save(SETTINGS_PATH)
+    tasks = []
 
-    logging.info("Pairing URL: %s", device.pairing_url)
-    display = auto(ask_user=True, verbose=True)
-
-    while True:
+    def update():
         try:
             logging.info("Fetching update...")
             device.fetch_update(display)
             logging.info("Sleeping 30s...")
-            time.sleep(30)
+            signal.alarm(30)
         except MissingUpdate:
             device.show_setup_screen(display)
             logging.info("Sleeping 10s...")
-            time.sleep(10)
+            signal.alarm(10)
         except requests.exceptions.ConnectionError as e:
             logging.error("Failed to fetch update with error '%s'", e)
             device.show_error(display, "Connection Error")
             logging.info("Sleeping 10s...")
-            time.sleep(10)
+            signal.alarm(10)
 
-    
+    def redraw():
+        device.display_image_if_necessary(display)
+
+    def alarm(sig, frame):
+        tasks.append(update)
+
+    def user(sig, frame):
+        tasks.append(redraw)
+
+    def interrupt(sig, frame):
+        exit()
+
+    signal.signal(signal.SIGALRM, alarm)
+    signal.signal(signal.SIGUSR1, user)
+    signal.signal(signal.SIGINT, interrupt)
+
+    tasks.append(update)
+
+    while True:
+        while True:
+            try:
+                tasks.pop(0)()
+            except IndexError:
+                break
+        signal.pause()
+
+
 if __name__ == "__main__":
     main()
