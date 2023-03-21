@@ -34,10 +34,10 @@ logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO, format="[%
 
 SETTINGS_PATH = os.path.expanduser("~/.statuspanel")
 
-COLORS = {
-    0: (0, 0, 255, 255),
-    1: (255, 255, 0, 255),
-    2: (255, 255, 255, 255),
+PALETTE = {
+    0: (0, 0, 255),
+    1: (255, 255, 0),
+    2: (255, 255, 255),
 }
 
 
@@ -218,10 +218,10 @@ class Device(object):
             # Convert the 2BPP representation to 8BPP RGB.
             rgb_data = []
             for byte in pixel_data:
-                rgb_data.append(COLORS[(byte >> 0) & 3])
-                rgb_data.append(COLORS[(byte >> 2) & 3])
-                rgb_data.append(COLORS[(byte >> 4) & 3])
-                rgb_data.append(COLORS[(byte >> 6) & 3])
+                rgb_data.append(PALETTE[(byte >> 0) & 3])
+                rgb_data.append(PALETTE[(byte >> 2) & 3])
+                rgb_data.append(PALETTE[(byte >> 4) & 3])
+                rgb_data.append(PALETTE[(byte >> 6) & 3])
 
             images.append(rgb_data)
 
@@ -243,21 +243,17 @@ class Device(object):
                 return
             self._state = self._requested_state
             state = self._requested_state
+        assert state is not None
 
-        if state is None:
-            # TODO: This should never happen; perhaps we should assert?
-            logging.info("Requested update is empty; ignoring...")
-            return
-
-        hack_image = Image.new("RGBA",
-                               (DEVICE_SIZE.width, DEVICE_SIZE.height),
-                               (255, 255, 255, 255))
-        hack_image.putdata(state.images[state.index])
-        image = Image.new("RGBA",
-                          display.resolution,
-                          (255, 255, 255, 255))
-        image.paste(hack_image, (0, 0))
-        display.set_image(image.convert("RGB"))  # TODO: Probably unnecessary
+        image = Image.new("RGB",
+                          (DEVICE_SIZE.width, DEVICE_SIZE.height),
+                          (255, 255, 255))
+        image.putdata(state.images[state.index])
+        panel_image = Image.new("RGB",
+                                display.resolution,
+                                (255, 255, 255))
+        panel_image.paste(image, (0, 0))
+        display.set_image(panel_image)
         display.show()
 
 
