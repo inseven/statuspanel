@@ -35,7 +35,7 @@ logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO, format="[%
 SETTINGS_PATH = os.path.expanduser("~/.statuspanel")
 
 PALETTE = {
-    0: (0, 0, 255),
+    0: (0, 0, 0),
     1: (255, 255, 0),
     2: (255, 255, 255),
 }
