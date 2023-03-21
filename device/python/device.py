@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import _thread
 import argparse
 import base64
 import enum
