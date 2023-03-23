@@ -23,7 +23,7 @@ import UIKit
 
 import Sodium
 
-class Client {
+class Service {
 
     let baseUrl: URL
 
@@ -71,41 +71,33 @@ class Client {
     }
 
     func upload(image: Data, privacyImage: Data, completion: @escaping (Bool) -> Void) {
-        DispatchQueue.global().async {
-            print("Uploading new images")
-
-            var devices = Config().devices
-            if devices.count == 0 {
-                print("No keys configured, not uploading")
-                completion(false)
-                return
-            }
-
-            var nextUpload : (Bool) -> Void = { (b: Bool) -> Void in }
-            var anythingUploaded = false
-            nextUpload = { (lastUploadDidUpload: Bool) in
-                if lastUploadDidUpload {
-                    anythingUploaded = true
-                }
-                if devices.count == 0 {
-                    completion(anythingUploaded)
-                } else {
-                    let (id, pubkey) = devices.remove(at: 0)
-                    if pubkey.isEmpty {
-                        // Empty keys are used for debugging the UI, and shouldn't cause an upload
-                        nextUpload(false)
-                        return
-                    }
-                    self.uploadImages([image, privacyImage], deviceid: id, publickey: pubkey, completion: nextUpload)
-                }
-            }
-            nextUpload(false)
+        Task {
+            let didUpload = await upload([image, privacyImage])
+            completion(didUpload)
         }
     }
 
-    private func uploadImages(_ images: [Data], deviceid: String, publickey: String, completion: @escaping (Bool) -> Void) {
+    private func upload(_ images: [Data]) async -> Bool {
+        let devices = await Config().devices
+        var result = false
+        for (id, publicKey) in devices {
+            let didUpload = await upload(images, deviceId: id, publicKey: publicKey)
+            result = result || didUpload
+        }
+        return result
+    }
+
+    private func upload(_ images: [Data], deviceId: String, publicKey: String) async -> Bool {
+        return await withCheckedContinuation { continuation in
+            self.upload(images, deviceId: deviceId, publicKey: publicKey) { change in
+                continuation.resume(with: .success(change))
+            }
+        }
+    }
+
+    private func upload(_ images: [Data], deviceId: String, publicKey: String, completion: @escaping (Bool) -> Void) {
         let sodium = Sodium()
-        guard let key = sodium.utils.base642bin(publickey, variant: .ORIGINAL) else {
+        guard let key = sodium.utils.base642bin(publicKey, variant: .ORIGINAL) else {
             print("Failed to decode key from publickey userdefault!")
             completion(false)
             return
@@ -114,9 +106,11 @@ class Client {
         // We can't just hash the resulting encryptedData because libsodium ensures it is different every time even
         // for identical input data (which normally is a good thing!) so we have to construct a unencrypted blob just
         // for the purposes of calculating the hash.
-        let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(Self.makeMultipartUpload(parts: images)))!, variant: .ORIGINAL)!
-        if hash == Config().getLastUploadHash(for: deviceid) {
-            print("Data for \(deviceid) is the same as before, not uploading")
+        let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(Self.makeMultipartUpload(parts: images)))!,
+                                           variant: .ORIGINAL)!
+
+        if hash == DispatchQueue.main.sync(execute: { return Config().getLastUploadHash(for: deviceId) }) {
+            print("Data for \(deviceId) is the same as before, not uploading")
             completion(false)
             return
         }
@@ -132,7 +126,7 @@ class Client {
             encryptedParts.append(Data(encryptedDataBytes!))
         }
         let encryptedData = Self.makeMultipartUpload(parts: encryptedParts)
-        let path = "https://api.statuspanel.io/api/v2/\(deviceid)"
+        let path = "https://api.statuspanel.io/api/v2/\(deviceId)"
         guard let url = URL(string: path) else {
             print("Unable to create URL")
             completion(false)
@@ -167,7 +161,9 @@ class Client {
             if let error = error {
                 print(error)
             } else {
-                Config().setLastUploadHash(for: deviceid, to: hash)
+                DispatchQueue.main.sync {
+                    Config().setLastUploadHash(for: deviceId, to: hash)
+                }
             }
             completion(true)
         })

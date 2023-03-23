@@ -81,7 +81,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         sourceController = AppDelegate.shared.sourceController
-        sourceController.delegate = self
 
         title = "StatusPanel"
         navigationItem.leftBarButtonItem = settingsButtonItem
@@ -114,8 +113,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     @objc func refreshTapped(sender: Any) {
-        Config().clearUploadHashes()  // Wipe all stored hashes to force re-upload on completion.
-        fetch()
+        fetch(force: true)
     }
 
     @objc func addTapped(sender: Any) {
@@ -141,7 +139,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         fetch()
     }
 
-    func fetch() {
+    func fetch(force: Bool = false, completion: @escaping (UIBackgroundFetchResult) -> Void = { _ in }) {
         dispatchPrecondition(condition: .onQueue(.main))
         let blankImage = Panel.blankImage()
         self.image = blankImage
@@ -153,7 +151,40 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
         self.refreshButtonItem.isEnabled = false
         activityIndicator.startAnimating()
-        sourceController.fetch()
+
+        sourceController.fetch { items, error in
+            dispatchPrecondition(condition: .onQueue(.main))
+
+            guard let items = items else {
+                if let error {
+                    self.present(error: error)
+                }
+                self.fetchDidComplete()
+                return
+            }
+
+            let config = Config()
+            let images = Renderer.render(data: items, config: config)
+
+            let client = AppDelegate.shared.client
+            DispatchQueue.global().async {
+                let payloads = Panel.rlePayloads(for: images)
+                DispatchQueue.main.sync {
+                    self.fetchDidUpdate(image: payloads[0].1, privacyImage: payloads[1].1)
+                    if force {
+                        // Remove the last upload hashes to ensure the upload method re-uploads the data.
+                        Config().clearUploadHashes()
+                    }
+                }
+                client.upload(image: payloads[0].0, privacyImage: payloads[1].0) { anythingChanged in
+                    print("Changes: \(anythingChanged)")
+                    DispatchQueue.main.async {
+                        completion(anythingChanged ? .newData : .noData)
+                        self.fetchDidComplete()
+                    }
+                }
+            }
+        }
     }
 
     func fetchDidUpdate(image: UIImage, privacyImage: UIImage) {
@@ -172,45 +203,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         self.refreshButtonItem.isEnabled = true
     }
 
-    func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
-        dispatchPrecondition(condition: .onQueue(.main))
-        let config = Config()
-        let images = Renderer.render(data: data, config: config)
-
-        let client = AppDelegate.shared.client
-        DispatchQueue.global().async {
-            let payloads = Panel.rlePayloads(for: images)
-            DispatchQueue.main.sync {
-                self.fetchDidUpdate(image: payloads[0].1, privacyImage: payloads[1].1)
-            }
-            client.upload(image: payloads[0].0, privacyImage: payloads[1].0) { anythingChanged in
-                print("Changes: \(anythingChanged)")
-                completion(anythingChanged)
-            }
-        }
-
-    }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         BitmapFontCache.shared.emptyCache()
-    }
-
-}
-
-extension ViewController: DataSourceControllerDelegate {
-
-    func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase]) {
-        self.renderAndUpload(data: data, completion: { (changes: Bool) -> Void in
-            DispatchQueue.main.async {
-                AppDelegate.shared.fetchCompleted(hasChanged: changes)
-                self.fetchDidComplete()
-            }
-        })
-    }
-
-    func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error) {
-        present(error: error)
-        fetchDidComplete()
     }
 
 }

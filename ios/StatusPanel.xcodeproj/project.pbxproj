@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D80380AB23E9B6D2002606C7 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Client.swift */; };
+		D80380AB23E9B6D2002606C7 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Service.swift */; };
 		D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523B2709875600C9D80A /* FontPickerViewController.swift */; };
 		D8166551272773AC005BDA9E /* ImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8166550272773AC005BDA9E /* ImageTableViewCell.swift */; };
 		D816655327277407005BDA9E /* UIActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D816655227277407005BDA9E /* UIActivityIndicatorView.swift */; };
@@ -125,7 +125,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		D80380AA23E9B6D2002606C7 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		D80380AA23E9B6D2002606C7 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		D812523B2709875600C9D80A /* FontPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPickerViewController.swift; sourceTree = "<group>"; };
 		D8166550272773AC005BDA9E /* ImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTableViewCell.swift; sourceTree = "<group>"; };
 		D816655227277407005BDA9E /* UIActivityIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorView.swift; sourceTree = "<group>"; };
@@ -494,7 +494,6 @@
 				DBCA987C2143E2920084B710 /* AppDelegate.swift */,
 				DBC3B35F26F5FA4600BC5FF0 /* BitmapFontCache.swift */,
 				DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */,
-				D80380AA23E9B6D2002606C7 /* Client.swift */,
 				D89CAF1021ABDDA200B4B314 /* Config.swift */,
 				D8DAED7126E3F3320002F388 /* Configuration.swift */,
 				D8E285AE271A45CE001738A8 /* Device.swift */,
@@ -502,6 +501,7 @@
 				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
 				D8DCA7DB29CBEBDD002010A5 /* RedactMode.swift */,
 				D8DCA7D929CBEB42002010A5 /* Renderer.swift */,
+				D80380AA23E9B6D2002606C7 /* Service.swift */,
 				D8DAED7326E3F3930002F388 /* StatusPanelError.swift */,
 				DB5E9DA0241562ED009F3807 /* StringUtils.swift */,
 				DBCA98832143E2920084B710 /* Assets.xcassets */,
@@ -693,7 +693,7 @@
 				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
 				D81CEBBA2906B31300E4B032 /* WeatherDataSource.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
-				D80380AB23E9B6D2002606C7 /* Client.swift in Sources */,
+				D80380AB23E9B6D2002606C7 /* Service.swift in Sources */,
 				D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */,
 				D89104852707B9A00020A2CF /* UIViewController.swift in Sources */,
 				D8C20D23271C6C1500F3F22A /* EKCalendar.swift in Sources */,

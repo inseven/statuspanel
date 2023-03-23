@@ -20,9 +20,24 @@
 
 import Foundation
 
+import Sodium
+
 struct Device: Identifiable, Equatable {
 
     var id: String
     var publicKey: String
+
+    init(id: String, publicKey: String) {
+        self.id = id
+        self.publicKey = publicKey
+    }
+
+    // Create a new dummy device identifier.
+    init() {
+        let sodium = Sodium()
+        id = UUID().uuidString
+        let keyPair = sodium.box.keyPair()!
+        publicKey = sodium.utils.bin2base64(keyPair.publicKey, variant: .ORIGINAL)!
+    }
 
 }

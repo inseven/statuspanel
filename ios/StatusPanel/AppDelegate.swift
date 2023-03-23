@@ -26,11 +26,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var background = false
 
     var window: UIWindow?
-    var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
+    var viewController: ViewController?
     var config = Config()
     var sourceController = DataSourceController()
     var apnsToken: Data?
-    var client: Client = Client(baseUrl: "https://api.statuspanel.io/")
+    var client: Service = Service(baseUrl: "https://api.statuspanel.io/")
 
     static var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
@@ -50,6 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let viewController = ViewController()
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.navigationBar.prefersLargeTitles = true
+        self.viewController = viewController
 
         window = UIWindow()
         window?.rootViewController = navigationController
@@ -138,16 +139,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didReceiveRemoteNotification userInfo: [AnyHashable : Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("didReceiveRemoteNotification")
+
+        // Record the last background update time.
         Config().lastBackgroundUpdate = Date()
-        backgroundFetchCompletionFn = completionHandler
-        sourceController.fetch()
 
         // Re-register the device to ensure it doesn't time out on the server.
         if let deviceToken = apnsToken {
             registerDevice(token: deviceToken)
         }
 
+        // Ensure we have a view controller to perform the update.
+        guard let viewController = viewController else {
+            completionHandler(.failed)
+            return
+        }
+
+        // Perform the update.
+        viewController.fetch(completion: completionHandler)
     }
 
     func registerDevice(token: Data) {
@@ -162,18 +170,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func update() {
-        if sourceController.delegate != nil {
-            sourceController.fetch()
-        }
+        viewController?.fetch()
     }
 
-    func fetchCompleted(hasChanged: Bool) {
-        if let fn = backgroundFetchCompletionFn {
-            print("Background fetch completed")
-            fn(hasChanged ? .newData : .noData)
-            backgroundFetchCompletionFn = nil
-        }
-    }
 }
 
 extension AppDelegate: WifiProvisionerControllerDelegate {
