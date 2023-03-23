@@ -66,6 +66,14 @@ struct DataItemFlags: OptionSet, Codable {
     static let header = DataItemFlags(rawValue: 1 << 1)
     static let prefersEmptyColumn = DataItemFlags(rawValue: 1 << 2)
     static let spansColumns = DataItemFlags(rawValue: 1 << 3)
+
+    var labelStyle: LabelStyle {
+        if contains(.header) {
+            return .header
+        }
+        return .text
+    }
+    
 }
 
 protocol DataItemBase : AnyObject {

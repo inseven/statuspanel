@@ -59,6 +59,10 @@
 		D8DAED7226E3F3320002F388 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7126E3F3320002F388 /* Configuration.swift */; };
 		D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7326E3F3930002F388 /* StatusPanelError.swift */; };
 		D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7626E3F3D40002F388 /* Bundle.swift */; };
+		D8DCA7D629CBEA92002010A5 /* LabelStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7D529CBEA92002010A5 /* LabelStyle.swift */; };
+		D8DCA7DA29CBEB43002010A5 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7D929CBEB42002010A5 /* Renderer.swift */; };
+		D8DCA7DC29CBEBDD002010A5 /* RedactMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7DB29CBEBDD002010A5 /* RedactMode.swift */; };
+		D8DCA7DE29CBEE4D002010A5 /* UILabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7DD29CBEE4D002010A5 /* UILabel.swift */; };
 		D8DD98FF271EF8CD004088CD /* ColoredCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD98FE271EF8CD004088CD /* ColoredCheckbox.swift */; };
 		D8DD9901271EF971004088CD /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD9900271EF971004088CD /* Binding.swift */; };
 		D8E285AD271A4547001738A8 /* ExternalOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E285AC271A4547001738A8 /* ExternalOperation.swift */; };
@@ -178,6 +182,10 @@
 		D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
 		D8DC8D8026E1ADAF004B081D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		D8DCA7D529CBEA92002010A5 /* LabelStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelStyle.swift; sourceTree = "<group>"; };
+		D8DCA7D929CBEB42002010A5 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		D8DCA7DB29CBEBDD002010A5 /* RedactMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactMode.swift; sourceTree = "<group>"; };
+		D8DCA7DD29CBEE4D002010A5 /* UILabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabel.swift; sourceTree = "<group>"; };
 		D8DD98FE271EF8CD004088CD /* ColoredCheckbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoredCheckbox.swift; sourceTree = "<group>"; };
 		D8DD9900271EF971004088CD /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		D8E285AC271A4547001738A8 /* ExternalOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalOperation.swift; sourceTree = "<group>"; };
@@ -325,6 +333,7 @@
 				D89104862707BAD50020A2CF /* DataSourceInstance.swift */,
 				D8383EBD270FBA1B0007EBB7 /* DataSourceSettingsStore.swift */,
 				D8E6839B270DF11800504B5E /* DataSourceType.swift */,
+				D8DCA7D529CBEA92002010A5 /* LabelStyle.swift */,
 				D842A3FC265BE81F009C1156 /* Calendar */,
 				D89104882707BB3D0020A2CF /* Dummy */,
 				D842A3FE265BE878009C1156 /* National Rail */,
@@ -419,14 +428,15 @@
 				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
 				D8E6D672271FBD3300AB6452 /* Color.swift */,
 				D8C20D22271C6C1500F3F22A /* EKCalendar.swift */,
+				D816655427277632005BDA9E /* FileManager.swift */,
 				D816655227277407005BDA9E /* UIActivityIndicatorView.swift */,
 				DBFAEA83272446C5005B9E21 /* UIFont.swift */,
 				D8D29BC92723E2F400125927 /* UIImage.swift */,
+				D8DCA7DD29CBEE4D002010A5 /* UILabel.swift */,
 				D83CC5212707543E00260DC1 /* UIStoryboard.swift */,
 				D89104842707B99F0020A2CF /* UIViewController.swift */,
 				DB981489270887590029BA0A /* UnicodeExtensions.swift */,
 				D8293A0B26F787D3008CE13B /* URL.swift */,
-				D816655427277632005BDA9E /* FileManager.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -490,6 +500,8 @@
 				D8E285AE271A45CE001738A8 /* Device.swift */,
 				DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */,
 				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
+				D8DCA7DB29CBEBDD002010A5 /* RedactMode.swift */,
+				D8DCA7D929CBEB42002010A5 /* Renderer.swift */,
 				D8DAED7326E3F3930002F388 /* StatusPanelError.swift */,
 				DB5E9DA0241562ED009F3807 /* StringUtils.swift */,
 				DBCA98832143E2920084B710 /* Assets.xcassets */,
@@ -499,12 +511,12 @@
 				DBCA98852143E2920084B710 /* LaunchScreen.storyboard */,
 				D862BF3D271B99450086BE48 /* Licenses */,
 				D8C20D20271C2A6200F3F22A /* Localizable.strings */,
+				D816655A2727B7D1005BDA9E /* Localizable.stringsdict */,
 				DBCA987A2143E2920084B710 /* Products */,
 				D8DD98FD271EF8A8004088CD /* Styles */,
 				D81DA7BE2712952D0052D32C /* Utilities */,
 				D842A401265BE916009C1156 /* View Controllers */,
 				D812523427093BAB00C9D80A /* Views */,
-				D816655A2727B7D1005BDA9E /* Localizable.stringsdict */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
@@ -665,13 +677,16 @@
 				D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */,
 				D8B3B3A827182BB000DD3148 /* AddDataSourceController.swift in Sources */,
 				D8C20D27271C7A6E00F3F22A /* CalendarPickerController.swift in Sources */,
+				D8DCA7D629CBEA92002010A5 /* LabelStyle.swift in Sources */,
 				D8E6D673271FBD3300AB6452 /* Color.swift in Sources */,
+				D8DCA7DE29CBEE4D002010A5 /* UILabel.swift in Sources */,
 				D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */,
 				D8DAED7226E3F3320002F388 /* Configuration.swift in Sources */,
 				D81DA7C3271297460052D32C /* ZenQuotesDataSource.swift in Sources */,
 				D8CC37B12717887A00938C5D /* Panel.swift in Sources */,
 				D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */,
 				DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */,
+				D8DCA7DA29CBEB43002010A5 /* Renderer.swift in Sources */,
 				D8D29BCA2723E2F400125927 /* UIImage.swift in Sources */,
 				D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */,
 				D8D252B327146ED800C68EF9 /* Value1TableViewCell.swift in Sources */,
@@ -713,6 +728,7 @@
 				D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
 				D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */,
+				D8DCA7DC29CBEBDD002010A5 /* RedactMode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
