@@ -21,10 +21,6 @@
 import UIKit
 import CoreImage
 
-enum RedactMode {
-    case none, redactLines, redactWords
-}
-
 class BitmapFontLabel: UILabel {
     var style: BitmapFontCache.Style
     let maxFullSizeLines = Int.max

@@ -279,7 +279,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             let config = Config()
             let fontName = indexPath.row == 0 ? config.titleFont : config.bodyFont
             let font = config.getFont(named: fontName)
-            let fontLabel = ViewController.getLabel(frame: .zero, font: font.configName, style: .text)
+            let fontLabel = UILabel.getLabel(frame: .zero, font: font.configName, style: .text)
             fontLabel.text = font.humanReadableName
             fontLabel.translatesAutoresizingMaskIntoConstraints = false
             fontLabel.textColor = .secondaryLabel

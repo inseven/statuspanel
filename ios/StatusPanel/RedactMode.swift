@@ -18,33 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import UIKit
+import Foundation
 
-class FontLabelTableViewCell: UITableViewCell {
-
-    let labelFont: Fonts.Font
-    let redactMode: RedactMode
-
-    lazy var label: UILabel = {
-        let label = UILabel.getLabel(frame: .zero, font: labelFont.configName, style: .text, redactMode: redactMode)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    init(font: Fonts.Font, redactMode: RedactMode = .none) {
-        self.labelFont = font
-        self.redactMode = redactMode
-        super.init(style: .default, reuseIdentifier: nil)
-        contentView.addSubview(label)
-        NSLayoutConstraint.activate([
-            label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            label.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
-            label.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
-        ])
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
+enum RedactMode {
+    case none
+    case redactLines
+    case redactWords
 }

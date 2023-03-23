@@ -430,6 +430,17 @@ class Config {
         }
     }
 
+    var displaysInDarkMode: Bool {
+        switch darkMode {
+        case .off:
+            return false
+        case .on:
+            return true
+        case .system:
+            return UITraitCollection.current.userInterfaceStyle == UIUserInterfaceStyle.dark
+        }
+    }
+
     var showDummyData: Bool {
         get {
             self.bool(for: .dummyData)
