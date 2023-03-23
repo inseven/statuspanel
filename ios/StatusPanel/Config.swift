@@ -345,7 +345,7 @@ class Config {
         }
     }
 
-    var devices: [(String, String)] {
+    @MainActor var devices: [(String, String)] {
         get {
             let ud = UserDefaults.standard
             if let oldStyle = Config.getDeviceAndKey() {
@@ -519,7 +519,8 @@ class Config {
         return "lastUploadedHash_\(deviceid)"
     }
 
-    func setLastUploadHash(for deviceid: String, to hash:String?) {
+    @MainActor func setLastUploadHash(for deviceid: String, to hash:String?) {
+        dispatchPrecondition(condition: .onQueue(.main))
         let key = Config.getLastUploadHashKey(for: deviceid)
         if let hash = hash {
             self.userDefaults.set(hash, forKey: key)
@@ -528,11 +529,12 @@ class Config {
         }
     }
 
-    func getLastUploadHash(for deviceid: String) -> String? {
+    @MainActor func getLastUploadHash(for deviceid: String) -> String? {
+        dispatchPrecondition(condition: .onQueue(.main  ))
         return self.userDefaults.string(forKey: Config.getLastUploadHashKey(for: deviceid))
     }
 
-    func clearUploadHashes() {
+    @MainActor func clearUploadHashes() {
         for (deviceid, _) in devices {
             setLastUploadHash(for: deviceid, to: nil)
         }

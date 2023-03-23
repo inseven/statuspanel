@@ -20,16 +20,7 @@
 
 import Foundation
 
-protocol DataSourceControllerDelegate: AnyObject {
-
-    // Always called in context of main thread
-    func dataSourceController(_ dataSourceController: DataSourceController, didUpdateData data: [DataItemBase])
-    func dataSourceController(_ dataSourceController: DataSourceController, didFailWithError error: Error)
-}
-
 class DataSourceController {
-
-    weak var delegate: DataSourceControllerDelegate?
 
     var sources: [AnyDataSource] = []
     var instances: [DataSourceInstance] = []
@@ -136,7 +127,7 @@ class DataSourceController {
         try Config().set(dataSources: self.instances.map { $0.details })
     }
 
-    func fetch() {
+    func fetch(completion: @escaping ([DataItemBase]?, Error?) -> Void) {
         dispatchPrecondition(condition: .onQueue(.main))
         let sources = Array(self.instances)  // Capture the ordered sources in case they change.
         syncQueue.async {
@@ -172,7 +163,7 @@ class DataSourceController {
                 }
                 if let error = errors.first {
                     DispatchQueue.main.async {
-                        self.delegate?.dataSourceController(self, didFailWithError: error)
+                        completion(nil, error)
                     }
                     return
                 }
@@ -185,7 +176,7 @@ class DataSourceController {
                     }
                 }.reduce([], +)
                 DispatchQueue.main.async {
-                    self.delegate?.dataSourceController(self, didUpdateData: items)
+                    completion(items, nil)
                 }
             }
         }
