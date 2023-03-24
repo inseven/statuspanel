@@ -1,12 +1,12 @@
 # StatusPanel
 
-[![Build](https://github.com/inseven/statuspanel/actions/workflows/build.yaml/badge.svg)](https://github.com/inseven/statuspanel/actions/workflows/build.yaml)
+[![build-app](https://github.com/inseven/statuspanel/actions/workflows/build-app.yaml/badge.svg)](https://github.com/inseven/statuspanel/actions/workflows/build-app.yaml) [![build-firmware](https://github.com/inseven/statuspanel/actions/workflows/build-firmware.yaml/badge.svg)](https://github.com/inseven/statuspanel/actions/workflows/build-firmware.yaml) [![build-website](https://github.com/inseven/statuspanel/actions/workflows/build-website.yaml/badge.svg)](https://github.com/inseven/statuspanel/actions/workflows/build-website.yaml) [![test-service](https://github.com/inseven/statuspanel/actions/workflows/test-service.yaml/badge.svg)](https://github.com/inseven/statuspanel/actions/workflows/test-service.yaml)
 
 eInk desk calendar and status board
 
 ## Overview
 
-![](hero.jpg)
+![Photo of the original StatusPanel](images/hero.jpg)
 
 StatusPanel is a modern take on the desk calendar. It shows you just what you need to know about your upcoming day, without the temptation of messages, social media feeds, or the other online distractions that come from checking your phone.
 
@@ -18,7 +18,6 @@ The StatusPanel iOS app has built-in support for a number of content sources:
 
 - Calendar
 - [London Underground](https://tfl.gov.uk/modes/tube/) (UK)
-- [National Rail](https://www.nationalrail.co.uk) (UK)
 - [ZenQuotes](https://zenquotes.io)
 
 ### Privacy

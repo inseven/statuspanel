@@ -24,6 +24,13 @@ import os
 import re
 import time
 
+# Monkey patch collections to work around legacy behaviour in gobiko and dateutil.
+import collections.abc
+collections.Iterable = collections.abc.Iterable
+collections.Mapping = collections.abc.Mapping
+collections.MutableSet = collections.abc.MutableSet
+collections.MutableMapping = collections.abc.MutableMapping
+
 import psycopg2
 import werkzeug
 

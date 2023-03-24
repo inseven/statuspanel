@@ -135,7 +135,7 @@ class Fonts {
         """
 
     static let guiConsFont = BitmapInfo(bitmap: "font6x10", charWidth: 6, charHeight: 10, capHeight: 7, descent: 2, startIndex: " ")
-    static let unifont = BitmapInfo(bitmap: "unifont-13.0.06", charWidth: 16, charHeight: 16, capHeight: 10, descent: 2, startIndex: "\0", minWidth: 7)
+    static let unifont = BitmapInfo(bitmap: "unifont-15.0.01", charWidth: 16, charHeight: 16, capHeight: 10, descent: 2, startIndex: "\0", minWidth: 7)
 
     class FontName {
         static let guicons = "font6x10_2"
