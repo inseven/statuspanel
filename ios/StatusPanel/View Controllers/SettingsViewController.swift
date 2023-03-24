@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2022 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2023 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -57,11 +57,11 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     init() {
         super.init(style: .insetGrouped)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem
@@ -516,7 +516,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return
         case AboutSection:
 
-            let aboutView = AboutView(copyright: "Copyright © 2018-2022\nJason Morley, Tom Sutcliffe") {
+            let aboutView = AboutView(copyright: "Copyright © 2018-2023\nJason Morley, Tom Sutcliffe") {
                 Action("InSeven Limited", url: URL(string: "https://inseven.co.uk")!)
                 Action("GitHub", url: URL(string: "https://github.com/inseven/statuspanel")!)
             } acknowledgements: {
