@@ -22,12 +22,15 @@ import logging
 import subprocess
 
 
+POSTGRES_PASSWORD = "0EFDA2E7-9700-4F06-ADCB-55D8E38A37DF"
+
+
 def run():
     logging.debug("Creating docker Postgres container...")
     subprocess.run(["docker", "run",
                     "--name", "statuspanel-postgres-test",
                     "-p", "5432:5432",
-                    "-e", "POSTGRES_PASSWORD=0EFDA2E7-9700-4F06-ADCB-55D8E38A37DF",
+                    "-e", "POSTGRES_PASSWORD=%s" % (POSTGRES_PASSWORD, ),
                     "-d", "postgres"], stdout=subprocess.PIPE)
 
 
@@ -55,3 +58,7 @@ class PostgresContainer(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.stop()
+
+    @property
+    def url(self):
+        return "postgres://postgres:%s@localhost:5432/postgres" % (POSTGRES_PASSWORD, )
