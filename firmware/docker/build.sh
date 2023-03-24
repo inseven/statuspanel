@@ -34,6 +34,8 @@ LUAC_CROSS_PATH="$NODEMCU_FIRMWARE_ROOT/build/luac_cross/luac.cross"
 ESP32_LFS_ADDR=0x3f440000
 ESP32_S2_LFS_ADDR=0x3f040000
 
+INIT_SCRIPT="\"(node.flashindex(\\\"init\\\") or (function() print(\\\"No LFS!\\\") end))()\""
+
 # Check that the project is in the expected location.
 if [ ! -d "$PROJECT_ROOT" ] ; then
     echo "Unable to find source at /opt/statuspanel. Did you forget to run the script inside Docker?"

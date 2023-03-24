@@ -437,6 +437,10 @@ function listen()
         writeFile("root.pem", certData)
         if terminator == "\0" then
             print("Completed read of root.pem")
+        rootPemFile:write(certData)
+        if terminator == "\0" then
+            print("Completed read of root.pem")
+            rootPemFile:close()
             provisioningSocket = sock
             wifi.mode(wifi.STATIONAP, false)
             wifi.sta.on("got_ip", connectToProvisionedCredsSucceeded)
@@ -446,7 +450,7 @@ function listen()
             if idf_v4 then
                 wifi.sta.connect()
             else
-                -- we should now get a got_ip or disconnected callback (despite auto=false...)
+            -- we should now get a got_ip or disconnected callback (despite auto=false...)
             end
         else
             -- We might get the rest of the data in a subsequent packet
