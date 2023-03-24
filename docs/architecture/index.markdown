@@ -1,3 +1,7 @@
+---
+title: Architecture
+---
+
 # Architecture
 
 StatusPanel is designed with a simple modular architecture to make individual components easily replaceable, reducing the dependence on a single party to provide hosting and hopefully future proofing the devices.
@@ -45,10 +49,5 @@ Images are transmitted in a 2BPP format, encrypted using a [libsodium sealed box
 Image values are as follows:
 
 - `0` – black
-- `1` – white
-
-## Possible Attack Vectors
-
-- DoS (systematically overwriting update payloads)
-- Sending too much data to clients / Bomb? / Decryption Bomb?
-- Service Misuse
+- `1` – highlight color
+- `2` – white

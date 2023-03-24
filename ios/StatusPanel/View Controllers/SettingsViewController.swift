@@ -39,7 +39,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     let DisplaySettingsSection = 2
     let FontsSection = 3
     let DevicesSection = 4
-    let DebugSection = 5
+    let StatusSection = 5
     let AboutSection = 6
 
     let DisplaySettingsRowCount = 5
@@ -146,7 +146,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 n += 1 // For "Add dummy device"
             #endif
             return n
-        case DebugSection:
+        case StatusSection:
             return 1
         case AboutSection:
             return 1
@@ -170,8 +170,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return "Fonts"
         case DevicesSection:
             return "Devices"
-        case DebugSection:
-            return "Debug"
+        case StatusSection:
+            return "Status"
         default:
             return nil
         }
@@ -309,7 +309,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
             return cell
 
-        case DebugSection:
+        case StatusSection:
             let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
             cell.textLabel?.text = LocalizedString("settings_last_background_update_label")
             if let lastBackgroundUpdate = Config().lastBackgroundUpdate {
@@ -356,7 +356,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return indexPath.row > 1
         } else if indexPath.section == DataSourcesSection {
             return dataSourceController.instances[indexPath.row].dataSource.configurable
-        } else if indexPath.section == DebugSection {
+        } else if indexPath.section == StatusSection {
             return false
         } else {
             // All others are highlightable
