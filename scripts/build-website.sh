@@ -26,24 +26,28 @@ set -x
 set -u
 
 SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
-CHANGES_DIRECTORY="${SCRIPTS_DIRECTORY}/changes"
-BUILD_TOOLS_DIRECTORY="${SCRIPTS_DIRECTORY}/build-tools"
-NODEMCU_DIRECTORY="${ROOT_DIRECTORY}/nodemcu"
+WEBSITE_DIRECTORY="${ROOT_DIRECTORY}/docs"
+WEBSITE_SIMULATOR_DIRECTORY="${ROOT_DIRECTORY}/docs/simulator"
 SIMULATOR_WEB_DIRECTORY="${ROOT_DIRECTORY}/simulator-web"
 
-ENVIRONMENT_PATH="${SCRIPTS_DIRECTORY}/environment.sh"
+RELEASE_NOTES_TEMPLATE_PATH="${SCRIPTS_DIRECTORY}/release-notes.markdown"
+RELEASE_NOTES_DIRECTORY="${ROOT_DIRECTORY}/docs/release-notes"
+RELEASE_NOTES_PATH="${RELEASE_NOTES_DIRECTORY}/index.markdown"
 
-source "$ENVIRONMENT_PATH"
+source "${SCRIPTS_DIRECTORY}/environment.sh"
 
-# Install the Python dependencies
-# TODO: This should install --deploy or sync?
-pip3 install --user pipenv
-PIPENV_PIPFILE="$ROOT_DIRECTORY/Pipfile" pipenv sync
-PIPENV_PIPFILE="$CHANGES_DIRECTORY/Pipfile" pipenv install
-PIPENV_PIPFILE="$BUILD_TOOLS_DIRECTORY/Pipfile" pipenv sync
-PIPENV_PIPFILE="$NODEMCU_DIRECTORY/Pipfile" pipenv sync
+cd "$ROOT_DIRECTORY"
+if [ -d "${RELEASE_NOTES_DIRECTORY}" ]; then
+    rm -r "${RELEASE_NOTES_DIRECTORY}"
+fi
+mkdir -p "${RELEASE_NOTES_DIRECTORY}"
+changes notes --pre-release --all --released --template "$RELEASE_NOTES_TEMPLATE_PATH" > "$RELEASE_NOTES_PATH"
 
-# Install the JavaScript dependencies
 cd "$SIMULATOR_WEB_DIRECTORY"
-npm install
+npm run build
+if [ -d "${WEBSITE_SIMULATOR_DIRECTORY}" ]; then
+    rm -r "${WEBSITE_SIMULATOR_DIRECTORY}"
+fi
+cp -R dist "${WEBSITE_SIMULATOR_DIRECTORY}"

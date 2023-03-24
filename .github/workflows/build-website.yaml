@@ -1,0 +1,54 @@
+name: build-website
+
+on:
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron:  '0 1 * * *'
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+
+  build-website:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        fetch-depth: 0
+
+    - name: Setup Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.9"
+
+    - name: Install pipenv
+      run: |
+        python -m pip install --upgrade pipenv wheel
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install dependencies
+      run: scripts/install-dependencies.sh
+
+    - name: Build website
+      run: |
+        scripts/build-website.sh
+
+    - name: Commit documentation
+      uses: stefanzweifel/git-auto-commit-action@v4
+      id: auto-commit
+      if: ${{ github.ref == 'refs/heads/main' }}
+      with:
+        branch: documentation
+        create_branch: true
+        push_options: --force
+        commit_message: "docs: Update release notes"
