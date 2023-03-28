@@ -178,29 +178,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let config = Config()
 
         // TODO fix this, for now always show eink format in the UI regardless of what devices are enrolled
-        let image = Renderer.renderImage(data: data, config: config, shouldRedact: false, deviceType: .einkV1)
-        let privacyImage = ((Config().privacyMode == .customImage)
-                            ? ViewController.loadPrivacyImage()
-                            : Renderer.renderImage(data: data, config: config, shouldRedact: true, deviceType: .einkV1))
-        let payloads = Panel.rlePayloads(for: [image, privacyImage])
-        self.fetchDidUpdate(image: payloads[0].1, privacyImage: payloads[1].1)
+        let images = Renderer.render(data: data, config: config, device: Device())
+        self.fetchDidUpdate(image: images[0], privacyImage: images[1])
 
         let devices = config.devices
         var pendingDevices = Set(devices)
         var anyChanges = false
         for device in devices {
-            var images: [UIImage] = []
-            let primary = Renderer.renderImage(data: data, config: config, shouldRedact: false, deviceType: device.kind)
-            images.append(primary)
-            if device.kind == .einkV1 {
-                // Privacy image only really makes sense on eink
-                let privacyImage = (config.privacyMode == .customImage)
-                ? ViewController.loadPrivacyImage()
-                : Renderer.renderImage(data: data, config: config, shouldRedact: true, deviceType: device.kind)
-                images.append(privacyImage)
-            } else {
-                // TODO support multiple pages, or something
-            }
+            let images = Renderer.render(data: data, config: config, device: device)
 
             let client = AppDelegate.shared.client
             let payloads = Panel.rlePayloads(for: images)

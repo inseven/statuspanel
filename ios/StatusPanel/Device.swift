@@ -34,17 +34,13 @@ struct Device: Identifiable, Equatable, Hashable {
     var id: String
     var publicKey: String
 
-    static func sizeFor(kind: Kind) -> CGSize {
-        switch (kind) {
+    var size: CGSize {
+        switch kind {
         case .einkV1, .demo:
             return CGSize(width: 640.0, height: 384.0)
         case .featherTft:
             return CGSize(width: 240.0, height: 135.0)
         }
-    }
-
-    var size: CGSize {
-        return Self.sizeFor(kind: self.kind)
     }
 
     init(kind: Kind, id: String, publicKey: String) {
