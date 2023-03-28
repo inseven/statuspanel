@@ -28,7 +28,10 @@ struct Renderer {
         case horizontal(originY: CGFloat)
     }
 
-    static func renderToImage(data: [DataItemBase], config: Config, shouldRedact: Bool, deviceType: Device.Kind) -> UIImage {
+    static func renderImage(data: [DataItemBase],
+                            config: Config,
+                            shouldRedact: Bool,
+                            deviceType: Device.Kind) -> UIImage {
         let contentView = UIView(frame: CGRect(origin: .zero, size: Device.sizeFor(kind: deviceType)))
         contentView.contentScaleFactor = 1.0
 
