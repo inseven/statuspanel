@@ -34,8 +34,8 @@ struct Device: Identifiable, Equatable, Hashable {
     var id: String
     var publicKey: String
 
-    static func sizeFor(kind: Kind) -> CGSize {
-        switch (kind) {
+    var size: CGSize {
+        switch kind {
         case .einkV1, .demo:
             return CGSize(width: 640.0, height: 384.0)
         case .featherTft:
@@ -43,8 +43,8 @@ struct Device: Identifiable, Equatable, Hashable {
         }
     }
 
-    var size: CGSize {
-        return Self.sizeFor(kind: self.kind)
+    var supportsTwoColumns: Bool {
+        return size.width < 500
     }
 
     init(kind: Kind, id: String, publicKey: String) {
