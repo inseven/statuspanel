@@ -25,7 +25,7 @@ import Sodium
 
 let IMAGE_FLAG_PNG: UInt16 = 1
 
-class Client {
+class Service {
 
     let baseUrl: URL
 

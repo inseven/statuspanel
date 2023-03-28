@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var config = Config()
     var sourceController = DataSourceController()
     var apnsToken: Data?
-    var client: Client = Client(baseUrl: "https://api.statuspanel.io/")
+    var client: Service = Service(baseUrl: "https://api.statuspanel.io/")
 
     static var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
