@@ -30,16 +30,9 @@ struct Renderer {
 
     static func render(data: [DataItemBase], config: Config, device: Device) -> [UIImage] {
         dispatchPrecondition(condition: .onQueue(.main))
-        var images: [UIImage] = []
-        let primary = renderImage(data: data, config: config, device: device)
-        images.append(primary)
-        if device.kind != .featherTft {
-            let privacyImage = renderPrivacyImage(data: data, config: config, device: device)
-            images.append(privacyImage)
-        } else {
-            // TODO support multiple pages, or something
-        }
-        return images
+        let image = renderImage(data: data, config: config, device: device)
+        let privacyImage = renderPrivacyImage(data: data, config: config, device: device)
+        return [image, privacyImage]
     }
 
     private static func renderImage(data: [DataItemBase],
