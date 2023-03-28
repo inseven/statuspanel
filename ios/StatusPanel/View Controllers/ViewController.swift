@@ -197,7 +197,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
-        let darkMode = shouldBeDark()
+        let darkMode = Config().displaysInDarkMode
 
         // TODO fix this, for now always show eink format in the UI regardless of what devices are enrolled
         let image = Self.renderToImage(data: data, shouldRedact: false, darkMode: darkMode, deviceType: .einkV1)
@@ -402,17 +402,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             }
         }
         return result
-    }
-
-    private func shouldBeDark() -> Bool {
-        switch Config().darkMode {
-        case .off:
-            return false
-        case .on:
-            return true
-        case .system:
-            return traitCollection.userInterfaceStyle == UIUserInterfaceStyle.dark
-        }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
