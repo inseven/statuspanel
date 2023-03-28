@@ -34,10 +34,7 @@ struct Renderer {
         let primary = renderImage(data: data, config: config, device: device)
         images.append(primary)
         if device.kind != .featherTft {
-            // Privacy image only really makes sense on eink
-            let privacyImage = (config.privacyMode == .customImage)
-            ? ViewController.loadPrivacyImage()
-            : renderImage(data: data, config: config, device: device, redact: true)
+            let privacyImage = renderPrivacyImage(data: data, config: config, device: device)
             images.append(privacyImage)
         } else {
             // TODO support multiple pages, or something
@@ -206,6 +203,15 @@ struct Renderer {
             }
         }
         return result
+    }
+
+    private static func renderPrivacyImage(data: [DataItemBase], config: Config, device: Device) -> UIImage {
+        switch config.privacyMode {
+        case .redactLines, .redactWords:
+            return renderImage(data: data, config: config, device: device, redact: true)
+        case .customImage:
+            return (try? config.privacyImage()) ?? Panel.blankImage()
+        }
     }
     
 }

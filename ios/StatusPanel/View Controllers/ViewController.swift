@@ -206,10 +206,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         }
     }
 
-    static func loadPrivacyImage() -> UIImage {
-        return (try? Config().privacyImage()) ?? Panel.blankImage()
-    }
-
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         BitmapFontCache.shared.emptyCache()
     }
