@@ -20,11 +20,14 @@
 
 import Foundation
 
+import Sodium
+
 struct Device: Identifiable, Equatable, Hashable {
 
     enum Kind: String {
         case einkV1 = "0"
         case featherTft = "1"
+        case demo = "2"
     }
 
     var kind: Kind
@@ -33,7 +36,7 @@ struct Device: Identifiable, Equatable, Hashable {
 
     static func sizeFor(kind: Kind) -> CGSize {
         switch (kind) {
-        case .einkV1:
+        case .einkV1, .demo:
             return CGSize(width: 640.0, height: 384.0)
         case .featherTft:
             return CGSize(width: 240.0, height: 135.0)
@@ -43,4 +46,20 @@ struct Device: Identifiable, Equatable, Hashable {
     var size: CGSize {
         return Self.sizeFor(kind: self.kind)
     }
+
+    init(kind: Kind, id: String, publicKey: String) {
+        self.kind = kind
+        self.id = id
+        self.publicKey = publicKey
+    }
+
+    // Create a new demo device identifier.
+    init() {
+        kind = .demo
+        id = UUID().uuidString
+        let sodium = Sodium()
+        let keyPair = sodium.box.keyPair()!
+        publicKey = sodium.utils.bin2base64(keyPair.publicKey, variant: .ORIGINAL)!
+    }
+
 }
