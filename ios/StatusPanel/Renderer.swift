@@ -67,7 +67,6 @@ struct Renderer {
 
             let flags = item.flags
             let font = flags.contains(.header) ? config.titleFont : config.bodyFont
-            let labelStyle = device.kind == .featherTft ? .subText : flags.labelStyle
             let fontDetails = Config().getFont(named: font)
             let w = flags.contains(.spansColumns) ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
@@ -80,7 +79,7 @@ struct Renderer {
             if !prefix.isEmpty {
                 let prefixLabel = UILabel.getLabel(frame: textFrame,
                                                    font: font,
-                                                   style: labelStyle,
+                                                   style: flags.labelStyle,
                                                    redactMode: redactMode)
                 prefixLabel.textColor = foregroundColor
                 prefixLabel.numberOfLines = numPrefixLines
@@ -99,7 +98,7 @@ struct Renderer {
             }
             let label = UILabel.getLabel(frame: textFrame,
                                          font: font,
-                                         style: labelStyle,
+                                         style: flags.labelStyle,
                                          redactMode: redactMode)
             label.numberOfLines = 1 // Temporarily while we're using it in checkFit
 
