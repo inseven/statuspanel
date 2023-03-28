@@ -25,17 +25,6 @@ import Sodium
 
 class ViewController: UIViewController, SettingsViewControllerDelegate {
 
-    enum DividerStyle {
-        case vertical(originY: CGFloat)
-        case horizontal(originY: CGFloat)
-    }
-
-    enum LabelStyle {
-        case text
-        case header
-        case subText
-    }
-
     private var image: UIImage?
     private var redactedImage: UIImage?
 
@@ -269,7 +258,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         var colStart = y
         var col = 0
         var columnItemCount = 0 // Number of items assigned to the current column
-        var divider: DividerStyle? = twoCols ? .vertical(originY: 0) : nil
+        var divider: Renderer.DividerStyle? = twoCols ? .vertical(originY: 0) : nil
         let redactMode: RedactMode = (shouldRedact ? (config.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
 
         for item in data {

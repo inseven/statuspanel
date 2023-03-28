@@ -60,6 +60,7 @@
 		D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7326E3F3930002F388 /* StatusPanelError.swift */; };
 		D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7626E3F3D40002F388 /* Bundle.swift */; };
 		D8DCA7D629CBEA92002010A5 /* LabelStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7D529CBEA92002010A5 /* LabelStyle.swift */; };
+		D8DCA7DA29CBEB43002010A5 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7D929CBEB42002010A5 /* Renderer.swift */; };
 		D8DCA7DC29CBEBDD002010A5 /* RedactMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7DB29CBEBDD002010A5 /* RedactMode.swift */; };
 		D8DCA7DE29CBEE4D002010A5 /* UILabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7DD29CBEE4D002010A5 /* UILabel.swift */; };
 		D8DD98FF271EF8CD004088CD /* ColoredCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD98FE271EF8CD004088CD /* ColoredCheckbox.swift */; };
@@ -182,6 +183,7 @@
 		D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
 		D8DC8D8026E1ADAF004B081D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		D8DCA7D529CBEA92002010A5 /* LabelStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelStyle.swift; sourceTree = "<group>"; };
+		D8DCA7D929CBEB42002010A5 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		D8DCA7DB29CBEBDD002010A5 /* RedactMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactMode.swift; sourceTree = "<group>"; };
 		D8DCA7DD29CBEE4D002010A5 /* UILabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabel.swift; sourceTree = "<group>"; };
 		D8DD98FE271EF8CD004088CD /* ColoredCheckbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoredCheckbox.swift; sourceTree = "<group>"; };
@@ -498,6 +500,7 @@
 				DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */,
 				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
 				D8DCA7DB29CBEBDD002010A5 /* RedactMode.swift */,
+				D8DCA7D929CBEB42002010A5 /* Renderer.swift */,
 				D80380AA23E9B6D2002606C7 /* Service.swift */,
 				D8DAED7326E3F3930002F388 /* StatusPanelError.swift */,
 				DB5E9DA0241562ED009F3807 /* StringUtils.swift */,
@@ -683,6 +686,7 @@
 				D8CC37B12717887A00938C5D /* Panel.swift in Sources */,
 				D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */,
 				DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */,
+				D8DCA7DA29CBEB43002010A5 /* Renderer.swift in Sources */,
 				D8D29BCA2723E2F400125927 /* UIImage.swift in Sources */,
 				D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */,
 				D8D252B327146ED800C68EF9 /* Value1TableViewCell.swift in Sources */,
