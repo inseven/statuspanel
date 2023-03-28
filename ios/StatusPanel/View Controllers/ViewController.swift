@@ -23,17 +23,6 @@ import EventKit
 
 import Sodium
 
-extension DataItemFlags {
-
-    var labelStyle: ViewController.LabelStyle {
-        if contains(.header) {
-            return .header
-        }
-        return .text
-    }
-
-}
-
 class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     enum DividerStyle {
@@ -49,8 +38,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     private var image: UIImage?
     private var redactedImage: UIImage?
-
-    let SettingsButtonTag = 1
 
     var sourceController: DataSourceController!
 
@@ -209,27 +196,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         self.refreshButtonItem.isEnabled = true
     }
 
-    static func getLabel(frame: CGRect, font fontName: String, style: LabelStyle, redactMode: RedactMode = .none) -> UILabel {
-        let font = Config().getFont(named: fontName)
-        let size = (style == .header) ? font.headerSize : (style == .subText) ? font.subTextSize : font.textSize
-        if let bitmapInfo = font.bitmapInfo {
-            return BitmapFontLabel(frame: frame, bitmapFont: bitmapInfo, scale: size, redactMode: redactMode)
-        } else if let uifont = UIFont(name: font.uifontName!, size: CGFloat(size)) {
-            return BitmapFontLabel(frame: frame, uiFont: uifont, redactMode: redactMode)
-        }
-
-        // Otherwise, a plain old label (this code path now only used if we fail to find a font)
-        let label = UILabel(frame: frame)
-        label.lineBreakMode = .byWordWrapping
-        print("No UIFont found for \(font.uifontName!)!")
-        for family in UIFont.familyNames {
-            for fontName in UIFont.fontNames(forFamilyName: family) {
-                print("Candidate: \(fontName)")
-            }
-        }
-        return label
-    }
-
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
         let darkMode = shouldBeDark()
 
@@ -321,10 +287,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             var itemHeight: CGFloat = 0
 
             if !prefix.isEmpty {
-                let prefixLabel = ViewController.getLabel(frame: textFrame,
-                                                          font: font,
-                                                          style: labelStyle,
-                                                          redactMode: redactMode)
+                let prefixLabel = UILabel.getLabel(frame: textFrame,
+                                                   font: font,
+                                                   style: labelStyle,
+                                                   redactMode: redactMode)
                 prefixLabel.textColor = foregroundColor
                 prefixLabel.numberOfLines = numPrefixLines
                 prefixLabel.text = prefix + " "
@@ -340,10 +306,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                     prefix = prefix + " "
                 }
             }
-            let label = ViewController.getLabel(frame: textFrame,
-                                                font: font,
-                                                style: labelStyle,
-                                                redactMode: redactMode)
+            let label = UILabel.getLabel(frame: textFrame,
+                                         font: font,
+                                         style: labelStyle,
+                                         redactMode: redactMode)
             label.numberOfLines = 1 // Temporarily while we're using it in checkFit
 
             let text = prefix + item.getText(checkFit: { (string: String) -> Bool in
@@ -366,10 +332,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: itemHeight))
             view.addSubview(label)
             if let subText = item.subText {
-                let subLabel = ViewController.getLabel(frame: textFrame,
-                                                       font: font,
-                                                       style: .subText,
-                                                       redactMode: redactMode)
+                let subLabel = UILabel.getLabel(frame: textFrame,
+                                                font: font,
+                                                style: .subText,
+                                                redactMode: redactMode)
                 subLabel.textColor = foregroundColor
                 subLabel.numberOfLines = config.maxLines
                 subLabel.text = subText
