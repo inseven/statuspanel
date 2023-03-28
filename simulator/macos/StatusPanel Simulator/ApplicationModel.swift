@@ -44,13 +44,9 @@ class ApplicationModel: ObservableObject {
                                           keyPair: Box.KeyPair(publicKey: Array(publicKey),
                                                                secretKey: Array(secretKey)))
         } else {
-            let sodium = Sodium()
-            let keyPair = sodium.box.keyPair()!
-            userDefaults.set(Data(keyPair.publicKey), forKey: "publicKey")
-            userDefaults.set(Data(keyPair.secretKey), forKey: "secretKey")
-            let id = UUID()
-            userDefaults.set(id.uuidString, forKey: "id")
-            identifier = DeviceIdentifier(id: id, keyPair: keyPair)
+            DispatchQueue.main.async {
+                self.reset()
+            }
         }
 
         start()
@@ -101,6 +97,18 @@ class ApplicationModel: ObservableObject {
                 print("Failed to update with error \(error)")
             }
         }
+    }
+
+    @MainActor func reset() {
+        let userDefaults = UserDefaults.standard
+        let sodium = Sodium()
+        let keyPair = sodium.box.keyPair()!
+        userDefaults.set(Data(keyPair.publicKey), forKey: "publicKey")
+        userDefaults.set(Data(keyPair.secretKey), forKey: "secretKey")
+        let id = UUID()
+        userDefaults.set(id.uuidString, forKey: "id")
+        identifier = DeviceIdentifier(id: id, keyPair: keyPair)
+        lastUpdate = nil
     }
 
     @MainActor func action() {
