@@ -57,6 +57,9 @@ struct Service {
             imageCount = nil
         }
 
+        // Read to the end of the header, ignoring remaining properties.
+        let _ = try stream.read(count: Int(headerLength) - 6)
+
         // If an image count has been defined, then an index immediately follows the
         // header giving the index of each image.
         var offsets: [UInt32] = []
