@@ -80,24 +80,24 @@ class Service {
     private func upload(_ images: [Data]) async -> Bool {
         let devices = await Config().devices
         var result = false
-        for (id, publicKey) in devices {
-            let didUpload = await upload(images, deviceId: id, publicKey: publicKey)
+        for device in devices {
+            let didUpload = await upload(images, device: device)
             result = result || didUpload
         }
         return result
     }
 
-    private func upload(_ images: [Data], deviceId: String, publicKey: String) async -> Bool {
+    private func upload(_ images: [Data], device: Device) async -> Bool {
         return await withCheckedContinuation { continuation in
-            self.upload(images, deviceId: deviceId, publicKey: publicKey) { change in
+            self.upload(images, device: device) { change in
                 continuation.resume(with: .success(change))
             }
         }
     }
 
-    private func upload(_ images: [Data], deviceId: String, publicKey: String, completion: @escaping (Bool) -> Void) {
+    private func upload(_ images: [Data], device: Device, completion: @escaping (Bool) -> Void) {
         let sodium = Sodium()
-        guard let key = sodium.utils.base642bin(publicKey, variant: .ORIGINAL) else {
+        guard let key = sodium.utils.base642bin(device.publicKey, variant: .ORIGINAL) else {
             print("Failed to decode key from publickey userdefault!")
             completion(false)
             return
@@ -109,8 +109,8 @@ class Service {
         let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(Self.makeMultipartUpload(parts: images)))!,
                                            variant: .ORIGINAL)!
 
-        if hash == DispatchQueue.main.sync(execute: { return Config().getLastUploadHash(for: deviceId) }) {
-            print("Data for \(deviceId) is the same as before, not uploading")
+        if hash == DispatchQueue.main.sync(execute: { return Config().getLastUploadHash(for: device.id) }) {
+            print("Data for \(device.id) is the same as before, not uploading")
             completion(false)
             return
         }
@@ -126,7 +126,7 @@ class Service {
             encryptedParts.append(Data(encryptedDataBytes!))
         }
         let encryptedData = Self.makeMultipartUpload(parts: encryptedParts)
-        let path = "https://api.statuspanel.io/api/v2/\(deviceId)"
+        let path = "https://api.statuspanel.io/api/v2/\(device.id)"
         guard let url = URL(string: path) else {
             print("Unable to create URL")
             completion(false)
@@ -162,7 +162,7 @@ class Service {
                 print(error)
             } else {
                 DispatchQueue.main.sync {
-                    Config().setLastUploadHash(for: deviceId, to: hash)
+                    Config().setLastUploadHash(for: device.id, to: hash)
                 }
             }
             completion(true)
