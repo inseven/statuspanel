@@ -23,7 +23,7 @@ import UIKit
 
 struct Renderer {
 
-    enum DividerStyle {
+    private enum DividerStyle {
         case vertical(originY: CGFloat)
         case horizontal(originY: CGFloat)
     }
