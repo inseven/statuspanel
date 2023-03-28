@@ -105,7 +105,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func addDevice(_ device: Device) {
         let config = Config()
         var devices = config.devices
-        devices.append((device.id, device.publicKey))
+        devices.append(device)
         config.devices = devices
         let alert = UIAlertController(title: "Device added",
                                       message: "Device \(device.id) has been added.",
