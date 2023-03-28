@@ -71,17 +71,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         return gestureRecognizer
     }()
 
-    private var showRedacted: Bool = false {
-        didSet {
-            switch showRedacted {
-            case true:
-                imageView.image = redactedImage
-            case false:
-                imageView.image = image
-            }
-        }
-    }
-
     init() {
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .systemGroupedBackground
