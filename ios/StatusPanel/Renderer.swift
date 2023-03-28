@@ -31,13 +31,13 @@ struct Renderer {
     static func render(data: [DataItemBase], config: Config, device: Device) -> [UIImage] {
         dispatchPrecondition(condition: .onQueue(.main))
         var images: [UIImage] = []
-        let primary = renderImage(data: data, config: config, device: device, shouldRedact: false)
+        let primary = renderImage(data: data, config: config, device: device)
         images.append(primary)
         if device.kind != .featherTft {
             // Privacy image only really makes sense on eink
             let privacyImage = (config.privacyMode == .customImage)
             ? ViewController.loadPrivacyImage()
-            : renderImage(data: data, config: config, device: device, shouldRedact: true)
+            : renderImage(data: data, config: config, device: device, redact: true)
             images.append(privacyImage)
         } else {
             // TODO support multiple pages, or something
@@ -48,7 +48,7 @@ struct Renderer {
     private static func renderImage(data: [DataItemBase],
                                     config: Config,
                                     device: Device,
-                                    shouldRedact: Bool) -> UIImage {
+                                    redact: Bool = false) -> UIImage {
         let contentView = UIView(frame: CGRect(origin: .zero, size: device.size))
         contentView.contentScaleFactor = 1.0
 
@@ -69,7 +69,7 @@ struct Renderer {
         var col = 0
         var columnItemCount = 0 // Number of items assigned to the current column
         var divider: DividerStyle? = twoCols ? .vertical(originY: 0) : nil
-        let redactMode: RedactMode = (shouldRedact ? (config.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
+        let redactMode: RedactMode = (redact ? (config.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
 
         for item in data {
 
