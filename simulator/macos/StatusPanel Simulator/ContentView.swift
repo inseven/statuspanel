@@ -65,6 +65,13 @@ struct ContentView: View {
                     Label("Refresh", systemImage: "arrow.clockwise")
                 }
             }
+            ToolbarItem(id: "reset") {
+                Button {
+                    applicationModel.reset()
+                } label: {
+                    Label("Reset", systemImage: "trash")
+                }
+            }
         }
     }
 }
