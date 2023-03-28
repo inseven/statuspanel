@@ -129,7 +129,10 @@ struct Renderer {
             label.text = text
             label.sizeToFit()
             itemHeight = max(itemHeight, label.bounds.height)
-            label.frame = CGRect(x: label.frame.minX, y: label.frame.minY, width: textFrame.width, height: label.frame.height)
+            label.frame = CGRect(x: label.frame.minX,
+                                 y: label.frame.minY,
+                                 width: textFrame.width,
+                                 height: label.frame.height)
             view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: itemHeight))
             view.addSubview(label)
             if let subText = item.subText {
