@@ -186,29 +186,28 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
-        let darkMode = Config().displaysInDarkMode
+        let config = Config()
 
         // TODO fix this, for now always show eink format in the UI regardless of what devices are enrolled
-        let image = Renderer.renderToImage(data: data, shouldRedact: false, darkMode: darkMode, deviceType: .einkV1)
+        let image = Renderer.renderToImage(data: data, config: config, shouldRedact: false, deviceType: .einkV1)
         let privacyImage = ((Config().privacyMode == .customImage)
                             ? ViewController.loadPrivacyImage()
-                            : Renderer.renderToImage(data: data, shouldRedact: true, darkMode: darkMode, deviceType: .einkV1))
+                            : Renderer.renderToImage(data: data, config: config, shouldRedact: true, deviceType: .einkV1))
         let payloads = Panel.rlePayloads(for: [image, privacyImage])
         self.fetchDidUpdate(image: payloads[0].1, privacyImage: payloads[1].1)
 
-        let config = Config()
         let devices = config.devices
         var pendingDevices = Set(devices)
         var anyChanges = false
         for device in devices {
             var images: [UIImage] = []
-            let primary = Renderer.renderToImage(data: data, shouldRedact: false, darkMode: darkMode, deviceType: device.kind)
+            let primary = Renderer.renderToImage(data: data, config: config, shouldRedact: false, deviceType: device.kind)
             images.append(primary)
             if device.kind == .einkV1 {
                 // Privacy image only really makes sense on eink
                 let privacyImage = (config.privacyMode == .customImage)
                 ? ViewController.loadPrivacyImage()
-                : Renderer.renderToImage(data: data, shouldRedact: true, darkMode: darkMode, deviceType: device.kind)
+                : Renderer.renderToImage(data: data, config: config, shouldRedact: true, deviceType: device.kind)
                 images.append(privacyImage)
             } else {
                 // TODO support multiple pages, or something

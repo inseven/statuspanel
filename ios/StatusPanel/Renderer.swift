@@ -28,14 +28,13 @@ struct Renderer {
         case horizontal(originY: CGFloat)
     }
 
-    static func renderToImage(data: [DataItemBase], shouldRedact: Bool, darkMode: Bool, deviceType: Device.Kind) -> UIImage {
+    static func renderToImage(data: [DataItemBase], config: Config, shouldRedact: Bool, deviceType: Device.Kind) -> UIImage {
         let contentView = UIView(frame: CGRect(origin: .zero, size: Device.sizeFor(kind: deviceType)))
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
-        contentView.backgroundColor = darkMode ? UIColor.black : UIColor.white
-        let foregroundColor = darkMode ? UIColor.white : UIColor.black
-        let config = Config()
+        contentView.backgroundColor = config.displaysInDarkMode ? UIColor.black : UIColor.white
+        let foregroundColor = config.displaysInDarkMode ? UIColor.white : UIColor.black
         let twoCols = contentView.frame.size.width < 500 ? false : config.displayTwoColumns
         let showIcons = config.showIcons
         let rect = contentView.frame
