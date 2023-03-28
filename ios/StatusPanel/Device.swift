@@ -43,6 +43,10 @@ struct Device: Identifiable, Equatable, Hashable {
         }
     }
 
+    var supportsTwoColumns: Bool {
+        return size.width < 500
+    }
+
     init(kind: Kind, id: String, publicKey: String) {
         self.kind = kind
         self.id = id

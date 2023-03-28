@@ -49,13 +49,15 @@ struct Renderer {
                                     config: Config,
                                     device: Device,
                                     redact: Bool = false) -> UIImage {
+        dispatchPrecondition(condition: .onQueue(.main))
+
         let contentView = UIView(frame: CGRect(origin: .zero, size: device.size))
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
         contentView.backgroundColor = config.displaysInDarkMode ? UIColor.black : UIColor.white
         let foregroundColor = config.displaysInDarkMode ? UIColor.white : UIColor.black
-        let twoCols = contentView.frame.size.width < 500 ? false : config.displayTwoColumns
+        let twoCols = device.supportsTwoColumns ? false : config.displayTwoColumns
         let showIcons = config.showIcons
         let rect = contentView.frame
         let maxy = rect.height - 10 // Leave space for status line
