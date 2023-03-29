@@ -27,7 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var viewController: ViewController?
-    var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
     var config = Config()
     var sourceController = DataSourceController()
     var apnsToken: Data?
@@ -70,13 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        if (background) {
-            background = false
-            update()
-        }
+        viewController?.fetch()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -142,21 +135,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("didReceiveRemoteNotification")
         Config().lastBackgroundUpdate = Date()
-        backgroundFetchCompletionFn = completionHandler
 
         // Re-register the device to ensure it doesn't time out on the server.
         if let deviceToken = apnsToken {
             registerDevice(token: deviceToken)
         }
 
-        // Ensure we have a view controller to perform the update.
-        guard let viewController = viewController else {
-            completionHandler(.failed)
-            return
-        }
-
-        // Perform the update.
-        viewController.fetch()
+        updateDevices(completion: completionHandler)
     }
 
     func registerDevice(token: Data) {
@@ -174,13 +159,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         viewController?.fetch()
     }
 
-    func fetchCompleted(hasChanged: Bool) {
-        if let fn = backgroundFetchCompletionFn {
-            print("Background fetch completed")
-            fn(hasChanged ? .newData : .noData)
-            backgroundFetchCompletionFn = nil
+    // Fetch items, generate updates, and upload per-device updates.
+    func updateDevices(completion: @escaping (UIBackgroundFetchResult) -> Void = { _ in }) {
+        Task {
+            do {
+                let config = Config()
+                let items = try await AppDelegate.shared.sourceController.fetch()
+                let updates = config.devices
+                    .map { device in
+                        let images = Renderer.render(data: items, config: config, device: device)
+                        let payloads = Panel.encode(images: images, encoding: device.encoding)
+                        return Service.Update(device: device, images: payloads)
+                    }
+                let change = await AppDelegate.shared.client.upload(updates)
+                completion(change ? .newData : .noData)
+            } catch {
+                completion(.failed)
+            }
         }
     }
+
 }
 
 extension AppDelegate: WifiProvisionerControllerDelegate {

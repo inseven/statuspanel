@@ -171,50 +171,32 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         self.refreshButtonItem.isEnabled = false
         activityIndicator.startAnimating()
 
+        // Generate a preview update.
         sourceController.fetch { items, error in
             dispatchPrecondition(condition: .onQueue(.main))
+
+            self.refreshButtonItem.isEnabled = true
 
             guard let items = items else {
                 if let error {
                     self.present(error: error)
                 }
-                self.fetchDidComplete()
                 return
             }
-
             let config = Config()
             let images = Renderer.render(data: items, config: config, device: Device())
-            self.fetchDidUpdate(image: images[0], privacyImage: images[1])
-
-            var updates: [Service.Update] = []
-            for device in config.devices {
-                let images = Renderer.render(data: items, config: config, device: device)
-                let payloads = Panel.encode(images: images, encoding: device.encoding)
-                updates.append(Service.Update(device: device, images: payloads))
-            }
-            AppDelegate.shared.client.upload(updates: updates) { changes in
-                DispatchQueue.main.async {
-                    AppDelegate.shared.fetchCompleted(hasChanged: changes)
-                    self.fetchDidComplete()
-                }
+            self.image = images[0]
+            self.redactedImage = images[1]
+            self.activityIndicator.stopAnimating()
+            UIView.transition(with: self.imageView,
+                              duration: 0.3,
+                              options: .transitionCrossDissolve) {
+                self.imageView.image = images[0]
             }
         }
-    }
 
-    func fetchDidUpdate(image: UIImage, privacyImage: UIImage) {
-        self.image = image
-        self.redactedImage = privacyImage
-        activityIndicator.stopAnimating()
-        UIView.transition(with: self.imageView,
-                          duration: 0.3,
-                          options: .transitionCrossDissolve) {
-            self.imageView.image = image
-        }
-    }
-
-    func fetchDidComplete() {
-        dispatchPrecondition(condition: .onQueue(.main))
-        self.refreshButtonItem.isEnabled = true
+        // Trigger an update; long-term this should be automatic when the configuration changes.
+        AppDelegate.shared.updateDevices()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

@@ -127,6 +127,22 @@ class DataSourceController {
         try Config().set(dataSources: self.instances.map { $0.details })
     }
 
+    func fetch() async throws -> [DataItemBase] {
+        return try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.main.async {
+                self.fetch() { items, error in
+                    guard error == nil,
+                          let items = items
+                    else {
+                        continuation.resume(with: .failure(error ?? StatusPanelError.internalInconsistency))
+                        return
+                    }
+                    continuation.resume(with: .success(items))
+                }
+            }
+        }
+    }
+
     func fetch(completion: @escaping ([DataItemBase]?, Error?) -> Void) {
         dispatchPrecondition(condition: .onQueue(.main))
         let sources = Array(self.instances)  // Capture the ordered sources in case they change.

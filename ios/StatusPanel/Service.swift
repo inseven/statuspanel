@@ -84,7 +84,7 @@ class Service {
         }
     }
 
-    private func upload(_ updates: [Update]) async -> Bool {
+    func upload(_ updates: [Update]) async -> Bool {
         var result = false
         for update in updates {
             let didUpload = await upload(update.images, device: update.device)
@@ -93,7 +93,7 @@ class Service {
         return result
     }
 
-    private func upload(_ images: [Data], device: Device) async -> Bool {
+    func upload(_ images: [Data], device: Device) async -> Bool {
         return await withCheckedContinuation { continuation in
             self.upload(images, device: device) { change in
                 continuation.resume(with: .success(change))
@@ -114,7 +114,7 @@ class Service {
         // for identical input data (which normally is a good thing!) so we have to construct a unencrypted blob just
         // for the purposes of calculating the hash.
         let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(Self.makeMultipartUpload(parts: images, flags: flags)))!, variant: .ORIGINAL)!
-        if hash == Config().getLastUploadHash(for: device.id) {
+        if hash == DispatchQueue.main.sync(execute: { return Config().getLastUploadHash(for: device.id) }) {
             print("Data for \(device.id) is the same as before, not uploading")
             completion(false)
             return
@@ -166,7 +166,9 @@ class Service {
             if let error = error {
                 print(error)
             } else {
-                Config().setLastUploadHash(for: device.id, to: hash)
+                DispatchQueue.main.sync {
+                    Config().setLastUploadHash(for: device.id, to: hash)
+                }
             }
             completion(true)
         })
