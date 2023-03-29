@@ -126,22 +126,10 @@ class Panel {
 
     static func rlePayloads(for images: [UIImage]) -> [(Data, UIImage)] {
         var result: [(Data, UIImage)] = []
-        for (i, image) in images.enumerated() {
+        for image in images {
             let (rawdata, panelImage) = imgToARGBData(image)
             let panelData = ARGBtoPanel(rawdata)
             let rleData = rleEncode(panelData)
-            do {
-                let dir = try FileManager.default.documentsUrl()
-                print("GOT DIR! " + dir.absoluteString)
-                let imgdata = panelImage.pngData()
-                let name = "img_\(i)"
-                try imgdata?.write(to: dir.appendingPathComponent(name + ".png"))
-                try rawdata.write(to: dir.appendingPathComponent(name + ".raw"))
-                try panelData.write(to: dir.appendingPathComponent(name + "_panel"))
-                try rleData.write(to: dir.appendingPathComponent(name + "_panel_rle"))
-            } catch {
-                print("meh")
-            }
             result.append((rleData, panelImage))
         }
         return result
