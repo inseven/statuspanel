@@ -28,25 +28,26 @@ struct Renderer {
         case horizontal(originY: CGFloat)
     }
 
-    static func render(data: [DataItemBase], config: Config) -> [UIImage] {
+    static func render(data: [DataItemBase], config: Config, device: Device) -> [UIImage] {
         dispatchPrecondition(condition: .onQueue(.main))
-        let image = renderImage(data: data, config: config)
-        let privacyImage = renderPrivacyImage(data: data, config: config)
+        let image = renderImage(data: data, config: config, device: device)
+        let privacyImage = renderPrivacyImage(data: data, config: config, device: device)
         return [image, privacyImage]
     }
 
     private static func renderImage(data: [DataItemBase],
                                     config: Config,
+                                    device: Device,
                                     redact: Bool = false) -> UIImage {
         dispatchPrecondition(condition: .onQueue(.main))
 
-        let contentView = UIView(frame: CGRect(origin: .zero, size: Panel.size))
+        let contentView = UIView(frame: CGRect(origin: .zero, size: device.size))
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
         contentView.backgroundColor = config.displaysInDarkMode ? UIColor.black : UIColor.white
         let foregroundColor = config.displaysInDarkMode ? UIColor.white : UIColor.black
-        let twoCols = config.displayTwoColumns
+        let twoCols = device.supportsTwoColumns ? false : config.displayTwoColumns
         let showIcons = config.showIcons
         let rect = contentView.frame
         let maxy = rect.height - 10 // Leave space for status line
@@ -55,7 +56,7 @@ struct Renderer {
         var y : CGFloat = 0
         let colWidth = twoCols ? (rect.width / 2 - x * 2) : rect.width - x
         let bodyFont = config.getFont(named: config.bodyFont)
-        let itemGap = CGFloat(min(10, bodyFont.textHeight / 2)) // ie 50% of the body text line height up to a max of 10px
+        let itemGap = device.kind == .featherTft ? 4 : CGFloat(min(10, bodyFont.textHeight / 2)) // ie 50% of the body text line height up to a max of 10px
         var colStart = y
         var col = 0
         var columnItemCount = 0 // Number of items assigned to the current column
@@ -196,13 +197,13 @@ struct Renderer {
         return result
     }
 
-    private static func renderPrivacyImage(data: [DataItemBase], config: Config) -> UIImage {
+    private static func renderPrivacyImage(data: [DataItemBase], config: Config, device: Device) -> UIImage {
         switch config.privacyMode {
         case .redactLines, .redactWords:
-            return renderImage(data: data, config: config, redact: true)
+            return renderImage(data: data, config: config, device: device, redact: true)
         case .customImage:
             return (try? config.privacyImage()) ?? Panel.blankImage()
         }
     }
-
+    
 }

@@ -23,7 +23,14 @@ import UIKit
 
 import Sodium
 
+let IMAGE_FLAG_PNG: UInt16 = 1
+
 class Service {
+
+    struct Update {
+        let device: Device
+        let images: [Data]
+    }
 
     let baseUrl: URL
 
@@ -70,24 +77,23 @@ class Service {
         }
     }
 
-    func upload(image: Data, privacyImage: Data, completion: @escaping (Bool) -> Void) {
+    func upload(updates: [Update], completion: @escaping (Bool) -> Void) {
         Task {
-            let didUpload = await upload([image, privacyImage])
+            let didUpload = await upload(updates)
             completion(didUpload)
         }
     }
 
-    private func upload(_ images: [Data]) async -> Bool {
-        let devices = await Config().devices
+    func upload(_ updates: [Update]) async -> Bool {
         var result = false
-        for device in devices {
-            let didUpload = await upload(images, device: device)
+        for update in updates {
+            let didUpload = await upload(update.images, device: update.device)
             result = result || didUpload
         }
         return result
     }
 
-    private func upload(_ images: [Data], device: Device) async -> Bool {
+    func upload(_ images: [Data], device: Device) async -> Bool {
         return await withCheckedContinuation { continuation in
             self.upload(images, device: device) { change in
                 continuation.resume(with: .success(change))
@@ -95,7 +101,8 @@ class Service {
         }
     }
 
-    private func upload(_ images: [Data], device: Device, completion: @escaping (Bool) -> Void) {
+    func upload(_ images: [Data], device: Device, completion: @escaping (Bool) -> Void) {
+        let flags = device.kind == .featherTft ? IMAGE_FLAG_PNG : 0
         let sodium = Sodium()
         guard let key = sodium.utils.base642bin(device.publicKey, variant: .ORIGINAL) else {
             print("Failed to decode key from publickey userdefault!")
@@ -106,9 +113,7 @@ class Service {
         // We can't just hash the resulting encryptedData because libsodium ensures it is different every time even
         // for identical input data (which normally is a good thing!) so we have to construct a unencrypted blob just
         // for the purposes of calculating the hash.
-        let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(Self.makeMultipartUpload(parts: images)))!,
-                                           variant: .ORIGINAL)!
-
+        let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(Self.makeMultipartUpload(parts: images, flags: flags)))!, variant: .ORIGINAL)!
         if hash == DispatchQueue.main.sync(execute: { return Config().getLastUploadHash(for: device.id) }) {
             print("Data for \(device.id) is the same as before, not uploading")
             completion(false)
@@ -125,7 +130,7 @@ class Service {
             }
             encryptedParts.append(Data(encryptedDataBytes!))
         }
-        let encryptedData = Self.makeMultipartUpload(parts: encryptedParts)
+        let encryptedData = Self.makeMultipartUpload(parts: encryptedParts, flags: flags)
         let path = "https://api.statuspanel.io/api/v2/\(device.id)"
         guard let url = URL(string: path) else {
             print("Unable to create URL")
@@ -170,15 +175,22 @@ class Service {
         task.resume()
     }
 
-    private static func makeMultipartUpload(parts: [Data]) -> Data {
+    private static func makeMultipartUpload(parts: [Data], flags: UInt16) -> Data {
         let wakeTime = Int(Config.getLocalWakeTime() / 60)
         // Header format is as below. Any fields beyond length can be omitted
         // providing the length is set appropriately.
         // FF 00 - indicating header present
         // NN    - Length of header
-        // TT TT - wakeup time
+        // TT TT - wakeup time (oops this is big endian)
         // CC    - count of images (index immediately follows header)
-        var data = Data([0xFF, 0x00, 0x06, UInt8(wakeTime >> 8), UInt8(wakeTime & 0xFF), UInt8(parts.count)])
+        // GG GG - flags (little endian)
+        // II II II II - file offset of image 1 (little endian)
+        // index of image 2, etc...
+        //
+        // Defined flags:
+        // 1 IMAGE_FLAG_PNG indicates the images are all in PNG format rather than RLE.
+        var data = Data([0xFF, 0x00, 0x08, UInt8(wakeTime >> 8), UInt8(wakeTime & 0xFF), UInt8(parts.count),
+                         UInt8(flags & 0xFF), UInt8(flags >> 8)])
         // I'm sure there's a way to do this with UnsafeRawPointers or something, but eh
         let u32le = { (val: Int) -> Data in
             let u32 = UInt32(val)
