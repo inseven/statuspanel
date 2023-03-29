@@ -27,6 +27,11 @@ let IMAGE_FLAG_PNG: UInt16 = 1
 
 class Service {
 
+    struct Update {
+        let device: Device
+        let images: [Data]
+    }
+
     let baseUrl: URL
 
     init(baseUrl: String) {
@@ -69,6 +74,30 @@ class Service {
             task.resume()
         } catch {
             completionHandler(false, error)
+        }
+    }
+
+    func upload(updates: [Update], completion: @escaping (Bool) -> Void) {
+        Task {
+            let didUpload = await upload(updates)
+            completion(didUpload)
+        }
+    }
+
+    private func upload(_ updates: [Update]) async -> Bool {
+        var result = false
+        for update in updates {
+            let didUpload = await upload(update.images, device: update.device)
+            result = result || didUpload
+        }
+        return result
+    }
+
+    private func upload(_ images: [Data], device: Device) async -> Bool {
+        return await withCheckedContinuation { continuation in
+            self.upload(images, device: device) { change in
+                continuation.resume(with: .success(change))
+            }
         }
     }
 

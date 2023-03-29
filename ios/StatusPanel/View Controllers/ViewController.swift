@@ -186,31 +186,17 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
             let images = Renderer.render(data: items, config: config, device: Device())
             self.fetchDidUpdate(image: images[0], privacyImage: images[1])
 
-            let devices = config.devices
-            var pendingDevices = Set(devices)
-            var anyChanges = false
-            for device in devices {
+            var updates: [Service.Update] = []
+            for device in config.devices {
                 let images = Renderer.render(data: items, config: config, device: device)
-
-                let client = AppDelegate.shared.client
-                let payloads = Panel.rlePayloads(for: images)
-
-                let completion = { (didUpload: Bool) in
-                    DispatchQueue.main.async {
-                        pendingDevices.remove(device)
-                        if didUpload {
-                            anyChanges = true
-                        }
-                        if pendingDevices.isEmpty {
-                            DispatchQueue.main.async {
-                                AppDelegate.shared.fetchCompleted(hasChanged: anyChanges)
-                                self.fetchDidComplete()
-                            }
-                        }
-                    }
+                let payloads = Panel.encode(images: images, encoding: device.encoding)
+                updates.append(Service.Update(device: device, images: payloads))
+            }
+            AppDelegate.shared.client.upload(updates: updates) { changes in
+                DispatchQueue.main.async {
+                    AppDelegate.shared.fetchCompleted(hasChanged: changes)
+                    self.fetchDidComplete()
                 }
-                let clientPayloads = device.kind == .einkV1 ? payloads.map { $0.0 } : payloads.map { $0.1.pngData()! }
-                client.upload(clientPayloads, device: device, completion: completion)
             }
         }
     }
