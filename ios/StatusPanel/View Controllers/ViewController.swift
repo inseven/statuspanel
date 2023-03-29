@@ -210,7 +210,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                     }
                 }
                 let clientPayloads = device.kind == .einkV1 ? payloads.map { $0.0 } : payloads.map { $0.1.pngData()! }
-                client.uploadImages(clientPayloads, forDevice: device, completion: completion)
+                client.upload(clientPayloads, device: device, completion: completion)
             }
         }
     }

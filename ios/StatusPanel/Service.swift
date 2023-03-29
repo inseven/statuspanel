@@ -72,7 +72,7 @@ class Service {
         }
     }
 
-    func uploadImages(_ images: [Data], forDevice device: Device, completion: @escaping (Bool) -> Void) {
+    func upload(_ images: [Data], device: Device, completion: @escaping (Bool) -> Void) {
         let flags = device.kind == .featherTft ? IMAGE_FLAG_PNG : 0
         let sodium = Sodium()
         guard let key = sodium.utils.base642bin(device.publicKey, variant: .ORIGINAL) else {
