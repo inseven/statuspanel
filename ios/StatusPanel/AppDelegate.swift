@@ -133,7 +133,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didReceiveRemoteNotification userInfo: [AnyHashable : Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("didReceiveRemoteNotification")
+
+        // Record the last background update time.
         Config().lastBackgroundUpdate = Date()
 
         // Re-register the device to ensure it doesn't time out on the server.
