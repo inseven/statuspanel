@@ -182,13 +182,36 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 return
             }
 
-            self.renderAndUpload(data: items, completion: { (changes: Bool) -> Void in
-                DispatchQueue.main.async {
-                    AppDelegate.shared.fetchCompleted(hasChanged: changes)
-                    self.fetchDidComplete()
-                }
-            })
+            let config = Config()
+            let images = Renderer.render(data: items, config: config, device: Device())
+            self.fetchDidUpdate(image: images[0], privacyImage: images[1])
 
+            let devices = config.devices
+            var pendingDevices = Set(devices)
+            var anyChanges = false
+            for device in devices {
+                let images = Renderer.render(data: items, config: config, device: device)
+
+                let client = AppDelegate.shared.client
+                let payloads = Panel.rlePayloads(for: images)
+
+                let completion = { (didUpload: Bool) in
+                    DispatchQueue.main.async {
+                        pendingDevices.remove(device)
+                        if didUpload {
+                            anyChanges = true
+                        }
+                        if pendingDevices.isEmpty {
+                            DispatchQueue.main.async {
+                                AppDelegate.shared.fetchCompleted(hasChanged: anyChanges)
+                                self.fetchDidComplete()
+                            }
+                        }
+                    }
+                }
+                let clientPayloads = device.kind == .einkV1 ? payloads.map { $0.0 } : payloads.map { $0.1.pngData()! }
+                client.uploadImages(clientPayloads, forDevice: device, completion: completion)
+            }
         }
     }
 
@@ -206,38 +229,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     func fetchDidComplete() {
         dispatchPrecondition(condition: .onQueue(.main))
         self.refreshButtonItem.isEnabled = true
-    }
-
-    func renderAndUpload(data: [DataItemBase], completion: @escaping (Bool) -> Void) {
-        let config = Config()
-
-        // TODO fix this, for now always show eink format in the UI regardless of what devices are enrolled
-        let images = Renderer.render(data: data, config: config, device: Device())
-        self.fetchDidUpdate(image: images[0], privacyImage: images[1])
-
-        let devices = config.devices
-        var pendingDevices = Set(devices)
-        var anyChanges = false
-        for device in devices {
-            let images = Renderer.render(data: data, config: config, device: device)
-
-            let client = AppDelegate.shared.client
-            let payloads = Panel.rlePayloads(for: images)
-
-            let completion = { (didUpload: Bool) in
-                DispatchQueue.main.async {
-                    pendingDevices.remove(device)
-                    if didUpload {
-                        anyChanges = true
-                    }
-                    if pendingDevices.isEmpty {
-                        completion(anyChanges)
-                    }
-                }
-            }
-            let clientPayloads = device.kind == .einkV1 ? payloads.map { $0.0 } : payloads.map { $0.1.pngData()! }
-            client.uploadImages(clientPayloads, forDevice: device, completion: completion)
-        }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
