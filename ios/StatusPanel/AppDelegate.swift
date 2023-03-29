@@ -26,6 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var background = false
 
     var window: UIWindow?
+    var viewController: ViewController?
     var backgroundFetchCompletionFn : ((UIBackgroundFetchResult) -> Void)?
     var config = Config()
     var sourceController = DataSourceController()
@@ -50,6 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let viewController = ViewController()
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.navigationBar.prefersLargeTitles = true
+        self.viewController = viewController
 
         window = UIWindow()
         window?.rootViewController = navigationController
@@ -141,13 +143,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("didReceiveRemoteNotification")
         Config().lastBackgroundUpdate = Date()
         backgroundFetchCompletionFn = completionHandler
-        sourceController.fetch()
 
         // Re-register the device to ensure it doesn't time out on the server.
         if let deviceToken = apnsToken {
             registerDevice(token: deviceToken)
         }
 
+        // Ensure we have a view controller to perform the update.
+        guard let viewController = viewController else {
+            completionHandler(.failed)
+            return
+        }
+
+        // Perform the update.
+        viewController.fetch()
     }
 
     func registerDevice(token: Data) {
@@ -162,9 +171,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func update() {
-        if sourceController.delegate != nil {
-            sourceController.fetch()
-        }
+        viewController?.fetch()
     }
 
     func fetchCompleted(hasChanged: Bool) {
