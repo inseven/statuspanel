@@ -47,6 +47,17 @@ struct Device: Identifiable, Equatable, Hashable {
         return size.width < 500
     }
 
+    var encoding: Panel.Encoding {
+        switch kind {
+        case .einkV1:
+            return .rle
+        case .featherTft:
+            return .png
+        case .demo:
+            return .rle
+        }
+    }
+
     init(kind: Kind, id: String, publicKey: String) {
         self.kind = kind
         self.id = id

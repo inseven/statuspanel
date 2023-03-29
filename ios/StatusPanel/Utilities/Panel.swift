@@ -23,6 +23,11 @@ import UIKit
 
 class Panel {
 
+    enum Encoding {
+        case rle
+        case png
+    }
+
     static let size = CGSize(width: 640.0, height: 384.0)
     static let statusBarHeight: CGFloat = 20.0
 
@@ -124,15 +129,19 @@ class Panel {
         return result
     }
 
-    static func rlePayloads(for images: [UIImage]) -> [(Data, UIImage)] {
-        var result: [(Data, UIImage)] = []
-        for image in images {
-            let (rawdata, panelImage) = imgToARGBData(image)
-            let panelData = ARGBtoPanel(rawdata)
-            let rleData = rleEncode(panelData)
-            result.append((rleData, panelImage))
-        }
-        return result
+    static func encode(images: [UIImage], encoding: Encoding) -> [Data] {
+        return images
+            .map { image in
+                switch encoding {
+                case .rle:
+                    let (rawdata, _) = imgToARGBData(image)
+                    let panelData = ARGBtoPanel(rawdata)
+                    let rleData = rleEncode(panelData)
+                    return rleData
+                case .png:
+                    return image.pngData()!
+                }
+            }
     }
 
     private static func imgToARGBData(_ image: UIImage) -> (Data, UIImage) {

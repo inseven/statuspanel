@@ -21,6 +21,8 @@
 import UIKit
 import EventKit
 
+import Sodium
+
 class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     private var image: UIImage?
@@ -118,7 +120,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     @objc func refreshTapped(sender: Any) {
-        fetch(force: true)
+        Config().clearUploadHashes()  // Wipe all stored hashes to force re-upload on completion.
+        fetch()
     }
 
     @objc func addTapped(sender: Any) {
@@ -155,7 +158,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         fetch()
     }
 
-    func fetch(force: Bool = false, completion: @escaping (UIBackgroundFetchResult) -> Void = { _ in }) {
+    func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
         let blankImage = Panel.blankImage()
         self.image = blankImage
@@ -168,57 +171,33 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         self.refreshButtonItem.isEnabled = false
         activityIndicator.startAnimating()
 
+        // Generate a preview update.
         sourceController.fetch { items, error in
             dispatchPrecondition(condition: .onQueue(.main))
+
+            self.refreshButtonItem.isEnabled = true
 
             guard let items = items else {
                 if let error {
                     self.present(error: error)
                 }
-                self.fetchDidComplete()
                 return
             }
-
             let config = Config()
-            let images = Renderer.render(data: items, config: config)
-
-            let client = AppDelegate.shared.client
-            DispatchQueue.global().async {
-                let payloads = Panel.rlePayloads(for: images)
-                DispatchQueue.main.sync {
-                    self.fetchDidUpdate(image: payloads[0].1, privacyImage: payloads[1].1)
-                    if force {
-                        // Remove the last upload hashes to ensure the upload method re-uploads the data.
-                        Config().clearUploadHashes()
-                    }
-                }
-                client.upload(image: payloads[0].0, privacyImage: payloads[1].0) { anythingChanged in
-                    print("Changes: \(anythingChanged)")
-                    DispatchQueue.main.async {
-                        completion(anythingChanged ? .newData : .noData)
-                        self.fetchDidComplete()
-                    }
-                }
+            let images = Renderer.render(data: items, config: config, device: Device())
+            self.image = images[0]
+            self.redactedImage = images[1]
+            self.activityIndicator.stopAnimating()
+            UIView.transition(with: self.imageView,
+                              duration: 0.3,
+                              options: .transitionCrossDissolve) {
+                self.imageView.image = images[0]
             }
         }
-    }
 
-    func fetchDidUpdate(image: UIImage, privacyImage: UIImage) {
-        self.image = image
-        self.redactedImage = privacyImage
-        activityIndicator.stopAnimating()
-        UIView.transition(with: self.imageView,
-                          duration: 0.3,
-                          options: .transitionCrossDissolve) {
-            self.imageView.image = image
-        }
+        // Trigger an update; long-term this should be automatic when the configuration changes.
+        AppDelegate.shared.updateDevices()
     }
-
-    func fetchDidComplete() {
-        dispatchPrecondition(condition: .onQueue(.main))
-        self.refreshButtonItem.isEnabled = true
-    }
-
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         BitmapFontCache.shared.emptyCache()
