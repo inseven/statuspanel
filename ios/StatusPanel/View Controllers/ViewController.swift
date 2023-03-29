@@ -44,9 +44,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }()
 
     private lazy var addButtonItem: UIBarButtonItem = {
-        return UIBarButtonItem(barButtonSystemItem: .add,
-                               target: self,
-                               action: #selector(addTapped(sender:)))
+        let configuration = UIImage.SymbolConfiguration(pointSize: 24)
+        let image = UIImage(systemName: "plus", withConfiguration: configuration)!
+        let button = UIButton()
+        button.setImage(image, for: .normal)
+        button.addTarget(self, action: #selector(addTapped(sender:)), for: .touchUpInside)
+        button.addGestureRecognizer(UILongPressGestureRecognizer(target: self,
+                                                                 action: #selector(addLongPress(sender:))))
+        return UIBarButtonItem(customView: button)
     }()
 
     private lazy var activityIndicator: UIActivityIndicatorView = {
@@ -124,6 +129,17 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         let viewController = AddViewController()
         viewController.addDelegate = self
         present(viewController, animated: true)
+    }
+
+    @objc func addLongPress(sender: UILongPressGestureRecognizer) {
+        guard sender.state == .began else {
+            return
+        }
+        guard let clipboard = UIPasteboard.general.string,
+           let url = URL(string: clipboard) else {
+            return
+        }
+        _ = AppDelegate.shared.application(UIApplication.shared, open: url, options: [:])
     }
 
     @objc func imageTapped(recognizer: UIGestureRecognizer) {
