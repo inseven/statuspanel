@@ -73,11 +73,12 @@ class DeviceIdentifier(object):
         parameters = urllib.parse.urlencode({
             'id': self.id,
             'pk': public_key,
+            't': '2',
         })
         return "statuspanel:r2?" + parameters
 
 
-DEVICE_SIZE = Size(640, 384)
+DEVICE_SIZE = Size(640, 400)
 
 
 class MissingUpdate(Exception):
@@ -131,7 +132,7 @@ class Service(object):
         # implementation.
         headerLength = unpack(data, '>B')[0]
         logging.debug("Header Length: %d", headerLength)
-        if headerLength < 6:
+        if headerLength < 8:
             raise UnsupportedUpdate()
 
         wakeupTime = unpack(data, '>H')[0]
@@ -140,11 +141,13 @@ class Service(object):
         imageCount = unpack(data, '>B')[0]
         logging.debug("Image Count: %d", imageCount)
 
+        encoding = unpack(data, '<H')[0]
+        logging.debug("Encoding: %d", encoding)
+
         # Seek to the end of the header.
         data.seek(headerLength)
 
-        # Read the index (given after the header), calculating the lengths as we
-        # go.
+        # Read the index (given after the header), calculating lengths as we go.
         offsets = []
         start = None
         for _ in range(0, imageCount):
@@ -165,32 +168,47 @@ class Service(object):
                                                      self.identifier.public_key,
                                                      self.identifier.secret_key)
 
-            # Unpack the RLE data.
-            rle_data = io.BytesIO(contents)
-            pixel_data = bytearray()
-            try:
-                while len(pixel_data) * 4 < DEVICE_SIZE.width * DEVICE_SIZE.height:
-                    pixel = unpack(rle_data, 'B')[0]
-                    if pixel == 255:
-                        count = unpack(rle_data, 'B')[0]
-                        value = unpack(rle_data, 'B')[0]
-                        for _ in range(0, count):
-                            pixel_data.append(value)
-                    else:
-                        pixel_data.append(pixel)
-            except Exception as e:
-                # TODO: Make this more specific.
-                pass
+            if encoding == 0:
+                logging.debug("Decoding RLE...")
 
-            # Convert the 2BPP representation to 8BPP RGB.
-            rgb_data = []
-            for byte in pixel_data:
-                rgb_data.append(PALETTE[(byte >> 0) & 3])
-                rgb_data.append(PALETTE[(byte >> 2) & 3])
-                rgb_data.append(PALETTE[(byte >> 4) & 3])
-                rgb_data.append(PALETTE[(byte >> 6) & 3])
+                # Unpack the RLE data.
+                rle_data = io.BytesIO(contents)
+                pixel_data = bytearray()
+                try:
+                    while len(pixel_data) * 4 < DEVICE_SIZE.width * DEVICE_SIZE.height:
+                        pixel = unpack(rle_data, 'B')[0]
+                        if pixel == 255:
+                            count = unpack(rle_data, 'B')[0]
+                            value = unpack(rle_data, 'B')[0]
+                            for _ in range(0, count):
+                                pixel_data.append(value)
+                        else:
+                            pixel_data.append(pixel)
+                except Exception as e:
+                    # TODO: Make this more specific.
+                    pass
 
-            images.append(rgb_data)
+                # Convert the 2BPP representation to 8BPP RGB.
+                rgb_data = []
+                for byte in pixel_data:
+                    rgb_data.append(PALETTE[(byte >> 0) & 3])
+                    rgb_data.append(PALETTE[(byte >> 2) & 3])
+                    rgb_data.append(PALETTE[(byte >> 4) & 3])
+                    rgb_data.append(PALETTE[(byte >> 6) & 3])
+
+                pil_image = Image.new("RGB",
+                                      (DEVICE_SIZE.width, DEVICE_SIZE.height),
+                                      (255, 255, 255))
+                pil_image.putdata(rgb_data)
+                images.append(pil_image)
+
+            elif encoding == 1:
+                logging.debug("Decoding PNG...")
+                pil_image = Image.open(io.BytesIO(contents))
+                images.append(pil_image)
+
+            else:
+                print("Unsupported Encoding")
 
         return images
 
@@ -275,14 +293,10 @@ class Device(object):
             state = self._requested_state
         assert state is not None
 
-        image = Image.new("RGB",
-                          (DEVICE_SIZE.width, DEVICE_SIZE.height),
-                          (255, 255, 255))
-        image.putdata(state.images[state.index])
         panel_image = Image.new("RGB",
                                 display.resolution,
                                 (255, 255, 255))
-        panel_image.paste(image, (0, 0))
+        panel_image.paste(state.images[state.index], (0, 0))
         display.set_image(panel_image)
         display.show()
 
