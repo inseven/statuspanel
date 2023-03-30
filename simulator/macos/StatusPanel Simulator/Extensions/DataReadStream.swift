@@ -29,4 +29,9 @@ extension DataReadStream {
         return CFSwapInt32LittleToHost(value)
     }
 
+    func readLE() throws -> UInt16 {
+        let value = try readBytes() as UInt16
+        return CFSwapInt16LittleToHost(value)
+    }
+
 }
