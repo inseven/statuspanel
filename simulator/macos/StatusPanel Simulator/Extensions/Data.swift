@@ -38,6 +38,18 @@ extension Data {
         return Data(bytes)
     }
 
+    func decode(encoding: Service.Encoding, size: CGSize) throws -> NSImage {
+        switch encoding {
+        case .rle:
+            return try self
+                .decodeRLE()
+                .expand2BPPValues()
+                .rgbaImage(size: size)
+        case .png:
+            return NSImage(data: self)!  // TODO: Don't crash.
+        }
+    }
+
     func decodeRLE() throws -> Data {
         let decoder = RLEDecoder(data: self)
         return try decoder.data()
@@ -71,13 +83,13 @@ extension Data {
         return data
     }
 
-    func rgbaImage() -> NSImage {
+    func rgbaImage(size: CGSize) -> NSImage {
         let dataProvider = CGDataProvider(data: self as NSData)!
-        let cgImage = CGImage(width: Device.v1.width,
-                              height: Device.v1.height,
+        let cgImage = CGImage(width: Int(size.width),
+                              height: Int(size.height),
                               bitsPerComponent: 8,
                               bitsPerPixel: 32,
-                              bytesPerRow: Device.v1.width * 4,
+                              bytesPerRow: Int(size.width) * 4,
                               space: CGColorSpaceCreateDeviceRGB(),
                               bitmapInfo: .byteOrderDefault,
                               provider: dataProvider,

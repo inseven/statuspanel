@@ -24,52 +24,40 @@ struct ContentView: View {
 
     @EnvironmentObject var applicationModel: ApplicationModel
 
-    @State var isHidden = false
-
     var body: some View {
-        VStack {
-            ZStack {
-                if let image = applicationModel.code {
-                    Image(nsImage: image)
-                }
-                if let image = applicationModel.lastUpdate?.images[applicationModel.index] {
-                    Image(nsImage: image)
+        ScrollView {
+            ForEach(applicationModel.devices) { deviceModel in
+                HStack {
+                    Spacer()
+                    DeviceView(deviceModel: deviceModel)
+                        .padding()
+                    Spacer()
                 }
             }
-            .frame(width: CGFloat(Device.v1.width), height: CGFloat(Device.v1.height))
-            .background(.white)
             .padding()
-            if let pairingURL = applicationModel.identifier?.pairingURL.absoluteString {
-                LabeledContent("Pairing URL", value: pairingURL)
-            }
-            if let identifier = applicationModel.identifier {
-                LabeledContent("Identifier", value: identifier.id.uuidString)
-            }
-            if let update = applicationModel.lastUpdate {
-                LabeledContent("Wakeup Time", value: String(update.wakeupTime))
-            }
         }
         .textSelection(.enabled)
         .toolbar(id: "main") {
-            ToolbarItem(id: "action") {
-                Button {
-                    applicationModel.action()
+            ToolbarItem(id: "add") {
+                Menu {
+                    Button {
+                        let identifier = DeviceConfiguration()
+                        let model = DeviceModel(identifier: identifier)
+                        applicationModel.devices.append(model)
+                        model.start()
+                    } label: {
+                        Label("eInk Version 1", systemImage: "plus")
+                    }
+                    Button {
+                        let identifier = DeviceConfiguration(kind: .featherTft)
+                        let model = DeviceModel(identifier: identifier)
+                        applicationModel.devices.append(model)
+                        model.start()
+                    } label: {
+                        Label("Feather TFT", systemImage: "plus")
+                    }
                 } label: {
-                    Label("Action", systemImage: "button.programmable")
-                }
-            }
-            ToolbarItem(id: "refresh") {
-                Button {
-                    applicationModel.refresh()
-                } label: {
-                    Label("Refresh", systemImage: "arrow.clockwise")
-                }
-            }
-            ToolbarItem(id: "reset") {
-                Button {
-                    applicationModel.reset()
-                } label: {
-                    Label("Reset", systemImage: "trash")
+                    Label("Add", systemImage: "plus")
                 }
             }
         }
