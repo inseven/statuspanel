@@ -114,6 +114,16 @@ class Service(object):
     def update_url(self):
         return "https://api.statuspanel.io/api/v3/status/" + self.identifier.id
 
+    def get_status_last_modified(self):
+        logging.info("Fetching update header '%s'...", self.update_url)
+        response = requests.head(self.update_url)
+        if response.status_code != 200:
+            logging.warning("Failed to fetch update with status code '%s'.",
+                            response.status_code)
+            raise MissingUpdate()
+        return response.headers['last-modified']
+
+
     def get_status(self):
         logging.info("Fetching update '%s'...", self.update_url)
         response = requests.get(self.update_url)
@@ -122,6 +132,7 @@ class Service(object):
                             response.status_code)
             raise MissingUpdate()
 
+        last_modified = response.headers['last-modified']
         data = io.BytesIO(response.content)
 
         # Check for a valid update.
@@ -210,7 +221,7 @@ class Service(object):
             else:
                 print("Unsupported Encoding")
 
-        return images
+        return images, last_modified
 
 
 class Device(object):
@@ -224,6 +235,7 @@ class Device(object):
         self._lock = threading.Lock()
         self._state = None  # Synchronized on _lock
         self._requested_state = None  # Synchronized on _lock
+        self._last_modified = None
 
     @classmethod
     def load(cls, path):
@@ -271,7 +283,12 @@ class Device(object):
         display.show()
 
     def fetch_update(self, display):
-        images = self.service.get_status()
+        if self._last_modified is not None:
+            last_modified = self.service.get_status_last_modified()
+            if last_modified == self._last_modified:
+                print("No update; skipping...")
+                return
+        images, self._last_modified = self.service.get_status()
 
         with self._lock:
             index = 0 if self._requested_state is None else self._requested_state.index % len(images)
