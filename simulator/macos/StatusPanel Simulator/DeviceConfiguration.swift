@@ -31,7 +31,7 @@ struct DeviceConfiguration: Codable, Equatable {
     enum Kind: String, Codable {
         case einkV1 = "0"
         case featherTft = "1"
-        case demo = "2"
+        case pimoroniInkyImpression4 = "2"
     }
 
     enum CodingKeys: String, CodingKey {
@@ -61,11 +61,13 @@ struct DeviceConfiguration: Codable, Equatable {
 
     var size: CGSize {
         switch kind {
-        case .einkV1, .demo:
+        case .einkV1:
             // TODO: The decoding runs out of pixels for some reason!
-            return CGSize(width: 640.0, height: 380.0)
+            return CGSize(width: 640, height: 380)
         case .featherTft:
-            return CGSize(width: 240.0, height: 135.0)
+            return CGSize(width: 240, height: 135)
+        case .pimoroniInkyImpression4:
+            return CGSize(width: 640, height: 400)
         }
     }
 

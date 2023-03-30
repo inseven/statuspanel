@@ -62,7 +62,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
         }
         firstRun = false
         DispatchQueue.global(qos: .userInteractive).async {
-            let image = try? self.config.privacyImage() ?? Panel.blankImage()
+            let image = try? self.config.privacyImage() ?? Device().blankImage()
             DispatchQueue.main.async {
                 self.privacyImage = image
             }
@@ -133,7 +133,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
                                                      for: indexPath) as! ImageViewTableViewCell
             cell.accessoryType = .disclosureIndicator
             cell.contentImageView.contentMode = .scaleAspectFit
-            cell.contentImageView.image = privacyImage ?? Panel.blankImage()
+            cell.contentImageView.image = privacyImage ?? Device().blankImage()
             cell.activityIndicatorView.setAnimating(privacyImage == nil)
             return cell
         }
@@ -152,7 +152,7 @@ extension PrivacyModeController: UIImagePickerControllerDelegate {
             return
         }
         self.privacyImage = nil
-        Panel.privacyImage(from: image) { result in
+        Panel.privacyImage(from: image, size: Device().size) { result in
             switch result {
             case .success(let image):
                 do {

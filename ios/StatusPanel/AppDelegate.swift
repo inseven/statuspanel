@@ -168,7 +168,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let items = try await AppDelegate.shared.sourceController.fetch()
                 let updates = config.devices
                     .map { device in
-                        let images = Renderer.render(data: items, config: config, device: device)
+                        let images = device.renderer.render(data: items, config: config, device: device)
                         let payloads = Panel.encode(images: images, encoding: device.encoding)
                         return Service.Update(device: device, images: payloads)
                     }

@@ -102,7 +102,7 @@ class Service {
     }
 
     func upload(_ images: [Data], device: Device, completion: @escaping (Bool) -> Void) {
-        let flags = device.kind == .featherTft ? IMAGE_FLAG_PNG : 0
+        let flags = device.encoding == .png ? IMAGE_FLAG_PNG : 0
         let sodium = Sodium()
         guard let key = sodium.utils.base642bin(device.publicKey, variant: .ORIGINAL) else {
             print("Failed to decode key from publickey userdefault!")

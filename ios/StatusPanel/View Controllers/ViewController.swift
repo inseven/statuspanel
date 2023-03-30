@@ -28,6 +28,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     private var image: UIImage?
     private var redactedImage: UIImage?
 
+    let device = Device(kind: .einkV1)
+
     var sourceController: DataSourceController!
 
     private lazy var settingsButtonItem: UIBarButtonItem = {
@@ -160,7 +162,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
-        let blankImage = Panel.blankImage()
+        let blankImage = device.blankImage()
         self.image = blankImage
         self.redactedImage = blankImage
         UIView.transition(with: self.imageView,
@@ -184,7 +186,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 return
             }
             let config = Config()
-            let images = Renderer.render(data: items, config: config, device: Device())
+            let images = self.device.renderer.render(data: items, config: config, device: self.device)
             self.image = images[0]
             self.redactedImage = images[1]
             self.activityIndicator.stopAnimating()

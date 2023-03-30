@@ -28,27 +28,20 @@ class Panel {
         case png
     }
 
-    static let size = CGSize(width: 640.0, height: 384.0)
-    static let statusBarHeight: CGFloat = 20.0
-
-    static func blankImage() -> UIImage {
-        return UIImage.blankImage(size: Panel.size, scale: 1.0)
-    }
-
-    static func privacyImage(from image: UIImage) throws -> UIImage? {
+    static func privacyImage(from image: UIImage, size: CGSize) throws -> UIImage? {
         guard let source = image
                 .normalizeOrientation()?
-                .scaleAndDither(to: Panel.size)
+                .scaleAndDither(to: size)
         else {
             return nil
         }
         return source
     }
 
-    static func privacyImage(from image: UIImage, completion: @escaping (Result<UIImage?, Error>) -> Void) {
+    static func privacyImage(from image: UIImage, size: CGSize, completion: @escaping (Result<UIImage?, Error>) -> Void) {
         DispatchQueue.global(qos: .userInteractive).async {
             do {
-                completion(.success(try privacyImage(from: image)))
+                completion(.success(try privacyImage(from: image, size: size)))
             } catch {
                 completion(.failure(error))
             }

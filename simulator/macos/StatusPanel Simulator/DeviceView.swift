@@ -40,6 +40,8 @@ struct DeviceView: View {
                    height: CGFloat(deviceModel.configuration.size.height))
             .background(.white)
             HStack {
+                Text(deviceModel.name)
+                    .foregroundColor(.secondary)
                 Button {
                     deviceModel.action()
                 } label: {
