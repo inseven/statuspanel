@@ -283,12 +283,16 @@ class Device(object):
         display.show()
 
     def fetch_update(self, display):
-        if self._last_modified is not None:
-            last_modified = self.service.get_status_last_modified()
-            if last_modified == self._last_modified:
-                print("No update; skipping...")
-                return
-        images, self._last_modified = self.service.get_status()
+        try:
+            if self._last_modified is not None:
+                last_modified = self.service.get_status_last_modified()
+                if last_modified == self._last_modified:
+                    print("No update; skipping...")
+                    return
+            images, self._last_modified = self.service.get_status()
+        except:
+            self._last_modified = None  # Ensure subsequent updates clear the screen.
+            raise  # Re-raise the exception.
 
         with self._lock:
             index = 0 if self._requested_state is None else self._requested_state.index % len(images)
