@@ -56,6 +56,14 @@ struct ContentView: View {
                     } label: {
                         Label("Feather TFT", systemImage: "plus")
                     }
+                    Button {
+                        let identifier = DeviceConfiguration(kind: .pimoroniInkyImpression4)
+                        let model = DeviceModel(identifier: identifier)
+                        applicationModel.devices.append(model)
+                        model.start()
+                    } label: {
+                        Label("Pimoroni Inky Impression 4", systemImage: "plus")
+                    }
                 } label: {
                     Label("Add", systemImage: "plus")
                 }

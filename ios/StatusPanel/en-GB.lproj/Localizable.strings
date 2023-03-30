@@ -32,7 +32,7 @@
 "settings_last_background_update_value_never" = "Never";
 
 "settings_no_devices_label" = "No Devices";
-"settings_add_dummy_device_label" = "Add Dummy Device...";
+"settings_add_dummy_device_label" = "Add Demo Device...";
 
 "maximum_lines_title" = "Maximum Lines";
 "maximum_lines_unlimited_label" = "Unlimited";

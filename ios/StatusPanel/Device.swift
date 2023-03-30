@@ -28,7 +28,18 @@ struct Device: Identifiable, Equatable, Hashable {
     enum Kind: String {
         case einkV1 = "0"
         case featherTft = "1"
-        case pimoroniInkyImpression4 = "3"
+        case pimoroniInkyImpression4 = "2"
+
+        var description: String {
+            switch self {
+            case .einkV1:
+                return "eInk Version 1"
+            case .featherTft:
+                return "Feather TFT"
+            case .pimoroniInkyImpression4:
+                return "Pimoroni Inky Impression 4"
+            }
+        }
     }
 
     var kind: Kind

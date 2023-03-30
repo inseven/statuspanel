@@ -30,6 +30,17 @@ class DeviceModel: ObservableObject, Identifiable {
     @Published var lastUpdate: Service.Update? = nil
     @Published var index: Int = 0
 
+    var name: String {
+        switch configuration.kind {
+        case .einkV1:
+            return "eInk Version 1"
+        case .featherTft:
+            return "Feather TFT"
+        case .pimoroniInkyImpression4:
+            return "Pimoroni Inky Impression 4"
+        }
+    }
+
     private var cancellables: Set<AnyCancellable> = []
 
     init(identifier: DeviceConfiguration) {
