@@ -25,6 +25,7 @@ enum DataSourceType: String, Codable {
     case calendar = "io.statuspanel.source.calendar"
     case calendarHeader = "io.statuspanel.source.calendar-header"
     case dummy = "io.statuspanel.source.dummy"
+    case lastUpdate = "io.statuspanel.source.last-update"
     case nationalRail = "io.statuspanel.source.national-rail"
     case text = "io.statuspanel.source.text"
     case transportForLondon = "io.statuspanel.source.transport-for-london"
