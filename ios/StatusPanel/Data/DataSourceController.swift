@@ -33,6 +33,7 @@ class DataSourceController {
             CalendarSource().anyDataSource(),
             CalendarHeaderSource().anyDataSource(),
             DummyDataSource().anyDataSource(),
+            LastUpdateDataSource().anyDataSource(),
             TextDataSource().anyDataSource(),
             TFLDataSource(configuration: configuration).anyDataSource(),
             ZenQuotesDataSource().anyDataSource(),
