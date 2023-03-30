@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 import Foundation
+import UIKit
 
 import Sodium
 
@@ -27,7 +28,7 @@ struct Device: Identifiable, Equatable, Hashable {
     enum Kind: String {
         case einkV1 = "0"
         case featherTft = "1"
-        case demo = "2"
+        case pimoroniInkyImpression4 = "3"
     }
 
     var kind: Kind
@@ -36,15 +37,28 @@ struct Device: Identifiable, Equatable, Hashable {
 
     var size: CGSize {
         switch kind {
-        case .einkV1, .demo:
-            return CGSize(width: 640.0, height: 384.0)
+        case .einkV1:
+            return CGSize(width: 640, height: 384)
         case .featherTft:
-            return CGSize(width: 240.0, height: 135.0)
+            return CGSize(width: 240, height: 135)
+        case .pimoroniInkyImpression4:
+            return CGSize(width: 640, height: 400)
         }
     }
 
     var supportsTwoColumns: Bool {
         return size.width < 500
+    }
+
+    var statusBarHeight: CGFloat {
+        switch kind {
+        case .einkV1:
+            return 20
+        case .featherTft:
+            return 0
+        case .pimoroniInkyImpression4:
+            return 0
+        }
     }
 
     var encoding: Panel.Encoding {
@@ -53,9 +67,24 @@ struct Device: Identifiable, Equatable, Hashable {
             return .rle
         case .featherTft:
             return .png
-        case .demo:
-            return .rle
+        case .pimoroniInkyImpression4:
+            return .png
         }
+    }
+
+    var renderer: Renderer {
+        switch kind {
+        case .einkV1:
+            return PixelRenderer()
+        case .featherTft:
+            return PixelRenderer()
+        case .pimoroniInkyImpression4:
+            return PixelRenderer()
+        }
+    }
+
+    func blankImage() -> UIImage {
+        return UIImage.blankImage(size: size, scale: 1.0)
     }
 
     init(kind: Kind, id: String, publicKey: String) {
@@ -64,9 +93,8 @@ struct Device: Identifiable, Equatable, Hashable {
         self.publicKey = publicKey
     }
 
-    // Create a new demo device identifier.
-    init() {
-        kind = .demo
+    init(kind: Kind = .einkV1) {
+        self.kind = kind
         id = UUID().uuidString
         let sodium = Sodium()
         let keyPair = sodium.box.keyPair()!
