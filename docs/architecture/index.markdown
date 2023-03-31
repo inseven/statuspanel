@@ -30,7 +30,7 @@ This URL has a scheme of `statuspanel`, an empty host, and path of `r2`. The pat
 | --------- | -------------------------------------------- | ------------------------------------------------------------ | -------- |
 | `id`      | Canonical UUID4                              | Identifier                                                   | Yes      |
 | `pk`      | Base64 then URL encoded libsodium public key | Public Key                                                   | Yes      |
-| `t`       | Int                                          | Type:<br />`0` – eInk version 1<br />`1` – Feather TFT<br />`2` – Demo | Optional |
+| `t`       | Int                                          | Type:<br />`0` – eInk Version 1<br />`1` – Feather TFT<br />`2` – Pimoroni Inky Impression 4 | Optional |
 | `s`       | String                                       | SSID of ad-hoc Wi-Fi hotspot to connect to for initial configuration | Optional |
 
 ## Updates
