@@ -69,13 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        if (background) {
-            background = false
-            update()
-        }
+        viewController?.fetch()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -105,7 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func addDevice(_ device: Device) {
         let config = Config()
         var devices = config.devices
-        devices.append((device.id, device.publicKey))
+        devices.append(device)
         config.devices = devices
         let alert = UIAlertController(title: "Device added",
                                       message: "Device \(device.id) has been added.",
@@ -148,14 +142,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             registerDevice(token: deviceToken)
         }
 
-        // Ensure we have a view controller to perform the update.
-        guard let viewController = viewController else {
-            completionHandler(.failed)
-            return
-        }
-
-        // Perform the update.
-        viewController.fetch(completion: completionHandler)
+        updateDevices(completion: completionHandler)
     }
 
     func registerDevice(token: Data) {
@@ -171,6 +158,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func update() {
         viewController?.fetch()
+    }
+
+    // Fetch items, generate updates, and upload per-device updates.
+    func updateDevices(completion: @escaping (UIBackgroundFetchResult) -> Void = { _ in }) {
+        Task {
+            do {
+                let config = Config()
+                let items = try await AppDelegate.shared.sourceController.fetch()
+                let updates = config.devices
+                    .map { device in
+                        let images = device.renderer.render(data: items, config: config, device: device)
+                        let payloads = Panel.encode(images: images, encoding: device.encoding)
+                        return Service.Update(device: device, images: payloads)
+                    }
+                let change = await AppDelegate.shared.client.upload(updates)
+                completion(change ? .newData : .noData)
+            } catch {
+                completion(.failed)
+            }
+        }
     }
 
 }

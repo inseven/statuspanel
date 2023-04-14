@@ -54,10 +54,11 @@ enum ExternalOperation: Equatable {
             // only to prevent old StatusPanel.apps from talking to v2
             // clients.
             guard let id = map["id"],
-                  let publicKey = map["pk"] else {
+                  let publicKey = map["pk"],
+                  let kind = Device.Kind(rawValue: map["t"] ?? "0") else {
                       return nil
                   }
-            let device = Device(id: id, publicKey: publicKey)
+            let device = Device(kind: kind, id: id, publicKey: publicKey)
             if let ssid = map["s"] {
                 self = .registerDeviceAndConfigureWiFi(device, ssid: ssid)
             } else {

@@ -60,7 +60,7 @@
 		D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7326E3F3930002F388 /* StatusPanelError.swift */; };
 		D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DAED7626E3F3D40002F388 /* Bundle.swift */; };
 		D8DCA7D629CBEA92002010A5 /* LabelStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7D529CBEA92002010A5 /* LabelStyle.swift */; };
-		D8DCA7DA29CBEB43002010A5 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7D929CBEB42002010A5 /* Renderer.swift */; };
+		D8DCA7DA29CBEB43002010A5 /* PixelRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7D929CBEB42002010A5 /* PixelRenderer.swift */; };
 		D8DCA7DC29CBEBDD002010A5 /* RedactMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7DB29CBEBDD002010A5 /* RedactMode.swift */; };
 		D8DCA7DE29CBEE4D002010A5 /* UILabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCA7DD29CBEE4D002010A5 /* UILabel.swift */; };
 		D8DD98FF271EF8CD004088CD /* ColoredCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DD98FE271EF8CD004088CD /* ColoredCheckbox.swift */; };
@@ -73,6 +73,8 @@
 		D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EBFCC92720A6F8000E120F /* Network.swift */; };
 		D8EED7F12630EF19009E2166 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = D8EED7F02630EF19009E2166 /* Sodium */; };
 		D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F57FE9271A009200847C67 /* QRCodeViewController.swift */; };
+		D8FB0D7829D56C04000E66E6 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FB0D7729D56C04000E66E6 /* Renderer.swift */; };
+		D8FB0D7B29D58216000E66E6 /* LastUpdateDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FB0D7A29D58216000E66E6 /* LastUpdateDataSource.swift */; };
 		DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB17F92E249E3BAD008CD83E /* CGExtensions.swift */; };
 		DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */; };
 		DB1EB9062427E1F900050A08 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = DB1EB9052427E1F900050A08 /* fonts */; };
@@ -183,7 +185,7 @@
 		D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
 		D8DC8D8026E1ADAF004B081D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		D8DCA7D529CBEA92002010A5 /* LabelStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelStyle.swift; sourceTree = "<group>"; };
-		D8DCA7D929CBEB42002010A5 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		D8DCA7D929CBEB42002010A5 /* PixelRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelRenderer.swift; sourceTree = "<group>"; };
 		D8DCA7DB29CBEBDD002010A5 /* RedactMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactMode.swift; sourceTree = "<group>"; };
 		D8DCA7DD29CBEE4D002010A5 /* UILabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabel.swift; sourceTree = "<group>"; };
 		D8DD98FE271EF8CD004088CD /* ColoredCheckbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoredCheckbox.swift; sourceTree = "<group>"; };
@@ -196,6 +198,8 @@
 		D8EBFCC92720A6F8000E120F /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		D8EED7EF2630EEFF009E2166 /* swift-sodium */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "swift-sodium"; sourceTree = "<group>"; };
 		D8F57FE9271A009200847C67 /* QRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeViewController.swift; sourceTree = "<group>"; };
+		D8FB0D7729D56C04000E66E6 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		D8FB0D7A29D58216000E66E6 /* LastUpdateDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastUpdateDataSource.swift; sourceTree = "<group>"; };
 		DB17F92E249E3BAD008CD83E /* CGExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
 		DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxLinesController.swift; sourceTree = "<group>"; };
 		DB1EB9052427E1F900050A08 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = StatusPanel/fonts; sourceTree = "<group>"; };
@@ -336,6 +340,7 @@
 				D8DCA7D529CBEA92002010A5 /* LabelStyle.swift */,
 				D842A3FC265BE81F009C1156 /* Calendar */,
 				D89104882707BB3D0020A2CF /* Dummy */,
+				D8FB0D7929D581F5000E66E6 /* Last Update */,
 				D842A3FE265BE878009C1156 /* National Rail */,
 				D848A196270C8D9A00681F62 /* Text */,
 				D842A3FF265BE8A2009C1156 /* TFL */,
@@ -449,6 +454,14 @@
 			path = Styles;
 			sourceTree = "<group>";
 		};
+		D8FB0D7929D581F5000E66E6 /* Last Update */ = {
+			isa = PBXGroup;
+			children = (
+				D8FB0D7A29D58216000E66E6 /* LastUpdateDataSource.swift */,
+			);
+			path = "Last Update";
+			sourceTree = "<group>";
+		};
 		DBB2D354217C9AC3009F7549 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -499,8 +512,9 @@
 				D8E285AE271A45CE001738A8 /* Device.swift */,
 				DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */,
 				D8D98E422493019A00F853CA /* NetworkProvisioner.swift */,
+				D8DCA7D929CBEB42002010A5 /* PixelRenderer.swift */,
 				D8DCA7DB29CBEBDD002010A5 /* RedactMode.swift */,
-				D8DCA7D929CBEB42002010A5 /* Renderer.swift */,
+				D8FB0D7729D56C04000E66E6 /* Renderer.swift */,
 				D80380AA23E9B6D2002606C7 /* Service.swift */,
 				D8DAED7326E3F3930002F388 /* StatusPanelError.swift */,
 				DB5E9DA0241562ED009F3807 /* StringUtils.swift */,
@@ -686,10 +700,11 @@
 				D8CC37B12717887A00938C5D /* Panel.swift in Sources */,
 				D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */,
 				DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */,
-				D8DCA7DA29CBEB43002010A5 /* Renderer.swift in Sources */,
+				D8DCA7DA29CBEB43002010A5 /* PixelRenderer.swift in Sources */,
 				D8D29BCA2723E2F400125927 /* UIImage.swift in Sources */,
 				D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */,
 				D8D252B327146ED800C68EF9 /* Value1TableViewCell.swift in Sources */,
+				D8FB0D7829D56C04000E66E6 /* Renderer.swift in Sources */,
 				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
 				D81CEBBA2906B31300E4B032 /* WeatherDataSource.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
@@ -705,6 +720,7 @@
 				D8E285AF271A45CE001738A8 /* Device.swift in Sources */,
 				DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */,
 				DBF15BC72471A61E004AA972 /* WifiProvisionerController.swift in Sources */,
+				D8FB0D7B29D58216000E66E6 /* LastUpdateDataSource.swift in Sources */,
 				DBCA987F2143E2920084B710 /* ViewController.swift in Sources */,
 				D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */,
 				D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */,

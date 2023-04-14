@@ -214,7 +214,7 @@ class Config {
                 if hasPrivacyImageV1 {
                     print("Migrating v1 privacy image...")
                     if let image = UIImage(contentsOfFile: privacyImageV1.path) {
-                        try setPrivacyImage(try Panel.privacyImage(from: image))
+                        try setPrivacyImage(try Panel.privacyImage(from: image, size: Device().size))
                     } else {
                         print("Failed to load v1 privacy image.")
                     }
@@ -224,7 +224,7 @@ class Config {
                 if hasPrivacyImageV2 {
                     print("Migrating v2 privacy image...")
                     if let image = UIImage(contentsOfFile: privacyImageV2.path) {
-                        try setPrivacyImage(try Panel.privacyImage(from: image))
+                        try setPrivacyImage(try Panel.privacyImage(from: image, size: Device().size))
                     } else {
                         print("Failed to load v2 privacy image.")
                     }
@@ -334,18 +334,17 @@ class Config {
     }
 
     // Old way of storing a single device and key
-    static private func getDeviceAndKey() -> (String, String)? {
+    static private func getDeviceAndKey() -> Device? {
         let ud = UserDefaults.standard
-        let deviceid = ud.string(forKey: "deviceid")
-        let publickey = ud.string(forKey: "publickey")
-        if deviceid == nil || publickey == nil {
+        guard let deviceid = ud.string(forKey: "deviceid"),
+              let publickey = ud.string(forKey: "publickey")
+        else {
             return nil
-        } else {
-            return (deviceid!, publickey!)
         }
+        return Device(kind: .einkV1, id: deviceid, publicKey: publickey)
     }
 
-    @MainActor var devices: [(String, String)] {
+    @MainActor var devices: [Device] {
         get {
             let ud = UserDefaults.standard
             if let oldStyle = Config.getDeviceAndKey() {
@@ -358,19 +357,22 @@ class Config {
             guard let deviceObjs = ud.array(forKey: "devices") as? [Dictionary<String, String>] else {
                 return []
             }
-            var result: [(String, String)] = []
+            var result: [Device] = []
             for obj in deviceObjs {
-                guard let deviceid = obj["deviceid"], let publickey = obj["publickey"] else {
+                guard let deviceid = obj["deviceid"],
+                      let publickey = obj["publickey"],
+                      let kind = Device.Kind(rawValue: obj["kind"] ?? Device.Kind.einkV1.rawValue)
+                else {
                     continue
                 }
-                result.append((deviceid, publickey))
+                result.append(Device(kind: kind, id: deviceid, publicKey: publickey))
             }
             return result
         }
         set {
             var objs: [Dictionary<String, String>] = []
-            for (deviceid, publickey) in newValue {
-                objs.append(["publickey": publickey, "deviceid": deviceid])
+            for device in newValue {
+                objs.append(["publickey": device.publicKey, "deviceid": device.id, "kind": device.kind.rawValue])
             }
             self.userDefaults.set(objs, forKey: "devices")
         }
@@ -535,8 +537,8 @@ class Config {
     }
 
     @MainActor func clearUploadHashes() {
-        for (deviceid, _) in devices {
-            setLastUploadHash(for: deviceid, to: nil)
+        for device in devices {
+            setLastUploadHash(for: device.id, to: nil)
         }
     }
 

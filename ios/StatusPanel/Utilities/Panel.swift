@@ -23,27 +23,25 @@ import UIKit
 
 class Panel {
 
-    static let size = CGSize(width: 640.0, height: 384.0)
-    static let statusBarHeight: CGFloat = 20.0
-
-    static func blankImage() -> UIImage {
-        return UIImage.blankImage(size: Panel.size, scale: 1.0)
+    enum Encoding {
+        case rle
+        case png
     }
 
-    static func privacyImage(from image: UIImage) throws -> UIImage? {
+    static func privacyImage(from image: UIImage, size: CGSize) throws -> UIImage? {
         guard let source = image
                 .normalizeOrientation()?
-                .scaleAndDither(to: Panel.size)
+                .scaleAndDither(to: size)
         else {
             return nil
         }
         return source
     }
 
-    static func privacyImage(from image: UIImage, completion: @escaping (Result<UIImage?, Error>) -> Void) {
+    static func privacyImage(from image: UIImage, size: CGSize, completion: @escaping (Result<UIImage?, Error>) -> Void) {
         DispatchQueue.global(qos: .userInteractive).async {
             do {
-                completion(.success(try privacyImage(from: image)))
+                completion(.success(try privacyImage(from: image, size: size)))
             } catch {
                 completion(.failure(error))
             }
@@ -124,27 +122,19 @@ class Panel {
         return result
     }
 
-    static func rlePayloads(for images: [UIImage]) -> [(Data, UIImage)] {
-        var result: [(Data, UIImage)] = []
-        for (i, image) in images.enumerated() {
-            let (rawdata, panelImage) = imgToARGBData(image)
-            let panelData = ARGBtoPanel(rawdata)
-            let rleData = rleEncode(panelData)
-            do {
-                let dir = try FileManager.default.documentsUrl()
-                print("GOT DIR! " + dir.absoluteString)
-                let imgdata = panelImage.pngData()
-                let name = "img_\(i)"
-                try imgdata?.write(to: dir.appendingPathComponent(name + ".png"))
-                try rawdata.write(to: dir.appendingPathComponent(name + ".raw"))
-                try panelData.write(to: dir.appendingPathComponent(name + "_panel"))
-                try rleData.write(to: dir.appendingPathComponent(name + "_panel_rle"))
-            } catch {
-                print("meh")
+    static func encode(images: [UIImage], encoding: Encoding) -> [Data] {
+        return images
+            .map { image in
+                switch encoding {
+                case .rle:
+                    let (rawdata, _) = imgToARGBData(image)
+                    let panelData = ARGBtoPanel(rawdata)
+                    let rleData = rleEncode(panelData)
+                    return rleData
+                case .png:
+                    return image.pngData()!
+                }
             }
-            result.append((rleData, panelImage))
-        }
-        return result
     }
 
     private static func imgToARGBData(_ image: UIImage) -> (Data, UIImage) {

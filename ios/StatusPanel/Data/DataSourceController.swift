@@ -33,6 +33,7 @@ class DataSourceController {
             CalendarSource().anyDataSource(),
             CalendarHeaderSource().anyDataSource(),
             DummyDataSource().anyDataSource(),
+            LastUpdateDataSource().anyDataSource(),
             TextDataSource().anyDataSource(),
             TFLDataSource(configuration: configuration).anyDataSource(),
             ZenQuotesDataSource().anyDataSource(),
@@ -125,6 +126,22 @@ class DataSourceController {
     func save() throws {
         dispatchPrecondition(condition: .onQueue(.main))
         try Config().set(dataSources: self.instances.map { $0.details })
+    }
+
+    func fetch() async throws -> [DataItemBase] {
+        return try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.main.async {
+                self.fetch() { items, error in
+                    guard error == nil,
+                          let items = items
+                    else {
+                        continuation.resume(with: .failure(error ?? StatusPanelError.internalInconsistency))
+                        return
+                    }
+                    continuation.resume(with: .success(items))
+                }
+            }
+        }
     }
 
     func fetch(completion: @escaping ([DataItemBase]?, Error?) -> Void) {

@@ -22,19 +22,27 @@ import SwiftUI
 
 import DataStream
 
+enum ServiceError: Error {
+    case unsupportedUpdate
+    case unsupportedEncoding
+}
+
 struct Service {
 
-    struct Update {
-
-        let wakeupTime: Int
-        let images: [NSImage]
-
+    enum Encoding: UInt16 {
+        case rle = 0
+        case png = 1
     }
 
-    static func update(identifier: DeviceIdentifier) async throws -> Update {
+    struct Update {
+        let wakeupTime: Int
+        let images: [NSImage]
+    }
+
+    static func update(configuration: DeviceConfiguration) async throws -> Update {
 
         let url = URL(string: "https://api.statuspanel.io/api/v3/status")!
-            .appendingPathComponent(identifier.id.uuidString)
+            .appendingPathComponent(configuration.id.uuidString)
 
         let response = try await URLSession.shared.data(from: url)
         let data = response.0
@@ -49,23 +57,25 @@ struct Service {
 
         // Read the header.
         let headerLength: UInt8 = try stream.read()
-        let wakeupTime: UInt16 = try stream.read()
-        let imageCount: UInt8?
-        if headerLength >= 6 {
-            imageCount = try stream.read()
-        } else {
-            imageCount = nil
+        guard headerLength >= 8 else {
+            throw ServiceError.unsupportedUpdate
         }
+
+        let wakeupTime: UInt16 = try stream.read()
+        let imageCount: UInt8 = try stream.read()
+        let encodingValue: UInt16 = try stream.readLE()
+        guard let encoding = Encoding(rawValue: encodingValue) else {
+            throw ServiceError.unsupportedEncoding
+        }
+
+        // Read to the end of the header, ignoring remaining properties.
+        let _ = try stream.read(count: Int(headerLength) - 8)
 
         // If an image count has been defined, then an index immediately follows the
         // header giving the index of each image.
         var offsets: [UInt32] = []
-        if let imageCount = imageCount {
-            for _ in 0..<imageCount {
-                offsets.append(try stream.readLE())
-            }
-        } else {
-            offsets = [0]
+        for _ in 0..<imageCount {
+            offsets.append(try stream.readLE())
         }
 
         // Convert the offsets to ranges by walking backwards through them and tracking
@@ -83,10 +93,8 @@ struct Service {
             let length = range.1 - range.0
             let imageData = try stream.read(count: Int(length))
             images.append(try imageData
-                .openSodiumSecretBox(keyPair: identifier.keyPair)
-                .decodeRLE()
-                .expand2BPPValues()
-                .rgbaImage())
+                .openSodiumSecretBox(keyPair: configuration.keyPair)
+                .decode(encoding: encoding, size: configuration.size))
         }
 
         return Update(wakeupTime: Int(wakeupTime), images: images)

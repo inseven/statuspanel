@@ -46,7 +46,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     weak var delegate: SettingsViewControllerDelegate?
 
-    var devices: [(String, String)] = []
+    var devices: [Device] = []
 
     var doneButtonItem: UIBarButtonItem {
         return UIBarButtonItem(barButtonSystemItem: .done,
@@ -142,9 +142,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             if n == 0 {
                 n += 1 // For "No devices configured"
             }
-            #if DEBUG
-                n += 1 // For "Add dummy device"
-            #endif
+            n += 1 // For "Add demo device"
             return n
         case StatusSection:
             return 1
@@ -213,7 +211,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 return cell
             }
         case DevicesSection:
-            let cell = UITableViewCell(style: .default, reuseIdentifier: "DeviceCell")
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DeviceCell")
             if devices.count == 0 && indexPath.row == 0 {
                 cell.textLabel?.text = LocalizedString("settings_no_devices_label")
                 cell.textLabel?.textColor = .secondaryLabel
@@ -222,7 +220,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.textLabel?.textColor = .label
             } else {
                 let device = devices[indexPath.row]
-                cell.textLabel?.text = device.0
+                cell.textLabel?.text = "\(device.kind.description)"
+                cell.detailTextLabel?.text = device.id
                 cell.textLabel?.textColor = .label
             }
             return cell
@@ -343,7 +342,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         Config().updateTime = newTime
     }
 
-    // TODO: Consider not using this?
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == DevicesSection {
             if indexPath.row == (devices.count == 0 ? 1 : devices.count) {
@@ -462,7 +460,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             let prevCount = devices.count
             if indexPath.row == (prevCount == 0 ? 1 : prevCount) {
                 let device = Device()
-                devices.append((device.id, device.publicKey))
+                devices.append(device)
                 Config().devices = devices
                 tableView.performBatchUpdates {
                     tableView.deselectRow(at: indexPath, animated: true)
@@ -549,7 +547,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return nil
         }
         let action = UIContextualAction(style: .destructive, title: "Delete") { (_, _, completion) in
-            let deviceBeingRemoved = self.devices.remove(at: indexPath.row).0
+            let deviceBeingRemoved = self.devices.remove(at: indexPath.row).id
             tableView.performBatchUpdates({
                 tableView.deleteRows(at: [indexPath], with: .automatic)
                 if self.devices.count == 0 {

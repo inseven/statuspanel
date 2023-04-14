@@ -19,23 +19,95 @@
 // SOFTWARE.
 
 import Foundation
+import UIKit
 
 import Sodium
 
-struct Device: Identifiable, Equatable {
+struct Device: Identifiable, Equatable, Hashable {
 
+    enum Kind: String {
+        case einkV1 = "0"
+        case featherTft = "1"
+        case pimoroniInkyImpression4 = "2"
+
+        var description: String {
+            switch self {
+            case .einkV1:
+                return "eInk Version 1"
+            case .featherTft:
+                return "Feather TFT"
+            case .pimoroniInkyImpression4:
+                return "Pimoroni Inky Impression 4"
+            }
+        }
+    }
+
+    var kind: Kind
     var id: String
     var publicKey: String
 
-    init(id: String, publicKey: String) {
+    var size: CGSize {
+        switch kind {
+        case .einkV1:
+            return CGSize(width: 640, height: 384)
+        case .featherTft:
+            return CGSize(width: 240, height: 135)
+        case .pimoroniInkyImpression4:
+            return CGSize(width: 640, height: 400)
+        }
+    }
+
+    var supportsTwoColumns: Bool {
+        return size.width < 500
+    }
+
+    var statusBarHeight: CGFloat {
+        switch kind {
+        case .einkV1:
+            return 20
+        case .featherTft:
+            return 0
+        case .pimoroniInkyImpression4:
+            return 0
+        }
+    }
+
+    var encoding: Panel.Encoding {
+        switch kind {
+        case .einkV1:
+            return .rle
+        case .featherTft:
+            return .png
+        case .pimoroniInkyImpression4:
+            return .png
+        }
+    }
+
+    var renderer: Renderer {
+        switch kind {
+        case .einkV1:
+            return PixelRenderer()
+        case .featherTft:
+            return PixelRenderer()
+        case .pimoroniInkyImpression4:
+            return PixelRenderer()
+        }
+    }
+
+    func blankImage() -> UIImage {
+        return UIImage.blankImage(size: size, scale: 1.0)
+    }
+
+    init(kind: Kind, id: String, publicKey: String) {
+        self.kind = kind
         self.id = id
         self.publicKey = publicKey
     }
 
-    // Create a new dummy device identifier.
-    init() {
-        let sodium = Sodium()
+    init(kind: Kind = .einkV1) {
+        self.kind = kind
         id = UUID().uuidString
+        let sodium = Sodium()
         let keyPair = sodium.box.keyPair()!
         publicKey = sodium.utils.bin2base64(keyPair.publicKey, variant: .ORIGINAL)!
     }
