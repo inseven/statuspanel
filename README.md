@@ -72,7 +72,16 @@ bundle install
 bundle exec jekyll serve
 ```
 
-Tools versioning for local development can be done with [asdf](http://asdf-vm.com) and `docs/.tool-versions` is already set up correctly.
+Tools versioning for local development can be done with [asdf](http://asdf-vm.com) and `.tool-versions` is already set up correctly. In order to use `asdf`, you will need to have the NodeJS and Ruby plugins installed:
+
+```bash
+# Install required plugins.
+asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+
+# Install appropriate tools versions.
+asdf install
+```
 
 ## Contributing
 
