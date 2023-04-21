@@ -152,22 +152,16 @@ extension PrivacyModeController: UIImagePickerControllerDelegate {
             return
         }
         self.privacyImage = nil
-        Panel.privacyImage(from: image, size: Device().size) { result in
-            switch result {
-            case .success(let image):
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard let privacyImage = image.normalizeOrientation() else {
+                print("Failed to normalize image orientation")
+                return
+            }
+            DispatchQueue.main.async {
                 do {
-                    try self.config.setPrivacyImage(image)
-                    DispatchQueue.main.async {
-                        self.privacyImage = image
-                    }
+                    try self.config.setPrivacyImage(privacyImage)
+                    self.privacyImage = privacyImage
                 } catch {
-                    DispatchQueue.main.async {
-                        self.present(error: error)
-                    }
-                    return
-                }
-            case .failure(let error):
-                DispatchQueue.main.async {
                     self.present(error: error)
                 }
             }

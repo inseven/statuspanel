@@ -57,6 +57,17 @@ struct Device: Identifiable, Equatable, Hashable {
         }
     }
 
+    var isFullColor: Bool {
+        switch kind {
+        case .einkV1:
+            return false
+        case .featherTft:
+            return true
+        case .pimoroniInkyImpression4:
+            return true
+        }
+    }
+
     var supportsTwoColumns: Bool {
         return size.width < 500
     }
