@@ -1,0 +1,23 @@
+name: build-raspberry-pi-image
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  schedule:
+    - cron:  '0 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  build-raspberry-pi-image:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Build image
+        uses: usimd/pi-gen-action@v1
+        with:
+          image-name: test
+          stage-list: stage0 stage1 stage2
