@@ -16,6 +16,12 @@ jobs:
 
     steps:
 
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        fetch-depth: 0
+
       - name: Build image
         uses: usimd/pi-gen-action@v1
         with:
