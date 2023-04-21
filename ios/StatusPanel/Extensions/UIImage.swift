@@ -127,23 +127,25 @@ extension UIImage {
         return resultImage
     }
 
-    func scaleAndDither(to size: CGSize) -> UIImage? {
+    func scale(to size: CGSize, grayscale: Bool) -> UIImage? {
         guard let cgImage = self.cgImage else {
             return nil
         }
-        let image = CIImage(cgImage: cgImage)
+        var image = CIImage(cgImage: cgImage)
             .applyingFilter("CILanczosScaleTransform", parameters: [
                 kCIInputAspectRatioKey: 1.0,
                 kCIInputScaleKey: size.width / self.size.width,
             ])
-            .applyingFilter("CIPhotoEffectMono", parameters: [:])
+        if grayscale {
+            image = image
+                .applyingFilter("CIPhotoEffectMono", parameters: [:])
+        }
 
         let context = CIContext(options: nil)
         guard let imageRef = context.createCGImage(image, from: CGRect(origin: .zero, size: size)) else {
             return nil
         }
         return UIImage(cgImage: imageRef)
-            .atkinsonDither()
     }
 
 }

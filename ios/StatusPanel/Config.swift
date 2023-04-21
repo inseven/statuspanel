@@ -214,7 +214,7 @@ class Config {
                 if hasPrivacyImageV1 {
                     print("Migrating v1 privacy image...")
                     if let image = UIImage(contentsOfFile: privacyImageV1.path) {
-                        try setPrivacyImage(try Panel.privacyImage(from: image, size: Device().size))
+                        try setPrivacyImage(Panel.privacyImage(from: image, size: Device().size))
                     } else {
                         print("Failed to load v1 privacy image.")
                     }
@@ -224,7 +224,7 @@ class Config {
                 if hasPrivacyImageV2 {
                     print("Migrating v2 privacy image...")
                     if let image = UIImage(contentsOfFile: privacyImageV2.path) {
-                        try setPrivacyImage(try Panel.privacyImage(from: image, size: Device().size))
+                        try setPrivacyImage(Panel.privacyImage(from: image, size: Device().size))
                     } else {
                         print("Failed to load v2 privacy image.")
                     }
