@@ -26,8 +26,8 @@ jobs:
       id: build
       uses: usimd/pi-gen-action@v1
       with:
-        image-name: test
-        stage-list: stage0 stage1 stage2
+        image-name: statuspanel
+        stage-list: stage0 stage1 stage2 device/python/image
 
     - uses: actions/upload-artifact@v3
       with:
