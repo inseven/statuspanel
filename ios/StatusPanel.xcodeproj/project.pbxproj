@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D80380AB23E9B6D2002606C7 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Service.swift */; };
+		D8104E0529F3408100C394CC /* EKEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8104E0429F3408100C394CC /* EKEvent.swift */; };
 		D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523B2709875600C9D80A /* FontPickerViewController.swift */; };
 		D8166551272773AC005BDA9E /* ImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8166550272773AC005BDA9E /* ImageTableViewCell.swift */; };
 		D816655327277407005BDA9E /* UIActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D816655227277407005BDA9E /* UIActivityIndicatorView.swift */; };
@@ -128,6 +129,7 @@
 
 /* Begin PBXFileReference section */
 		D80380AA23E9B6D2002606C7 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
+		D8104E0429F3408100C394CC /* EKEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEvent.swift; sourceTree = "<group>"; };
 		D812523B2709875600C9D80A /* FontPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPickerViewController.swift; sourceTree = "<group>"; };
 		D8166550272773AC005BDA9E /* ImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTableViewCell.swift; sourceTree = "<group>"; };
 		D816655227277407005BDA9E /* UIActivityIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorView.swift; sourceTree = "<group>"; };
@@ -442,6 +444,7 @@
 				D89104842707B99F0020A2CF /* UIViewController.swift */,
 				DB981489270887590029BA0A /* UnicodeExtensions.swift */,
 				D8293A0B26F787D3008CE13B /* URL.swift */,
+				D8104E0429F3408100C394CC /* EKEvent.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -729,6 +732,7 @@
 				D83CC5222707543E00260DC1 /* UIStoryboard.swift in Sources */,
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */,
+				D8104E0529F3408100C394CC /* EKEvent.swift in Sources */,
 				DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */,
 				D83CC5202707532400260DC1 /* AnyDataSource.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */,

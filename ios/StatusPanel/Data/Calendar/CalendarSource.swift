@@ -29,21 +29,28 @@ class CalendarItem : DataItemBase {
     let title: String
     let location: String?
     let flags: DataItemFlags
+    let accentColor: UIColor?
 
-    init(time: String?, icon: String?, title: String, location: String?, flags: DataItemFlags = []) {
+    init(time: String?,
+         icon: String?,
+         title: String,
+         location: String?,
+         flags: DataItemFlags = [],
+         accentColor: UIColor?) {
         self.time = time
         self.icon = icon
         self.title = title
         self.location = location
         self.flags = flags
+        self.accentColor = accentColor
     }
 
-    convenience init(time: String?, title: String, location: String?) {
-        self.init(time: time, icon: nil, title: title, location: location, flags: [])
+    convenience init(time: String?, title: String, location: String?, accentColor: UIColor?) {
+        self.init(time: time, icon: nil, title: title, location: location, flags: [], accentColor: accentColor)
     }
 
-    convenience init(icon: String?, title: String, location: String?) {
-        self.init(time: nil, icon: icon, title: title, location: location, flags: [])
+    convenience init(icon: String?, title: String, location: String?, accentColor: UIColor?) {
+        self.init(time: nil, icon: icon, title: title, location: location, flags: [], accentColor: accentColor)
     }
 
     var prefix: String { time ?? "" }
@@ -178,7 +185,8 @@ final class CalendarSource : DataSource {
             if allDay {
                 results.append(CalendarItem(icon: event.calendar.type == .birthday ? "🎁" : "🗓",
                                             title: title,
-                                            location: location))
+                                            location: location,
+                                            accentColor: event.uiColor))
             } else {
                 var relevantTime: Date = event.startDate
                 var timeStr = df.string(from: relevantTime)
@@ -196,7 +204,10 @@ final class CalendarSource : DataSource {
                     let tzStr = timeZoneFormatter.string(from: relevantTime)
                     title = "\(title) (\(eventLocalTime) \(tzStr))"
                 }
-                results.append(CalendarItem(time: timeStr, title: title, location: location))
+                results.append(CalendarItem(time: timeStr,
+                                            title: title,
+                                            location: location,
+                                            accentColor: event.uiColor))
             }
         }
         callback(results, nil)

@@ -21,18 +21,10 @@
 import EventKit
 import SwiftUI
 
-extension EKCalendar: Identifiable {
-
-    public var id: String {
-        return calendarIdentifier
-    }
-
-    public var color: Color {
-        return Color(UIColor(cgColor: cgColor))
-    }
+extension EKEvent {
 
     public var uiColor: UIColor {
-        return UIColor(cgColor: cgColor)
+        return calendar.uiColor
     }
 
 }
