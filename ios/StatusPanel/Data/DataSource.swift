@@ -82,6 +82,7 @@ protocol DataItemBase : AnyObject {
     var prefix: String { get }
     var flags: DataItemFlags { get }
     var subText: String? { get }
+    var accentColor: UIColor? { get }
 
     func getText(checkFit: (String) -> Bool) -> String
 }
@@ -107,11 +108,13 @@ class DataItem : Equatable, DataItemBase {
     let icon: String?
     let text: String
     let flags: DataItemFlags
+    let accentColor: UIColor?
 
-    init(icon: String?, text: String, flags: DataItemFlags = []) {
+    init(icon: String?, text: String, flags: DataItemFlags = [], accentColor: UIColor? = nil) {
         self.icon = icon
         self.text = text
         self.flags = flags
+        self.accentColor = accentColor
     }
 
     convenience init(text: String, flags: DataItemFlags = []) {

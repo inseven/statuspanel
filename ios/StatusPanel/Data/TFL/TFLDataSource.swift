@@ -174,7 +174,15 @@ final class TFLDataSource: DataSource {
                     return
                 }
 
-                dataItems.append(DataItem(icon: "🚇", text: "\(name): \(desc)", flags: flags))
+                guard let accentColor = self.linesById[line.id]?.color.cgColor else {
+                    completion([], StatusPanelError.invalidResponse)
+                    return
+                }
+
+                dataItems.append(DataItem(icon: "🚇",
+                                          text: "\(name): \(desc)",
+                                          flags: flags,
+                                          accentColor: UIColor(cgColor: accentColor)))
             }
             completion(dataItems, error)
         }
