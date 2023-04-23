@@ -25,10 +25,8 @@ pip3 install pysodium
 EOF
 
 # Install StatusPanel.
-on_chroot <<EOF
-cd /opt
-git clone --depth 1 https://github.com/inseven/statuspanel.git
-EOF
+install -d "${ROOTFS_DIR}/opt/statuspanel"
+install -m 755 files/device.py "${ROOTFS_DIR}/opt/statuspanel/"
 
 # Install the StatusPanel service.
 cat <<EOF> "${ROOTFS_DIR}/etc/systemd/system/statuspanel.service"
@@ -38,7 +36,7 @@ Description=StatusPanel
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /opt/statuspanel/device/python/device.py
+ExecStart=/usr/bin/python3 /opt/statuspanel/device.py
 User=root
 
 [Install]
