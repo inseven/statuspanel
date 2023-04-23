@@ -31,3 +31,4 @@ jobs:
       with:
         name: Firmware
         path: firmware/build
+        if-no-files-found: error
