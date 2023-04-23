@@ -36,7 +36,7 @@ sudo apt install \
    ```bash
    scripts/firmware flash ~/Downloads/Firmware.zip
    ```
-   
+
 ### Debugging and Troubleshooting
 
 The serial console is your first port of call when trying to work out why something isn't working correctly; log output is directed here, and you call [execute Lua code directly on-device](#running-code-on-device) if you really need to poke things to see what's going on. You have lots of options for how to connect to the serial console...
@@ -96,13 +96,13 @@ The device run-loop will automatically start if the auto switch is on (GPIO 14 h
 
 ## Building Firmware
 
-The easiest way to build the firmware is to use the Docker-based build script:
+The easiest way to build the firmware is to use the build script:
 
 ```bash
-firmware/docker/docker-build.sh
+firmware/build.sh
 ```
 
-You can find the build output in `firmware/docker/build`. Build times on macOS are terrible (2 hours vs. 4 minutes on Linux) so you may find it easiest to set up a Linux VM if you're running macOS and plan to do any signifiant firmware development.
+You can find the build output in `firmware/build`.
 
 Alternatively the recent esp-idf plays quite nicely with native macOS, even on Apple Silicon:
 
@@ -123,7 +123,7 @@ $ PATH=${IDF_PYTHON_ENV_PATH}:${PATH} pip install -r requirements.txt
 $ idf.py set-target esp32
 
 $ idf.py build
-$ ./build/luac_cross/luac.cross -f -m 0x20000 -o build/lfs.tmp ../../nodemcu/*.lua
+$ ./build/luac_cross/luac.cross -f -m 0x20000 -o build/lfs.tmp ../src/*.lua
 $ ./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
 ```
 
@@ -138,10 +138,10 @@ $ ./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
     write_flash \
     --flash_mode dio \
     --flash_freq 40m \
-    0x1000 nodemcu/esp32/bootloader.bin \
-    0x8000 nodemcu/esp32/partition-table.bin \
-    0x10000 nodemcu/esp32/nodemcu.bin \
-    0x190000 nodemcu/esp32/lfs.img
+    0x1000 firmware/src/esp32/bootloader.bin \
+    0x8000 firmware/src/esp32/partition-table.bin \
+    0x10000 firmware/src/esp32/nodemcu.bin \
+    0x190000 firmware/src/esp32/lfs.img
 ```
 
 ### Latest
