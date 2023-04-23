@@ -35,7 +35,6 @@ TARGET=esp32
 
 
 # Process the command line arguments.
-
 POSITIONAL=()
 CLEAN=false
 while [[ $# -gt 0 ]]
@@ -52,19 +51,26 @@ do
         ;;
     esac
 done
-
 if [ ${#POSITIONAL[@]} -ne 0 ] ; then
     echo "Usage: build.sh [--clean]"
     exit 1
 fi
 
+# Check the Python version.
+if [[ $( python -V ) != "Python 3.10"* ]] ; then
+    echo "Python 3.10 required."
+    exit 1
+fi
+
+# Clean up the top-level build directory.
+if [ -d "${BUILD_DIRECTORY}" ] ; then
+    rm -r "${BUILD_DIRECTORY}"
+fi
+mkdir -p "${BUILD_DIRECTORY}"
+
 
 # Build the firmaware.
-
 cd "${NODEMCU_FIRMWARE_DIRECTORY}"
-
-# if you have python 3.11 installed on Apple Silicon, have to downgrade...
-# export PATH=/opt/homebrew/opt/python@3.9/libexec/bin:$PATH
 
 # Only needed the first time.
 ./sdk/esp32-esp-idf/install.sh
@@ -89,12 +95,6 @@ idf.py build
 # Build the image.
 ./build/luac_cross/luac.cross -f -m 0x20000 -o build/lfs.tmp ../../nodemcu/*.lua
 ./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
-
-# Clean up the top-level build directory.
-if [ -d "${BUILD_DIRECTORY}" ] ; then
-    rm -r "${BUILD_DIRECTORY}"
-fi
-mkdir -p "${BUILD_DIRECTORY}"
 
 # Archive the artifacts.
 zip "${BUILD_DIRECTORY}/firmware-${TARGET}.zip" \
