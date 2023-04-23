@@ -435,8 +435,6 @@ function listen()
         local certData, terminator = payload:match("([^%z]*)(%z?)", certsPos)
         print(string.format("Writing %d bytes to root.pem", #certData))
         writeFile("root.pem", certData)
-        if terminator == "\0" then
-            print("Completed read of root.pem")
         rootPemFile:write(certData)
         if terminator == "\0" then
             print("Completed read of root.pem")
@@ -471,7 +469,7 @@ end
 --
 
 function getWakeTime()
-    local wakeTime = struct.unpack("I4", readFile("wake_time", 4))
+    local wakeTime = string.unpack("I4", readFile("wake_time", 4))
     return wakeTime
 end
 
@@ -549,7 +547,7 @@ end
 
 function processRawImage(lastModified)
     local wakeTime = network.parseImgHeader(readFile("img_raw", 5))
-    writeFile("wake_time", struct.pack("I4", wakeTime))
+    writeFile("wake_time", string.pack("I4", wakeTime))
     writeFile("last_modified", lastModified)
     writeFile("last_ip", ip) -- So we don't have to restart networking just to show the IP address
     -- For decryption we have to reboot to defrag our heap between basically every image

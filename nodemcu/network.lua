@@ -188,12 +188,12 @@ function parseImgHeader(data)
             if numImages and #data >= headerLen + numImages * 4 then
                 imageIndexes = {}
                 for i = 0, numImages - 1 do
-                    imageIndexes[i+1] = struct.unpack("<I4", data, headerLen + (i * 4) + 1)
+                    imageIndexes[i+1] = string.unpack("<I4", data, headerLen + (i * 4) + 1)
                 end
             end
         end
         if headerLen >= 8 and #data >= 8 then
-            flags = struct.unpack("<I2", data, 7)
+            flags = string.unpack("<I2", data, 7)
         end
     end
     return wakeTime, imageIndexes, flags

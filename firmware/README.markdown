@@ -104,59 +104,67 @@ firmware/docker/docker-build.sh
 
 You can find the build output in `firmware/docker/build`. Build times on macOS are terrible (2 hours vs. 4 minutes on Linux) so you may find it easiest to set up a Linux VM if you're running macOS and plan to do any signifiant firmware development.
 
+Alternatively the recent esp-idf plays quite nicely with native macOS, even on Apple Silicon:
+
+```bash
+$ cd firmware/nodemcu-firmware
+
+# if you have python 3.11 installed on Apple Silicon, have to downgrade...
+$ export PATH=/opt/homebrew/opt/python@3.9/libexec/bin:$PATH
+
+# Only needed the first time.
+$ ./sdk/esp32-esp-idf/install.sh
+
+$ . ./sdk/esp32-esp-idf/export.sh
+
+$ PATH=${IDF_PYTHON_ENV_PATH}:${PATH} pip install -r requirements.txt
+
+# Change this to esp32s2 if applicable
+$ idf.py set-target esp32
+
+$ idf.py build
+$ ./build/luac_cross/luac.cross -f -m 0x20000 -o build/lfs.tmp ../../nodemcu/*.lua
+$ ./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
+```
+
 ## Firmware
 
 ### Last Known Good
 
 ```bash
-esptool.py \
+./esptool/esptool.py \
     --port /dev/cu.SLAB_USBtoUART \
     --baud 921600 \
     write_flash \
     --flash_mode dio \
     --flash_freq 40m \
-    0x1000 esp32/bootloader.bin \
-    0x10000 esp32/NodeMCU.bin \
-    0x8000 esp32/partitions.bin \
-    0x190000 esp32/lfs.img
-```
-
-vs Arduino:
-
-```bash
-/Users/tomsci/Library/Arduino15/packages/esp32/tools/esptool/2.3.1/esptool \
-    --chip esp32 \
-    --port /dev/cu.SLAB_USBtoUART \
-    --baud 921600 \
-    --before default_reset \
-    --after hard_reset write_flash \
-    -z \
-    --flash_mode dio \
-    --flash_freq 80m \
-    --flash_size detect \
-    0xe000 /Users/tomsci/Library/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/partitions/boot_app0.bin \
-    0x1000 /Users/tomsci/Library/Arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/bin/bootloader_dio_80m.bin \
-    0x10000 /var/folders/h2/xybvrtgs07g17_yvy7njh2tc0000gn/T/arduino_build_680606/epd7in5b-demo.ino.bin \
-    0x8000 /var/folders/h2/xybvrtgs07g17_yvy7njh2tc0000gn/T/arduino_build_680606/epd7in5b-demo.ino.partitions.bin
+    0x1000 nodemcu/esp32/bootloader.bin \
+    0x8000 nodemcu/esp32/partition-table.bin \
+    0x10000 nodemcu/esp32/nodemcu.bin \
+    0x190000 nodemcu/esp32/lfs.img
 ```
 
 ### Latest
 
+Assuming you've built it yourself with the "alternatively" commands in the "Building Firmware" section above:
+
 ```bash
-esptool.py \
+cd firmware/nodemcu-firmware
+../../esptool/esptool.py \
     --port /dev/cu.SLAB_USBtoUART \
     --baud 921600 \
     write_flash \
     --flash_mode dio \
     --flash_freq 40m \
-    0x1000 ~/Documents/Dev/nodemcu/esp32/build/bootloader/bootloader.bin \
-    0x10000 ~/Documents/Dev/nodemcu/esp32/build/NodeMCU.bin \
-    0x8000 ~/Documents/Dev/nodemcu/esp32/build/partitions_tomsci.bin
+    0x1000 build/bootloader/bootloader.bin \
+    0x8000 build/partition_table/partition-table.bin \
+    0x10000 build/nodemcu.bin \
+    0x190000 build/lfs.img
 ```
 
 ## How things were made
 
-### root.pem
+### ios/StatusPanel/Assets.xcassets/TlsCertificates.dataset/root.pem
 
 Is the root cert that statuspanel.io is using, created by:
 

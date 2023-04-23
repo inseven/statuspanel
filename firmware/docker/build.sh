@@ -53,14 +53,14 @@ PATH=${IDF_PYTHON_ENV_PATH}:$PATH pip install -r requirements.txt
 idf.py set-target esp32
 cp "$SDKCONFIG_PATH" "$NODEMCU_FIRMWARE_ROOT"
 idf.py build
-cp "$NODEMCU_FIRMWARE_ROOT"/build/bootloader/bootloader.* "$BUILD_DIRECTORY"
-cp "$NODEMCU_FIRMWARE_ROOT"/build/NodeMCU.* "$BUILD_DIRECTORY"
-cp "$NODEMCU_FIRMWARE_ROOT"/build/partitions.bin "$BUILD_DIRECTORY"
+cp "$NODEMCU_FIRMWARE_ROOT/build/bootloader/bootloader.bin "$BUILD_DIRECTORY"
+cp "$NODEMCU_FIRMWARE_ROOT"/build/nodemcu.* "$BUILD_DIRECTORY"
+cp "$NODEMCU_FIRMWARE_ROOT/build/partition_table/partition-table.bin" "$BUILD_DIRECTORY"
 
 # Build the LFS.
 cd "$LUA_ROOT"
-"$LUAC_CROSS_PATH" -f -m 0x20000 -o "$BUILD_DIRECTORY/lfs.tmp" *.lua
-"$LUAC_CROSS_PATH" -F build/lfs.tmp -a $ESP32_LFS_ADDR -o "$BUILD_DIRECTORY/lfs.img"
+"$LUAC_CROSS_PATH" -f -m 0x20000 -o "$NODEMCU_FIRMWARE_ROOT/build/lfs.tmp" *.lua
+"$LUAC_CROSS_PATH" -F "$NODEMCU_FIRMWARE_ROOT/build/lfs.tmp" -a $ESP32_LFS_ADDR -o "$BUILD_DIRECTORY/lfs.img"
 
 # Compress the build directory.
 cd "$BUILD_DIRECTORY"
