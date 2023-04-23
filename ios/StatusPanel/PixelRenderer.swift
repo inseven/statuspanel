@@ -81,7 +81,7 @@ struct PixelRenderer: Renderer {
                                                    font: font,
                                                    style: flags.labelStyle,
                                                    redactMode: redactMode)
-                prefixLabel.textColor = foregroundColor
+                prefixLabel.textColor = device.isFullColor ? (item.accentColor ?? foregroundColor) : foregroundColor
                 prefixLabel.numberOfLines = numPrefixLines
                 prefixLabel.text = prefix + " "
                 prefixLabel.sizeToFit()
@@ -202,7 +202,24 @@ struct PixelRenderer: Renderer {
         case .redactLines, .redactWords:
             return renderImage(data: data, config: config, device: device, redact: true)
         case .customImage:
-            return (try? config.privacyImage()) ?? device.blankImage()
+
+            guard let privacyImage = try? config.privacyImage() else {
+                return device.blankImage()
+            }
+
+            if device.isFullColor {
+                if let image = privacyImage.scale(to: device.size, grayscale: false) {
+                    return image
+                }
+                print("Failed to scale privacy image.")
+                return device.blankImage()
+            } else {
+                if let image = Panel.privacyImage(from: privacyImage, size: device.size) {
+                    return image
+                }
+                print("Failed to generate privacy image.")
+                return device.blankImage()
+            }
         }
     }
     

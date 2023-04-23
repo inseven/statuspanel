@@ -42,6 +42,8 @@ final class CalendarHeaderSource : DataSource {
 
         let flags: DataItemFlags
 
+        let accentColor: UIColor? = nil
+
         init(date: Date, longFormat: String, shortFormat: String, flags: DataItemFlags) {
             self.date = date
             self.longFormat = longFormat

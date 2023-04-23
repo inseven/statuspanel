@@ -28,24 +28,15 @@ class Panel {
         case png
     }
 
-    static func privacyImage(from image: UIImage, size: CGSize) throws -> UIImage? {
+    static func privacyImage(from image: UIImage, size: CGSize) -> UIImage? {
         guard let source = image
-                .normalizeOrientation()?
-                .scaleAndDither(to: size)
+            .normalizeOrientation()?
+            .scale(to: size, grayscale: true)?
+            .atkinsonDither()
         else {
             return nil
         }
         return source
-    }
-
-    static func privacyImage(from image: UIImage, size: CGSize, completion: @escaping (Result<UIImage?, Error>) -> Void) {
-        DispatchQueue.global(qos: .userInteractive).async {
-            do {
-                completion(.success(try privacyImage(from: image, size: size)))
-            } catch {
-                completion(.failure(error))
-            }
-        }
     }
 
     private static func ARGBtoPanel(_ data: Data) -> Data {

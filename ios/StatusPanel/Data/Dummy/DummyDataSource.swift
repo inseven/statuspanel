@@ -87,14 +87,21 @@ final class DummyDataSource : DataSource {
                 specialChars.append(str)
             }
             let specialCharsStr = specialChars.joined(separator: "")
-            let specialCharsItem = CalendarItem(icon: "🗓", title: specialCharsStr, location: specialCharsStr)
+            let specialCharsItem = CalendarItem(icon: "🗓",
+                                                title: specialCharsStr,
+                                                location: specialCharsStr,
+                                                accentColor: UIColor.red)
             let dummyData: [DataItemBase] = [
                 CalendarItem(time: "06:00",
                              title: "Something that has really long text that needs to wrap. Like, really really long!",
-                             location: "A place that is also really really lengthy"),
+                             location: "A place that is also really really lengthy",
+                             accentColor: UIColor.red),
                 DataItem(text: "Northern line: part suspended", flags: [.warning]),
                 DataItem(text: "07:44 to CBG: Cancelled", flags: [.warning]),
-                CalendarItem(time: "09:40", title: "Some text wot is multiline", location: nil),
+                CalendarItem(time: "09:40",
+                             title: "Some text wot is multiline",
+                             location: nil,
+                             accentColor: UIColor.red),
             ]
             data.append(contentsOf: dummyData)
             if Config().showIcons {
