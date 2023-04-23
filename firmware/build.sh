@@ -29,6 +29,9 @@ FIRMWARE_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd
 
 ROOT_DIRECTORY="${FIRMWARE_DIRECTORY}/.."
 NODEMCU_FIRMWARE_DIRECTORY="${FIRMWARE_DIRECTORY}/nodemcu-firmware"
+BUILD_DIRECTORY="${FIRMWARE_DIRECTORY}/build"
+
+TARGET=esp32
 
 
 # Process the command line arguments.
@@ -70,7 +73,7 @@ cd "${NODEMCU_FIRMWARE_DIRECTORY}"
 PATH=${IDF_PYTHON_ENV_PATH}:${PATH} pip install -r requirements.txt
 
 # Change this to esp32s2 if applicable
-idf.py set-target esp32
+idf.py set-target "${TARGET}"
 
 # Copy the configuration.
 cp ../../nodemcu/esp32/sdkconfig .
@@ -86,3 +89,15 @@ idf.py build
 # Build the image.
 ./build/luac_cross/luac.cross -f -m 0x20000 -o build/lfs.tmp ../../nodemcu/*.lua
 ./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
+
+# Clean up the top-level build directory.
+if [ -d "${BUILD_DIRECTORY}" ] ; then
+    rm -r "${BUILD_DIRECTORY}"
+fi
+mkdir -p "${BUILD_DIRECTORY}"
+
+# Archive the artifacts.
+zip "${BUILD_DIRECTORY}/firmware-${TARGET}.zip" \
+    build/bootloader/bootloader.bin \
+    build/partition_table/partition-table.bin \
+    build/nodemcu.bin

@@ -29,6 +29,5 @@ jobs:
     - name: Archive the firmware
       uses: actions/upload-artifact@v2
       with:
-        name: Firmware
-        path: firmware/build
+        path: firmware/build/firmware-esp32.zip
         if-no-files-found: error
