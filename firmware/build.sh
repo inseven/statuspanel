@@ -22,8 +22,6 @@
 
 set -e
 set -o pipefail
-# set -x
-#set -u
 
 FIRMWARE_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
@@ -82,7 +80,7 @@ PATH=${IDF_PYTHON_ENV_PATH}:${PATH} pip install -r requirements.txt
 idf.py set-target "${TARGET}"
 
 # Copy the configuration.
-cp ../../nodemcu/esp32/sdkconfig .
+cp ../src/esp32/sdkconfig .
 
 # Optionally clean.
 if $CLEAN ; then
@@ -93,7 +91,7 @@ fi
 idf.py build
 
 # Build the image.
-./build/luac_cross/luac.cross -f -m 0x20000 -o build/lfs.tmp ../../nodemcu/*.lua
+./build/luac_cross/luac.cross -f -m 0x20000 -o build/lfs.tmp ../src/*.lua
 ./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
 
 # Archive the artifacts.
