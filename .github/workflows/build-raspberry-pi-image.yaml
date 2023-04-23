@@ -22,13 +22,17 @@ jobs:
         submodules: recursive
         fetch-depth: 0
 
+    - name: Copy Python source
+      run: |
+        cp -R device/python/src device/python/raspberry-pi-image/00-install-statuspanel/files
+
     - name: Build image
       id: build
       uses: usimd/pi-gen-action@v1
       with:
         image-name: statuspanel
         hostname: statuspanel
-        stage-list: stage0 stage1 stage2 device/python/image
+        stage-list: stage0 stage1 stage2 device/python/raspberry-pi-image
         pi-gen-version: master
         verbose-output: true
 
