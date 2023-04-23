@@ -27,6 +27,7 @@ jobs:
       uses: usimd/pi-gen-action@v1
       with:
         image-name: statuspanel
+        hostname: statuspanel
         stage-list: stage0 stage1 stage2 device/python/image
         pi-gen-version: master
         verbose-output: true

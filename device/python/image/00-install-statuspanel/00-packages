@@ -1,7 +1,6 @@
 dnsmasq
 git
 hostapd
-python3-nacl
 python3-pip
 python3-qrcode
 python3-rpi.gpio
