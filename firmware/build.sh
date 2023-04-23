@@ -97,7 +97,8 @@ idf.py build
 ./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
 
 # Archive the artifacts.
-zip "${BUILD_DIRECTORY}/firmware-${TARGET}.zip" \
+zip --junk-paths "${BUILD_DIRECTORY}/firmware-${TARGET}.zip" \
     build/bootloader/bootloader.bin \
     build/partition_table/partition-table.bin \
-    build/nodemcu.bin
+    build/nodemcu.bin \
+    build/lfs.img
