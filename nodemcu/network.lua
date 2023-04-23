@@ -1,6 +1,8 @@
 -- Network and stuff
 _ENV = module()
 
+IMAGE_FLAG_PNG = 1
+
 function getImages()
     collectgarbage() -- Clear the decks...
     local deviceId = getDeviceId()
@@ -35,7 +37,7 @@ function getImages()
     conn:on("data", function(status, data)
         if status == 200 then
             if f == nil then
-                f = assert(file.open("img_raw", "w"))
+                f = assert(file_open("img_raw", "w"))
             end
             f:write(data)
         end
@@ -57,9 +59,9 @@ function getImages()
 end
 
 function readFile(name, maxSize)
-    local f = file.open(name, "r")
+    local f = file_open(name, "r")
     if f then
-        local contents = f:read(maxSize)
+        local contents = f:read(maxSize or 32)
         f:close()
         return contents
     else
@@ -71,7 +73,7 @@ function writeFile(name, contents)
     if contents == nil then
         file.remove(name)
     else
-        local f = assert(file.open(name, "w"))
+        local f = assert(file_open(name, "w"))
         assert(f:write(contents))
         f:close()
     end
@@ -144,7 +146,11 @@ Register v1 format:
 statuspanel:r?id=<deviceid>&pk=<pk>[&s=<ssid>]
 
 Register v2 format:
-statuspanel:r2?id=<deviceid>&pk=<pk>[&s=<ssid>]
+statuspanel:r2?id=<deviceid>&pk=<pk>[&t=<devicetype>][&s=<ssid>]
+
+devicetype:
+* 0: Original 640x384 3-colour e-ink display
+* 1: 240x135 16-bit colour esp32 TFT Feather
 
 Is used to indicate root certs need to also be supplied. The reason for
 introducing a new version here is so that and old iOS client will not attempt
@@ -157,45 +163,19 @@ function getQRCodeURL(includeSsid)
     local pk = getPublicKey()
     -- toBase64 doesn't URL-encode the unsafe chars, so do that too
     local pkstr = encoder.toBase64(pk):gsub("[/%+%=]", function(ch) return string.format("%%%02X", ch:byte()) end)
-    local result = string.format("statuspanel:r2?id=%s&pk=%s", id, pkstr)
+    local type = isFeatherTft() and 1 or 0
+    local result = string.format("statuspanel:r2?id=%s&pk=%s&t=%d", id, pkstr, type)
     if includeSsid then
         result = result.."&s="..getApSSID()
     end
     return result
 end
 
-function displayQRCode(url)
-    assert(coroutine.running())
-    local font = require("font")
-    local BLACK, WHITE, w, h = panel.BLACK, panel.WHITE, panel.w, panel.h
-    local urlWidth = #url * font.charw
-    local data = qrcodegen.encodeText(url)
-    local sz = qrcodegen.getSize(data)
-    local scale = 8
-    local startx = math.floor((w - sz * scale) / 2)
-    local starty = math.floor((h - sz * scale) / 2)
-    local textPixel = panel.getTextPixelFn(url)
-    local texty = 20
-    local textStart = math.floor((w - urlWidth) / 2)
-    local function getPixel(x, y)
-        if y >= texty and y < texty + font.charh then
-            return textPixel(x - textStart, y - texty)
-        end
-        local codex = math.floor((x - startx) / scale)
-        local codey = math.floor((y - starty) / scale)
-        if codex >= 0 and codex < sz and codey >= 0 and codey < sz then
-            return qrcodegen.getPixel(data, codex, codey) and BLACK or WHITE
-        else
-            return WHITE
-        end
-    end
-    panel.display(getPixel)
-end
-
 function parseImgHeader(data)
     local headerLen = 0
     local wakeTime = nil
     local imageIndexes = nil
+    local flags = 0
     -- FF 00 is not a valid sequence in our RLE scheme
     if data:sub(1, 2) == "\255\0" then
         headerLen = data:byte(3)
@@ -212,8 +192,11 @@ function parseImgHeader(data)
                 end
             end
         end
+        if headerLen >= 8 and #data >= 8 then
+            flags = struct.unpack("<I2", data, 7)
+        end
     end
-    return wakeTime, imageIndexes
+    return wakeTime, imageIndexes, flags
 end
 
 return _ENV -- Must be last

@@ -1,7 +1,7 @@
 panel = require "panel"
 network = require "network"
 
-local readFile, writeFile = network.readFile, network.writeFile
+readFile, writeFile = network.readFile, network.writeFile
 
 -- It takes about 2 seconds for board to boot so the actual time required to
 -- long press is about LongPressTime plus 2 seconds.
@@ -9,10 +9,13 @@ local readFile, writeFile = network.readFile, network.writeFile
 LongPressTime = 2000 -- milliseconds
 unpairPressTimer = nil
 
+DefaultLineFormatFileWidth = 640 -- regardless of what panel.w is
+DefaultLineFormatFileHeight = 384 -- regardless of what panel.h is
+
 -- We never check for unpair during operation (only at wake-from-sleep) so we
 -- can be sure there'll never be anything else going on at this point
 function unpairPressed()
-    assert(coroutine.running())
+    assert(coroutine_running())
     local pressed = gpio.read(UnpairPin) == 1
     if not pressed then
         -- Already released
@@ -50,20 +53,34 @@ function unpairReleased()
     end
 end
 
+function imageFilename(idx)
+    local name = string.format("img_%d", idx)
+    if not file.exists(name) then
+        local pngName = name..".png"
+        if file.exists(pngName) then
+            return pngName
+        end
+    end
+    return name
+end
+
 function shortPressUnpair()
     print("Short press on unpair")
-    assert(coroutine.running())
+    assert(coroutine_running())
 
     local imageToShow
     local id = getCurrentDisplayIdentifier()
-    if id and id:match("^img_1,") then
-        imageToShow = "img_2"
+    if id == nil then
+        go()
+        return
+    elseif id:match("^img_1,") then
+        imageToShow = imageFilename(2)
     else
-        imageToShow = "img_1"
+        imageToShow = imageFilename(1)
     end
 
     if file.exists(imageToShow) then
-        showFile(imageToShow, imageToShow == "img_1")
+        showFile(imageToShow)
         -- Might as well just reboot here, seems easiest
         node.restart()
     else
@@ -74,7 +91,7 @@ end
 
 function longPressUnpair()
     print("Long press on unpair")
-    assert(coroutine.running())
+    assert(coroutine_running())
     setStatusLed(1)
     resetDeviceState()
     wait(1000)
@@ -82,7 +99,7 @@ function longPressUnpair()
 end
 
 function getDateAndSleep()
-    assert(coroutine.running())
+    assert(coroutine_running())
     -- In lieu of an RTC or proper NTP, just grab the date header from a dumb http request
     if ip or startNetworking() then
         local status, _, headers = http.get("http://statuspanel.io/")
@@ -126,7 +143,7 @@ function sleepFor(delta)
     wifi.stop()
     printf("Sleeping for %d secs (~%d hours)", delta, math.floor(delta / (60*60)))
     local shouldUsbDetect = true
-    if gpio.read(UsbDetect) == 1 then
+    if UsbDetect == nil or gpio.read(UsbDetect) == 1 then
         -- Don't wake for USB if USB is actually attached when we sleep, because
         -- that would mean we'd wake immediately.
         shouldUsbDetect = false
@@ -150,7 +167,7 @@ function isset64(numlo, numhi, bitnum)
         bitnum = bitnum - 32
         num = numhi
     end
-    return bit.isset(num, bitnum)
+    return (num & (1 << bitnum)) ~= 0
 end
 
 local provisioningSocket = nil
@@ -168,7 +185,7 @@ function rebootAndExecute(fn)
 end
 
 function runBootNext()
-    assert(coroutine.running())
+    assert(coroutine_running())
     local fn = assert(loadfile("boot_next"))
     file.remove("boot_next") -- Do this before executing, don't wanna get stuck in a loop
     fn()
@@ -178,7 +195,7 @@ local connectStarted = false
 local connectTimer
 
 function startNetworking()
-    assert(coroutine.running())
+    assert(coroutine_running())
     assert(not connectStarted, "startNetworking has already been called (somehow)!")
     if ip then
         return
@@ -205,9 +222,9 @@ function startNetworking()
 
     local ok, err = pcall(wifi.sta.connect)
     if ok then
-        -- Whatever state we end up in, if we don't get an IP address in 10 seconds it's an error
+        -- Whatever state we end up in, if we don't get an IP address in 30 seconds it's an error
         connectTimer = tmr.create()
-        connectTimer:alarm(10000, tmr.ALARM_SINGLE, function(timer)
+        connectTimer:alarm(30000, tmr.ALARM_SINGLE, function(timer)
             print("Timed out waiting for an IP address")
             if connectStarted then
                 connectStarted = false
@@ -224,10 +241,10 @@ function startNetworking()
 end
 
 function main()
-    local autoMode = gpio.read(AutoPin) == 1
+    local autoMode = AutoPin ~= nil and gpio.read(AutoPin) == 1
     local wokeByUsb, wokeByUnpair
     local reason, ext, pinslo, pinshi = node.bootreason()
-    if ext == 5 then -- Deep sleep wake
+    if ext == 12 then -- Deep sleep wake
         if not pinshi then pinslo, pinshi = 0, 0 end
         if isset64(pinslo, pinshi, UnpairPin) then
             wokeByUnpair = true
@@ -246,29 +263,41 @@ function main()
     else
         print("Auto mode off, call go() to get started.")
         if wokeByUsb then
-            print("Woke up by UsbDetect (A3)")
+            print("Woke up by UsbDetect")
         end
         if wokeByUnpair then
-            print("Woke up by UnpairPin (32)")
+            print("Woke up by UnpairPin")
         end
     end
 
-    if whatToDo then
-        costart(whatToDo)
+    if isFeatherTft() then
+        gpio.trig(UnpairPin, gpio.INTR_DOWN, function() costart(unpairPressed) end)
     end
 
-    -- Despite EGC being disabled at this point (by init.lua), lua.c will reenable it once init.lua is finished!
-    -- So that can fsck right noff.
-    tmr.create():alarm(20, tmr.ALARM_SINGLE, function()
-        node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
+    costart(function()
+        panel.init()
+        if whatToDo then
+            whatToDo()
+        end
     end)
+
+    if node.egc then
+        -- Despite EGC being disabled at this point (by init.lua), lua.c will reenable it once init.lua is finished!
+        -- So that can fsck right noff.
+        tmr.create():alarm(20, tmr.ALARM_SINGLE, function()
+            node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
+        end)
+    end
 end
 
 -- As a convenience, we'll allow go() to be called not from within a coroutine
 function go()
-    if not coroutine.running() then
+    if not coroutine_running() then
         costart(go)
         return
+    end
+    if isFeatherTft() and file.exists("img_1.png") then
+        showFile(imageFilename(1))
     end
     local ok = file.exists("root.pem") and startNetworking()
     if ok then
@@ -309,7 +338,7 @@ function flashStatusLed(interval)
 end
 
 function enterHotspotMode()
-    assert(coroutine.running())
+    assert(coroutine_running())
     if wifi.getmode() == wifi.STATION then
         wifi.stop()
     end
@@ -340,7 +369,7 @@ function enterHotspotMode()
     wifi.start()
 
     local url = network.getQRCodeURL(true)
-    initAndDisplay(url, network.displayQRCode, url)
+    initAndDisplay(url, panel.displayQRCode, url)
     print("Finished displayQRCode")
     flashStatusLed(1000)
 end
@@ -372,6 +401,7 @@ end
 
 local function connectToProvisionedCredsFailed(eventName, event)
     assert(provisioningSocket, "Unexpected callback when provisioningSocket==nil")
+    print("disconnected", eventName, event.reason)
     print("Bad creds")
     provisioningSocket:send("NO", closeSocket)
     provisioningSocket = nil
@@ -402,11 +432,11 @@ function listen()
             end
         end
 
-        if not rootPemFile then
-            rootPemFile = file.open("root.pem", "w")
-        end
         local certData, terminator = payload:match("([^%z]*)(%z?)", certsPos)
         print(string.format("Writing %d bytes to root.pem", #certData))
+        writeFile("root.pem", certData)
+        if terminator == "\0" then
+            print("Completed read of root.pem")
         rootPemFile:write(certData)
         if terminator == "\0" then
             print("Completed read of root.pem")
@@ -416,7 +446,12 @@ function listen()
             wifi.sta.on("got_ip", connectToProvisionedCredsSucceeded)
             wifi.sta.on("disconnected", connectToProvisionedCredsFailed)
             wifi.sta.config({ ssid=ssid, pwd=pass, auto=false }, true)
-            -- we should now get a got_ip or disconnected callback (despite auto=false...)
+            print("Waiting for got_ip/disconnected...")
+            if idf_v4 then
+                wifi.sta.connect()
+            else
+                -- we should now get a got_ip or disconnected callback (despite auto=false...)
+            end
         else
             -- We might get the rest of the data in a subsequent packet
         end
@@ -445,7 +480,7 @@ function getImgHash()
 end
 
 function fetch()
-    assert(coroutine.running())
+    assert(coroutine_running())
     print("Fetching image...")
 
     local result = network.getImages()
@@ -457,17 +492,18 @@ function fetch()
 
     if status == 404 then
         local url = network.getQRCodeURL(false)
-        initAndDisplay(url, network.displayQRCode, url)
+        initAndDisplay(url, panel.displayQRCode, url)
         retry()
     elseif status == 200 then
         processRawImage(result.lastModified)
     elseif status == 304 then
-        if getCurrentDisplayIdentifier():match("^(img_%d+)") then
+        local currentId = getCurrentDisplayIdentifier()
+        if currentId and currentId:match("^(img_%d+)") then
             -- Nothing to do
             sleepFromDate(result.date)
         else
             -- We're currently displaying something else (eg a qrcode, or an error), so we need to fix that
-            showFile("img_1", true)
+            showFile(imageFilename(1))
             getDateAndSleep()
         end
     else
@@ -478,22 +514,27 @@ function fetch()
     end
 end
 
+local _currentDisplayId = nil
+
 function getCurrentDisplayIdentifier()
+    if isFeatherTft() then
+        return _currentDisplayId
+    end
     return readFile("current_display_identifier", 128)
 end
 
 function setCurrentDisplayIdentifier(id)
-    if id then
-        local f = assert(file.open("current_display_identifier", "w"))
-        f:write(id)
-        f:close()
-    else
-        file.remove("current_display_identifier")
+    printf("setCurrentDisplayIdentifier %s", id)
+    if isFeatherTft() then
+        _currentDisplayId = id
+        return
     end
+    writeFile("current_display_identifier", id)
 end
 
 function initAndDisplay(id, displayFn, ...)
-    assert(coroutine.running())
+    assert(coroutine_running())
+    -- only the eink display has persistence, so this check makes no sense on a TFT display
     if id and id == getCurrentDisplayIdentifier() then
         print("Requested contents are already on screen, doing nothing")
         return
@@ -516,16 +557,17 @@ function processRawImage(lastModified)
 end
 
 function decryptImage(index)
-    assert(coroutine.running())
+    assert(coroutine_running())
     printf("Decrypting image number %d...", index)
     local pk = network.getPublicKey()
     local sk = network.getSecretKey()
     collectgarbage()
     print(node.heap(), collectgarbage("count"))
-    local f = assert(file.open("img_raw", "r"))
+    local f = assert(file_open("img_raw", "r"))
     local hdr = f:read(32)
     local fileLen = f:seek("end")
-    local _, indexes = network.parseImgHeader(hdr)
+    local _, indexes, flags = network.parseImgHeader(hdr)
+    local isPng = (flags & network.IMAGE_FLAG_PNG) ~= 0
 
     local offset = indexes[index]
     f:seek("set", offset)
@@ -537,13 +579,21 @@ function decryptImage(index)
     local decrypted = sodium.crypto_box.seal_open(encrypted, pk, sk)
     printf("Decrypted data len=%d", #decrypted)
     local filename = string.format("img_%d", index)
+    if isPng then
+        filename = filename..".png"
+    end
+
     local hashFilename = filename.."_hash"
     -- The hashes are always of the decrypted data, not of the line format we eventually write to flash
     local existingHash = readFile(hashFilename)
     local newHash = sodium.generichash(decrypted)
     local imageHasChanged = (newHash ~= existingHash)
     if imageHasChanged then
-        writeDecryptedRleToLineFormat(decrypted, string.format("img_%d", index))
+        if isPng then
+            writeFile(filename, decrypted)
+        else
+            writeDecryptedRleToLineFormat(decrypted, filename)
+        end
         writeFile(hashFilename, newHash)
     end
 
@@ -555,9 +605,9 @@ function decryptImage(index)
 
         -- At the end of a decrypt we always want to display, while preserving the currently-selected image if any
         local current = getCurrentDisplayIdentifier()
-        local imageToShow = current and current:match("^(img_%d+)") or "img_1"
-        local autoMode = gpio.read(AutoPin) == 1
-        showFile(imageToShow, imageToShow == "img_1")
+        local imageToShow = current and current:match("^(img_[^,]+)") or imageFilename(1)
+        local autoMode = AutoPin and gpio.read(AutoPin) == 1
+        showFile(imageToShow)
         if autoMode then
             getDateAndSleep()
         end
@@ -586,10 +636,10 @@ local kLookupTable = {
 }
 
 function writeDecryptedRleToLineFormat(decrypted, filename)
-    local outf = assert(file.open(filename, "w"))
+    local outf = assert(file_open(filename, "w"))
     local rle = require("rle")
-    local rle_getByte, string_byte, string_char, band, rshift = rle.getByte, string.byte, string.char, bit.band, bit.rshift
-    local w, h = panel.w, panel.h
+    local rle_getByte, string_byte, string_char = rle.getByte, string.byte, string.char
+    local w, h = DefaultLineFormatFileWidth, DefaultLineFormatFileHeight
 
     local bufIdx = 0
     local function reader()
@@ -604,7 +654,7 @@ function writeDecryptedRleToLineFormat(decrypted, filename)
         local line = {}
         for x = 1, w / 4 do
             local b = rle_getByte(ctx)
-            line[x] = string_char(kLookupTable[band(b, 0xF)], kLookupTable[rshift(b, 4)])
+            line[x] = string_char(kLookupTable[b & 0xF], kLookupTable[b >> 4])
         end
         outf:write(table.concat(line))
     end
@@ -631,13 +681,13 @@ function getDisplayStatusLineFn(customText, isErrText)
     end
     local err = batteryLow or isErrText
     local statusText = table.concat(statusTable, " | ")
-    local fg = panel.BLACK
-    local bg = err and panel.COLOURED or panel.WHITE
+    local fg = panel.FG
+    local bg = err and panel.COLOURED or panel.BG
     return panel.getTextPixelFn(statusText, fg, bg)
 end
 
 function displayErrLine(line)
-    assert(coroutine.running())
+    assert(coroutine_running())
     local getTextPixel = getDisplayStatusLineFn(line, true)
     local charh = require("font").charh
     local starth = (panel.h - charh) / 2
@@ -652,33 +702,41 @@ function displayErrLine(line)
 end
 
 function displayLineFormatFile(filename, statusLine)
-    assert(coroutine.running())
-    local f = assert(file.open(filename, "r"))
+    assert(coroutine_running())
+    local f = assert(file_open(filename, "r"))
     local w = panel.w
     local statusLineFn, statusLineStart
     if statusLine then
         statusLineStart = panel.h - require("font").charh
     end
-    -- print("statusLine", statusLine)
-    if statusLine == true then
+    print("statusLine", statusLine)
+    if isFeatherTft() then
+        -- Don't support statusline atm
+        statusLineFn = nil
+    elseif statusLine == true then
         statusLineFn = panel.pixelFnToLineFn(getDisplayStatusLineFn())
     elseif statusLine then
-        statusLineFn = panel.pixelFnToLineFn(panel.getTextPixelFn(statusLine, panel.BLACK, panel.WHITE))
+        statusLineFn = panel.pixelFnToLineFn(panel.getTextPixelFn(statusLine, panel.FG, panel.BG))
     end
 
     local function readLine(y)
         if statusLineFn and y >= statusLineStart then
             return statusLineFn(y - statusLineStart)
         else
-            return f:read(w / 2)
+            return f:read(DefaultLineFormatFileWidth / 2)
         end
     end
     panel.displayLines(readLine)
     f:close()
 end
 
-function showFile(filename, statusLine)
-    assert(coroutine.running())
-    local id = string.format("%s,%s", filename, readFile(filename.."_hash"))
-    initAndDisplay(id, displayLineFormatFile, filename, statusLine)
+function showFile(filename)
+    assert(coroutine_running())
+    local statusLine = not isFeatherTft() and filename == imageFilename(1)
+    local id = string.format("%s,%s", filename, encoder.toBase64(readFile(filename.."_hash")))
+    if filename:match("%.png$") then
+        initAndDisplay(id, panel.displayPngFile, filename, statusLine)
+    else
+        initAndDisplay(id, displayLineFormatFile, filename, statusLine)
+    end
 end
