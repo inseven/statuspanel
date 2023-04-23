@@ -29,7 +29,7 @@ SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 CHANGES_DIRECTORY="${SCRIPTS_DIRECTORY}/changes"
 BUILD_TOOLS_DIRECTORY="${SCRIPTS_DIRECTORY}/build-tools"
-NODEMCU_DIRECTORY="${ROOT_DIRECTORY}/nodemcu"
+NODEMCU_DIRECTORY="${ROOT_DIRECTORY}/firmware/src"
 SIMULATOR_WEB_DIRECTORY="${ROOT_DIRECTORY}/simulator/web"
 
 ENVIRONMENT_PATH="${SCRIPTS_DIRECTORY}/environment.sh"
@@ -38,7 +38,6 @@ source "$ENVIRONMENT_PATH"
 
 # Install the Python dependencies
 pip3 install --user pipenv
-# PIPENV_PIPFILE="$ROOT_DIRECTORY/Pipfile" pipenv sync
 PIPENV_PIPFILE="$CHANGES_DIRECTORY/Pipfile" pipenv install
 PIPENV_PIPFILE="$BUILD_TOOLS_DIRECTORY/Pipfile" pipenv sync
 PIPENV_PIPFILE="$NODEMCU_DIRECTORY/Pipfile" pipenv sync
