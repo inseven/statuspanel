@@ -77,6 +77,7 @@ Tools versioning for local development can be done with [asdf](http://asdf-vm.co
 ```bash
 # Install required plugins.
 asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+asdf plugin add python
 asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
 
 # Install appropriate tools versions.

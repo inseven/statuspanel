@@ -1,6 +1,0 @@
-local init = node.flashindex("init")
-if init then
-    init()
-else
-    print("No LFS!")
-end
