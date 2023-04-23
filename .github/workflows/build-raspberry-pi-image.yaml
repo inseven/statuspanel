@@ -28,6 +28,7 @@ jobs:
       with:
         image-name: statuspanel
         stage-list: stage0 stage1 stage2 device/python/image
+        verbose-output: true
 
     - uses: actions/upload-artifact@v3
       with:
