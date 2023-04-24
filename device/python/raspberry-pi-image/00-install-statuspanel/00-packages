@@ -1,8 +1,8 @@
 dnsmasq
 git
 hostapd
-libsodium23
 python3-pip
+python3-pysodium
 python3-qrcode
 python3-rpi.gpio
 python3-smbus

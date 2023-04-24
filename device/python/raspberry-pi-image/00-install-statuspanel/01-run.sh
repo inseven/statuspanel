@@ -19,11 +19,6 @@ cd inky
 ./install.sh
 EOF
 
-# Install StatusPanel Python dependencies.
-on_chroot <<EOF
-pip3 install pysodium
-EOF
-
 # Install StatusPanel.
 install -d "${ROOTFS_DIR}/opt/statuspanel"
 install -m 755 files/device.py "${ROOTFS_DIR}/opt/statuspanel/"
