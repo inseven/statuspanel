@@ -1,4 +1,4 @@
-# Firmware
+# NodeMCU Firmware
 
 The firmware is responsible for managing the StatusPanel device itself. It handles WiFi setup, encryption keys, device sleep, and scheduling fetching updates, and drawing on the eInk display.
 
