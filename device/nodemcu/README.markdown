@@ -99,7 +99,7 @@ The device run-loop will automatically start if the auto switch is on (GPIO 14 h
 The easiest way to build the firmware is to use the build script:
 
 ```bash
-firmware/build.sh
+device/nodemcu/build.sh
 ```
 
 You can find the build output in `firmware/build`.
@@ -107,7 +107,7 @@ You can find the build output in `firmware/build`.
 Alternatively the recent esp-idf plays quite nicely with native macOS, even on Apple Silicon:
 
 ```bash
-$ cd firmware/nodemcu-firmware
+$ cd device/nodemcu/nodemcu-firmware
 
 # if you have python 3.11 installed on Apple Silicon, have to downgrade...
 $ export PATH=/opt/homebrew/opt/python@3.9/libexec/bin:$PATH
@@ -138,10 +138,10 @@ $ ./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
     write_flash \
     --flash_mode dio \
     --flash_freq 40m \
-    0x1000 firmware/src/esp32/bootloader.bin \
-    0x8000 firmware/src/esp32/partition-table.bin \
-    0x10000 firmware/src/esp32/nodemcu.bin \
-    0x190000 firmware/src/esp32/lfs.img
+    0x1000 device/nodemcu/src/esp32/bootloader.bin \
+    0x8000 device/nodemcu/src/esp32/partition-table.bin \
+    0x10000 device/nodemcu/src/esp32/nodemcu.bin \
+    0x190000 device/nodemcu/src/esp32/lfs.img
 ```
 
 ### Latest
@@ -149,7 +149,7 @@ $ ./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
 Assuming you've built it yourself with the "alternatively" commands in the "Building Firmware" section above:
 
 ```bash
-cd firmware/nodemcu-firmware
+cd device/nodemcu/nodemcu-firmware
 ../../esptool/esptool.py \
     --port /dev/cu.SLAB_USBtoUART \
     --baud 921600 \

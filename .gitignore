@@ -9,7 +9,7 @@ xcuserdata
 .env*
 /.local
 /build
-/firmware/build
+/device/nodemcu/build
 /ios/StatusPanel/configuration.json
 
 # Site
