@@ -57,7 +57,6 @@ struct FlagsSection: View {
                 Text(Localized(DataItemFlags.Style.body))
                     .tag(DataItemFlags.Style.body)
             }
-            .pickerStyle(.navigationLink)
             Toggle(LocalizedString("flags_section_prefers_empty_column_label"), isOn: prefersEmptyColumn())
             Toggle(LocalizedString("flags_section_spans_columns_label"), isOn: spansColumns())
         }
