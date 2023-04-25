@@ -35,10 +35,15 @@ If you can't wait to try it out, have a little technical experience, and don't m
 ## Technical Details
 
 - [Architecture](docs/architecture/index.markdown)
-- [Firmware](firmware/README.markdown)
-- [Device](device/README.markdown)
-- [iOS app](ios/README.markdown)
-- [Service](service/README.markdown)
+- Devices
+    - Firmware
+        - [NodeMCU](device/nodemcu/README.markdown)
+        - [Python](device/python/README.md)
+    - [Hardware](device/README.markdown)
+- Clients
+    - [iOS](ios/README.markdown)
+
+- [Web Service](service/README.markdown)
 
 ## Development
 

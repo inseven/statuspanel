@@ -1,4 +1,4 @@
-# Python
+# Python Firmware
 
 Simple Python implementation of the StatusPanel device protocol.
 
