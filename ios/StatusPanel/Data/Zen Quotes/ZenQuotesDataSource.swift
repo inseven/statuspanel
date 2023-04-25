@@ -67,6 +67,14 @@ final class ZenQuotesDataSource: DataSource {
                 } footer: {
                     Text("Inspirational quotes provided by ZenQuotes API.")
                 }
+                Section {
+                    Link("ZenQuotes", url: URL(string: "https://zenquotes.io/")!)
+                    Link("Privacy Policy", url: URL(string: "https://docs.zenquotes.io/privacy-policy/")!)
+                } header: {
+                    Text("About")
+                } footer: {
+                    Text("Inspirational quotes provided by ZenQuotes API.")
+                }
             }
             .alert(isPresented: $error.mappedToBool()) {
                 Alert(error: error)
