@@ -60,6 +60,11 @@ extension DataSource {
 
 struct DataItemFlags: OptionSet, Codable {
 
+    enum Style {
+        case title
+        case body
+    }
+
     let rawValue: Int
 
     static let warning = DataItemFlags(rawValue: 1 << 0)
@@ -72,6 +77,23 @@ struct DataItemFlags: OptionSet, Codable {
             return .header
         }
         return .text
+    }
+
+    var style: Style {
+        get {
+            if contains(.header) {
+                return .title
+            }
+            return .body
+        }
+        set {
+            switch newValue {
+            case .title:
+                insert(.header)
+            case .body:
+                remove(.header)
+            }
+        }
     }
     
 }

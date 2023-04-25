@@ -243,7 +243,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.accessoryView = control
             case 2:
                 cell.textLabel?.text = "Dark Mode"
-                cell.detailTextLabel?.text = Localize(config.darkMode)
+                cell.detailTextLabel?.text = Localized(config.darkMode)
                 cell.accessoryType = .disclosureIndicator
             case 3:
                 cell.textLabel?.text = "Maximum Lines per Item"
@@ -528,7 +528,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 }
             } licenses: {
                 License(name: "Binding+mappedToBool", author: "Joseph Duffy", filename: "Binding+mappedToBool.txt")
-                License(name: "Diligence", author: "InSeven Limited", filename: "Diligence.txt")
                 License(name: "StatusPanel", author: "Jason Morley, Tom Sutcliffe", filename: "StatusPanel.txt")
                 License(name: "Swift-Sodium", author: "Frank Denis", filename: "Swift-Sodium.txt")
             }

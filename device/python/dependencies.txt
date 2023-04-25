@@ -1,2 +1,0 @@
-python3-nacl
-python3-qrcode
