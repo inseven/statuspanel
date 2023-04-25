@@ -96,7 +96,6 @@ final class CalendarHeaderSource : DataSource {
                         Text(LocalizedOffset(0)).tag(0)
                         Text(LocalizedOffset(1)).tag(1)
                     }
-                    .pickerStyle(.navigationLink)
                     NavigationLink(destination: FormatEditor(settings: $settings)) {
                         HStack {
                             Text("Format")
