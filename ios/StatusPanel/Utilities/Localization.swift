@@ -35,7 +35,7 @@ func LocalizedOffset(_ offset: Int) -> String {
     }
 }
 
-func Localize(_ darkModeConfig: Config.DarkModeConfig) -> String {
+func Localized(_ darkModeConfig: Config.DarkModeConfig) -> String {
     switch darkModeConfig {
     case .off:
         return LocalizedString("dark_mode_config_off")
@@ -46,7 +46,7 @@ func Localize(_ darkModeConfig: Config.DarkModeConfig) -> String {
     }
 }
 
-func Localize(_ style: FlagsSection.Style) -> String {
+func Localized(_ style: DataItemFlags.Style) -> String {
     switch style {
     case .title:
         return LocalizedString("flags_section_style_value_title")
