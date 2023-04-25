@@ -528,7 +528,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 }
             } licenses: {
                 License(name: "Binding+mappedToBool", author: "Joseph Duffy", filename: "Binding+mappedToBool.txt")
-                License(name: "Diligence", author: "InSeven Limited", filename: "Diligence.txt")
                 License(name: "StatusPanel", author: "Jason Morley, Tom Sutcliffe", filename: "StatusPanel.txt")
                 License(name: "Swift-Sodium", author: "Frank Denis", filename: "Swift-Sodium.txt")
             }
