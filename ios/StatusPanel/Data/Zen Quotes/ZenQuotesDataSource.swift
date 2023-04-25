@@ -20,6 +20,8 @@
 
 import SwiftUI
 
+import Diligence
+
 final class ZenQuotesDataSource: DataSource {
 
     struct Settings: DataSourceSettings & Equatable {
@@ -43,19 +45,6 @@ final class ZenQuotesDataSource: DataSource {
 
     }
 
-    struct Footer: View {
-
-        var body: some View {
-            Text("Inspirational quotes provided by ZenQuotes API.")
-                .onTapGesture {
-                    guard let url = URL(string: "https://zenquotes.io/") else {
-                        return
-                    }
-                    UIApplication.shared.open(url, options: [:])
-                }
-        }
-    }
-
     struct SettingsView: View {
 
         var store: Store
@@ -64,12 +53,20 @@ final class ZenQuotesDataSource: DataSource {
 
         var body: some View {
             Form {
-                Section(footer: Footer()) {
+                Section {
                     Picker("Mode", selection: $settings.mode) {
                         Text(Settings.Mode.today.localizedName).tag(Settings.Mode.today)
                         Text(Settings.Mode.random.localizedName).tag(Settings.Mode.random)
                     }
                     .pickerStyle(.navigationLink)
+                }
+                Section {
+                    Link("ZenQuotes", url: URL(string: "https://zenquotes.io/")!)
+                    Link("Privacy Policy", url: URL(string: "https://docs.zenquotes.io/privacy-policy/")!)
+                } header: {
+                    Text("About")
+                } footer: {
+                    Text("Inspirational quotes provided by ZenQuotes API.")
                 }
             }
             .alert(isPresented: $error.mappedToBool()) {
