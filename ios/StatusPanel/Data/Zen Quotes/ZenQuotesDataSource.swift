@@ -69,6 +69,7 @@ final class ZenQuotesDataSource: DataSource {
                         Text(Settings.Mode.today.localizedName).tag(Settings.Mode.today)
                         Text(Settings.Mode.random.localizedName).tag(Settings.Mode.random)
                     }
+                    .pickerStyle(.navigationLink)
                 }
             }
             .alert(isPresented: $error.mappedToBool()) {
