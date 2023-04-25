@@ -22,6 +22,8 @@ import Foundation
 import UIKit
 import SwiftUI
 
+import Diligence
+
 // See https://api-portal.tfl.gov.uk/admin/applications/1409617922524
 final class TFLDataSource: DataSource {
 
@@ -70,6 +72,14 @@ final class TFLDataSource: DataSource {
                 ForEach(lines) { line in
                     Toggle(line.title, isOn: $settings.lines.binding(for: line.id))
                         .toggleStyle(ColoredCheckbox(color: line.color))
+                }
+                Section {
+                    Link("TfL Transport Data Service", url: URL(string: "https://api.tfl.gov.uk")!)
+                    Link("Privacy Policy", url: URL(string: "https://tfl.gov.uk/corporate/privacy-and-cookies/")!)
+                } header: {
+                    Text("About")
+                } footer: {
+                    Text("Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016' and Geomni UK Map data © and database rights [2019].")
                 }
             }
             .alert(isPresented: $error.mappedToBool()) {
