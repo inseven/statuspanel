@@ -243,7 +243,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.accessoryView = control
             case 2:
                 cell.textLabel?.text = "Dark Mode"
-                cell.detailTextLabel?.text = Localize(config.darkMode)
+                cell.detailTextLabel?.text = Localized(config.darkMode)
                 cell.accessoryType = .disclosureIndicator
             case 3:
                 cell.textLabel?.text = "Maximum Lines per Item"

@@ -20,36 +20,10 @@
 
 import SwiftUI
 
-extension DataItemFlags {
-
-    var style: FlagsSection.Style {
-        get {
-            if contains(.header) {
-                return .title
-            }
-            return .body
-        }
-        set {
-            switch newValue {
-            case .title:
-                insert(.header)
-            case .body:
-                remove(.header)
-            }
-        }
-    }
-
-}
-
 struct FlagsSection: View {
 
     @Binding var flags: DataItemFlags
     @State var isShowingStyle = false
-
-    enum Style {
-        case title
-        case body
-    }
 
     func prefersEmptyColumn() -> Binding<Bool> {
         Binding {
@@ -77,46 +51,12 @@ struct FlagsSection: View {
 
     var body: some View {
         Section(header: Text("Display")) {
-            NavigationLink(destination: List {
-                Button {
-                    flags.style = .title
-                    isShowingStyle = false
-                } label: {
-                    HStack {
-                        Text(Localize(Style.title))
-                        Spacer()
-                        if flags.style == .title {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.accentColor)
-                        }
-                    }
-                    .foregroundColor(.primary)
-                }
-                Button {
-                    flags.style = .body
-                    isShowingStyle = false
-                } label: {
-                    HStack {
-                        Text(Localize(Style.body))
-                        Spacer()
-                        if flags.style == .body {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.accentColor)
-                        }
-                    }
-                    .foregroundColor(.primary)
-                }
+            Picker("Style", selection: $flags.style) {
+                Text(Localized(DataItemFlags.Style.title))
+                    .tag(DataItemFlags.Style.title)
+                Text(Localized(DataItemFlags.Style.body))
+                    .tag(DataItemFlags.Style.body)
             }
-            .listStyle(GroupedListStyle())
-            .navigationTitle("Style"), isActive: $isShowingStyle) {
-                HStack {
-                    Text(LocalizedString("flags_section_style_label"))
-                    Spacer()
-                    Text(Localize(flags.style))
-                        .foregroundColor(.secondary)
-                }
-            }
-
             Toggle(LocalizedString("flags_section_prefers_empty_column_label"), isOn: prefersEmptyColumn())
             Toggle(LocalizedString("flags_section_spans_columns_label"), isOn: spansColumns())
         }
