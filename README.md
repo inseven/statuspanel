@@ -44,7 +44,7 @@ If you can't wait to try it out, have a little technical experience, and don't m
 
 StatusPanel follows the version numbering, build and signing conventions for InSeven Limited apps. Further details can be found [here](https://github.com/inseven/build-documentation).
 
-### Installing Dependencies
+### Dependencies
 
 StatusPanel uses [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so before doing anything else, you'll need to do:
 
@@ -62,16 +62,6 @@ scripts/install-dependencies.sh
 
 This script installs all dependencies in the `.local` folder within the project root, does not require root, and should not impact your local machine configuration. Scripts that rely on these dependencies source the `scripts/environment.sh` script which configures the path at runtime.
 
-### Website
-
-The website (https://statuspanel.io) is built using Jekyll and hosted on GitHub Pages. If you'd like to edit and serve locally, you run the following commands:
-
-```bash
-cd docs
-bundle install
-bundle exec jekyll serve
-```
-
 Tools versioning for local development can be done with [asdf](http://asdf-vm.com) and `.tool-versions` is already set up correctly. In order to use `asdf`, you will need to have the NodeJS and Ruby plugins installed:
 
 ```bash
@@ -82,6 +72,16 @@ asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
 
 # Install appropriate tools versions.
 asdf install
+```
+
+### Website
+
+The website (https://statuspanel.io) is built using Jekyll and hosted on GitHub Pages. If you'd like to edit and serve locally, you run the following commands:
+
+```bash
+cd docs
+bundle install
+bundle exec jekyll serve
 ```
 
 ## Contributing
