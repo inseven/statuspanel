@@ -530,6 +530,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 License(name: "Binding+mappedToBool", author: "Joseph Duffy", filename: "Binding+mappedToBool.txt")
                 License(name: "StatusPanel", author: "Jason Morley, Tom Sutcliffe", filename: "StatusPanel.txt")
                 License(name: "Swift-Sodium", author: "Frank Denis", filename: "Swift-Sodium.txt")
+                for license in Fonts.licenses {
+                    license
+                }
             }
             let view = UIHostingController(rootView: aboutView)
             present(view, animated: true, completion: nil)
