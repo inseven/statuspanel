@@ -20,6 +20,8 @@
 
 import Foundation
 
+import Diligence
+
 class Fonts {
     struct BitmapInfo {
         let bitmapName: String
@@ -200,4 +202,11 @@ class Fonts {
             License: Creative Commons Attribution
             """),
     ]
+
+    static var licenses: [License] {
+        return availableFonts
+            .sorted { $0.humanReadableName < $1.humanReadableName }
+            .map { License(name: $0.humanReadableName, author: $0.author, text: $0.attribution) }
+    }
+
 }
