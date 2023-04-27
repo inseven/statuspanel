@@ -37,10 +37,17 @@ ENVIRONMENT_PATH="${SCRIPTS_DIRECTORY}/environment.sh"
 source "$ENVIRONMENT_PATH"
 
 # Install the Python dependencies
+# This only install dependencies for submodules that have been checked out locally.
 pip3 install --user pipenv
-PIPENV_PIPFILE="$CHANGES_DIRECTORY/Pipfile" pipenv install
-PIPENV_PIPFILE="$BUILD_TOOLS_DIRECTORY/Pipfile" pipenv sync
-PIPENV_PIPFILE="$NODEMCU_DIRECTORY/Pipfile" pipenv sync
+if [ -f "$CHANGES_DIRECTORY/Pipfile" ] ; then
+    PIPENV_PIPFILE="$CHANGES_DIRECTORY/Pipfile" pipenv install
+fi
+if [ -f "$BUILD_TOOLS_DIRECTORY/Pipfile" ] ; then
+    PIPENV_PIPFILE="$BUILD_TOOLS_DIRECTORY/Pipfile" pipenv sync
+fi
+if [ -f "$NODEMCU_DIRECTORY/Pipfile" ] ; then
+    PIPENV_PIPFILE="$NODEMCU_DIRECTORY/Pipfile" pipenv sync
+fi
 
 # Install the JavaScript dependencies
 cd "$SIMULATOR_WEB_DIRECTORY"
