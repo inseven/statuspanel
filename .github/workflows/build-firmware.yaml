@@ -24,6 +24,12 @@ jobs:
       run: |
         git submodule update --init --recursive --depth 1 device/nodemcu/nodemcu-firmware
 
+    - name: Cache Espressif toolchain
+      uses: actions/cache@v3
+      with:
+        path: device/nodemcu/.espressif
+        key: ${{ runner.os }}-espressif-toolchain
+
     - name: Build
       run: |
         device/nodemcu/build.sh
