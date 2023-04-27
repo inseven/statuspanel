@@ -294,9 +294,7 @@ class Fonts {
     static var licenses: [License] {
         return availableFonts
             .sorted { $0.humanReadableName < $1.humanReadableName }
-            .map { $0.license
-
-            }
+            .map { $0.license }
     }
 
 }
