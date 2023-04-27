@@ -8,6 +8,12 @@ function isFeatherTft()
     return node.chipid == nil -- Basically, testing for the esp32s2
 end
 
+local _isInky = false
+function isInky()
+    return _isInky
+end
+
+-- Assumes huzzah32 (original esp32 feather)
 function configurePins_eink()
     OriginalBusy = 13
     NewBusy = 22 -- aka SCL
@@ -21,6 +27,7 @@ function configurePins_eink()
     AutoPin = 14
     VBat = 7 -- That is, ADC1_CH7 aka GPIO 35 (internally connected to BAT)
     UnpairPin = 32
+    UnpairActiveHigh = true
     UsbDetect = 39 -- aka A3
 
     gpio.config({
@@ -65,6 +72,7 @@ function configurePins_tft()
     TFT_MOSI = 35
     TFT_SCLK = 36
     UnpairPin = 0
+    UnpairActiveHigh = false
     StatusLed = 13
     NeoPixelPin = 33
     NeoPixelPowerPin = 34
@@ -89,6 +97,56 @@ function configurePins_tft()
     })
 end
 
+-- Currently assumes huzzah32
+function configurePins_inky()
+    SpiId = 1 -- HSPI (doesn't place any restriction on pins)
+    Sda = 23 -- Pi: GP2 (SDA)
+    Scl = 22 -- Pi: GP3 (SCL)
+    Reset = 27 -- Pi: GP27 (really)
+    Busy = 34 -- A2, Pi: GP17
+    DC = 33 -- Pi: GP22
+    Mosi = 18 -- Pi: 10 (MOSI)
+    Sclk = 5 -- Pi: 11 (SCLK)
+    CS = 15 -- Pi: 8 (CE0)
+    ButtonA = 32 -- Pi: GP5
+    -- ButtonB = ? -- Pi: GP6
+    -- ButtonC = ? -- Pi: GP16
+    -- ButtonD (Pi: GP24) we connect to reset so doesn't have a esp32 GPIO pin number
+
+    AutoPin = 14
+    StatusLed = 13 -- Just use the feather onboard LED
+    UnpairPin = ButtonA
+    UnpairActiveHigh = false
+    UsbDetect = 39 -- aka A3
+
+    gpio.config({
+        gpio = { Reset, DC, CS, StatusLed },
+        dir = gpio.OUT,
+    }, {
+        gpio = { Busy },
+        dir = gpio.IN
+    }, {
+        gpio = { ButtonA },
+        dir = gpio.IN,
+        pull = gpio.PULL_UP
+    }, {
+        gpio = { AutoPin, UsbDetect },
+        dir = gpio.IN,
+        pull = gpio.PULL_DOWN
+    })
+
+    local spimaster = spi.master(SpiId, {
+        sclk = Sclk,
+        mosi = Mosi,
+        max_transfer_sz = 0,
+    }, 1) -- 1 means enable DMA
+    spidevice = spimaster:device({
+        cs = CS,
+        mode = 0,
+        freq = 2*1000*1000, -- ie 2 MHz
+    })
+end
+
 -- Assumes pin is configured without pullups/downs
 function inputIsConnected(pin)
     gpio.config { gpio = pin, dir = gpio.IN, pull = gpio.PULL_DOWN }
@@ -99,6 +157,35 @@ function inputIsConnected(pin)
 
     gpio.config { gpio = pin, dir = gpio.IN }
     return not(pulledUp and pulledDown)
+end
+
+-- In practice we're going to always be using slow SW i2c in projects like this
+function i2c_setup(sda, scl, speed)
+    i2c.setup(i2c.SW, sda, scl, speed or i2c.SLOW)
+end
+
+function i2c_write(addr, ...)
+    i2c.start(i2c.SW)
+    assert(i2c.address(i2c.SW, addr, i2c.TRANSMITTER))
+    i2c.write(i2c.SW, ...)
+end
+
+function i2c_try_write(addr, ...)
+    i2c.start(i2c.SW)
+    if not i2c.address(i2c.SW, addr, i2c.TRANSMITTER) then
+        return nil
+    end
+    return i2c.write(i2c.SW, ...)
+end
+
+function i2c_read(addr, numBytes)
+    i2c.start(i2c.SW)
+    assert(i2c.address(i2c.SW, eepromAddr, i2c.RECEIVER))
+    return i2c.read(i2c.SW, numBytes)
+end
+
+function i2c_stop()
+    i2c.stop(i2c.SW)
 end
 
 function init()
@@ -150,9 +237,29 @@ function init()
     end
 
     if isFeatherTft() then
+        print("Configuring as ESP32-S2 TFT Feather")
         configurePins_tft()
-    else
+    elseif node.chipid and node.chipid() == "0xee30aea419be" then
+        -- Have to special-case this because the "NewBusy" eink variant unwisely used SCL for NewBusy which means we
+        -- can't safely try to poke around on i2c
+        printf("Configuring as NewBusy WaveShare Huzzah32")
+        _isInky = false
         configurePins_eink()
+    else
+        local esp32_Sda = 23
+        local esp32_Scl = 22
+        local inky_eeprom_addr = 0x50
+        i2c_setup(esp32_Sda, esp32_Scl)
+        _isInky = i2c_try_write(inky_eeprom_addr, 0, 0)
+        i2c_stop()
+
+        if isInky() then
+            print("Configuring as Inky Huzzah32") 
+            configurePins_inky()
+        else
+            printf("Configuring as OldBusy WaveShare Huzzah32")
+            configurePins_eink()
+        end
     end
 
     require("main")
@@ -180,8 +287,8 @@ function printf(...)
 end
 
 function getBatteryVoltage()
-    if isFeatherTft() then
-        return 4000 --TODO
+    if isFeatherTft() or isInky() then
+        return nil
     else
         -- At 11db attenuation and 12 bits width, 4095 = VDD_A
         local val = adc.read(adc.ADC1, VBat)
@@ -193,7 +300,10 @@ function getBatteryVoltage()
 end
 
 function getBatteryVoltageStatus()
-    local val = math.floor(getBatteryVoltage() / 100) -- ie 42 for 4.2V
+    local v = getBatteryVoltage()
+    if not v then return "?", false end
+
+    local val = math.floor(v / 100) -- ie 42 for 4.2V
     -- Warn below 3.4V?
     local v = math.floor(val / 10)
     local dv = val - v*10

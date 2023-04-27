@@ -12,6 +12,21 @@ if isFeatherTft() then
     h = tft.TFT_WIDTH
     displayLines = tft.displayEinkFormatLines
     displayPngFile = tft.displayPngFile
+    display = tft.display
+elseif isInky() then
+    inky = require("inky")
+    WHITE = inky.WHITE
+    BLACK = inky.BLACK
+    COLOURED = inky.YELLOW
+    FG = BLACK
+    BG = WHITE
+    w = inky.w
+    h = inky.h
+    pixelFnToLineFn = inky.pixelFnToLineFn
+    displayLines = inky.displayLines
+    displayPngFile = inky.displayPngFile
+    display = inky.display
+    rleLookupTable = inky.rleLookupTable
 else
     eink = require("eink")
     WHITE = eink.WHITE
@@ -23,6 +38,8 @@ else
     h = eink.h
     pixelFnToLineFn = eink.pixelFnToLineFn
     displayLines = eink.displayLines
+    display = eink.display
+    rleLookupTable = eink.rleLookupTable
 end
 
 function init()
@@ -33,8 +50,10 @@ function init()
 end
 
 function initp()
-    if not isFeatherTft() then
+    if eink then
         eink.initp()
+    elseif inky then
+        inky.initp()
     end
 end
 
@@ -52,14 +71,6 @@ function getTextPixelFn(text, fg, bg)
         local char = text:sub(textPos, textPos)
         local chx = x % charw
         return font.getPixel(char, chx, y) and fg or bg
-    end
-end
-
-function display(getPixelFn)
-    if isFeatherTft() then
-        return tft.display(getPixelFn)
-    else
-        return eink.display(getPixelFn)
     end
 end
 
@@ -97,7 +108,7 @@ function displayQRCode(url)
             return BG
         end
     end
-    panel.display(getPixel)
+    display(getPixel)
 end
 
 return _ENV

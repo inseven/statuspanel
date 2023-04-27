@@ -150,7 +150,7 @@ Assuming you've built it yourself with the "alternatively" commands in the "Buil
 
 ```bash
 cd device/nodemcu/nodemcu-firmware
-../../esptool/esptool.py \
+../../../esptool/esptool.py \
     --port /dev/cu.SLAB_USBtoUART \
     --baud 921600 \
     write_flash \
