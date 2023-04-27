@@ -527,11 +527,15 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                     Credit("Pavlos Vinieratos", url: URL(string: "https://github.com/pvinis"))
                 }
             } licenses: {
-                License(name: "Binding+mappedToBool", author: "Joseph Duffy", filename: "Binding+mappedToBool.txt")
-                License(name: "StatusPanel", author: "Jason Morley, Tom Sutcliffe", filename: "StatusPanel.txt")
-                License(name: "Swift-Sodium", author: "Frank Denis", filename: "Swift-Sodium.txt")
-                for license in Fonts.licenses {
-                    license
+                LicenseGroup("Fonts") {
+                    for license in Fonts.licenses {
+                        license
+                    }
+                }
+                LicenseGroup("Licenses", includeDiligenceLicense: true) {
+                    License(name: "Binding+mappedToBool", author: "Joseph Duffy", filename: "Binding+mappedToBool.txt")
+                    License(name: "StatusPanel", author: "Jason Morley, Tom Sutcliffe", filename: "StatusPanel.txt")
+                    License(name: "Swift-Sodium", author: "Frank Denis", filename: "Swift-Sodium.txt")
                 }
             }
             let view = UIHostingController(rootView: aboutView)
