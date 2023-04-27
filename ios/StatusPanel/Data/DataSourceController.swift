@@ -30,7 +30,7 @@ class DataSourceController {
 
         let configuration = try! Bundle.main.configuration()
         sources = [
-            CalendarSource().anyDataSource(),
+            CalendarDataSource().anyDataSource(),
             CalendarHeaderSource().anyDataSource(),
             DummyDataSource().anyDataSource(),
             LastUpdateDataSource().anyDataSource(),
@@ -69,16 +69,16 @@ class DataSourceController {
                                                                 offset: 0,
                                                                 flags: [.header, .spansColumns]))
                 try add(type: .calendar,
-                        settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
-                                                          showUrls: config.showUrlsInCalendarLocations,
-                                                          offset: 0))
+                        settings: CalendarDataSource.Settings(showLocations: config.showCalendarLocations,
+                                                              showUrls: config.showUrlsInCalendarLocations,
+                                                              offset: 0))
                 try add(type: .text,
                         settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
                                                           text: "Tomorrow:"))
                 try add(type: .calendar,
-                        settings: CalendarSource.Settings(showLocations: config.showCalendarLocations,
-                                                          showUrls: config.showUrlsInCalendarLocations,
-                                                          offset: 1))
+                        settings: CalendarDataSource.Settings(showLocations: config.showCalendarLocations,
+                                                              showUrls: config.showUrlsInCalendarLocations,
+                                                              offset: 1))
                 try save()
             } catch {
                 print("Failed to add default data sources with error \(error).")

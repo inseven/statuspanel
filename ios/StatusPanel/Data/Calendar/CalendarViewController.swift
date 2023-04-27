@@ -27,13 +27,13 @@ class CalendarViewController: UITableViewController {
     private static var cellReuseIdentifier = "Cell"
 
     private let config: Config
-    private let store: DataSourceSettingsStore<CalendarSource.Settings>
-    private var settings: CalendarSource.Settings
+    private let store: DataSourceSettingsStore<CalendarDataSource.Settings>
+    private var settings: CalendarDataSource.Settings
     private let eventStore: EKEventStore
 
     private var activeCalendars: Set<String> = []
 
-    init(config: Config, store: DataSourceSettingsStore<CalendarSource.Settings>, settings: CalendarSource.Settings) {
+    init(config: Config, store: DataSourceSettingsStore<CalendarDataSource.Settings>, settings: CalendarDataSource.Settings) {
         self.config = config
         self.store = store
         self.settings = settings

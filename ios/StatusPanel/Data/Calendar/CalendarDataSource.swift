@@ -63,7 +63,7 @@ class CalendarItem : DataItemBase {
 
 }
 
-final class CalendarSource : DataSource {
+final class CalendarDataSource : DataSource {
 
     struct Settings: DataSourceSettings {
 

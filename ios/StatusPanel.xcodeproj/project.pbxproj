@@ -95,7 +95,7 @@
 		DBCA98842143E2920084B710 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DBCA98832143E2920084B710 /* Assets.xcassets */; };
 		DBCA98872143E2920084B710 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DBCA98852143E2920084B710 /* LaunchScreen.storyboard */; };
 		DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B02143F2B30084B710 /* TFLDataSource.swift */; };
-		DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B221440CD90084B710 /* CalendarSource.swift */; };
+		DBCA98B321440CD90084B710 /* CalendarDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B221440CD90084B710 /* CalendarDataSource.swift */; };
 		DBCA98B52144421F0084B710 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B42144421F0084B710 /* DataSource.swift */; };
 		DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B6214518EF0084B710 /* DataSourceController.swift */; };
 		DBF15BC72471A61E004AA972 /* WifiProvisionerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */; };
@@ -225,7 +225,7 @@
 		DBCA98862143E2920084B710 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DBCA98882143E2920084B710 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBCA98B02143F2B30084B710 /* TFLDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TFLDataSource.swift; sourceTree = "<group>"; };
-		DBCA98B221440CD90084B710 /* CalendarSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSource.swift; sourceTree = "<group>"; };
+		DBCA98B221440CD90084B710 /* CalendarDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDataSource.swift; sourceTree = "<group>"; };
 		DBCA98B42144421F0084B710 /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		DBCA98B6214518EF0084B710 /* DataSourceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceController.swift; sourceTree = "<group>"; };
 		DBF15BBB2471A322004AA972 /* StatusPanel-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StatusPanel-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -302,7 +302,7 @@
 			isa = PBXGroup;
 			children = (
 				D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */,
-				DBCA98B221440CD90084B710 /* CalendarSource.swift */,
+				DBCA98B221440CD90084B710 /* CalendarDataSource.swift */,
 				D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */,
 				D8383EBF270FC50A0007EBB7 /* FormatEditor.swift */,
 			);
@@ -735,7 +735,7 @@
 				D8104E0529F3408100C394CC /* EKEvent.swift in Sources */,
 				DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */,
 				D83CC5202707532400260DC1 /* AnyDataSource.swift in Sources */,
-				DBCA98B321440CD90084B710 /* CalendarSource.swift in Sources */,
+				DBCA98B321440CD90084B710 /* CalendarDataSource.swift in Sources */,
 				DB5E9DA1241562ED009F3807 /* StringUtils.swift in Sources */,
 				D8DD9901271EF971004088CD /* Binding.swift in Sources */,
 				D8E285AD271A4547001738A8 /* ExternalOperation.swift in Sources */,
