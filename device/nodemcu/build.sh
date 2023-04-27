@@ -67,10 +67,11 @@ fi
 mkdir -p "${BUILD_DIRECTORY}"
 
 
-# Build the firmaware.
+# Build the firmware.
 cd "${NODEMCU_FIRMWARE_DIRECTORY}"
 
 # Only needed the first time.
+export IDF_TOOLS_PATH="${FIRMWARE_DIRECTORY}/.espressif"
 ./sdk/esp32-esp-idf/install.sh
 
 . ./sdk/esp32-esp-idf/export.sh
