@@ -524,7 +524,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 }
                 Acknowledgements("Thanks") {
                     Credit("Lukas Fittl")
-                    Credit("Pavlos Vinieratos")
+                    Credit("Pavlos Vinieratos", url: URL(string: "https://github.com/pvinis"))
                 }
             } licenses: {
                 License(name: "Binding+mappedToBool", author: "Joseph Duffy", filename: "Binding+mappedToBool.txt")
