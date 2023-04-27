@@ -24,13 +24,6 @@ jobs:
       run: |
         git submodule update --init --recursive --depth 1 device/nodemcu/nodemcu-firmware
 
-    - name: Cache build directory
-      id: cache-build
-      uses: actions/cache@v3
-      with:
-        path: device/nodemcu/nodemcu-firmware/build
-        key: ${{ runner.os }}-build
-
     - name: Build
       run: |
         device/nodemcu/build.sh

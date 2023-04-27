@@ -24,7 +24,7 @@ jobs:
 
     - name: Checkout required submodules
       run: |
-        git submodule update --init scripts/changes
+        git submodule update --init --depth 1 scripts/changes
 
     - name: Setup Python
       uses: actions/setup-python@v3
