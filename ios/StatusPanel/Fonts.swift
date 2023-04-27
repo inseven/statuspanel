@@ -23,6 +23,7 @@ import Foundation
 import Diligence
 
 class Fonts {
+
     struct BitmapInfo {
         let bitmapName: String
         let startIndex: Unicode.Scalar
@@ -293,7 +294,6 @@ class Fonts {
 
     static var licenses: [License] {
         return availableFonts
-            .sorted { $0.humanReadableName < $1.humanReadableName }
             .map { $0.license }
     }
 
