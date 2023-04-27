@@ -24,11 +24,17 @@ jobs:
       run: |
         git submodule update --init --recursive --depth 1 device/nodemcu/nodemcu-firmware
 
+    - name: Get nodemcu-firmware sha
+      id: get-firmware-sha
+      run: |
+        echo "sha=$(git rev-parse HEAD:device/nodemcu/nodemcu-firmware)" >> $GITHUB_OUTPUT
+      shell: bash
+
     - name: Cache Espressif toolchain
       uses: actions/cache@v3
       with:
         path: device/nodemcu/.espressif
-        key: ${{ runner.os }}-espressif-toolchain
+        key: ${{ runner.os }}-espressif-toolchain-${{ steps.get-firmware-sha.outputs.sha }}
 
     - name: Build
       run: |
