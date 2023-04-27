@@ -19,8 +19,10 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v3
-      with:
-        submodules: recursive
+
+    - name: Checkout required submodules
+      run: |
+        git submodule update --init --recursive --depth 1 device/nodemcu/nodemcu-firmware
 
     - name: Cache build directory
       id: cache-build
