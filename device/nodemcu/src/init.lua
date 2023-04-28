@@ -29,6 +29,7 @@ function configurePins_eink()
     UnpairPin = 32
     UnpairActiveHigh = true
     UsbDetect = 39 -- aka A3
+    DeepSleepIsolatePins = { 12, OldBusy, AutoPin, CS, Reset, DC }
 
     gpio.config({
         gpio = { Reset, DC, StatusLed },
@@ -118,6 +119,9 @@ function configurePins_inky()
     UnpairPin = ButtonA
     UnpairActiveHigh = false
     UsbDetect = 39 -- aka A3
+    -- For some reason isolating CS messes up after wakeup from deepsleep. I cannot figure out what's supposed to happen
+    -- from the docs, so it's easiest for now just not to isolate it. And it probably doesn't save any power anyway...
+    DeepSleepIsolatePins = { 12 }
 
     gpio.config({
         gpio = { Reset, DC, CS, StatusLed },

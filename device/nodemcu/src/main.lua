@@ -3,6 +3,12 @@ network = require "network"
 
 readFile, writeFile = network.readFile, network.writeFile
 
+function ls()
+    for k, v in pairs(file.list()) do
+        print(k, v)
+    end
+end
+
 -- It takes about 2 seconds for board to boot so the actual time required to
 -- long press is about LongPressTime plus 2 seconds.
 
@@ -67,6 +73,7 @@ function shortPressUnpair()
 
     local imageToShow
     local id = getCurrentDisplayIdentifier()
+    print("Current identifier", id)
     if id == nil then
         go()
         return
@@ -76,6 +83,7 @@ function shortPressUnpair()
         imageToShow = imageFilename(1)
     end
 
+    print("imageToShow", imageToShow)
     if file.exists(imageToShow) then
         showFile(imageToShow)
         -- Might as well just reboot here, seems easiest
@@ -145,23 +153,14 @@ function sleepFor(delta)
         -- that would mean we'd wake immediately.
         shouldUsbDetect = false
     end
-    if UnpairActiveHigh then
-        node.dsleep({
-            secs = delta,
-            gpio = { UnpairPin, shouldUsbDetect and UsbDetect or nil },
-            pull = true,
-            isolate = { 12, AutoPin, CS, Reset, DC, OldBusy },
-        })
-    else
+    node.dsleep({
+        secs = delta,
         -- If unpair is active-low, we can't specify multiple pins for wakeup :(
-        node.dsleep({
-            secs = delta,
-            gpio = { UnpairPin },
-            level = 0,
-            pull = true,
-            isolate = { 12, AutoPin, CS, Reset, DC, OldBusy },
-        })
-    end
+        gpio = { UnpairPin, UnpairActiveHigh and shouldUsbDetect and UsbDetect or nil },
+        level = UnpairActiveHigh and 1 or 0,
+        pull = true,
+        isolate = DeepSleepIsolatePins,
+    })
 end
 
 -- For testing
@@ -170,6 +169,9 @@ function slp()
 end
 
 function isset64(numlo, numhi, bitnum)
+    if numlo == nil or numhi == nil then
+        return false
+    end
     local num = numlo
     if bitnum >= 32 then
         bitnum = bitnum - 32
@@ -253,8 +255,8 @@ function main()
     local wokeByUsb, wokeByUnpair
     local reason, ext, pinslo, pinshi = node.bootreason()
     if ext == 12 then -- Deep sleep wake
-        if not pinshi then pinslo, pinshi = 0, 0 end
-        if isset64(pinslo, pinshi, UnpairPin) then
+        -- print("Deep sleep wake pins=", pinslo, pinshi)
+        if (not UnpairActiveHigh and pinslo ~= nil) or isset64(pinslo, pinshi, UnpairPin) then
             wokeByUnpair = true
         elseif isset64(pinslo, pinshi, UsbDetect) then
             wokeByUsb = true
@@ -719,6 +721,7 @@ function displayLineFormatFile(filename, statusLine)
 end
 
 function showFile(filename)
+    -- print("showFile", filename)
     assert(coroutine_running())
     local statusLine = not isFeatherTft() and filename == imageFilename(1)
     local id = string.format("%s,%s", filename, encoder.toBase64(readFile(filename.."_hash")))
