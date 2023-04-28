@@ -83,8 +83,6 @@ if [ "${CURRENT_TARGET}" != "\"${TARGET}\"" ] ; then
     idf.py set-target "${TARGET}"
 fi
 
-exit
-
 # Copy the configuration.
 cp ../src/esp32/sdkconfig .
 
