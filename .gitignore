@@ -11,6 +11,7 @@ xcuserdata
 /build
 /device/nodemcu/build
 /ios/StatusPanel/configuration.json
+/device/nodemcu/.espressif/
 
 # Site
 _site
