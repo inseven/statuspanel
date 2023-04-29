@@ -157,7 +157,7 @@ class Fonts {
              headerScale: 1,
              author: "Unifoundry",
              license: """
-                GNU Unifont 13.0.06.
+                GNU Unifont 15.0.01.
                 http://unifoundry.com/unifont/index.html
                 License: SIL Open Font License version 1.1
 
@@ -209,7 +209,7 @@ class Fonts {
              headerScale: 2,
              author: "Unifoundry",
              license: """
-                GNU Unifont 13.0.06.
+                GNU Unifont 15.0.01.
                 http://unifoundry.com/unifont/index.html
                 License: SIL Open Font License version 1.1
 
