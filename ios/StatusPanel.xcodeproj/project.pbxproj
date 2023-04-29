@@ -47,7 +47,7 @@
 		D8B9874B270FF88D00EC2BA4 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B9874A270FF88D00EC2BA4 /* Alert.swift */; };
 		D8C20D1E271C2A6200F3F22A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D8C20D20271C2A6200F3F22A /* Localizable.strings */; };
 		D8C20D23271C6C1500F3F22A /* EKCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D22271C6C1500F3F22A /* EKCalendar.swift */; };
-		D8C20D25271C7A2000F3F22A /* CalendarPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */; };
+		D8C20D25271C7A2000F3F22A /* CalendarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D24271C7A2000F3F22A /* CalendarSettingsView.swift */; };
 		D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D2A271CC1E600F3F22A /* FontLabelTableViewCell.swift */; };
 		D8CC37B12717887A00938C5D /* Panel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CC37B02717887A00938C5D /* Panel.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
@@ -168,7 +168,7 @@
 		D8C20D1F271C2A6200F3F22A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D8C20D21271C2B0D00F3F22A /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		D8C20D22271C6C1500F3F22A /* EKCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKCalendar.swift; sourceTree = "<group>"; };
-		D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPicker.swift; sourceTree = "<group>"; };
+		D8C20D24271C7A2000F3F22A /* CalendarSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSettingsView.swift; sourceTree = "<group>"; };
 		D8C20D2A271CC1E600F3F22A /* FontLabelTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontLabelTableViewCell.swift; sourceTree = "<group>"; };
 		D8CC37B02717887A00938C5D /* Panel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panel.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
@@ -259,7 +259,7 @@
 			isa = PBXGroup;
 			children = (
 				D848A199270D16AD00681F62 /* AddDataSourceView.swift */,
-				D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */,
+				D8C20D24271C7A2000F3F22A /* CalendarSettingsView.swift */,
 				D8383EBB270FB8E20007EBB7 /* DayPicker.swift */,
 				D848A19D270D213800681F62 /* FlagsSection.swift */,
 			);
@@ -720,7 +720,7 @@
 				D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */,
 				D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */,
 				DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */,
-				D8C20D25271C7A2000F3F22A /* CalendarPicker.swift in Sources */,
+				D8C20D25271C7A2000F3F22A /* CalendarSettingsView.swift in Sources */,
 				D83CC5222707543E00260DC1 /* UIStoryboard.swift in Sources */,
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */,

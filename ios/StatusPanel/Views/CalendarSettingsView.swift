@@ -21,7 +21,7 @@
 import EventKit
 import SwiftUI
 
-struct CalendarPicker: View {
+struct CalendarSettingsView: View {
 
     private struct Source: Identifiable {
 

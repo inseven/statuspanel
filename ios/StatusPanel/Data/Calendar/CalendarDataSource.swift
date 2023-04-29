@@ -240,10 +240,10 @@ final class CalendarDataSource : DataSource {
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        return UIHostingController(rootView: CalendarPicker(store: store,
-                                                            settings: settings,
-                                                            eventStore: EKEventStore(),
-                                                            selection: activeCalendarsBinding))
+        return UIHostingController(rootView: CalendarSettingsView(store: store,
+                                                                  settings: settings,
+                                                                  eventStore: EKEventStore(),
+                                                                  selection: activeCalendarsBinding))
     }
 
 }
