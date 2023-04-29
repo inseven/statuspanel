@@ -29,6 +29,7 @@ struct Device: Identifiable, Equatable, Hashable {
         case einkV1 = "0"
         case featherTft = "1"
         case pimoroniInkyImpression4 = "2"
+        case pimoroniInkyImpression4_rle = "3"
 
         var description: String {
             switch self {
@@ -37,7 +38,9 @@ struct Device: Identifiable, Equatable, Hashable {
             case .featherTft:
                 return "Feather TFT"
             case .pimoroniInkyImpression4:
-                return "Pimoroni Inky Impression 4"
+                return "Pimoroni Inky Impression 4 (PNG)"
+            case .pimoroniInkyImpression4_rle:
+                return "Pimoroni Inky Impression 4 (RLE)"
             }
         }
     }
@@ -52,7 +55,7 @@ struct Device: Identifiable, Equatable, Hashable {
             return CGSize(width: 640, height: 384)
         case .featherTft:
             return CGSize(width: 240, height: 135)
-        case .pimoroniInkyImpression4:
+        case .pimoroniInkyImpression4, .pimoroniInkyImpression4_rle:
             return CGSize(width: 640, height: 400)
         }
     }
@@ -65,6 +68,8 @@ struct Device: Identifiable, Equatable, Hashable {
             return true
         case .pimoroniInkyImpression4:
             return true
+        case .pimoroniInkyImpression4_rle:
+            return false // Well, it is kinda, but...
         }
     }
 
@@ -80,6 +85,8 @@ struct Device: Identifiable, Equatable, Hashable {
             return 0
         case .pimoroniInkyImpression4:
             return 0
+        case .pimoroniInkyImpression4_rle:
+            return 20
         }
     }
 
@@ -91,6 +98,8 @@ struct Device: Identifiable, Equatable, Hashable {
             return .png
         case .pimoroniInkyImpression4:
             return .png
+        case .pimoroniInkyImpression4_rle:
+            return .rle
         }
     }
 
@@ -101,6 +110,8 @@ struct Device: Identifiable, Equatable, Hashable {
         case .featherTft:
             return PixelRenderer()
         case .pimoroniInkyImpression4:
+            return PixelRenderer()
+        case .pimoroniInkyImpression4_rle:
             return PixelRenderer()
         }
     }

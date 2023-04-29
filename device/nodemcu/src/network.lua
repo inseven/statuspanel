@@ -151,6 +151,8 @@ statuspanel:r2?id=<deviceid>&pk=<pk>[&t=<devicetype>][&s=<ssid>]
 devicetype:
 * 0: Original 640x384 3-colour e-ink display
 * 1: 240x135 16-bit colour esp32 TFT Feather
+* 2: 640x400 Pimoroni Inky Impression 4 7-colour e-ink display (PNG format)
+* 3: 640x400 Pimoroni Inky Impression 4 7-colour e-ink display (3-colour RLE format)
 
 Is used to indicate root certs need to also be supplied. The reason for
 introducing a new version here is so that and old iOS client will not attempt
@@ -163,7 +165,7 @@ function getQRCodeURL(includeSsid)
     local pk = getPublicKey()
     -- toBase64 doesn't URL-encode the unsafe chars, so do that too
     local pkstr = encoder.toBase64(pk):gsub("[/%+%=]", function(ch) return string.format("%%%02X", ch:byte()) end)
-    local type = isFeatherTft() and 1 or 0
+    local type = isFeatherTft() and 1 or isInky() and 3 or 0
     local result = string.format("statuspanel:r2?id=%s&pk=%s&t=%d", id, pkstr, type)
     if includeSsid then
         result = result.."&s="..getApSSID()
