@@ -36,8 +36,6 @@ struct CalendarSettingsView: View {
     @State var settings: CalendarDataSource.Settings
 
     private var eventStore: EKEventStore
-    @Binding private var selection: Set<String>
-    @State private var shadowSelection: Set<String>
 
     @State var error: Error? = nil
 
@@ -45,13 +43,10 @@ struct CalendarSettingsView: View {
 
     init(store: DataSourceSettingsStore<CalendarDataSource.Settings>,
          settings: CalendarDataSource.Settings,
-         eventStore: EKEventStore,
-         selection: Binding<Set<String>>) {
+         eventStore: EKEventStore) {
         self.store = store
         self.settings = settings
         self.eventStore = eventStore
-        _selection = selection
-        _shadowSelection = State(initialValue: selection.wrappedValue)
     }
 
     private func loadSources() -> [Source] {
@@ -71,7 +66,7 @@ struct CalendarSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Picker("Day", selection: $settings.offset) {
+                Picker(LocalizedString("calendar_day_label"), selection: $settings.offset) {
                     Text(LocalizedOffset(0)).tag(0)
                     Text(LocalizedOffset(1)).tag(1)
                 }
@@ -83,7 +78,7 @@ struct CalendarSettingsView: View {
             ForEach(sources) { source in
                 Section(header: Text(source.source.title)) {
                     ForEach(source.calendars) { calendar in
-                        Toggle(calendar.title, isOn: $shadowSelection.binding(for: calendar.calendarIdentifier))
+                        Toggle(calendar.title, isOn: $settings.activeCalendars.binding(for: calendar.calendarIdentifier))
                             .toggleStyle(ColoredCheckbox(color: calendar.color))
                     }
                 }
@@ -98,9 +93,6 @@ struct CalendarSettingsView: View {
             } catch {
                 self.error = error
             }
-        }
-        .onChange(of: shadowSelection) { selection in
-            self.selection = selection
         }
         .onAppear {
             sources = loadSources()
