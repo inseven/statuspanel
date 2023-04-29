@@ -395,10 +395,12 @@ class Fonts {
              textSize: 16,
              headerSize: 16,
              author: "castpixel",
+             attributes: [
+                NamedURL("Website", url: URL(string: "https://www.patreon.com/posts/16897144")!),
+                NamedURL("Patreon", url: URL(string: "https://www.patreon.com/castpixel")!)
+             ],
              license: """
-                Font by castpixel <https://www.patreon.com/castpixel>
-                https://www.patreon.com/posts/16897144
-                License: Free for any use
+                Free for any use
                 """),
 
         Font(configName: FontName.robotY,
