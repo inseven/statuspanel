@@ -20,7 +20,7 @@
 
 import Foundation
 import EventKit
-import UIKit
+import SwiftUI
 
 class CalendarItem : DataItemBase {
 
@@ -65,7 +65,7 @@ class CalendarItem : DataItemBase {
 
 final class CalendarDataSource : DataSource {
 
-    struct Settings: DataSourceSettings {
+    struct Settings: DataSourceSettings, Equatable {
 
         var showLocations: Bool
         var showUrls: Bool
@@ -227,12 +227,23 @@ final class CalendarDataSource : DataSource {
         return result
     }
 
+    var activeCalendarsBinding: Binding<Set<String>> {
+        return Binding {
+            return Set(Config().activeCalendars)
+        } set: { newValue in
+            Config().activeCalendars = newValue.sorted()
+        }
+    }
+
     func summary(settings: Settings) -> String? {
         return "\(LocalizedOffset(settings.offset)): \(settings.calendarNames)"
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        return CalendarViewController(config: Config(), store: store, settings: settings)
+        return UIHostingController(rootView: CalendarPicker(store: store,
+                                                            settings: settings,
+                                                            eventStore: EKEventStore(),
+                                                            selection: activeCalendarsBinding))
     }
 
 }
