@@ -380,10 +380,12 @@ class Fonts {
              textSize: 32,
              headerSize: 48,
              author: "castpixel",
+             attributes: [
+                NamedURL("Website", url: URL(string: "https://www.patreon.com/posts/39070970")!),
+                NamedURL("Patreon", url: URL(string: "https://www.patreon.com/castpixel")!)
+             ],
              license: """
-                Font by castpixel <https://www.patreon.com/castpixel>
-                https://www.patreon.com/posts/39070970
-                License: Free for any use
+                Free for any use
                 """),
 
         Font(configName: FontName.jinxedWizards,
