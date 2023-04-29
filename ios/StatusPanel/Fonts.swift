@@ -432,10 +432,11 @@ class Fonts {
              textSize: 32,
              headerSize: 48,
              author: "Giles Booth",
+             attributes: [
+                NamedURL("Website", url: URL(string: "http://www.pentacom.jp/pentacom/bitfontmaker2/gallery/?id=3778")!)
+             ],
              license: """
-                ChiKareGo by Giles Booth
-                http://www.pentacom.jp/pentacom/bitfontmaker2/gallery/?id=3778
-                License: Creative Commons Attribution
+                Creative Commons Attribution
                 """),
 
         Font(configName: FontName.chiKareGo2,
@@ -445,10 +446,11 @@ class Fonts {
              textSize: 32,
              headerSize: 48,
              author: "Giles Booth",
+             attributes: [
+                NamedURL("Website", url: URL(string: "http://www.pentacom.jp/pentacom/bitfontmaker2/gallery/?id=3780")!)
+             ],
              license: """
-                ChiKareGo2 by Giles Booth
-                http://www.pentacom.jp/pentacom/bitfontmaker2/gallery/?id=3780
-                License: Creative Commons Attribution
+                Creative Commons Attribution
                 """),
     ]
 
