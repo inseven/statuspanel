@@ -8,9 +8,9 @@ StatusPanel is designed with a simple modular architecture to make individual co
 
 There are three primary components in the StatusPanel architecture:
 
-- Client – publishes updates; typically a cellphone
-- Service – pigeon-hole service; stores updates from clients for devices to pick up on their own schedule)
-- Device – renders updates; lower-power network-attached display
+- Client – publishes updates; typically a cellphone
+- Service – pigeon-hole service; stores updates from clients for devices to pick up on their own schedule)
+- Device – renders updates; lower-power network-attached display
 
 Unlike many centralised systems, the service has no access to any user data–it simply serves as an asynchronous message exchange mechanism for delivering end-to-end encrypted updates from client to device. Key exchange occurs when initially pairing a device with a client.
 
@@ -30,7 +30,7 @@ This URL has a scheme of `statuspanel`, an empty host, and path of `r2`. The pat
 | --------- | -------------------------------------------- | ------------------------------------------------------------ | -------- |
 | `id`      | Canonical UUID4                              | Identifier                                                   | Yes      |
 | `pk`      | Base64 then URL encoded libsodium public key | Public Key                                                   | Yes      |
-| `t`       | Int                                          | Type:<br />`0` – eInk Version 1<br />`1` – Feather TFT<br />`2` – Pimoroni Inky Impression 4 | Optional |
+| `t`       | Int                                          | Type:<br />`0` – eInk Version 1<br />`1` – Feather TFT<br />`2` – Pimoroni Inky Impression 4 (using full colour PNG)<br />`3` – Pimoroni Inky Impression 4 (using 2BPP RLE) | Optional |
 | `s`       | String                                       | SSID of ad-hoc Wi-Fi hotspot to connect to for initial configuration | Optional |
 
 ## Updates
@@ -42,8 +42,8 @@ GET https://api.statuspanel.io/api/v3/status/<device identifier>
 Updates are returned as binary data with the following components
 
 - Header – metadata about the image
-- Index – offsets of the images in the data
-- Images – update images themselves
+- Index – offsets of the images in the data
+- Images – update images themselves
 
 ### Header
 
@@ -74,13 +74,13 @@ The index is only included if `imageCount` is present in the header. It contains
 
 Images are stored back-to-back, each starting at the offset defined in the index (or at offset 6 if `imageCount` is not present in the header).
 
-Images are encrypted using a [libsodium sealed box](https://doc.libsodium.org/public-key_cryptography/sealed_boxes)  using the device's public key that is provided to **client** at device registration time.
+Images are encrypted using a [libsodium sealed box](https://doc.libsodium.org/public-key_cryptography/sealed_boxes) using the device's public key that is provided to **client** at device registration time.
 
 #### Encodings
 
 ##### RLE + 2BPP
 
-```
+```python
 while let pixel = data.read() {
   if pixel == 255 {
     let count = data.read()
@@ -98,7 +98,7 @@ Image values are as follows:
 
 - `0` – black
 - `1` – highlight color
-- `2` – white
+- `2` – white
 
 ##### PNG
 
