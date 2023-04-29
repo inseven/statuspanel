@@ -115,6 +115,7 @@ function configurePins_inky()
     -- ButtonD (Pi: GP24) we connect to reset so doesn't have a esp32 GPIO pin number
 
     AutoPin = 14
+    VBat = 7 -- That is, ADC1_CH7 aka GPIO 35 (internally connected to BAT)
     StatusLed = 13 -- Just use the feather onboard LED
     UnpairPin = ButtonA
     UnpairActiveHigh = false
@@ -149,6 +150,9 @@ function configurePins_inky()
         mode = 0,
         freq = 2*1000*1000, -- ie 2 MHz
     })
+    adc.setup(adc.ADC1, VBat, adc.ATTEN_11db)
+    adc.setwidth(adc.ADC1, 12)
+    gpio.write(Reset, 0)
 end
 
 -- Assumes pin is configured without pullups/downs
@@ -291,7 +295,7 @@ function printf(...)
 end
 
 function getBatteryVoltage()
-    if isFeatherTft() or isInky() then
+    if isFeatherTft() then
         return nil
     else
         -- At 11db attenuation and 12 bits width, 4095 = VDD_A
@@ -299,7 +303,7 @@ function getBatteryVoltage()
         print("Raw ADC val", val)
         -- In theory result in mV should be (val * 3.3 * 2) / 4.096
         -- In practice, calibration seems off so we use a bigger number (~3.5)
-        return math.floor((val * 6973) / 4096)
+        return (val * 6973) // 4096
     end
 end
 
@@ -307,10 +311,10 @@ function getBatteryVoltageStatus()
     local v = getBatteryVoltage()
     if not v then return "?", false end
 
-    local val = math.floor(v / 100) -- ie 42 for 4.2V
+    local val = v // 100 -- ie 42 for 4.2V
     -- Warn below 3.4V?
-    local v = math.floor(val / 10)
-    local dv = val - v*10
+    local v = val // 10
+    local dv = val - v * 10
     return string.format("%d.%dV", v, dv), val < 34
 end
 
