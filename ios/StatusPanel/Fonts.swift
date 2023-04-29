@@ -348,8 +348,7 @@ class Fonts {
 
                 The personal, non-commercial use of my font is free.
                 But Donations are accepted and highly appreciated!
-                The use of my fonts for commercial and profit purposes is prohibited,
-                unless a small donation is send to me.
+                The use of my fonts for commercial and profit purposes is prohibited, unless a small donation is send to me.
                 Contact: ck@freakyfonts.de
                 These font files may not be modified or renamed.
                 This readme file must be included with each font, unchanged.
