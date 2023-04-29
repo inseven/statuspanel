@@ -22,7 +22,6 @@
 		D825A55D26F6811400B85206 /* DummyDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D825A55C26F6811400B85206 /* DummyDataSource.swift */; };
 		D8293A0C26F787D3008CE13B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8293A0B26F787D3008CE13B /* URL.swift */; };
 		D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */; };
-		D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */; };
 		D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D835EC972471D811003E402E /* NetworkExtension.framework */; };
 		D8383EBC270FB8E20007EBB7 /* DayPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBB270FB8E20007EBB7 /* DayPicker.swift */; };
 		D8383EBE270FBA1B0007EBB7 /* DataSourceSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBD270FBA1B0007EBB7 /* DataSourceSettingsStore.swift */; };
@@ -48,8 +47,7 @@
 		D8B9874B270FF88D00EC2BA4 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B9874A270FF88D00EC2BA4 /* Alert.swift */; };
 		D8C20D1E271C2A6200F3F22A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D8C20D20271C2A6200F3F22A /* Localizable.strings */; };
 		D8C20D23271C6C1500F3F22A /* EKCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D22271C6C1500F3F22A /* EKCalendar.swift */; };
-		D8C20D25271C7A2000F3F22A /* CalendarPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */; };
-		D8C20D27271C7A6E00F3F22A /* CalendarPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D26271C7A6E00F3F22A /* CalendarPickerController.swift */; };
+		D8C20D25271C7A2000F3F22A /* CalendarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D24271C7A2000F3F22A /* CalendarSettingsView.swift */; };
 		D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D2A271CC1E600F3F22A /* FontLabelTableViewCell.swift */; };
 		D8CC37B12717887A00938C5D /* Panel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CC37B02717887A00938C5D /* Panel.swift */; };
 		D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */; };
@@ -143,7 +141,6 @@
 		D825A55C26F6811400B85206 /* DummyDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyDataSource.swift; sourceTree = "<group>"; };
 		D8293A0B26F787D3008CE13B /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		D835EC972471D811003E402E /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		D8383EBB270FB8E20007EBB7 /* DayPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPicker.swift; sourceTree = "<group>"; };
 		D8383EBD270FBA1B0007EBB7 /* DataSourceSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceSettingsStore.swift; sourceTree = "<group>"; };
@@ -171,8 +168,7 @@
 		D8C20D1F271C2A6200F3F22A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D8C20D21271C2B0D00F3F22A /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		D8C20D22271C6C1500F3F22A /* EKCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKCalendar.swift; sourceTree = "<group>"; };
-		D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPicker.swift; sourceTree = "<group>"; };
-		D8C20D26271C7A6E00F3F22A /* CalendarPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPickerController.swift; sourceTree = "<group>"; };
+		D8C20D24271C7A2000F3F22A /* CalendarSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSettingsView.swift; sourceTree = "<group>"; };
 		D8C20D2A271CC1E600F3F22A /* FontLabelTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontLabelTableViewCell.swift; sourceTree = "<group>"; };
 		D8CC37B02717887A00938C5D /* Panel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panel.swift; sourceTree = "<group>"; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
@@ -263,7 +259,7 @@
 			isa = PBXGroup;
 			children = (
 				D848A199270D16AD00681F62 /* AddDataSourceView.swift */,
-				D8C20D24271C7A2000F3F22A /* CalendarPicker.swift */,
+				D8C20D24271C7A2000F3F22A /* CalendarSettingsView.swift */,
 				D8383EBB270FB8E20007EBB7 /* DayPicker.swift */,
 				D848A19D270D213800681F62 /* FlagsSection.swift */,
 			);
@@ -303,7 +299,6 @@
 			children = (
 				D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */,
 				DBCA98B221440CD90084B710 /* CalendarDataSource.swift */,
-				D82D0C0521EC1E8700B1C753 /* CalendarViewController.swift */,
 				D8383EBF270FC50A0007EBB7 /* FormatEditor.swift */,
 			);
 			path = Calendar;
@@ -357,7 +352,6 @@
 			children = (
 				D8B3B3A727182BB000DD3148 /* AddDataSourceController.swift */,
 				D83B6C34271A8E4800F48FB2 /* AddViewController.swift */,
-				D8C20D26271C7A6E00F3F22A /* CalendarPickerController.swift */,
 				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
 				D812523B2709875600C9D80A /* FontPickerViewController.swift */,
 				DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */,
@@ -693,7 +687,6 @@
 				DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */,
 				D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */,
 				D8B3B3A827182BB000DD3148 /* AddDataSourceController.swift in Sources */,
-				D8C20D27271C7A6E00F3F22A /* CalendarPickerController.swift in Sources */,
 				D8DCA7D629CBEA92002010A5 /* LabelStyle.swift in Sources */,
 				D8E6D673271FBD3300AB6452 /* Color.swift in Sources */,
 				D8DCA7DE29CBEE4D002010A5 /* UILabel.swift in Sources */,
@@ -712,7 +705,6 @@
 				D81CEBBA2906B31300E4B032 /* WeatherDataSource.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
 				D80380AB23E9B6D2002606C7 /* Service.swift in Sources */,
-				D82D0C0621EC1E8700B1C753 /* CalendarViewController.swift in Sources */,
 				D89104852707B9A00020A2CF /* UIViewController.swift in Sources */,
 				D8C20D23271C6C1500F3F22A /* EKCalendar.swift in Sources */,
 				D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */,
@@ -728,7 +720,7 @@
 				D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */,
 				D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */,
 				DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */,
-				D8C20D25271C7A2000F3F22A /* CalendarPicker.swift in Sources */,
+				D8C20D25271C7A2000F3F22A /* CalendarSettingsView.swift in Sources */,
 				D83CC5222707543E00260DC1 /* UIStoryboard.swift in Sources */,
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */,

@@ -21,7 +21,7 @@
 import EventKit
 import SwiftUI
 
-struct CalendarPicker: View {
+struct CalendarSettingsView: View {
 
     private struct Source: Identifiable {
 
@@ -32,13 +32,23 @@ struct CalendarPicker: View {
 
     }
 
+    var store: DataSourceSettingsStore<CalendarDataSource.Settings>
+    @State var settings: CalendarDataSource.Settings
+
     private var eventStore: EKEventStore
     @Binding private var selection: Set<String>
     @State private var shadowSelection: Set<String>
 
+    @State var error: Error? = nil
+
     @State private var sources: [Source] = []
 
-    init(eventStore: EKEventStore, selection: Binding<Set<String>>) {
+    init(store: DataSourceSettingsStore<CalendarDataSource.Settings>,
+         settings: CalendarDataSource.Settings,
+         eventStore: EKEventStore,
+         selection: Binding<Set<String>>) {
+        self.store = store
+        self.settings = settings
         self.eventStore = eventStore
         _selection = selection
         _shadowSelection = State(initialValue: selection.wrappedValue)
@@ -60,6 +70,16 @@ struct CalendarPicker: View {
 
     var body: some View {
         Form {
+            Section {
+                Picker("Day", selection: $settings.offset) {
+                    Text(LocalizedOffset(0)).tag(0)
+                    Text(LocalizedOffset(1)).tag(1)
+                }
+                Toggle(LocalizedString("calendar_show_locations_label"), isOn: $settings.showLocations)
+                if settings.showLocations {
+                    Toggle(LocalizedString("calendar_show_urls_label"), isOn: $settings.showUrls)
+                }
+            }
             ForEach(sources) { source in
                 Section(header: Text(source.source.title)) {
                     ForEach(source.calendars) { calendar in
@@ -67,6 +87,16 @@ struct CalendarPicker: View {
                             .toggleStyle(ColoredCheckbox(color: calendar.color))
                     }
                 }
+            }
+        }
+        .alert(isPresented: $error.mappedToBool()) {
+            Alert(error: error)
+        }
+        .onChange(of: settings) { newValue in
+            do {
+                try store.save(settings: newValue)
+            } catch {
+                self.error = error
             }
         }
         .onChange(of: shadowSelection) { selection in
