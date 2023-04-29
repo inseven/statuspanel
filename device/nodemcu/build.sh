@@ -78,7 +78,10 @@ export IDF_TOOLS_PATH="${FIRMWARE_DIRECTORY}/.espressif"
 PATH=${IDF_PYTHON_ENV_PATH}:${PATH} pip install -r requirements.txt
 
 # Change this to esp32s2 if applicable
-idf.py set-target "${TARGET}"
+SDKCONFIG=build/config/sdkconfig.json
+if [ ! -f "${SDKCONFIG}" ] || [ $(cat "${SDKCONFIG}" | jq '.IDF_TARGET') != "\"${TARGET}\"" ] ; then
+    idf.py set-target "${TARGET}"
+fi
 
 # Copy the configuration.
 cp ../src/esp32/sdkconfig .

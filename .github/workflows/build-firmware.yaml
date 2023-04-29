@@ -35,6 +35,13 @@ jobs:
           device/nodemcu/.espressif
         key: ${{ runner.os }}-espressif-toolchain-${{ steps.get-firmware-sha.outputs.sha }}
 
+    - name: Cache NodeMCU build
+      uses: actions/cache@v3
+      with:
+        path: |
+          device/nodemcu/nodemcu-firmware/build
+        key: ${{ runner.os }}-espressif-toolchain-${{ steps.get-firmware-sha.outputs.sha }}-${{ hashFiles('device/nodemcu/src/esp32/sdkconfig') }}
+
     - name: Checkout required submodules
       run: |
         git submodule update --init --recursive --depth 1 device/nodemcu/nodemcu-firmware
