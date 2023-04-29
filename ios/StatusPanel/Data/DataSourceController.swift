@@ -71,14 +71,16 @@ class DataSourceController {
                 try add(type: .calendar,
                         settings: CalendarDataSource.Settings(showLocations: config.showCalendarLocations,
                                                               showUrls: config.showUrlsInCalendarLocations,
-                                                              offset: 0))
+                                                              offset: 0,
+                                                              activeCalendars: []))
                 try add(type: .text,
                         settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
                                                           text: "Tomorrow:"))
                 try add(type: .calendar,
                         settings: CalendarDataSource.Settings(showLocations: config.showCalendarLocations,
                                                               showUrls: config.showUrlsInCalendarLocations,
-                                                              offset: 1))
+                                                              offset: 1,
+                                                              activeCalendars: []))
                 try save()
             } catch {
                 print("Failed to add default data sources with error \(error).")

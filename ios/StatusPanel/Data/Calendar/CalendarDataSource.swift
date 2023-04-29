@@ -67,9 +67,17 @@ final class CalendarDataSource : DataSource {
 
     struct Settings: DataSourceSettings, Equatable {
 
+        enum CodingKeys: String, CodingKey {
+            case showLocations
+            case showUrls
+            case offset
+            case activeCalendars
+        }
+
         var showLocations: Bool
         var showUrls: Bool
         var offset: Int
+        var activeCalendars: Set<String>
 
         var calendarNames: String {
             let eventStore = EKEventStore()
@@ -78,6 +86,33 @@ final class CalendarDataSource : DataSource {
                 return "No Calendars Selected"
             }
             return calendarNames.joined(separator: ", ")
+        }
+
+        init(showLocations: Bool, showUrls: Bool, offset: Int, activeCalendars: Set<String>) {
+            self.showLocations = showLocations
+            self.showUrls = showUrls
+            self.offset = offset
+            self.activeCalendars = activeCalendars
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            showLocations = try container.decode(Bool.self, forKey: .showLocations)
+            showUrls = try container.decode(Bool.self, forKey: .showUrls)
+            offset = try container.decode(Int.self, forKey: .offset)
+            if container.contains(.activeCalendars) {
+                activeCalendars = Set(try container.decode([String].self, forKey: .activeCalendars))
+            } else {
+                activeCalendars = Set(Config().activeCalendars)
+            }
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(showLocations, forKey: .showLocations)
+            try container.encode(showUrls, forKey: .showUrls)
+            try container.encode(offset, forKey: .offset)
+            try container.encode(Array(activeCalendars), forKey: .activeCalendars)
         }
 
     }
@@ -93,7 +128,8 @@ final class CalendarDataSource : DataSource {
     var defaults: Settings {
         return Settings(showLocations: false,
                         showUrls: false,
-                        offset: 0)
+                        offset: 0,
+                        activeCalendars: [])
     }
 
     init() {
@@ -227,14 +263,6 @@ final class CalendarDataSource : DataSource {
         return result
     }
 
-    var activeCalendarsBinding: Binding<Set<String>> {
-        return Binding {
-            return Set(Config().activeCalendars)
-        } set: { newValue in
-            Config().activeCalendars = newValue.sorted()
-        }
-    }
-
     func summary(settings: Settings) -> String? {
         return "\(LocalizedOffset(settings.offset)): \(settings.calendarNames)"
     }
@@ -242,8 +270,7 @@ final class CalendarDataSource : DataSource {
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
         return UIHostingController(rootView: CalendarSettingsView(store: store,
                                                                   settings: settings,
-                                                                  eventStore: EKEventStore(),
-                                                                  selection: activeCalendarsBinding))
+                                                                  eventStore: EKEventStore()))
     }
 
 }
