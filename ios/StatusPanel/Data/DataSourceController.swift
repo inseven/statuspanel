@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import EventKit
 import Foundation
 
 class DataSourceController {
@@ -48,7 +49,7 @@ class DataSourceController {
         let config = Config()
 
         do {
-            let instances = try Config().dataSources() ?? []
+            let instances = try config.dataSources() ?? []
             do {
                 for instance in instances {
                     try add(type: instance.type, uuid: instance.id)
@@ -60,33 +61,47 @@ class DataSourceController {
             print("Failed to load data sources with error \(error).")
         }
 
-        // Restore the default configuration if there are none configured.
-        if instances.isEmpty {
-            do {
-                try add(type: .calendarHeader,
-                        settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
-                                                                shortFormat: "yMMMMdEEE",
-                                                                offset: 0,
-                                                                flags: [.header, .spansColumns]))
-                try add(type: .calendar,
-                        settings: CalendarDataSource.Settings(showLocations: config.showCalendarLocations,
-                                                              showUrls: config.showUrlsInCalendarLocations,
-                                                              offset: 0,
-                                                              activeCalendars: []))
-                try add(type: .text,
-                        settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
-                                                          text: "Tomorrow:"))
-                try add(type: .calendar,
-                        settings: CalendarDataSource.Settings(showLocations: config.showCalendarLocations,
-                                                              showUrls: config.showUrlsInCalendarLocations,
-                                                              offset: 1,
-                                                              activeCalendars: []))
-                try save()
-            } catch {
-                print("Failed to add default data sources with error \(error).")
+        // Set up the initial data sources if necessary.
+        // This is a little inelegant as it presumes we'll only need to request access to EKEventStore and hard-codes
+        // that request here--a better approach would be to introduce a an asynchronous DataSource API that allows
+        // each source to request access to the stores it requires.
+        let eventStore = EKEventStore()
+        eventStore.requestAccess(to: EKEntityType.event) { granted, error in
+            DispatchQueue.main.async {
+                self.configureDefaultDataSourcesIfNecessary(config: config, eventStore: eventStore)
             }
         }
 
+    }
+
+    @MainActor func configureDefaultDataSourcesIfNecessary(config: Config, eventStore: EKEventStore) {
+        guard instances.isEmpty else {
+            return
+        }
+        do {
+            let calendars = eventStore.allCalendars().map { $0.calendarIdentifier }
+            try add(type: .calendarHeader,
+                    settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                                            shortFormat: "yMMMMdEEE",
+                                                            offset: 0,
+                                                            flags: [.header, .spansColumns]))
+            try add(type: .calendar,
+                    settings: CalendarDataSource.Settings(showLocations: config.showCalendarLocations,
+                                                          showUrls: config.showUrlsInCalendarLocations,
+                                                          offset: 0,
+                                                          activeCalendars: Set(calendars)))
+            try add(type: .text,
+                    settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
+                                                      text: "Tomorrow:"))
+            try add(type: .calendar,
+                    settings: CalendarDataSource.Settings(showLocations: config.showCalendarLocations,
+                                                          showUrls: config.showUrlsInCalendarLocations,
+                                                          offset: 1,
+                                                          activeCalendars: Set(calendars)))
+            try save()
+        } catch {
+            print("Failed to add default data sources with error \(error).")
+        }
     }
 
     private func add(type: DataSourceType, uuid: UUID = UUID()) throws {

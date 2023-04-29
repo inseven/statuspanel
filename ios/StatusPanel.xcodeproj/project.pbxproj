@@ -70,6 +70,7 @@
 		D8E6D673271FBD3300AB6452 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6D672271FBD3300AB6452 /* Color.swift */; };
 		D8EBFCC8272099B0000E120F /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */; };
 		D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EBFCC92720A6F8000E120F /* Network.swift */; };
+		D8ED8AC829FDC484007FDE06 /* EKEventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */; };
 		D8EED7F12630EF19009E2166 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = D8EED7F02630EF19009E2166 /* Sodium */; };
 		D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F57FE9271A009200847C67 /* QRCodeViewController.swift */; };
 		D8FB0D7829D56C04000E66E6 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FB0D7729D56C04000E66E6 /* Renderer.swift */; };
@@ -194,6 +195,7 @@
 		D8E6D672271FBD3300AB6452 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		D8EBFCC92720A6F8000E120F /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEventStore.swift; sourceTree = "<group>"; };
 		D8EED7EF2630EEFF009E2166 /* swift-sodium */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "swift-sodium"; sourceTree = "<group>"; };
 		D8F57FE9271A009200847C67 /* QRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeViewController.swift; sourceTree = "<group>"; };
 		D8FB0D7729D56C04000E66E6 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
@@ -429,6 +431,8 @@
 				DB17F92E249E3BAD008CD83E /* CGExtensions.swift */,
 				D8E6D672271FBD3300AB6452 /* Color.swift */,
 				D8C20D22271C6C1500F3F22A /* EKCalendar.swift */,
+				D8104E0429F3408100C394CC /* EKEvent.swift */,
+				D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */,
 				D816655427277632005BDA9E /* FileManager.swift */,
 				D816655227277407005BDA9E /* UIActivityIndicatorView.swift */,
 				DBFAEA83272446C5005B9E21 /* UIFont.swift */,
@@ -438,7 +442,6 @@
 				D89104842707B99F0020A2CF /* UIViewController.swift */,
 				DB981489270887590029BA0A /* UnicodeExtensions.swift */,
 				D8293A0B26F787D3008CE13B /* URL.swift */,
-				D8104E0429F3408100C394CC /* EKEvent.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -738,6 +741,7 @@
 				D81DA7C02712953D0052D32C /* Localization.swift in Sources */,
 				D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */,
 				D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */,
+				D8ED8AC829FDC484007FDE06 /* EKEventStore.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
 				D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */,
 				D8DCA7DC29CBEBDD002010A5 /* RedactMode.swift in Sources */,
