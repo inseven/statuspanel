@@ -66,6 +66,18 @@ struct DeviceSettingsView: View {
             }
         }
 
+        @Published var titleFont: String {
+            didSet {
+                config.titleFont = titleFont
+            }
+        }
+
+        @Published var bodyFont: String {
+            didSet {
+                config.bodyFont = bodyFont
+            }
+        }
+
         init() {
             displayTwoColumns = config.displayTwoColumns
             showIcons = config.showIcons
@@ -73,6 +85,8 @@ struct DeviceSettingsView: View {
             maxLines = config.maxLines
             privacyMode = config.privacyMode
             updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
+            titleFont = config.titleFont
+            bodyFont = config.bodyFont
         }
 
     }
@@ -81,9 +95,9 @@ struct DeviceSettingsView: View {
 
     var body: some View {
         Form {
-            Section("Schedule") {
-                DatePicker("Device Update Time", selection: $model.updateTime, displayedComponents: .hourAndMinute)
-                    .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+            Section("Fonts") {
+                FontPicker("Title", selection: $model.titleFont)
+                FontPicker("Body", selection: $model.bodyFont)
             }
             Section("Display") {
                 Toggle("Use Two Columns", isOn: $model.displayTwoColumns)
@@ -116,7 +130,10 @@ struct DeviceSettingsView: View {
                     LabeledContent("Privacy Mode", value: Localized(model.privacyMode))
                 }
             }
-
+            Section("Schedule") {
+                DatePicker("Device Update Time", selection: $model.updateTime, displayedComponents: .hourAndMinute)
+                    .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+            }
         }
         .navigationTitle("Device Settings")
     }

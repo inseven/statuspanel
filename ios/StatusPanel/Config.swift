@@ -406,16 +406,6 @@ class Config {
     }
 
     typealias Font = Fonts.Font
-    let availableFonts = Fonts.availableFonts
-
-    func getFont(named: String) -> Font {
-        for font in availableFonts {
-            if font.configName == named {
-                return font
-            }
-        }
-        return availableFonts[0]
-    }
 
     enum DarkMode: Int, CaseIterable {
         case off = 0

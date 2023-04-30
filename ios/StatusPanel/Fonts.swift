@@ -459,11 +459,21 @@ class Fonts {
              license: """
                 Creative Commons Attribution
                 """),
-    ]
+
+    ].sorted { $0.humanReadableName.localizedCompare($1.humanReadableName) == .orderedAscending }
 
     static var licenses: [License] {
         return availableFonts
             .map { $0.license }
+    }
+
+    static func font(named: String) -> Font {
+        for font in availableFonts {
+            if font.configName == named {
+                return font
+            }
+        }
+        return availableFonts[0]
     }
 
 }
