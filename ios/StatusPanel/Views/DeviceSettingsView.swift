@@ -20,6 +20,51 @@
 
 import SwiftUI
 
+struct FontView: UIViewRepresentable {
+
+    let font: String
+    let text: String
+
+    func makeUIView(context: Context) -> UILabel {
+        let label = UILabel.getLabel(frame: .zero, font: font, style: .text)
+        label.text = text
+        return label
+    }
+
+    func updateUIView(_ uiView: UILabel, context: Context) {
+        uiView.text = text
+    }
+
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UILabel, context: Context) -> CGSize? {
+        uiView.sizeThatFits(.zero)
+    }
+
+}
+
+struct FontPicker: View {
+
+    let title: String
+
+    @Binding var selection: String
+
+    init(_ title: String, selection: Binding<String>) {
+        self.title = title
+        _selection = selection
+    }
+
+    var body: some View {
+        Picker(title, selection: $selection) {
+            ForEach(Fonts.availableFonts) { font in
+                FontView(font: font.configName, text: font.humanReadableName)
+                    .tag(font.configName)
+            }
+        }
+        .pickerStyle(.navigationLink)
+    }
+
+}
+
+
 struct DeviceSettingsView: View {
 
     // N.B. This model currently uses the global `Config` object. It's doing this to allow the new device UI to be built
@@ -66,6 +111,18 @@ struct DeviceSettingsView: View {
             }
         }
 
+        @Published var titleFont: String {
+            didSet {
+                config.titleFont = titleFont
+            }
+        }
+
+        @Published var bodyFont: String {
+            didSet {
+                config.bodyFont = bodyFont
+            }
+        }
+
         init() {
             displayTwoColumns = config.displayTwoColumns
             showIcons = config.showIcons
@@ -73,6 +130,8 @@ struct DeviceSettingsView: View {
             maxLines = config.maxLines
             privacyMode = config.privacyMode
             updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
+            titleFont = config.titleFont
+            bodyFont = config.bodyFont
         }
 
     }
@@ -81,9 +140,9 @@ struct DeviceSettingsView: View {
 
     var body: some View {
         Form {
-            Section("Schedule") {
-                DatePicker("Device Update Time", selection: $model.updateTime, displayedComponents: .hourAndMinute)
-                    .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+            Section("Fonts") {
+                FontPicker("Title", selection: $model.titleFont)
+                FontPicker("Body", selection: $model.bodyFont)
             }
             Section("Display") {
                 Toggle("Use Two Columns", isOn: $model.displayTwoColumns)
@@ -116,7 +175,10 @@ struct DeviceSettingsView: View {
                     LabeledContent("Privacy Mode", value: Localized(model.privacyMode))
                 }
             }
-
+            Section("Schedule") {
+                DatePicker("Device Update Time", selection: $model.updateTime, displayedComponents: .hourAndMinute)
+                    .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+            }
         }
         .navigationTitle("Device Settings")
     }

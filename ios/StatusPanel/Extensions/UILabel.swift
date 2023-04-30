@@ -27,7 +27,7 @@ extension UILabel {
                          style: LabelStyle,
                          redactMode: RedactMode = .none) -> UILabel {
         dispatchPrecondition(condition: .onQueue(.main))
-        let font = Config().getFont(named: fontName)
+        let font = Fonts.font(named: fontName)
         let size = (style == .header) ? font.headerSize : (style == .subText) ? font.subTextSize : font.textSize
         if let bitmapInfo = font.bitmapInfo {
             return BitmapFontLabel(frame: frame, bitmapFont: bitmapInfo, scale: size, redactMode: redactMode)

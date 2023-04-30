@@ -36,10 +36,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     let DataSourcesSection = 0
     let DeviceSettingsOrAddSourceSection = 1
-    let FontsSection = 2
-    let DevicesSection = 3
-    let StatusSection = 4
-    let AboutSection = 5
+    let DevicesSection = 2
+    let StatusSection = 3
+    let AboutSection = 4
 
     weak var delegate: SettingsViewControllerDelegate?
 
@@ -130,8 +129,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return dataSourceController.instances.count
         case DeviceSettingsOrAddSourceSection:
             return 1
-        case FontsSection:
-            return 2
         case DevicesSection:
             var n = devices.count
             if n == 0 {
@@ -153,8 +150,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DataSourcesSection: return "Layout"
         case DeviceSettingsOrAddSourceSection:
             return nil
-        case FontsSection:
-            return "Fonts"
         case DevicesSection:
             return "Devices"
         case StatusSection:
@@ -207,49 +202,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.textLabel?.textColor = .label
             }
             return cell
-        case FontsSection:
-
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-
-            let textLabel = UILabel()
-            textLabel.translatesAutoresizingMaskIntoConstraints = false
-            textLabel.font = UIFont.preferredFont(forTextStyle: .body)
-            textLabel.adjustsFontForContentSizeCategory = true
-            cell.contentView.addSubview(textLabel)
-
-            let config = Config()
-            let fontName = indexPath.row == 0 ? config.titleFont : config.bodyFont
-            let font = config.getFont(named: fontName)
-            let fontLabel = UILabel.getLabel(frame: .zero, font: font.configName, style: .text)
-            fontLabel.text = font.humanReadableName
-            fontLabel.translatesAutoresizingMaskIntoConstraints = false
-            fontLabel.textColor = .secondaryLabel
-            cell.contentView.addSubview(fontLabel)
-
-            NSLayoutConstraint.activate([
-
-                textLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-                textLabel.leadingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.leadingAnchor),
-
-                fontLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-                fontLabel.leadingAnchor.constraint(equalTo: textLabel.trailingAnchor),
-                fontLabel.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
-
-            ])
-
-            switch indexPath.row {
-            case 0:
-                textLabel.text = "Title"
-            case 1:
-                textLabel.text = "Body"
-            default:
-                break
-            }
-
-            cell.accessoryType = .disclosureIndicator
-
-            return cell
-
         case StatusSection:
             let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
             cell.textLabel?.text = LocalizedString("settings_last_background_update_label")
@@ -408,28 +360,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             } else {
                 return
             }
-        case FontsSection:
-            switch indexPath.row {
-            case 0:
-                let viewController = FontPickerViewController("Title Font", font: Binding {
-                    Config().titleFont
-                } set: { font in
-                    Config().titleFont = font
-                })
-                navigationController?.pushViewController(viewController, animated: true)
-            case 1:
-                let viewController = FontPickerViewController("Body Font", font: Binding {
-                    Config().bodyFont
-                } set: { font in
-                    Config().bodyFont = font
-                })
-                navigationController?.pushViewController(viewController, animated: true)
-            default:
-                break
-            }
-            return
         case AboutSection:
-
             let aboutView = AboutView(copyright: "Copyright © 2018-2023\nJason Morley, Tom Sutcliffe") {
                 Action("InSeven Limited", url: URL(string: "https://inseven.co.uk")!)
                 Action("GitHub", url: URL(string: "https://github.com/inseven/statuspanel")!)
@@ -457,7 +388,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             let view = UIHostingController(rootView: aboutView)
             present(view, animated: true, completion: nil)
             tableView.deselectRow(at: indexPath, animated: true)
-
         default:
             break
         }

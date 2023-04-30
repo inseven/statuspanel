@@ -55,7 +55,7 @@ struct PixelRenderer: Renderer {
         var x : CGFloat = 5
         var y : CGFloat = 0
         let colWidth = twoCols ? (rect.width / 2 - x * 2) : rect.width - x
-        let bodyFont = config.getFont(named: config.bodyFont)
+        let bodyFont = Fonts.font(named: config.bodyFont)
         let itemGap = device.kind == .featherTft ? 4 : CGFloat(min(10, bodyFont.textHeight / 2)) // ie 50% of the body text line height up to a max of 10px
         var colStart = y
         var col = 0
@@ -67,7 +67,7 @@ struct PixelRenderer: Renderer {
 
             let flags = item.flags
             let font = flags.contains(.header) ? config.titleFont : config.bodyFont
-            let fontDetails = Config().getFont(named: font)
+            let fontDetails = Fonts.font(named: font)
             let w = flags.contains(.spansColumns) ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
             let view = UIView(frame: frame)

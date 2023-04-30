@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		D80380AB23E9B6D2002606C7 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80380AA23E9B6D2002606C7 /* Service.swift */; };
 		D8104E0529F3408100C394CC /* EKEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8104E0429F3408100C394CC /* EKEvent.swift */; };
-		D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D812523B2709875600C9D80A /* FontPickerViewController.swift */; };
 		D8166551272773AC005BDA9E /* ImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8166550272773AC005BDA9E /* ImageTableViewCell.swift */; };
 		D816655327277407005BDA9E /* UIActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D816655227277407005BDA9E /* UIActivityIndicatorView.swift */; };
 		D816655527277632005BDA9E /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D816655427277632005BDA9E /* FileManager.swift */; };
@@ -129,7 +128,6 @@
 /* Begin PBXFileReference section */
 		D80380AA23E9B6D2002606C7 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		D8104E0429F3408100C394CC /* EKEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEvent.swift; sourceTree = "<group>"; };
-		D812523B2709875600C9D80A /* FontPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPickerViewController.swift; sourceTree = "<group>"; };
 		D8166550272773AC005BDA9E /* ImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTableViewCell.swift; sourceTree = "<group>"; };
 		D816655227277407005BDA9E /* UIActivityIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorView.swift; sourceTree = "<group>"; };
 		D816655427277632005BDA9E /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
@@ -356,7 +354,6 @@
 			children = (
 				D8B3B3A727182BB000DD3148 /* AddDataSourceController.swift */,
 				D83B6C34271A8E4800F48FB2 /* AddViewController.swift */,
-				D812523B2709875600C9D80A /* FontPickerViewController.swift */,
 				DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */,
 				D8F57FE9271A009200847C67 /* QRCodeViewController.swift */,
 				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
@@ -672,7 +669,6 @@
 				DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */,
 				DB62F335224FB47A00CA5E64 /* Station.swift in Sources */,
 				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
-				D812523C2709875600C9D80A /* FontPickerViewController.swift in Sources */,
 				D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */,
 				D82366EC2718B2D500086538 /* DatePickerTableViewCell.swift in Sources */,
 				D8EBFCC8272099B0000E120F /* TextFieldTableViewCell.swift in Sources */,
