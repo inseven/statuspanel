@@ -71,7 +71,6 @@ struct DeviceSettingsView: View {
     }
 
     @StateObject var model = Model()
-    @State var isShowingPrivacy = false
 
     var body: some View {
         Form {
