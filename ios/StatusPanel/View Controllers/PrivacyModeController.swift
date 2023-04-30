@@ -26,21 +26,23 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
     private let kImageRowHeight: CGFloat = 200
 
     private let config: Config
+    private let model: DeviceSettingsView.Model
 
     private var firstRun = true
 
     private var privacyImage: UIImage? = nil {
         didSet {
             dispatchPrecondition(condition: .onQueue(.main))
-            guard self.config.privacyMode == .customImage else {
+            guard config.privacyMode == .customImage else {
                 return
             }
             self.tableView.reloadRows(at: [IndexPath(row: 3, section: 0)], with: .fade)
         }
     }
 
-    init(config: Config) {
-        self.config = config
+    init(model: DeviceSettingsView.Model) {
+        self.config = Config()
+        self.model = model
         super.init(style: .grouped)
         title = LocalizedString("privacy_mode_title")
         tableView.register(ImageViewTableViewCell.self, forCellReuseIdentifier: Self.imageCellReuseIdentifier)
@@ -79,14 +81,14 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
             picker.modalPresentationStyle = .popover
             present(picker, animated: true)
         } else {
-            let prevMode = config.privacyMode
+            let prevMode = model.privacyMode
             let prevIndexPath = IndexPath(row: prevMode.rawValue, section: 0)
             let newMode = Config.PrivacyMode(rawValue: indexPath.row)!
             if newMode == prevMode {
                 tableView.deselectRow(at: indexPath, animated: true)
                 return
             }
-            config.privacyMode = Config.PrivacyMode(rawValue: indexPath.row)!
+            model.privacyMode = Config.PrivacyMode(rawValue: indexPath.row)!
             tableView.performBatchUpdates {
                 tableView.deselectRow(at: indexPath, animated: true)
                 let imgCellIndexPath = IndexPath(row: 3, section: 0)
@@ -105,7 +107,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return config.privacyMode == .customImage ? 4 : 3
+        return model.privacyMode == .customImage ? 4 : 3
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -121,12 +123,12 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
             let redactMode: RedactMode = (indexPath.row == 0) ? .redactLines : .redactWords
             let cell = FontLabelTableViewCell(font: config.getFont(named: config.bodyFont), redactMode: redactMode)
             cell.label.text = "Redact text good"
-            cell.accessoryType = indexPath.row == config.privacyMode.rawValue ? .checkmark : .none
+            cell.accessoryType = indexPath.row == model.privacyMode.rawValue ? .checkmark : .none
             return cell
         } else if (indexPath.row == 2) {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = "Custom Image"
-            cell.accessoryType = indexPath.row == config.privacyMode.rawValue ? .checkmark : .none
+            cell.accessoryType = indexPath.row == model.privacyMode.rawValue ? .checkmark : .none
             return cell
         } else if (indexPath.row == 3) {
             let cell = tableView.dequeueReusableCell(withIdentifier: Self.imageCellReuseIdentifier,

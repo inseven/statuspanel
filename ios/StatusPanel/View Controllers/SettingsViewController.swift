@@ -35,14 +35,12 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     static let datePickerCellReuseIdentifier = "DatePickerCell"
 
     let DataSourcesSection = 0
-    let ScheduleOrAddSourceSection = 1
-    let DisplaySettingsSection = 2
+    let DeviceSettingsOrAddSourceSection = 1
+    let ScheduleSection = 2
     let FontsSection = 3
     let DevicesSection = 4
     let StatusSection = 5
     let AboutSection = 6
-
-    let DisplaySettingsRowCount = 5
 
     weak var delegate: SettingsViewControllerDelegate?
 
@@ -131,10 +129,10 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         switch section {
         case DataSourcesSection:
             return dataSourceController.instances.count
-        case ScheduleOrAddSourceSection:
+        case DeviceSettingsOrAddSourceSection:
             return 1
-        case DisplaySettingsSection:
-            return DisplaySettingsRowCount
+        case ScheduleSection:
+            return 1
         case FontsSection:
             return 2
         case DevicesSection:
@@ -156,14 +154,10 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case DataSourcesSection: return "Layout"
-        case ScheduleOrAddSourceSection:
-            if isEditing {
-                return nil
-            } else {
-                return "Schedule"
-            }
-        case DisplaySettingsSection:
-            return "Display"
+        case DeviceSettingsOrAddSourceSection:
+            return nil
+        case ScheduleSection:
+            return "Schedule"
         case FontsSection:
             return "Fonts"
         case DevicesSection:
@@ -176,7 +170,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let config = Config()
         switch indexPath.section {
         case DataSourcesSection:
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DataSourceCell")
@@ -193,23 +186,28 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             cell.accessoryType = source.dataSource.configurable ? .disclosureIndicator : .none
             cell.showsReorderControl = true
             return cell
-        case ScheduleOrAddSourceSection:
+        case DeviceSettingsOrAddSourceSection:
             if isEditing {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Add Data Source..."
                 return cell
             } else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: Self.datePickerCellReuseIdentifier,
-                                                         for: indexPath) as! DatePickerTableViewCell
-                cell.label.text = "Device Update Time"
-                cell.datePicker.datePickerMode = .time
-                cell.datePicker.timeZone = TimeZone(secondsFromGMT: 0)
-                cell.datePicker.date = Date.init(timeIntervalSinceReferenceDate: Config().updateTime)
-                cell.datePicker.addTarget(self,
-                                          action: #selector(updateTimeChanged(sender:forEvent:)),
-                                          for: .valueChanged)
+                let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+                cell.textLabel?.text = "Device Settings"
+                cell.accessoryType = .disclosureIndicator
                 return cell
             }
+        case ScheduleSection:
+            let cell = tableView.dequeueReusableCell(withIdentifier: Self.datePickerCellReuseIdentifier,
+                                                     for: indexPath) as! DatePickerTableViewCell
+            cell.label.text = "Device Update Time"
+            cell.datePicker.datePickerMode = .time
+            cell.datePicker.timeZone = TimeZone(secondsFromGMT: 0)
+            cell.datePicker.date = Date.init(timeIntervalSinceReferenceDate: Config().updateTime)
+            cell.datePicker.addTarget(self,
+                                      action: #selector(updateTimeChanged(sender:forEvent:)),
+                                      for: .valueChanged)
+            return cell
         case DevicesSection:
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DeviceCell")
             if devices.count == 0 && indexPath.row == 0 {
@@ -223,46 +221,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.textLabel?.text = "\(device.kind.description)"
                 cell.detailTextLabel?.text = device.id
                 cell.textLabel?.textColor = .label
-            }
-            return cell
-        case DisplaySettingsSection:
-            let row = indexPath.row
-            let cell = UITableViewCell(style: row == 2 || row == 3  || row == 4 ? .value1 : .default, reuseIdentifier: nil)
-            switch row {
-            case 0:
-                cell.textLabel?.text = "Use Two Columns"
-                let control = UISwitch()
-                control.isOn = config.displayTwoColumns
-                control.addTarget(self, action:#selector(columSwitchChanged(sender:)), for: .valueChanged)
-                cell.accessoryView = control
-            case 1:
-                cell.textLabel?.text = "Show Icons"
-                let control = UISwitch()
-                control.isOn = config.showIcons
-                control.addTarget(self, action:#selector(showIconsChanged(sender:)), for: .valueChanged)
-                cell.accessoryView = control
-            case 2:
-                cell.textLabel?.text = "Dark Mode"
-                cell.detailTextLabel?.text = Localized(config.darkMode)
-                cell.accessoryType = .disclosureIndicator
-            case 3:
-                cell.textLabel?.text = "Maximum Lines per Item"
-                let val = config.maxLines
-                cell.detailTextLabel?.text = val == 0 ? "Unlimited" : String(format: "%d", val)
-                cell.accessoryType = .disclosureIndicator
-            case 4:
-                cell.textLabel?.text = "Privacy Mode"
-                switch config.privacyMode {
-                case .redactLines:
-                    cell.detailTextLabel?.text = "Redact Lines"
-                case .redactWords:
-                    cell.detailTextLabel?.text = "Redact Words"
-                case .customImage:
-                    cell.detailTextLabel?.text = "Custom Image"
-                }
-                cell.accessoryType = .disclosureIndicator
-            default:
-                break
             }
             return cell
         case FontsSection:
@@ -348,10 +306,10 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 return true // The debug add button
             }
             return false
-        } else if indexPath.section == ScheduleOrAddSourceSection {
-            return isEditing
-        } else if indexPath.section == DisplaySettingsSection {
-            return indexPath.row > 1
+        } else if indexPath.section == DeviceSettingsOrAddSourceSection {
+            return true
+        } else if indexPath.section == ScheduleSection {
+            return false
         } else if indexPath.section == DataSourcesSection {
             return dataSourceController.instances[indexPath.row].dataSource.configurable
         } else if indexPath.section == StatusSection {
@@ -448,14 +406,19 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 self.present(error: error)
             }
             return
-        case ScheduleOrAddSourceSection:
+        case DeviceSettingsOrAddSourceSection:
             if isEditing {
                 addDataSource()
                 tableView.deselectRow(at: indexPath, animated: true)
                 return
             } else {
+                let controller = UIHostingController(rootView: DeviceSettingsView())
+                navigationController?.pushViewController(controller, animated: true)
+                tableView.deselectRow(at: indexPath, animated: true)
                 return
             }
+        case ScheduleSection:
+            return
         case DevicesSection:
             let prevCount = devices.count
             if indexPath.row == (prevCount == 0 ? 1 : prevCount) {
@@ -476,20 +439,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 }
                 return
             } else {
-                return
-            }
-        case DisplaySettingsSection:
-            if indexPath.row == 2 {
-                let viewController = DarkModeController(config: Config())
-                navigationController?.pushViewController(viewController, animated: true)
-                return
-            } else if indexPath.row == 3 {
-                let viewController = MaxLinesController(config: Config())
-                navigationController?.pushViewController(viewController, animated: true)
-                return
-            } else if indexPath.row == 4 {
-                let viewController = PrivacyModeController(config: Config())
-                navigationController?.pushViewController(viewController, animated: true)
                 return
             }
         case FontsSection:

@@ -35,7 +35,7 @@ func LocalizedOffset(_ offset: Int) -> String {
     }
 }
 
-func Localized(_ darkModeConfig: Config.DarkModeConfig) -> String {
+func Localized(_ darkModeConfig: Config.DarkMode) -> String {
     switch darkModeConfig {
     case .off:
         return LocalizedString("dark_mode_config_off")
@@ -43,6 +43,17 @@ func Localized(_ darkModeConfig: Config.DarkModeConfig) -> String {
         return LocalizedString("dark_mode_config_on")
     case .system:
         return LocalizedString("dark_mode_config_system")
+    }
+}
+
+func Localized(_ privacyMode: Config.PrivacyMode) -> String {
+    switch privacyMode {
+    case .redactLines:
+        return LocalizedString("privacy_mode_redact_lines")
+    case .redactWords:
+        return LocalizedString("privacy_mode_redact_words")
+    case .customImage:
+        return LocalizedString("privacy_mode_custom_image")
     }
 }
 

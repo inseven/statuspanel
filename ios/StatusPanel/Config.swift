@@ -417,15 +417,15 @@ class Config {
         return availableFonts[0]
     }
 
-    enum DarkModeConfig: Int, CaseIterable {
+    enum DarkMode: Int, CaseIterable {
         case off = 0
         case on = 1
         case system = 2
     }
 
-    var darkMode: DarkModeConfig {
+    var darkMode: DarkMode {
         get {
-            DarkModeConfig.init(rawValue: self.integer(for: .darkMode))!
+            DarkMode.init(rawValue: self.integer(for: .darkMode))!
         }
         set {
             self.set(newValue.rawValue, for: .darkMode)

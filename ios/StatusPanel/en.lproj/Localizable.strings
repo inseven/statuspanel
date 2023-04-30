@@ -34,14 +34,15 @@
 "settings_no_devices_label" = "No Devices";
 "settings_add_dummy_device_label" = "Add Demo Device...";
 
-"maximum_lines_title" = "Maximum Lines";
 "maximum_lines_unlimited_label" = "Unlimited";
-
-"dark_mode_title" = "Dark Mode";
 
 "dark_mode_config_off" = "Off";
 "dark_mode_config_on" = "On";
 "dark_mode_config_system" = "Use System";
+
+"privacy_mode_redact_lines" = "Redact Lines";
+"privacy_mode_redact_words" = "Redact Words";
+"privacy_mode_custom_image" = "Custom Image";
 
 "calendar_calendars_label" = "Calendars";
 "calendar_day_label" = "Day";
