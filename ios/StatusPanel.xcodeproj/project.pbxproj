@@ -71,14 +71,14 @@
 		D8EBFCC8272099B0000E120F /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */; };
 		D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EBFCC92720A6F8000E120F /* Network.swift */; };
 		D8ED8AC829FDC484007FDE06 /* EKEventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */; };
+		D8ED8ACA29FDCBC5007FDE06 /* DeviceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8AC929FDCBC5007FDE06 /* DeviceSettingsView.swift */; };
+		D8ED8ACC29FDF2B7007FDE06 /* PrivacyModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */; };
 		D8EED7F12630EF19009E2166 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = D8EED7F02630EF19009E2166 /* Sodium */; };
 		D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F57FE9271A009200847C67 /* QRCodeViewController.swift */; };
 		D8FB0D7829D56C04000E66E6 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FB0D7729D56C04000E66E6 /* Renderer.swift */; };
 		D8FB0D7B29D58216000E66E6 /* LastUpdateDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FB0D7A29D58216000E66E6 /* LastUpdateDataSource.swift */; };
 		DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB17F92E249E3BAD008CD83E /* CGExtensions.swift */; };
-		DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */; };
 		DB1EB9062427E1F900050A08 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = DB1EB9052427E1F900050A08 /* fonts */; };
-		DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3E769E2416CD9E000D059A /* DarkModeController.swift */; };
 		DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB51C2E221749A2A00F016DB /* JSONRequest.swift */; };
 		DB5E9DA1241562ED009F3807 /* StringUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5E9DA0241562ED009F3807 /* StringUtils.swift */; };
 		DB62F333224F89C200CA5E64 /* StationPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB62F332224F89C200CA5E64 /* StationPickerController.swift */; };
@@ -196,14 +196,14 @@
 		D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		D8EBFCC92720A6F8000E120F /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEventStore.swift; sourceTree = "<group>"; };
+		D8ED8AC929FDCBC5007FDE06 /* DeviceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingsView.swift; sourceTree = "<group>"; };
+		D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyModeView.swift; sourceTree = "<group>"; };
 		D8EED7EF2630EEFF009E2166 /* swift-sodium */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "swift-sodium"; sourceTree = "<group>"; };
 		D8F57FE9271A009200847C67 /* QRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeViewController.swift; sourceTree = "<group>"; };
 		D8FB0D7729D56C04000E66E6 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		D8FB0D7A29D58216000E66E6 /* LastUpdateDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastUpdateDataSource.swift; sourceTree = "<group>"; };
 		DB17F92E249E3BAD008CD83E /* CGExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
-		DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxLinesController.swift; sourceTree = "<group>"; };
 		DB1EB9052427E1F900050A08 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = StatusPanel/fonts; sourceTree = "<group>"; };
-		DB3E769E2416CD9E000D059A /* DarkModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkModeController.swift; sourceTree = "<group>"; };
 		DB51C2E221749A2A00F016DB /* JSONRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRequest.swift; sourceTree = "<group>"; };
 		DB5E9DA0241562ED009F3807 /* StringUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringUtils.swift; sourceTree = "<group>"; };
 		DB62F332224F89C200CA5E64 /* StationPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationPickerController.swift; sourceTree = "<group>"; };
@@ -263,7 +263,9 @@
 				D848A199270D16AD00681F62 /* AddDataSourceView.swift */,
 				D8C20D24271C7A2000F3F22A /* CalendarSettingsView.swift */,
 				D8383EBB270FB8E20007EBB7 /* DayPicker.swift */,
+				D8ED8AC929FDCBC5007FDE06 /* DeviceSettingsView.swift */,
 				D848A19D270D213800681F62 /* FlagsSection.swift */,
+				D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -354,9 +356,7 @@
 			children = (
 				D8B3B3A727182BB000DD3148 /* AddDataSourceController.swift */,
 				D83B6C34271A8E4800F48FB2 /* AddViewController.swift */,
-				DB3E769E2416CD9E000D059A /* DarkModeController.swift */,
 				D812523B2709875600C9D80A /* FontPickerViewController.swift */,
-				DB1EB8F224278CDC00050A08 /* MaxLinesController.swift */,
 				DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */,
 				D8F57FE9271A009200847C67 /* QRCodeViewController.swift */,
 				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
@@ -698,7 +698,6 @@
 				D81DA7C3271297460052D32C /* ZenQuotesDataSource.swift in Sources */,
 				D8CC37B12717887A00938C5D /* Panel.swift in Sources */,
 				D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */,
-				DB3E769F2416CD9E000D059A /* DarkModeController.swift in Sources */,
 				D8DCA7DA29CBEB43002010A5 /* PixelRenderer.swift in Sources */,
 				D8D29BCA2723E2F400125927 /* UIImage.swift in Sources */,
 				D8DAED7426E3F3930002F388 /* StatusPanelError.swift in Sources */,
@@ -712,6 +711,7 @@
 				D8C20D23271C6C1500F3F22A /* EKCalendar.swift in Sources */,
 				D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */,
 				D83B6C35271A8E4800F48FB2 /* AddViewController.swift in Sources */,
+				D8ED8ACC29FDF2B7007FDE06 /* PrivacyModeView.swift in Sources */,
 				D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */,
 				D8383EBE270FBA1B0007EBB7 /* DataSourceSettingsStore.swift in Sources */,
 				D8B9874B270FF88D00EC2BA4 /* Alert.swift in Sources */,
@@ -728,7 +728,6 @@
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */,
 				D8104E0529F3408100C394CC /* EKEvent.swift in Sources */,
-				DB1EB8F324278CDC00050A08 /* MaxLinesController.swift in Sources */,
 				D83CC5202707532400260DC1 /* AnyDataSource.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarDataSource.swift in Sources */,
 				DB5E9DA1241562ED009F3807 /* StringUtils.swift in Sources */,
@@ -741,6 +740,7 @@
 				D81DA7C02712953D0052D32C /* Localization.swift in Sources */,
 				D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */,
 				D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */,
+				D8ED8ACA29FDCBC5007FDE06 /* DeviceSettingsView.swift in Sources */,
 				D8ED8AC829FDC484007FDE06 /* EKEventStore.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
 				D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */,
