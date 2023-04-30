@@ -51,7 +51,7 @@ jobs:
         device/nodemcu/build.sh
 
     - name: Archive the firmware
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: device/nodemcu/build/firmware-esp32.zip
         if-no-files-found: error
