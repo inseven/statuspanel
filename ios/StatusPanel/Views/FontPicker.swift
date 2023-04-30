@@ -26,6 +26,7 @@ struct FontPicker: View {
 
         @Environment(\.dismiss) var dismiss
 
+        let title: String
         @Binding var selection: String
 
         var body: some View {
@@ -47,6 +48,7 @@ struct FontPicker: View {
                     }
                 }
             }
+            .navigationTitle(title)
         }
 
     }
@@ -62,7 +64,7 @@ struct FontPicker: View {
 
     var body: some View {
         NavigationLink {
-            FontList(selection: $selection)
+            FontList(title: title, selection: $selection)
         } label: {
             LabeledContent(title) {
                 FontView(font: selection, text: Fonts.font(named: selection).humanReadableName, color: .secondary)
