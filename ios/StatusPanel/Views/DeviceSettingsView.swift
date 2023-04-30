@@ -20,51 +20,6 @@
 
 import SwiftUI
 
-struct FontView: UIViewRepresentable {
-
-    let font: String
-    let text: String
-
-    func makeUIView(context: Context) -> UILabel {
-        let label = UILabel.getLabel(frame: .zero, font: font, style: .text)
-        label.text = text
-        return label
-    }
-
-    func updateUIView(_ uiView: UILabel, context: Context) {
-        uiView.text = text
-    }
-
-    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UILabel, context: Context) -> CGSize? {
-        uiView.sizeThatFits(.zero)
-    }
-
-}
-
-struct FontPicker: View {
-
-    let title: String
-
-    @Binding var selection: String
-
-    init(_ title: String, selection: Binding<String>) {
-        self.title = title
-        _selection = selection
-    }
-
-    var body: some View {
-        Picker(title, selection: $selection) {
-            ForEach(Fonts.availableFonts) { font in
-                FontView(font: font.configName, text: font.humanReadableName)
-                    .tag(font.configName)
-            }
-        }
-        .pickerStyle(.navigationLink)
-    }
-
-}
-
-
 struct DeviceSettingsView: View {
 
     // N.B. This model currently uses the global `Config` object. It's doing this to allow the new device UI to be built
