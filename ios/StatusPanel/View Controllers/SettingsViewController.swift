@@ -36,11 +36,10 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     let DataSourcesSection = 0
     let DeviceSettingsOrAddSourceSection = 1
-    let ScheduleSection = 2
-    let FontsSection = 3
-    let DevicesSection = 4
-    let StatusSection = 5
-    let AboutSection = 6
+    let FontsSection = 2
+    let DevicesSection = 3
+    let StatusSection = 4
+    let AboutSection = 5
 
     weak var delegate: SettingsViewControllerDelegate?
 
@@ -131,8 +130,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return dataSourceController.instances.count
         case DeviceSettingsOrAddSourceSection:
             return 1
-        case ScheduleSection:
-            return 1
         case FontsSection:
             return 2
         case DevicesSection:
@@ -156,8 +153,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DataSourcesSection: return "Layout"
         case DeviceSettingsOrAddSourceSection:
             return nil
-        case ScheduleSection:
-            return "Schedule"
         case FontsSection:
             return "Fonts"
         case DevicesSection:
@@ -197,17 +192,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.accessoryType = .disclosureIndicator
                 return cell
             }
-        case ScheduleSection:
-            let cell = tableView.dequeueReusableCell(withIdentifier: Self.datePickerCellReuseIdentifier,
-                                                     for: indexPath) as! DatePickerTableViewCell
-            cell.label.text = "Device Update Time"
-            cell.datePicker.datePickerMode = .time
-            cell.datePicker.timeZone = TimeZone(secondsFromGMT: 0)
-            cell.datePicker.date = Date.init(timeIntervalSinceReferenceDate: Config().updateTime)
-            cell.datePicker.addTarget(self,
-                                      action: #selector(updateTimeChanged(sender:forEvent:)),
-                                      for: .valueChanged)
-            return cell
         case DevicesSection:
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DeviceCell")
             if devices.count == 0 && indexPath.row == 0 {
@@ -287,19 +271,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         }
     }
 
-    @objc func columSwitchChanged(sender: UISwitch) {
-        Config().displayTwoColumns = sender.isOn
-    }
-
-    @objc func showIconsChanged(sender: UISwitch) {
-        Config().showIcons = sender.isOn
-    }
-
-    @objc func updateTimeChanged(sender: UIDatePicker, forEvent event: UIEvent) {
-        let newTime = sender.date.timeIntervalSinceReferenceDate
-        Config().updateTime = newTime
-    }
-
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == DevicesSection {
             if indexPath.row == (devices.count == 0 ? 1 : devices.count) {
@@ -308,8 +279,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             return false
         } else if indexPath.section == DeviceSettingsOrAddSourceSection {
             return true
-        } else if indexPath.section == ScheduleSection {
-            return false
         } else if indexPath.section == DataSourcesSection {
             return dataSourceController.instances[indexPath.row].dataSource.configurable
         } else if indexPath.section == StatusSection {
@@ -417,8 +386,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 tableView.deselectRow(at: indexPath, animated: true)
                 return
             }
-        case ScheduleSection:
-            return
         case DevicesSection:
             let prevCount = devices.count
             if indexPath.row == (prevCount == 0 ? 1 : prevCount) {

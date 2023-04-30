@@ -60,12 +60,19 @@ struct DeviceSettingsView: View {
             }
         }
 
+        @Published var updateTime: Date {
+            didSet {
+                config.updateTime = updateTime.timeIntervalSinceReferenceDate
+            }
+        }
+
         init() {
             displayTwoColumns = config.displayTwoColumns
             showIcons = config.showIcons
             darkMode = config.darkMode
             maxLines = config.maxLines
             privacyMode = config.privacyMode
+            updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
         }
 
     }
@@ -74,6 +81,10 @@ struct DeviceSettingsView: View {
 
     var body: some View {
         Form {
+            Section("Schedule") {
+                DatePicker("Device Update Time", selection: $model.updateTime, displayedComponents: .hourAndMinute)
+                    .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+            }
             Section("Display") {
                 Toggle("Use Two Columns", isOn: $model.displayTwoColumns)
                 Toggle("Show Icons", isOn: $model.showIcons)
