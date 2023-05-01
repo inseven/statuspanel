@@ -330,10 +330,9 @@ class Config {
     }
 
     // Old way of storing a single device and key
-    static private func getDeviceAndKey() -> Device? {
-        let ud = UserDefaults.standard
-        guard let deviceid = ud.string(forKey: "deviceid"),
-              let publickey = ud.string(forKey: "publickey")
+    @MainActor private func getDeviceAndKey() -> Device? {
+        guard let deviceid = userDefaults.string(forKey: "deviceid"),
+              let publickey = userDefaults.string(forKey: "publickey")
         else {
             return nil
         }
@@ -342,15 +341,14 @@ class Config {
 
     @MainActor var devices: [Device] {
         get {
-            let ud = UserDefaults.standard
-            if let oldStyle = Config.getDeviceAndKey() {
+            if let oldStyle = getDeviceAndKey() {
                 // Migrate
                 let devices = [oldStyle]
-                ud.removeObject(forKey: "deviceid")
-                ud.removeObject(forKey: "publickey")
+                userDefaults.removeObject(forKey: "deviceid")
+                userDefaults.removeObject(forKey: "publickey")
                 self.devices = devices
             }
-            guard let deviceObjs = ud.array(forKey: "devices") as? [Dictionary<String, String>] else {
+            guard let deviceObjs = userDefaults.array(forKey: "devices") as? [Dictionary<String, String>] else {
                 return []
             }
             var result: [Device] = []
