@@ -24,13 +24,13 @@ import UIKit
 
 class Config: ObservableObject {
 
-    enum DarkMode: Int, CaseIterable {
+    enum DarkMode: Int, CaseIterable, Codable {
         case off = 0
         case on = 1
         case system = 2
     }
 
-    enum PrivacyMode: Int, CaseIterable {
+    enum PrivacyMode: Int, CaseIterable, Codable {
         case redactLines = 0
         case redactWords = 1
         case customImage = 2
@@ -55,8 +55,10 @@ class Config: ObservableObject {
         case showIcons
         case dataSources
         case settings(UUID)
+        case deviceSettings(String)
 
         static let settingsPrefix = "Settings-"
+        static let deviceSettingsPrefix = "DeviceSettings-"
 
         init?(rawValue: String) {
             switch rawValue {
@@ -97,6 +99,9 @@ class Config: ObservableObject {
                     return nil
                 }
                 self = .settings(uuid)
+            case _ where rawValue.starts(with: Self.deviceSettingsPrefix):
+                let deviceId = String(rawValue.dropFirst(Self.settingsPrefix.count))
+                self = .deviceSettings(deviceId)
             default:
                 return nil
             }
@@ -138,6 +143,8 @@ class Config: ObservableObject {
                 return "dataSources"
             case .settings(let uuid):
                 return "Settings-\(uuid.uuidString)"
+            case .deviceSettings(let deviceId):
+                return "Settings-\(deviceId)"
             }
         }
     }
@@ -284,16 +291,6 @@ class Config: ObservableObject {
         }
     }
 
-    var showIcons: Bool {
-        get {
-            self.bool(for: .showIcons, default: true)
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .showIcons)
-        }
-    }
-
     var trainRoutes: [TrainRoute] {
         get {
             guard let val = self.array(for: .trainRoutes) as? [Dictionary<String,String>] else {
@@ -390,58 +387,7 @@ class Config: ObservableObject {
         }
     }
 
-    var displayTwoColumns: Bool {
-        get {
-            !self.bool(for: .displaySingleColumn)
-        }
-        set {
-            objectWillChange.send()
-            self.set(!newValue, for: .displaySingleColumn)
-        }
-    }
-
-    var titleFont: String {
-        get {
-            self.string(for: .titleFont) ?? Fonts.FontName.chiKareGo2
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .titleFont)
-        }
-    }
-
-    var bodyFont: String {
-        get {
-            self.string(for: .bodyFont) ?? Fonts.FontName.unifont16
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .bodyFont)
-        }
-    }
-
     typealias Font = Fonts.Font
-
-    var darkMode: DarkMode {
-        get {
-            DarkMode.init(rawValue: self.integer(for: .darkMode))!
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue.rawValue, for: .darkMode)
-        }
-    }
-
-    var displaysInDarkMode: Bool {
-        switch darkMode {
-        case .off:
-            return false
-        case .on:
-            return true
-        case .system:
-            return UITraitCollection.current.userInterfaceStyle == UIUserInterfaceStyle.dark
-        }
-    }
 
     var showDummyData: Bool {
         get {
@@ -470,27 +416,6 @@ class Config: ObservableObject {
         set {
             objectWillChange.send()
             self.set(newValue, for: .showUrlsInCalendarLocations)
-        }
-    }
-
-    // 0 means unlimited
-    var maxLines: Int {
-        get {
-            self.integer(for: .maxLines)
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .maxLines)
-        }
-    }
-
-    var privacyMode: PrivacyMode {
-        get {
-            PrivacyMode.init(rawValue: self.integer(for: .privacyMode))!
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue.rawValue, for: .privacyMode)
         }
     }
 
@@ -574,6 +499,28 @@ class Config: ObservableObject {
         let data = try JSONEncoder().encode(settings)
         objectWillChange.send()
         set(data, for: .settings(instanceId))
+    }
+
+    @MainActor func settings(forDevice deviceId: String) throws -> DeviceSettings {
+        guard let data = object(for: .deviceSettings(deviceId)) as? Data else {
+            var settings = DeviceSettings()
+            settings.displayTwoColumns = !bool(for: .displaySingleColumn)
+            settings.showIcons = bool(for: .showIcons, default: true)
+            settings.darkMode = DarkMode.init(rawValue: integer(for: .darkMode))!
+            settings.maxLines = integer(for: .maxLines)
+            settings.privacyMode = PrivacyMode.init(rawValue: integer(for: .privacyMode))!
+            settings.updateTime = Date(timeIntervalSinceReferenceDate: updateTime)
+            settings.titleFont = string(for: .titleFont) ?? Fonts.FontName.chiKareGo2
+            settings.bodyFont = string(for: .bodyFont) ?? Fonts.FontName.unifont16
+            return settings
+        }
+        return try JSONDecoder().decode(DeviceSettings.self, from: data as Data)
+    }
+
+    @MainActor func save(settings: DeviceSettings, deviceId: String) throws {
+        let data = try JSONEncoder().encode(settings)
+        objectWillChange.send()
+        set(data, for: .deviceSettings(deviceId))
     }
 
 }

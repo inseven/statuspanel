@@ -28,16 +28,17 @@ struct PixelRenderer: Renderer {
         case horizontal(originY: CGFloat)
     }
 
-    func render(data: [DataItemBase], config: Config, device: Device) -> [UIImage] {
+    func render(data: [DataItemBase], config: Config, device: Device, settings: DeviceSettings) -> [UIImage] {
         dispatchPrecondition(condition: .onQueue(.main))
-        let image = Self.renderImage(data: data, config: config, device: device)
-        let privacyImage = Self.renderPrivacyImage(data: data, config: config, device: device)
+        let image = Self.renderImage(data: data, config: config, device: device, settings: settings)
+        let privacyImage = Self.renderPrivacyImage(data: data, config: config, device: device, settings: settings)
         return [image, privacyImage]
     }
 
     private static func renderImage(data: [DataItemBase],
                                     config: Config,
                                     device: Device,
+                                    settings: DeviceSettings,
                                     redact: Bool = false) -> UIImage {
         dispatchPrecondition(condition: .onQueue(.main))
 
@@ -45,28 +46,28 @@ struct PixelRenderer: Renderer {
         contentView.contentScaleFactor = 1.0
 
         // Construct the contentView's contents. For now just make labels and flow them into 2 columns
-        contentView.backgroundColor = config.displaysInDarkMode ? UIColor.black : UIColor.white
-        let foregroundColor = config.displaysInDarkMode ? UIColor.white : UIColor.black
-        let twoCols = device.supportsTwoColumns ? false : config.displayTwoColumns
-        let showIcons = config.showIcons
+        contentView.backgroundColor = settings.displaysInDarkMode ? UIColor.black : UIColor.white
+        let foregroundColor = settings.displaysInDarkMode ? UIColor.white : UIColor.black
+        let twoCols = device.supportsTwoColumns ? false : settings.displayTwoColumns
+        let showIcons = settings.showIcons
         let rect = contentView.frame
         let maxy = rect.height - 10 // Leave space for status line
         let midx = rect.width / 2
         var x : CGFloat = 5
         var y : CGFloat = 0
         let colWidth = twoCols ? (rect.width / 2 - x * 2) : rect.width - x
-        let bodyFont = Fonts.font(named: config.bodyFont)
+        let bodyFont = Fonts.font(named: settings.bodyFont)
         let itemGap = device.kind == .featherTft ? 4 : CGFloat(min(10, bodyFont.textHeight / 2)) // ie 50% of the body text line height up to a max of 10px
         var colStart = y
         var col = 0
         var columnItemCount = 0 // Number of items assigned to the current column
         var divider: DividerStyle? = twoCols ? .vertical(originY: 0) : nil
-        let redactMode: RedactMode = (redact ? (config.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
+        let redactMode: RedactMode = (redact ? (settings.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
 
         for item in data {
 
             let flags = item.flags
-            let font = flags.contains(.header) ? config.titleFont : config.bodyFont
+            let font = flags.contains(.header) ? settings.titleFont : settings.bodyFont
             let fontDetails = Fonts.font(named: font)
             let w = flags.contains(.spansColumns) ? rect.width : colWidth
             let frame = CGRect(x: x, y: y, width: w, height: 0)
@@ -113,7 +114,7 @@ struct PixelRenderer: Renderer {
                 label.backgroundColor = UIColor.yellow
                 label.textColor = UIColor.black
             }
-            label.numberOfLines = config.maxLines
+            label.numberOfLines = settings.maxLines
             label.lineBreakMode = .byTruncatingTail
             label.text = text
             label.sizeToFit()
@@ -130,7 +131,7 @@ struct PixelRenderer: Renderer {
                                                 style: .subText,
                                                 redactMode: redactMode)
                 subLabel.textColor = foregroundColor
-                subLabel.numberOfLines = config.maxLines
+                subLabel.numberOfLines = settings.maxLines
                 subLabel.text = subText
                 subLabel.sizeToFit()
                 subLabel.frame = CGRect(x: textFrame.minX, y: view.bounds.maxY + 1, width: textFrame.width, height: subLabel.frame.height)
@@ -197,10 +198,13 @@ struct PixelRenderer: Renderer {
         return result
     }
 
-    private static func renderPrivacyImage(data: [DataItemBase], config: Config, device: Device) -> UIImage {
-        switch config.privacyMode {
+    private static func renderPrivacyImage(data: [DataItemBase],
+                                           config: Config,
+                                           device: Device,
+                                           settings: DeviceSettings) -> UIImage {
+        switch settings.privacyMode {
         case .redactLines, .redactWords:
-            return renderImage(data: data, config: config, device: device, redact: true)
+            return renderImage(data: data, config: config, device: device, settings: settings, redact: true)
         case .customImage:
 
             guard let privacyImage = try? config.privacyImage() else {

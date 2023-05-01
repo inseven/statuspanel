@@ -20,6 +20,21 @@
 
 import UIKit
 
+// https://www.swiftbysundell.com/articles/async-and-concurrent-forEach-and-map/
+extension Sequence {
+    func asyncMap<T>(
+        _ transform: (Element) async throws -> T
+    ) async rethrows -> [T] {
+        var values = [T]()
+
+        for element in self {
+            try await values.append(transform(element))
+        }
+
+        return values
+    }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -169,9 +184,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Task {
             do {
                 let items = try await AppDelegate.shared.dataSourceController.fetch()
-                let updates = config.devices
-                    .map { device in
-                        let images = device.renderer.render(data: items, config: config, device: device)
+                let updates = try await config.devices
+                    .asyncMap { device in
+                        // TODO: This should be on the main thread?
+                        let settings = try config.settings(forDevice: device.id)
+                        let images = device.renderer.render(data: items, config: config, device: device, settings: settings)
                         let payloads = Panel.encode(images: images, encoding: device.encoding)
                         return Service.Update(device: device, images: payloads)
                     }

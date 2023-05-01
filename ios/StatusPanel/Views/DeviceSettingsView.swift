@@ -20,74 +20,101 @@
 
 import SwiftUI
 
+struct DeviceSettings: Codable {
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case displayTwoColumns
+        case showIcons
+        case darkMode
+        case maxLines
+        case privacyMode
+        case updateTime
+        case titleFont
+        case bodyFont
+    }
+
+    var name: String = ""
+    var displayTwoColumns: Bool = true
+    var showIcons: Bool = true
+    var darkMode: Config.DarkMode = .off
+    var maxLines: Int = 0
+    var privacyMode: Config.PrivacyMode = .redactLines
+    var updateTime: Date = Date(timeIntervalSinceReferenceDate: (6 * 60 + 20) * 60)
+    var titleFont: String = Fonts.FontName.chiKareGo2
+    var bodyFont: String =  Fonts.FontName.unifont16
+
+    init() {
+
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        displayTwoColumns = try container.decode(Bool.self, forKey: .displayTwoColumns)
+        showIcons = try container.decode(Bool.self, forKey: .showIcons)
+        darkMode = try container.decode(Config.DarkMode.self, forKey: .darkMode)
+        maxLines = try container.decode(Int.self, forKey: .maxLines)
+        privacyMode = try container.decode(Config.PrivacyMode.self, forKey: .privacyMode)
+        updateTime = Date(timeIntervalSinceReferenceDate: try container.decode(TimeInterval.self, forKey: .updateTime))
+        titleFont = try container.decode(String.self, forKey: .titleFont)
+        bodyFont = try container.decode(String.self, forKey: .bodyFont)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(displayTwoColumns, forKey: .displayTwoColumns)
+        try container.encode(showIcons, forKey: .showIcons)
+        try container.encode(darkMode, forKey: .darkMode)
+        try container.encode(maxLines, forKey: .maxLines)
+        try container.encode(privacyMode, forKey: .privacyMode)
+        try container.encode(updateTime.timeIntervalSinceReferenceDate, forKey: .updateTime)
+        try container.encode(titleFont, forKey: .titleFont)
+        try container.encode(bodyFont, forKey: .bodyFont)
+    }
+
+    var displaysInDarkMode: Bool {
+        switch darkMode {
+        case .off:
+            return false
+        case .on:
+            return true
+        case .system:
+            return UITraitCollection.current.userInterfaceStyle == UIUserInterfaceStyle.dark
+        }
+    }
+
+}
+
 struct DeviceSettingsView: View {
 
-    // N.B. This model currently uses the global `Config` object. It's doing this to allow the new device UI to be built
-    // out in advance of introducing per-device settings and associated data migrations. It's likely this model will be
-    // serve as the starting-point for the device configuration.
     class Model: ObservableObject {
 
-        let config: Config
+        private let config: Config
+        private let device: Device
 
-        @Published var displayTwoColumns: Bool {
+        @MainActor @Published var settings: DeviceSettings {
             didSet {
-                config.displayTwoColumns = displayTwoColumns
+                do {
+                    try config.save(settings: settings, deviceId: device.id)
+                } catch {
+                    self.error = error
+                }
             }
         }
 
-        @Published var showIcons: Bool {
-            didSet {
-                config.showIcons = showIcons
-            }
+        @Published var error: Error?
 
-        }
-
-        @Published var darkMode: Config.DarkMode {
-            didSet {
-                config.darkMode = darkMode
-            }
-        }
-
-        @Published var maxLines: Int {
-            didSet {
-                config.maxLines = maxLines
-            }
-        }
-
-        @Published var privacyMode: Config.PrivacyMode {
-            didSet {
-                config.privacyMode = privacyMode
-            }
-        }
-
-        @Published var updateTime: Date {
-            didSet {
-                config.updateTime = updateTime.timeIntervalSinceReferenceDate
-            }
-        }
-
-        @Published var titleFont: String {
-            didSet {
-                config.titleFont = titleFont
-            }
-        }
-
-        @Published var bodyFont: String {
-            didSet {
-                config.bodyFont = bodyFont
-            }
-        }
-
-        init(config: Config) {
+        @MainActor init(config: Config, device: Device) {
             self.config = config
-            displayTwoColumns = config.displayTwoColumns
-            showIcons = config.showIcons
-            darkMode = config.darkMode
-            maxLines = config.maxLines
-            privacyMode = config.privacyMode
-            updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
-            titleFont = config.titleFont
-            bodyFont = config.bodyFont
+            self.device = device
+            do {
+                self.settings = try config.settings(forDevice: device.id)
+            } catch {
+                self.settings = DeviceSettings()
+                self.error = error
+            }
         }
 
     }
@@ -111,11 +138,14 @@ struct DeviceSettingsView: View {
         self.config = config
         self.dataSourceController = dataSourceController
         self.device = device
-        _model = StateObject(wrappedValue: Model(config: config))
+        _model = StateObject(wrappedValue: Model(config: config, device: device))
     }
 
     var body: some View {
         Form {
+            Section {
+                TextField(device.kind.description, text: $model.settings.name)
+            }
             Section("Layout") {
                 ForEach(dataSourceController.instances) { dataSourceInstance in
                     NavigationLink {
@@ -140,13 +170,13 @@ struct DeviceSettingsView: View {
                 }
             }
             Section("Fonts") {
-                FontPicker("Title", selection: $model.titleFont)
-                FontPicker("Body", selection: $model.bodyFont)
+                FontPicker("Title", selection: $model.settings.titleFont)
+                FontPicker("Body", selection: $model.settings.bodyFont)
             }
             Section("Display") {
-                Toggle("Use Two Columns", isOn: $model.displayTwoColumns)
-                Toggle("Show Icons", isOn: $model.showIcons)
-                Picker("Dark Mode", selection: $model.darkMode) {
+                Toggle("Use Two Columns", isOn: $model.settings.displayTwoColumns)
+                Toggle("Show Icons", isOn: $model.settings.showIcons)
+                Picker("Dark Mode", selection: $model.settings.darkMode) {
                     Text(Localized(Config.DarkMode.off))
                         .tag(Config.DarkMode.off)
                     Text(Localized(Config.DarkMode.on))
@@ -154,7 +184,7 @@ struct DeviceSettingsView: View {
                     Text(Localized(Config.DarkMode.system))
                         .tag(Config.DarkMode.system)
                 }
-                Picker("Maximum Lines Per Item", selection: $model.maxLines) {
+                Picker("Maximum Lines Per Item", selection: $model.settings.maxLines) {
                     Text("1")
                         .tag(1)
                     Text("2")
@@ -171,11 +201,11 @@ struct DeviceSettingsView: View {
                         .edgesIgnoringSafeArea(.all)
                         .navigationTitle(LocalizedString("privacy_mode_title"))
                 } label: {
-                    LabeledContent("Privacy Mode", value: Localized(model.privacyMode))
+                    LabeledContent("Privacy Mode", value: Localized(model.settings.privacyMode))
                 }
             }
             Section("Schedule") {
-                DatePicker("Device Update Time", selection: $model.updateTime, displayedComponents: .hourAndMinute)
+                DatePicker("Device Update Time", selection: $model.settings.updateTime, displayedComponents: .hourAndMinute)
                     .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
             }
             Section("Details") {

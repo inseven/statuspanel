@@ -187,8 +187,10 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 }
                 return
             }
+            // TODO: This preview will no longer honour the layout settings.
             let images = self.device.renderer.render(data: items, config: AppDelegate.shared.config,
-                                                     device: self.device)
+                                                     device: self.device,
+                                                     settings: DeviceSettings())
             self.image = images[0]
             self.redactedImage = images[1]
             self.activityIndicator.stopAnimating()

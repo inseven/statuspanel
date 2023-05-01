@@ -23,5 +23,5 @@ import UIKit
 
 protocol Renderer {
 
-    func render(data: [DataItemBase], config: Config, device: Device) -> [UIImage]
+    func render(data: [DataItemBase], config: Config, device: Device, settings: DeviceSettings) -> [UIImage]
 }
