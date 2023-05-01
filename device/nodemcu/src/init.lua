@@ -284,12 +284,6 @@ function module()
     return env
 end
 
-function setStatusLed(val)
-    if StatusLed then
-        gpio.write(StatusLed, val)
-    end
-end
-
 function printf(...)
     print(string.format(...))
 end

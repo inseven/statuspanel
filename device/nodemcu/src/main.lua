@@ -97,7 +97,7 @@ end
 function longPressUnpair()
     print("Long press on unpair")
     assert(coroutine_running())
-    setStatusLed(1)
+    setStatus("unpairing")
     resetDeviceState()
     wait(1000)
     node.restart()
@@ -141,6 +141,7 @@ function sleepFromDate(date)
     if gpio.read(UsbDetect) == 1 then
         delta = 60
     end
+    setStatus("idle")
     sleepFor(delta)
 end
 
@@ -329,21 +330,55 @@ end
 
 statusLedFlashTimer = nil
 
-function flashStatusLed(interval)
+local neorgb, statusColours, setNeoPixelValue
+if NeoPixelPin ~= nil then
+    function neorgb(r, g, b)
+        return string.char(g, r, b)
+    end
+    statusColours = {
+        idle = neorgb(0, 0, 0), -- off
+        hotspot = neorgb(0, 0, 255), -- blue
+        fetching = neorgb(0, 0, 255), -- blue
+        goodWifiCreds = neorgb(0, 255, 0), -- green
+        drawing = neorgb(255, 0, 255), -- purple
+        unpairing = neorgb(255, 0, 0), -- red
+    }
+    function setNeoPixelValue(val)
+        gpio.write(NeoPixelPowerPin, 1)
+        ws2812.write({pin = NeoPixelPin, data = val})
+    end
+end
+
+local function rawSetStatus(status)
+    if NeoPixelPin then
+        setNeoPixelValue(statusColours[status])
+    elseif StatusLed then
+        gpio.write(StatusLed, status == "idle" and 0 or 1)
+    end
+end
+
+local function flashStatus(status, interval)
+    statusLedFlashTimer = tmr:create()
+    rawSetStatus(status) -- Turn it on immediately
+    local ledVal = false
+    statusLedFlashTimer:alarm(interval, tmr.ALARM_AUTO, function()
+        rawSetStatus(ledVal and status or "idle")
+        ledVal = not ledVal
+    end)
+end
+
+function setStatus(status)
+    print("setStatus", status)
+
     if statusLedFlashTimer then
         statusLedFlashTimer:unregister()
         statusLedFlashTimer = nil
     end
-    if interval then
-        statusLedFlashTimer = tmr:create()
-        setStatusLed(1) -- Turn it on immediately
-        local ledVal = false
-        statusLedFlashTimer:alarm(interval, tmr.ALARM_AUTO, function()
-            setStatusLed(ledVal and 1 or 0)
-            ledVal = not ledVal
-        end)
+
+    if status == "hotspot" then
+        flashStatus(status, 1000)
     else
-        setStatusLed(0)
+        rawSetStatus(status or "idle")
     end
 end
 
@@ -381,7 +416,7 @@ function enterHotspotMode()
     local url = network.getQRCodeURL(true)
     initAndDisplay(url, panel.displayQRCode, url)
     print("Finished displayQRCode")
-    flashStatusLed(1000)
+    setStatus("hotspot")
 end
 
 function forgetWifiCredentials()
@@ -393,8 +428,7 @@ end
 local function connectToProvisionedCredsSucceeded(eventName, event)
     assert(provisioningSocket, "Unexpected callback when provisioningSocket==nil")
     print("Huzzah, got creds!")
-    flashStatusLed(nil)
-    setStatusLed(1)
+    setStatus("goodWifiCreds")
     provisioningSocket:send("OK", function()
         provisioningSocket:close()
         provisioningSocket = nil
@@ -493,6 +527,7 @@ function fetch()
     assert(coroutine_running())
     print("Fetching image...")
 
+    setStatus("fetching")
     local result = network.getImages()
     local status = result and result.status
     local function retry()
@@ -552,12 +587,15 @@ function initAndDisplay(id, displayFn, ...)
         setCurrentDisplayIdentifier(nil)
     end
 
+    setStatus("drawing")
     panel.initp()
     displayFn(...)
     setCurrentDisplayIdentifier(id)
+    setStatus("idle")
 end
 
 function processRawImage(lastModified)
+    setStatus("decoding")
     local wakeTime = network.parseImgHeader(readFile("img_raw", 5))
     writeFile("wake_time", string.pack("I4", wakeTime))
     writeFile("last_modified", lastModified)
@@ -568,6 +606,7 @@ end
 
 function decryptImage(index)
     assert(coroutine_running())
+    setStatus("decoding")
     printf("Decrypting image number %d...", index)
     local pk = network.getPublicKey()
     local sk = network.getSecretKey()

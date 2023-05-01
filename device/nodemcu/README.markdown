@@ -127,6 +127,8 @@ $ ./build/luac_cross/luac.cross -f -m 0x20000 -o build/lfs.tmp ../src/*.lua
 $ ./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
 ```
 
+**Note:** The magic `-a` value is unpredicable and subject to change. It is currently `0x3f030000` for the esp32s2 ROM.
+
 ## Firmware
 
 ### Last Known Good
@@ -162,11 +164,24 @@ cd device/nodemcu/nodemcu-firmware
     0x190000 build/lfs.img
 ```
 
+### Hardware notes
+
+#### esp32s2
+
+To get working serial UART on anything with native USB, in `Component config -> ESP System Settings` and set:
+
+* `Channel for console output -> Custom UART`
+* `UART peripheral to use for console output -> UART1`
+* `UART TX on GPIO# -> 1`
+* `UART RX on GPIO# -> 2`
+
+Then attach a TTL serial cable to GND, RX and TX pins.
+
 ## How things were made
 
 ### ios/StatusPanel/Assets.xcassets/TlsCertificates.dataset/root.pem
 
-Is the root cert that statuspanel.io is using, created by:
+Is the root cert that api.statuspanel.io is using, created by:
 
 ```bash
 openssl x509 -inform der -outform pem -in "Baltimore CyberTrust Root.cer" -out root.pem
