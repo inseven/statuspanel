@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import Foundation
-import UIKit
+import SwiftUI
 
 final class NationalRailDataSource : DataSource {
     // See https://wiki.openraildata.com/index.php/NRE_Darwin_Web_Service_(Public)
@@ -32,6 +32,8 @@ final class NationalRailDataSource : DataSource {
         var to: String?
 
     }
+
+    typealias SettingsView = EmptyView
 
     struct Delays: Decodable {
         var delays: Bool
@@ -125,6 +127,11 @@ final class NationalRailDataSource : DataSource {
             return "Not configured"
         }
         return "\(from) to \(to)"
+    }
+
+    func settingsView(store: Store, settings: Settings) -> EmptyView {
+        // TODO: Actually return the view
+        return EmptyView()
     }
 
     func settingsViewController(store: Store, settings: Settings) -> UIViewController? {

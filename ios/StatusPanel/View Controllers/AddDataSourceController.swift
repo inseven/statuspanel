@@ -83,9 +83,8 @@ class AddDataSourceController: UINavigationController {
                 self.addSourceDelegate?.addDataSourceController(self, didCompleteWithDetails: details)
                 return
             }
-            guard let settingsViewController = try dataSource.settingsViewController(for: details.id) else {
-                throw StatusPanelError.internalInconsistency
-            }
+            let settingsView = try dataSource.settingsView(for: details.id)
+            let settingsViewController = UIHostingController(rootView: settingsView)
             settingsViewController.navigationItem.rightBarButtonItem = self.doneButtonItem
             self.pushViewController(settingsViewController, animated: true)
             self.details = details

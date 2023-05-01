@@ -117,6 +117,8 @@ final class CalendarDataSource : DataSource {
 
     }
 
+    typealias SettingsView = CalendarSettingsView
+
     let id: DataSourceType = .calendar
     let name = "Calendar"
     let image = UIImage(systemName: "calendar", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
@@ -267,10 +269,10 @@ final class CalendarDataSource : DataSource {
         return "\(LocalizedOffset(settings.offset)): \(settings.calendarNames)"
     }
 
-    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        return UIHostingController(rootView: CalendarSettingsView(store: store,
-                                                                  settings: settings,
-                                                                  eventStore: EKEventStore()))
+    func settingsView(store: Store, settings: Settings) -> CalendarSettingsView {
+        return CalendarSettingsView(store: store,
+                                    settings: settings,
+                                    eventStore: EKEventStore())
     }
 
 }
