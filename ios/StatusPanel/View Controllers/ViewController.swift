@@ -166,7 +166,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
         // Use the first device for the previews.
         let device = config.devices.first ?? Device(kind: .einkV1)
-        let settings = (try? config.settings(forDevice: device.id)) ?? DeviceSettings()
+        let settings = (try? config.settings(forDevice: device.id)) ?? DeviceSettings(deviceId: UUID().uuidString)
 
         let blankImage = device.blankImage()
         self.image = blankImage

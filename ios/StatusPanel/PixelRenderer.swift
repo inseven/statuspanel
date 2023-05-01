@@ -135,7 +135,8 @@ struct PixelRenderer: Renderer {
                 subLabel.text = subText
                 subLabel.sizeToFit()
                 subLabel.frame = CGRect(x: textFrame.minX, y: view.bounds.maxY + 1, width: textFrame.width, height: subLabel.frame.height)
-                view.frame = CGRect(origin: view.frame.origin, size: CGSize(width: view.frame.width, height: subLabel.frame.maxY))
+                view.frame = CGRect(origin: view.frame.origin,
+                                    size: CGSize(width: view.frame.width, height: subLabel.frame.maxY))
                 view.addSubview(subLabel)
             }
             let sz = view.frame
@@ -207,7 +208,7 @@ struct PixelRenderer: Renderer {
             return renderImage(data: data, config: config, device: device, settings: settings, redact: true)
         case .customImage:
 
-            guard let privacyImage = try? config.privacyImage() else {
+            guard let privacyImage = try? settings.privacyImage() else {
                 return device.blankImage()
             }
 

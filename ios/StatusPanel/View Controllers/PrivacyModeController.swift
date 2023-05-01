@@ -64,7 +64,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
         }
         firstRun = false
         DispatchQueue.global(qos: .userInteractive).async {
-            let image = try? self.config.privacyImage() ?? Device().blankImage()
+            let image = try? self.model.settings.privacyImage() ?? Device().blankImage()
             DispatchQueue.main.async {
                 self.privacyImage = image
             }
@@ -161,7 +161,7 @@ extension PrivacyModeController: UIImagePickerControllerDelegate {
             }
             DispatchQueue.main.async {
                 do {
-                    try self.config.setPrivacyImage(privacyImage)
+                    try self.model.settings.setPrivacyImage(privacyImage)
                     self.privacyImage = privacyImage
                 } catch {
                     self.present(error: error)

@@ -23,6 +23,7 @@ import SwiftUI
 struct DeviceSettings: Codable {
 
     enum CodingKeys: String, CodingKey {
+        case deviceId
         case name
         case displayTwoColumns
         case showIcons
@@ -34,6 +35,7 @@ struct DeviceSettings: Codable {
         case bodyFont
     }
 
+    let deviceId: String
     var name: String = ""
     var displayTwoColumns: Bool = true
     var showIcons: Bool = true
@@ -44,12 +46,24 @@ struct DeviceSettings: Codable {
     var titleFont: String = Fonts.FontName.chiKareGo2
     var bodyFont: String =  Fonts.FontName.unifont16
 
-    init() {
+    var displaysInDarkMode: Bool {
+        switch darkMode {
+        case .off:
+            return false
+        case .on:
+            return true
+        case .system:
+            return UITraitCollection.current.userInterfaceStyle == UIUserInterfaceStyle.dark
+        }
+    }
 
+    init(deviceId: String) {
+        self.deviceId = deviceId
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        deviceId = try container.decode(String.self, forKey: .deviceId)
         name = try container.decode(String.self, forKey: .name)
         displayTwoColumns = try container.decode(Bool.self, forKey: .displayTwoColumns)
         showIcons = try container.decode(Bool.self, forKey: .showIcons)
@@ -63,6 +77,7 @@ struct DeviceSettings: Codable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(deviceId, forKey: .deviceId)
         try container.encode(name, forKey: .name)
         try container.encode(displayTwoColumns, forKey: .displayTwoColumns)
         try container.encode(showIcons, forKey: .showIcons)
@@ -74,15 +89,26 @@ struct DeviceSettings: Codable {
         try container.encode(bodyFont, forKey: .bodyFont)
     }
 
-    var displaysInDarkMode: Bool {
-        switch darkMode {
-        case .off:
-            return false
-        case .on:
-            return true
-        case .system:
-            return UITraitCollection.current.userInterfaceStyle == UIUserInterfaceStyle.dark
+    // TODO: Move this into a common privacy mode manager that is used by config and these?
+
+    func privacyImage() throws -> UIImage? {
+        let url = try FileManager.default.documentsUrl().appendingPathComponent("privacy-image-\(deviceId).png")
+        return UIImage(contentsOfFile: url.path)
+    }
+
+    func setPrivacyImage(_ image: UIImage?) throws {
+        let fileManager = FileManager.default
+        let url = try fileManager.documentsUrl().appendingPathComponent("privacy-image-\(deviceId).png")
+        guard let image = image else {
+            if fileManager.fileExists(at: url) {
+                try fileManager.removeItem(at: url)
+            }
+            return
         }
+        guard let data = image.pngData() else {
+            throw StatusPanelError.invalidImage
+        }
+        try data.write(to: url, options: [.atomic])
     }
 
 }
@@ -112,7 +138,7 @@ struct DeviceSettingsView: View {
             do {
                 self.settings = try config.settings(forDevice: device.id)
             } catch {
-                self.settings = DeviceSettings()
+                self.settings = DeviceSettings(deviceId: device.id)
                 self.error = error
             }
         }

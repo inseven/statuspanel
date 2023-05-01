@@ -419,14 +419,14 @@ class Config: ObservableObject {
         }
     }
 
-    static let privacyImageFilename = "privacy-image.png"
+    private static let privacyImageFilename = "privacy-image.png"
 
-    func privacyImage() throws -> UIImage? {
+    private func privacyImage() throws -> UIImage? {
         let url = try FileManager.default.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
         return UIImage(contentsOfFile: url.path)
     }
 
-    func setPrivacyImage(_ image: UIImage?) throws {
+    private func setPrivacyImage(_ image: UIImage?) throws {
         let fileManager = FileManager.default
         let url = try fileManager.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
         guard let image = image else {
@@ -503,7 +503,7 @@ class Config: ObservableObject {
 
     @MainActor func settings(forDevice deviceId: String) throws -> DeviceSettings {
         guard let data = object(for: .deviceSettings(deviceId)) as? Data else {
-            var settings = DeviceSettings()
+            var settings = DeviceSettings(deviceId: deviceId)
             settings.displayTwoColumns = !bool(for: .displaySingleColumn)
             settings.showIcons = bool(for: .showIcons, default: true)
             settings.darkMode = DarkMode.init(rawValue: integer(for: .darkMode))!
@@ -512,6 +512,12 @@ class Config: ObservableObject {
             settings.updateTime = Date(timeIntervalSinceReferenceDate: updateTime)
             settings.titleFont = string(for: .titleFont) ?? Fonts.FontName.chiKareGo2
             settings.bodyFont = string(for: .bodyFont) ?? Fonts.FontName.unifont16
+            let fileManager = FileManager.default
+            let url = try fileManager.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
+            let deviceUrl = try fileManager.documentsUrl().appendingPathComponent("\(deviceId).png")
+            if fileManager.fileExists(at: url) {
+                try fileManager.copyItem(at: url, to: deviceUrl)
+            }
             return settings
         }
         return try JSONDecoder().decode(DeviceSettings.self, from: data as Data)
