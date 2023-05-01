@@ -23,13 +23,14 @@ import SwiftUI
 
 protocol AddDataSourceControllerDelegate: AnyObject {
 
-    func addDataSourceController(_ addDataSourceController: AddDataSourceController,
-                                 didCompleteWithDetails details: DataSourceInstance.Details)
+    func addDataSourceControllerDidComplete(_ addDataSourceController: AddDataSourceController)
     func addDataSourceControllerDidCancel(_ addDataSourceController: AddDataSourceController)
 
 }
 
 class AddDataSourceController: UINavigationController {
+
+    private let dataSourceController: DataSourceController
 
     weak var addSourceDelegate: AddDataSourceControllerDelegate?
 
@@ -49,6 +50,7 @@ class AddDataSourceController: UINavigationController {
     }()
 
     init(dataSourceController: DataSourceController) {
+        self.dataSourceController = dataSourceController
         super.init(rootViewController: UITableViewController())
 
         let view = AddDataSourceView(sourceController: dataSourceController) { dataSource in
@@ -73,14 +75,31 @@ class AddDataSourceController: UINavigationController {
             present(error: StatusPanelError.internalInconsistency)
             return
         }
-        addSourceDelegate?.addDataSourceController(self, didCompleteWithDetails: details)
+        if addDataSource(details: details) {
+            addSourceDelegate?.addDataSourceControllerDidComplete(self)
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+
+    func addDataSource(details: DataSourceInstance.Details) -> Bool {
+        do {
+            try dataSourceController.add(details)
+            try dataSourceController.save()
+            return true
+        } catch {
+            present(error: error)
+            return false
+        }
     }
 
     func didSelectDataSource(_ dataSource: AnyDataSource) {
         do {
             let details = DataSourceInstance.Details(id: UUID(), type: dataSource.id)
             guard dataSource.configurable else {
-                self.addSourceDelegate?.addDataSourceController(self, didCompleteWithDetails: details)
+                if addDataSource(details: details) {
+                    addSourceDelegate?.addDataSourceControllerDidComplete(self)
+                    self.dismiss(animated: true, completion: nil)
+                }
                 return
             }
             let settingsView = try dataSource.settingsView(for: details.id)

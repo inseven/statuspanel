@@ -417,17 +417,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
 extension SettingsViewController: AddDataSourceControllerDelegate {
 
-    func addDataSourceController(_ addDataSourceController: AddDataSourceController,
-                                 didCompleteWithDetails details: DataSourceInstance.Details) {
-        do {
-            try self.dataSourceController.add(details)
-            try self.dataSourceController.save()
-            let indexPath = IndexPath(row: self.dataSourceController.instances.count - 1, section: 0)
-            self.tableView.insertRows(at: [indexPath], with: .none)
-            self.navigationController?.dismiss(animated: true, completion: nil)
-        } catch {
-            present(error: error)
-        }
+    func addDataSourceControllerDidComplete(_ addDataSourceController: AddDataSourceController) {
+        let indexPath = IndexPath(row: self.dataSourceController.instances.count - 1, section: 0)
+        self.tableView.insertRows(at: [indexPath], with: .none)
     }
 
     func addDataSourceControllerDidCancel(_ addDataSourceController: AddDataSourceController) {
