@@ -171,7 +171,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             cell.imageView?.image = source.dataSource.image
             cell.textLabel?.text = source.dataSource.name
             do {
-                cell.detailTextLabel?.text = try source.dataSource.summary(for: source.id)
+                cell.detailTextLabel?.text = try source.dataSource.summary(config: config, instanceId: source.id)
             } catch {
                 cell.detailTextLabel?.text = error.localizedDescription
             }
@@ -311,7 +311,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
     }
 
     func addDataSource() {
-        let viewController = AddDataSourceController(dataSourceController: dataSourceController)
+        let viewController = AddDataSourceController(config: config, dataSourceController: dataSourceController)
         viewController.addSourceDelegate = self
         self.navigationController?.present(viewController, animated: true, completion: nil)
     }
@@ -321,7 +321,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DataSourcesSection:
             do {
                 let source = dataSourceController.instances[indexPath.row]
-                let viewController = try source.settingsViewController()
+                let viewController = try source.settingsViewController(config: config)
                 navigationController?.pushViewController(viewController, animated: true)
             } catch {
                 self.present(error: error)

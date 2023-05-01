@@ -49,18 +49,18 @@ struct DataSourceInstance: Identifiable, Equatable {
         self.dataSource = dataSource
     }
 
-    func fetch(completion: @escaping ([DataItemBase]?, Error?) -> Void) {
+    func fetch(config: Config, completion: @escaping ([DataItemBase]?, Error?) -> Void) {
         DispatchQueue.global().async {
-            self.dataSource.data(for: id, completion: completion)
+            self.dataSource.data(config: config, instanceId: id, completion: completion)
         }
     }
 
-    func view() throws -> AnyView {
-        try dataSource.settingsView(for: id)
+    func view(config: Config) throws -> AnyView {
+        try dataSource.settingsView(config: config, instanceId: id)
     }
 
-    func settingsViewController() throws -> UIViewController {
-        return UIHostingController(rootView: try view())
+    func settingsViewController(config: Config) throws -> UIViewController {
+        return UIHostingController(rootView: try view(config: config))
     }
 
 }

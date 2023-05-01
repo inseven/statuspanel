@@ -166,7 +166,7 @@ class DataSourceController {
             var results: [UUID: Result<[DataItemBase], Error>] = [:]  // Synchronized on syncQueue.
             for source in sources {
                 dispatchGroup.enter()
-                source.fetch { data, error in
+                source.fetch(config: self.config) { data, error in
                     self.syncQueue.async {
                         if let error = error {
                             results[source.id] = .failure(error)
