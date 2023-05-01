@@ -66,10 +66,6 @@ final class WeatherDataSource: DataSource {
     let defaults = Settings(flags: [], address: "Bletchley Park, Sherwood Drive, Bletchley, Milton Keynes, MK3 6EB")
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
-        guard #available(iOS 16.0, *) else {
-            completion([DataItem(text: "Unsupported", flags: settings.flags)], nil)
-            return
-        }
         Task.detached {
             do {
                 let geocoder = CLGeocoder()
