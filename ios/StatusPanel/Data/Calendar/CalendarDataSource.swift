@@ -81,7 +81,7 @@ final class CalendarDataSource : DataSource {
 
         var calendarNames: String {
             let eventStore = EKEventStore()
-            let calendarNames = Config().activeCalendars.compactMap { eventStore.calendar(withIdentifier:$0)?.title }
+            let calendarNames = activeCalendars.compactMap { eventStore.calendar(withIdentifier:$0)?.title }
             guard calendarNames.count > 0 else {
                 return "No Calendars Selected"
             }
@@ -154,10 +154,9 @@ final class CalendarDataSource : DataSource {
         let timeZoneFormatter = DateFormatter()
         timeZoneFormatter.dateFormat = "z"
 
-        let activeCalendars = Config().activeCalendars
         let calendars = eventStore
             .calendars(for: .event)
-            .filter({ activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
+            .filter({ settings.activeCalendars.firstIndex(of: $0.calendarIdentifier) != nil })
         if calendars.count == 0 {
             // predicateForEvents treats calendars:[] the same as calendars:nil
             // which matches against _all_ calendars, which we definitely don't
