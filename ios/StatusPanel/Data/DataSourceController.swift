@@ -39,9 +39,7 @@ class DataSourceController {
             TFLDataSource(configuration: configuration).anyDataSource(),
             WeatherDataSource().anyDataSource(),
             ZenQuotesDataSource().anyDataSource(),
-        ]
-
-        sources = sources.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+        ].sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
 
         let config = Config()
 
