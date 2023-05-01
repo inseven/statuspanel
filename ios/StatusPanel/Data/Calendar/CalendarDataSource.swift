@@ -95,7 +95,7 @@ final class CalendarDataSource : DataSource {
             self.activeCalendars = activeCalendars
         }
 
-        init(from decoder: Decoder) throws {
+        @MainActor init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             showLocations = try container.decode(Bool.self, forKey: .showLocations)
             showUrls = try container.decode(Bool.self, forKey: .showUrls)
