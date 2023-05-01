@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import Foundation
-import UIKit
+import SwiftUI
 
 /// Type erasing wrapper for `DataSource`
 class AnyDataSource: Identifiable {
@@ -30,7 +30,7 @@ class AnyDataSource: Identifiable {
     private var configurableProxy: (() -> Bool)! = nil
     private var dataProxy: ((UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
     private var summaryProxy: ((UUID) throws -> String?)! = nil
-    private var settingsViewControllerProxy: ((UUID) throws -> UIViewController?)! = nil
+    private var settingsViewProxy: ((UUID) throws -> AnyView)! = nil
     private var validateSettingsProxy: ((DataSourceSettings) -> Bool)! = nil
 
     var id: DataSourceType {
@@ -57,8 +57,8 @@ class AnyDataSource: Identifiable {
         return try summaryProxy(instanceId)
     }
 
-    func settingsViewController(for instanceId: UUID) throws -> UIViewController? {
-        return try settingsViewControllerProxy(instanceId)
+    func settingsView(for instanceId: UUID) throws -> AnyView {
+        return try settingsViewProxy(instanceId)
     }
 
     func validate(settings: DataSourceSettings) -> Bool {
@@ -97,12 +97,13 @@ class AnyDataSource: Identifiable {
             let settings = try dataSource.settings(for: instanceId)
             return dataSource.summary(settings: settings)
         }
-        settingsViewControllerProxy = { instanceId in
+        settingsViewProxy = { instanceId in
             let settings = try dataSource.settings(for: instanceId)
             let store = DataSourceSettingsStore<T.Settings>(config: Config(), uuid: instanceId)
-            let viewController = dataSource.settingsViewController(store: store, settings: settings)
-            viewController?.navigationItem.title = dataSource.name
-            return viewController
+            let view = dataSource
+                .settingsView(store: store, settings: settings)
+                .navigationTitle(dataSource.name)
+            return AnyView(view)
         }
         validateSettingsProxy = { settings in
             return type(of: settings) == type(of: dataSource).Settings

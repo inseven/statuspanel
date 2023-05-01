@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import Foundation
-import UIKit
+import SwiftUI
 
 final class NationalRailDataSource : DataSource {
     // See https://wiki.openraildata.com/index.php/NRE_Darwin_Web_Service_(Public)
@@ -30,6 +30,35 @@ final class NationalRailDataSource : DataSource {
 
         var from: String?
         var to: String?
+
+    }
+
+    struct NationalRailSettingsView: UIViewControllerRepresentable {
+
+        let store: NationalRailDataSource.Store
+        let settings: NationalRailDataSource.Settings
+
+        func makeUIViewController(context: Context) -> some UIViewController {
+            let viewController = NationalRailSettingsController()
+            viewController.store = store
+            viewController.settings = settings
+            return viewController
+        }
+
+        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+        }
+
+    }
+
+    struct SettingsView: View {
+
+        let store: NationalRailDataSource.Store
+        let settings: NationalRailDataSource.Settings
+
+        var body: some View {
+            NationalRailSettingsView(store: store, settings: settings)
+                .edgesIgnoringSafeArea(.all)
+        }
 
     }
 
@@ -127,15 +156,8 @@ final class NationalRailDataSource : DataSource {
         return "\(from) to \(to)"
     }
 
-    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        let viewController = NationalRailSettingsController()
-//        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
-//                as? NationalRailSettingsController else {
-//            return nil
-//        }
-        viewController.store = store
-        viewController.settings = settings
-        return viewController
+    func settingsView(store: Store, settings: Settings) -> SettingsView {
+        return SettingsView(store: store, settings: settings)
     }
 
 }

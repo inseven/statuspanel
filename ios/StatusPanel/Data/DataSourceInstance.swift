@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 import Foundation
+import SwiftUI
 
 struct DataSourceInstance: Identifiable, Equatable {
 
@@ -52,6 +53,14 @@ struct DataSourceInstance: Identifiable, Equatable {
         DispatchQueue.global().async {
             self.dataSource.data(for: id, completion: completion)
         }
+    }
+
+    func view() throws -> AnyView {
+        try dataSource.settingsView(for: id)
+    }
+
+    func settingsViewController() throws -> UIViewController {
+        return UIHostingController(rootView: try view())
     }
 
 }

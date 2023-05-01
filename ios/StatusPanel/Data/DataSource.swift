@@ -20,6 +20,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 protocol DataSourceSettings: Codable {
 
@@ -30,6 +31,7 @@ protocol DataSource: AnyObject, Identifiable {
     typealias Store = DataSourceSettingsStore<Settings>
 
     associatedtype Settings: DataSourceSettings
+    associatedtype SettingsView: View
 
     var id: DataSourceType { get }
 
@@ -43,7 +45,7 @@ protocol DataSource: AnyObject, Identifiable {
 
     func summary(settings: Settings) -> String?
 
-    func settingsViewController(store: Store, settings: Settings) -> UIViewController?
+    func settingsView(store: Store, settings: Settings) -> SettingsView
 
 }
 
