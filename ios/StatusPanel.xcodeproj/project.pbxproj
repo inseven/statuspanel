@@ -30,6 +30,7 @@
 		D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A197270C8DB100681F62 /* TextDataSource.swift */; };
 		D848A19A270D16AD00681F62 /* DataSourcePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A199270D16AD00681F62 /* DataSourcePicker.swift */; };
 		D848A19E270D213800681F62 /* FlagsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A19D270D213800681F62 /* FlagsSection.swift */; };
+		D86278A82A0054A4003A9616 /* DeviceSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86278A72A0054A4003A9616 /* DeviceSettings.swift */; };
 		D862BF3F271B99700086BE48 /* Swift-Sodium.txt in Resources */ = {isa = PBXBuildFile; fileRef = D862BF3E271B99700086BE48 /* Swift-Sodium.txt */; };
 		D862BF41271B9B620086BE48 /* Binding+mappedToBool.txt in Resources */ = {isa = PBXBuildFile; fileRef = D862BF40271B9B620086BE48 /* Binding+mappedToBool.txt */; };
 		D87439032730C3E400B676A5 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D87439022730C3E400B676A5 /* Diligence */; };
@@ -152,6 +153,7 @@
 		D848A197270C8DB100681F62 /* TextDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDataSource.swift; sourceTree = "<group>"; };
 		D848A199270D16AD00681F62 /* DataSourcePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourcePicker.swift; sourceTree = "<group>"; };
 		D848A19D270D213800681F62 /* FlagsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagsSection.swift; sourceTree = "<group>"; };
+		D86278A72A0054A4003A9616 /* DeviceSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettings.swift; sourceTree = "<group>"; };
 		D862BF3E271B99700086BE48 /* Swift-Sodium.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Swift-Sodium.txt"; sourceTree = "<group>"; };
 		D862BF40271B9B620086BE48 /* Binding+mappedToBool.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Binding+mappedToBool.txt"; sourceTree = "<group>"; };
 		D87439012730C3A100B676A5 /* diligence */ = {isa = PBXFileReference; lastKnownFileType = folder; path = diligence; sourceTree = "<group>"; };
@@ -381,6 +383,14 @@
 			path = Text;
 			sourceTree = "<group>";
 		};
+		D86278A62A005496003A9616 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D86278A72A0054A4003A9616 /* DeviceSettings.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		D862BF3D271B99450086BE48 /* Licenses */ = {
 			isa = PBXGroup;
 			children = (
@@ -532,6 +542,7 @@
 				D862BF3D271B99450086BE48 /* Licenses */,
 				D8C20D20271C2A6200F3F22A /* Localizable.strings */,
 				D816655A2727B7D1005BDA9E /* Localizable.stringsdict */,
+				D86278A62A005496003A9616 /* Model */,
 				DBCA987A2143E2920084B710 /* Products */,
 				D8DD98FD271EF8A8004088CD /* Styles */,
 				D81DA7BE2712952D0052D32C /* Utilities */,
@@ -735,6 +746,7 @@
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */,
 				D8104E0529F3408100C394CC /* EKEvent.swift in Sources */,
+				D86278A82A0054A4003A9616 /* DeviceSettings.swift in Sources */,
 				D83CC5202707532400260DC1 /* AnyDataSource.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarDataSource.swift in Sources */,
 				DB5E9DA1241562ED009F3807 /* StringUtils.swift in Sources */,
