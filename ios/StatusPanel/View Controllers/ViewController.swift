@@ -28,6 +28,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     private var image: UIImage?
     private var redactedImage: UIImage?
 
+    let config: Config
     let device = Device(kind: .einkV1)
 
     var sourceController: DataSourceController!
@@ -78,7 +79,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         return gestureRecognizer
     }()
 
-    init() {
+    init(config: Config) {
+        self.config = config
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .systemGroupedBackground
     }
@@ -115,14 +117,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     }
 
     @objc func settingsTapped(sender: Any) {
-        let settingsViewController = SettingsViewController()
+        let settingsViewController = SettingsViewController(config: config)
         let viewController = UINavigationController(rootViewController: settingsViewController)
         settingsViewController.delegate = self
         present(viewController, animated: true, completion: nil)
     }
 
     @objc func refreshTapped(sender: Any) {
-        Config().clearUploadHashes()  // Wipe all stored hashes to force re-upload on completion.
+        config.clearUploadHashes()  // Wipe all stored hashes to force re-upload on completion.
         fetch()
     }
 
@@ -185,8 +187,8 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 }
                 return
             }
-            let config = Config()
-            let images = self.device.renderer.render(data: items, config: config, device: self.device)
+            let images = self.device.renderer.render(data: items, config: AppDelegate.shared.config,
+                                                     device: self.device)
             self.image = images[0]
             self.redactedImage = images[1]
             self.activityIndicator.stopAnimating()

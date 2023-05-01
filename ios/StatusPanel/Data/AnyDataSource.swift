@@ -74,7 +74,7 @@ class AnyDataSource: Identifiable {
         }
         dataProxy = { instanceId, completion in
             do {
-                let settings = try dataSource.settings(for: instanceId)
+                let settings = try dataSource.settings(config: Config(), instanceId: instanceId)
                 dataSource.data(settings: settings) { data, error in
                     if let error = error {
                         completion(nil, error)
@@ -94,12 +94,13 @@ class AnyDataSource: Identifiable {
             return dataSource.image
         }
         summaryProxy = { instanceId in
-            let settings = try dataSource.settings(for: instanceId)
+            let settings = try dataSource.settings(config: Config(), instanceId: instanceId)
             return dataSource.summary(settings: settings)
         }
         settingsViewProxy = { instanceId in
-            let settings = try dataSource.settings(for: instanceId)
-            let store = DataSourceSettingsStore<T.Settings>(config: Config(), uuid: instanceId)
+            let config = Config()
+            let settings = try dataSource.settings(config: config, instanceId: instanceId)
+            let store = DataSourceSettingsStore<T.Settings>(config: config, uuid: instanceId)
             let view = dataSource
                 .settingsView(store: store, settings: settings)
                 .navigationTitle(dataSource.name)

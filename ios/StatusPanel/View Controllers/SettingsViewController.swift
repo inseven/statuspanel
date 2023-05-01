@@ -42,6 +42,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     weak var delegate: SettingsViewControllerDelegate?
 
+    let config: Config
     var devices: [Device] = []
 
     var doneButtonItem: UIBarButtonItem {
@@ -50,7 +51,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                                action: #selector(cancelTapped(_:)))
     }
 
-    init() {
+    init(config: Config) {
+        self.config = config
         super.init(style: .insetGrouped)
     }
 
@@ -100,7 +102,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        devices = Config().devices
+        devices = config.devices
         if self.viewIfLoaded != nil {
             self.tableView.reloadData()
         }
@@ -205,7 +207,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case StatusSection:
             let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
             cell.textLabel?.text = LocalizedString("settings_last_background_update_label")
-            if let lastBackgroundUpdate = Config().lastBackgroundUpdate {
+            if let lastBackgroundUpdate = config.lastBackgroundUpdate {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateStyle = .short
                 dateFormatter.timeStyle = .short
@@ -331,7 +333,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 tableView.deselectRow(at: indexPath, animated: true)
                 return
             } else {
-                let controller = UIHostingController(rootView: DeviceSettingsView())
+                let controller = UIHostingController(rootView: DeviceSettingsView(config: config))
                 navigationController?.pushViewController(controller, animated: true)
                 tableView.deselectRow(at: indexPath, animated: true)
                 return
@@ -341,7 +343,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
             if indexPath.row == (prevCount == 0 ? 1 : prevCount) {
                 let device = Device()
                 devices.append(device)
-                Config().devices = devices
+                config.devices = devices
                 tableView.performBatchUpdates {
                     tableView.deselectRow(at: indexPath, animated: true)
                     if prevCount == 0 {
@@ -404,9 +406,8 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                     tableView.insertRows(at: [IndexPath(row: 0, section: self.DevicesSection)], with: .automatic)
                 }
             }, completion: nil)
-            let config = Config()
-            config.setLastUploadHash(for: deviceBeingRemoved, to: nil)
-            config.devices = self.devices
+            self.config.setLastUploadHash(for: deviceBeingRemoved, to: nil)
+            self.config.devices = self.devices
             completion(true)
         }
         let actions = UISwipeActionsConfiguration(actions: [action])

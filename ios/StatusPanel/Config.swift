@@ -319,14 +319,10 @@ class Config {
         }
     }
 
-    static func getWakeTime() -> TimeInterval {
-        return Config().updateTime
-    }
-
-
-    // The wake time relative to start of day GMT. If waketime is 6*60*60 then this returns the offset from midnight GMT to 0600 local time. It is always positive.
-    static func getLocalWakeTime() -> TimeInterval {
-        var result = getWakeTime() - TimeInterval(TimeZone.current.secondsFromGMT())
+    // The wake time relative to start of day GMT. If waketime is 6*60*60 then this returns the offset from midnight GMT
+    // to 0600 local time. It is always positive.
+    func getLocalWakeTime() -> TimeInterval {
+        var result = updateTime - TimeInterval(TimeZone.current.secondsFromGMT())
         if result < 0 {
             result += 24 * 60 * 60
         }
