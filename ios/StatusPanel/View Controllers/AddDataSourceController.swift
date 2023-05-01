@@ -24,7 +24,6 @@ import SwiftUI
 protocol AddDataSourceControllerDelegate: AnyObject {
 
     func addDataSourceControllerDidComplete(_ addDataSourceController: AddDataSourceController)
-    func addDataSourceControllerDidCancel(_ addDataSourceController: AddDataSourceController)
 
 }
 
@@ -56,8 +55,7 @@ class AddDataSourceController: UINavigationController {
         let view = AddDataSourceView(sourceController: dataSourceController) { dataSource in
             dispatchPrecondition(condition: .onQueue(.main))
             guard let dataSource = dataSource else {
-                self.navigationController?.dismiss(animated: true, completion: nil)
-                self.addSourceDelegate?.addDataSourceControllerDidCancel(self)
+                self.dismiss(animated: true, completion: nil)
                 return
             }
             self.didSelectDataSource(dataSource)
@@ -67,7 +65,7 @@ class AddDataSourceController: UINavigationController {
     }
 
     @objc func cancelTapped(sender: Any) {
-        addSourceDelegate?.addDataSourceControllerDidCancel(self)
+        self.dismiss(animated: true, completion: nil)
     }
 
     @objc func doneTapped(sender: Any) {

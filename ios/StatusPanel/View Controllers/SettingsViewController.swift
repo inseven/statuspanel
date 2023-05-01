@@ -422,8 +422,4 @@ extension SettingsViewController: AddDataSourceControllerDelegate {
         self.tableView.insertRows(at: [indexPath], with: .none)
     }
 
-    func addDataSourceControllerDidCancel(_ addDataSourceController: AddDataSourceController) {
-        self.navigationController?.dismiss(animated: true, completion: nil)
-    }
-
 }
