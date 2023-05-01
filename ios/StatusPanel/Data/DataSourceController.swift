@@ -37,12 +37,9 @@ class DataSourceController {
             LastUpdateDataSource().anyDataSource(),
             TextDataSource().anyDataSource(),
             TFLDataSource(configuration: configuration).anyDataSource(),
+            WeatherDataSource().anyDataSource(),
             ZenQuotesDataSource().anyDataSource(),
         ]
-
-        if #available(iOS 16.0, *) {
-            sources.append(WeatherDataSource().anyDataSource())
-        }
 
         sources = sources.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
 
