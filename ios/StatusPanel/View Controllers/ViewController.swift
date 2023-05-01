@@ -29,7 +29,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     private var redactedImage: UIImage?
 
     let config: Config
-    let device = Device(kind: .einkV1)
 
     var sourceController: DataSourceController!
 
@@ -164,6 +163,11 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
+
+        // Use the first device for the previews.
+        let device = config.devices.first ?? Device(kind: .einkV1)
+        let settings = (try? config.settings(forDevice: device.id)) ?? DeviceSettings()
+
         let blankImage = device.blankImage()
         self.image = blankImage
         self.redactedImage = blankImage
@@ -187,10 +191,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 }
                 return
             }
-            // TODO: This preview will no longer honour the layout settings.
-            let images = self.device.renderer.render(data: items, config: AppDelegate.shared.config,
-                                                     device: self.device,
-                                                     settings: DeviceSettings())
+            let images = device.renderer.render(data: items, config: AppDelegate.shared.config,
+                                                device: device,
+                                                settings: settings)
             self.image = images[0]
             self.redactedImage = images[1]
             self.activityIndicator.stopAnimating()
