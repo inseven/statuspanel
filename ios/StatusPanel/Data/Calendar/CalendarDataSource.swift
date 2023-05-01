@@ -95,7 +95,7 @@ final class CalendarDataSource : DataSource {
             self.activeCalendars = activeCalendars
         }
 
-        @MainActor init(from decoder: Decoder) throws {
+        init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             showLocations = try container.decode(Bool.self, forKey: .showLocations)
             showUrls = try container.decode(Bool.self, forKey: .showUrls)
@@ -103,7 +103,7 @@ final class CalendarDataSource : DataSource {
             if container.contains(.activeCalendars) {
                 activeCalendars = Set(try container.decode([String].self, forKey: .activeCalendars))
             } else {
-                activeCalendars = Set(AppDelegate.shared.config.activeCalendars)
+                activeCalendars = Set(Config().activeCalendars)
             }
         }
 
