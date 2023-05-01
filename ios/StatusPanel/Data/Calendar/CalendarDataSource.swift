@@ -103,7 +103,7 @@ final class CalendarDataSource : DataSource {
             if container.contains(.activeCalendars) {
                 activeCalendars = Set(try container.decode([String].self, forKey: .activeCalendars))
             } else {
-                activeCalendars = Set(Config().activeCalendars)
+                activeCalendars = Set(AppDelegate.shared.config.activeCalendars)
             }
         }
 
