@@ -34,10 +34,9 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     static let datePickerCellReuseIdentifier = "DatePickerCell"
 
-    let DeviceSettingsSection = 0
-    let DevicesSection = 1
-    let StatusSection = 2
-    let AboutSection = 3
+    let DevicesSection = 0
+    let StatusSection = 1
+    let AboutSection = 2
 
     weak var delegate: SettingsViewControllerDelegate?
 
@@ -99,8 +98,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case DeviceSettingsSection:
-            return 1
         case DevicesSection:
             var n = devices.count
             if n == 0 {
@@ -119,8 +116,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case DeviceSettingsSection:
-            return nil
         case DevicesSection:
             return "Devices"
         case StatusSection:
@@ -132,11 +127,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
-        case DeviceSettingsSection:
-            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-            cell.textLabel?.text = "Device Settings"
-            cell.accessoryType = .disclosureIndicator
-            return cell
         case DevicesSection:
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "DeviceCell")
             if devices.count == 0 && indexPath.row == 0 {
@@ -150,6 +140,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 cell.textLabel?.text = "\(device.kind.description)"
                 cell.detailTextLabel?.text = device.id
                 cell.textLabel?.textColor = .label
+                cell.accessoryType = .disclosureIndicator
             }
             return cell
         case StatusSection:
@@ -175,12 +166,13 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == DevicesSection {
-            if indexPath.row == (devices.count == 0 ? 1 : devices.count) {
-                return true // The debug add button
+            if devices.count == 0 && indexPath.row == 0 {
+                return false
+            } else if indexPath.row >= devices.count {
+                return true
+            } else {
+                return true
             }
-            return false
-        } else if indexPath.section == DeviceSettingsSection {
-            return true
         } else if indexPath.section == StatusSection {
             return false
         } else {
@@ -198,12 +190,6 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.section {
-        case DeviceSettingsSection:
-            let controller = UIHostingController(rootView: DeviceSettingsView(config: config,
-                                                                              dataSourceController: dataSourceController))
-            navigationController?.pushViewController(controller, animated: true)
-            tableView.deselectRow(at: indexPath, animated: true)
-            return
         case DevicesSection:
             let prevCount = devices.count
             if indexPath.row == (prevCount == 0 ? 1 : prevCount) {
@@ -224,6 +210,12 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
                 }
                 return
             } else {
+                let device = devices[indexPath.row]
+                let controller = UIHostingController(rootView: DeviceSettingsView(config: config,
+                                                                                  dataSourceController: dataSourceController,
+                                                                                  device: device))
+                navigationController?.pushViewController(controller, animated: true)
+                tableView.deselectRow(at: indexPath, animated: true)
                 return
             }
         case AboutSection:

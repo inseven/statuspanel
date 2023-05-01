@@ -101,14 +101,16 @@ struct DeviceSettingsView: View {
 
     @ObservedObject var config: Config
     @ObservedObject var dataSourceController: DataSourceController
+    var device: Device
 
     @StateObject var model: Model
     @State var sheet: SheetType? = nil
     @State var error: Error? = nil
 
-    init(config: Config, dataSourceController: DataSourceController) {
+    init(config: Config, dataSourceController: DataSourceController, device: Device) {
         self.config = config
         self.dataSourceController = dataSourceController
+        self.device = device
         _model = StateObject(wrappedValue: Model(config: config))
     }
 
@@ -175,6 +177,10 @@ struct DeviceSettingsView: View {
             Section("Schedule") {
                 DatePicker("Device Update Time", selection: $model.updateTime, displayedComponents: .hourAndMinute)
                     .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+            }
+            Section("Details") {
+                LabeledContent("Type", value: device.kind.description)
+                LabeledContent("Identifier", value: device.id)
             }
         }
         .alert(isPresented: $error.mappedToBool()) {
