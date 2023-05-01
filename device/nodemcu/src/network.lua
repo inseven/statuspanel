@@ -7,9 +7,7 @@ function getImages()
     collectgarbage() -- Clear the decks...
     local deviceId = getDeviceId()
 
-    if gw then
-        setStatusLed(1)
-    else
+    if not gw then
         -- No internet connection?
         return
     end
@@ -49,7 +47,6 @@ function getImages()
         if f then
             f:close()
         end
-        setStatusLed(0)
         result.status = status
         coresume(result)
     end)

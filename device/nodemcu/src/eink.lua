@@ -145,14 +145,12 @@ w, h = 640, 384
 
 function displayLines(lineFn)
     -- This overload assumes the caller already has the pixel data assembled into panel format
-    setStatusLed(1)
     local t = uptime()
     cmd(DATA_START_TRANSMISSION_1)
     gpio_write(DC, DC_DATA)
 
     for y = 0, h - 1 do
         -- print("Line", y)
-        setStatusLed(y % 2)
         local data = lineFn(y)
         spidevice_transfer(spidevice, data)
     end
@@ -162,7 +160,6 @@ function displayLines(lineFn)
     local elapsed = math.floor((uptime() - t) / 1000000)
     sleep()
     printf("Display complete, took %ds", elapsed)
-    setStatusLed(0)
 end
 
 function pixelFnToLineFn(getPixelFn)
