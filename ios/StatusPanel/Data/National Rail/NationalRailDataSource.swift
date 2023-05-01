@@ -33,7 +33,34 @@ final class NationalRailDataSource : DataSource {
 
     }
 
-    typealias SettingsView = EmptyView
+    struct NationalRailSettingsView: UIViewControllerRepresentable {
+
+        let store: NationalRailDataSource.Store
+        let settings: NationalRailDataSource.Settings
+
+        func makeUIViewController(context: Context) -> some UIViewController {
+            let viewController = NationalRailSettingsController()
+            viewController.store = store
+            viewController.settings = settings
+            return viewController
+        }
+
+        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+        }
+
+    }
+
+    struct SettingsView: View {
+
+        let store: NationalRailDataSource.Store
+        let settings: NationalRailDataSource.Settings
+
+        var body: some View {
+            NationalRailSettingsView(store: store, settings: settings)
+                .edgesIgnoringSafeArea(.all)
+        }
+
+    }
 
     struct Delays: Decodable {
         var delays: Bool
@@ -129,20 +156,8 @@ final class NationalRailDataSource : DataSource {
         return "\(from) to \(to)"
     }
 
-    func settingsView(store: Store, settings: Settings) -> EmptyView {
-        // TODO: Actually return the view
-        return EmptyView()
-    }
-
-    func settingsViewController(store: Store, settings: Settings) -> UIViewController? {
-        let viewController = NationalRailSettingsController()
-//        guard let viewController = UIStoryboard.main.instantiateViewController(withIdentifier: "NationalRailEditor")
-//                as? NationalRailSettingsController else {
-//            return nil
-//        }
-        viewController.store = store
-        viewController.settings = settings
-        return viewController
+    func settingsView(store: Store, settings: Settings) -> SettingsView {
+        return SettingsView(store: store, settings: settings)
     }
 
 }
