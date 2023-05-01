@@ -77,6 +77,9 @@ function configurePins_tft()
     StatusLed = 13
     NeoPixelPin = 33
     NeoPixelPowerPin = 34
+    Sda = 42
+    Scl = 41
+    BatteryMonitorI2CAddress = 0xB
 
     gpio.config({
         gpio = { TFT_RESET, TFT_DC, TFT_BL, TFT_POWER, TFT_CS, StatusLed, NeoPixelPin, NeoPixelPowerPin },
@@ -96,6 +99,9 @@ function configurePins_tft()
         mode = 0,
         freq = 40*1000*1000, -- ie 40 MHz
     })
+
+    -- Doing this before the spi setup hangs, no idea why...
+    i2c_setup(Sda, Scl)
 end
 
 -- Currently assumes huzzah32
@@ -188,7 +194,7 @@ end
 
 function i2c_read(addr, numBytes)
     i2c.start(i2c.SW)
-    assert(i2c.address(i2c.SW, eepromAddr, i2c.RECEIVER))
+    assert(i2c.address(i2c.SW, addr, i2c.RECEIVER))
     return i2c.read(i2c.SW, numBytes)
 end
 
@@ -290,7 +296,11 @@ end
 
 function getBatteryVoltage()
     if isFeatherTft() then
-        return nil
+        if batt == nil then
+            batt = require("LC709203F")
+            batt.init(BatteryMonitorI2CAddress)
+        end
+        return batt.getVoltage()
     else
         -- At 11db attenuation and 12 bits width, 4095 = VDD_A
         local val = adc.read(adc.ADC1, VBat)
