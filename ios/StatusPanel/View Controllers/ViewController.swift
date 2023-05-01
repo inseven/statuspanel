@@ -91,7 +91,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        sourceController = AppDelegate.shared.sourceController
+        sourceController = AppDelegate.shared.dataSourceController
 
         title = "StatusPanel"
         navigationItem.leftBarButtonItem = settingsButtonItem

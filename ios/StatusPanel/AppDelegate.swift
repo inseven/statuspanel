@@ -32,12 +32,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var viewController: ViewController?
     var config = Config()
-    var sourceController: DataSourceController
+    var dataSourceController: DataSourceController
     var apnsToken: Data?
     var client: Service = Service(baseUrl: "https://api.statuspanel.io/")
 
     override init() {
-        sourceController = DataSourceController(config: config)
+        dataSourceController = DataSourceController(config: config)
         super.init()
     }
 
@@ -168,7 +168,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func updateDevices(completion: @escaping (UIBackgroundFetchResult) -> Void = { _ in }) {
         Task {
             do {
-                let items = try await AppDelegate.shared.sourceController.fetch()
+                let items = try await AppDelegate.shared.dataSourceController.fetch()
                 let updates = config.devices
                     .map { device in
                         let images = device.renderer.render(data: items, config: config, device: device)

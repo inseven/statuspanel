@@ -20,11 +20,12 @@
 
 import EventKit
 import Foundation
+import SwiftUI
 
-class DataSourceController {
+class DataSourceController: ObservableObject {
 
     let config: Config
-    var sources: [AnyDataSource] = []
+    let sources: [AnyDataSource]
     var instances: [DataSourceInstance] = []
     var syncQueue = DispatchQueue(label: "DataSourceController.syncQueue")
 
@@ -104,7 +105,9 @@ class DataSourceController {
         guard let dataSource = sources.first(where: { $0.id == type }) else {
             throw StatusPanelError.unknownDataSource(type)
         }
+        objectWillChange.send()
         instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
+        try save()
     }
 
     func add(_ details: DataSourceInstance.Details) throws {
@@ -121,7 +124,9 @@ class DataSourceController {
             throw StatusPanelError.incorrectSettingsType
         }
         try config.save(settings: settings, instanceId: uuid)
+        objectWillChange.send()
         instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
+        try save()
     }
 
     func add(_ dataSource: AnyDataSource) throws {
@@ -129,13 +134,27 @@ class DataSourceController {
         try self.add(type: dataSource.id)
     }
 
-    func remove(instance: DataSourceInstance) {
+    func remove(instance: DataSourceInstance) throws {
         dispatchPrecondition(condition: .onQueue(.main))
         let index = instances.firstIndex(of: instance)!
+        objectWillChange.send()
         instances.remove(at: index)
+        try save()
     }
 
-    func save() throws {
+    public func removeInstances(atOffsets offsets: IndexSet) throws {
+        objectWillChange.send()
+        instances.remove(atOffsets: offsets)
+        try save()
+    }
+
+    public func moveInstances(fromOffsets source: IndexSet, toOffset destination: Int) throws {
+        objectWillChange.send()
+        instances.move(fromOffsets: source, toOffset: destination)
+        try save()
+    }
+
+    private func save() throws {
         dispatchPrecondition(condition: .onQueue(.main))
         try config.set(dataSources: self.instances.map { $0.details })
     }

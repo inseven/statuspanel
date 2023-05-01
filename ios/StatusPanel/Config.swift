@@ -22,7 +22,19 @@ import Foundation
 import Network
 import UIKit
 
-class Config {
+class Config: ObservableObject {
+
+    enum DarkMode: Int, CaseIterable {
+        case off = 0
+        case on = 1
+        case system = 2
+    }
+
+    enum PrivacyMode: Int, CaseIterable {
+        case redactLines = 0
+        case redactWords = 1
+        case customImage = 2
+    }
 
     private enum Key: RawRepresentable {
 
@@ -246,6 +258,7 @@ class Config {
             self.object(for: .activeCalendars) as? [String] ?? []
         }
         set {
+            objectWillChange.send()
             self.set(newValue, for: .activeCalendars)
         }
     }
@@ -255,6 +268,7 @@ class Config {
             self.object(for: .activeTFLLines) as? [String] ?? []
         }
         set {
+            objectWillChange.send()
             self.set(newValue, for: .activeTFLLines)
         }
     }
@@ -265,6 +279,7 @@ class Config {
             self.value(for: .updateTime) as? TimeInterval ?? (6 * 60 + 20) * 60
         }
         set {
+            objectWillChange.send()
             self.set(newValue, for: .updateTime)
         }
     }
@@ -274,6 +289,7 @@ class Config {
             self.bool(for: .showIcons, default: true)
         }
         set {
+            objectWillChange.send()
             self.set(newValue, for: .showIcons)
         }
     }
@@ -301,6 +317,7 @@ class Config {
                 }
                 val.append(dict)
             }
+            objectWillChange.send()
             self.set(val, for: .trainRoutes)
         }
     }
@@ -368,6 +385,7 @@ class Config {
             for device in newValue {
                 objs.append(["publickey": device.publicKey, "deviceid": device.id, "kind": device.kind.rawValue])
             }
+            objectWillChange.send()
             self.userDefaults.set(objs, forKey: "devices")
         }
     }
@@ -377,6 +395,7 @@ class Config {
             !self.bool(for: .displaySingleColumn)
         }
         set {
+            objectWillChange.send()
             self.set(!newValue, for: .displaySingleColumn)
         }
     }
@@ -386,6 +405,7 @@ class Config {
             self.string(for: .titleFont) ?? Fonts.FontName.chiKareGo2
         }
         set {
+            objectWillChange.send()
             self.set(newValue, for: .titleFont)
         }
     }
@@ -395,23 +415,19 @@ class Config {
             self.string(for: .bodyFont) ?? Fonts.FontName.unifont16
         }
         set {
+            objectWillChange.send()
             self.set(newValue, for: .bodyFont)
         }
     }
 
     typealias Font = Fonts.Font
 
-    enum DarkMode: Int, CaseIterable {
-        case off = 0
-        case on = 1
-        case system = 2
-    }
-
     var darkMode: DarkMode {
         get {
             DarkMode.init(rawValue: self.integer(for: .darkMode))!
         }
         set {
+            objectWillChange.send()
             self.set(newValue.rawValue, for: .darkMode)
         }
     }
@@ -432,6 +448,7 @@ class Config {
             self.bool(for: .dummyData)
         }
         set {
+            objectWillChange.send()
             self.set(newValue, for: .dummyData)
         }
     }
@@ -441,6 +458,7 @@ class Config {
             self.bool(for: .showCalendarLocations)
         }
         set {
+            objectWillChange.send()
             self.set(newValue, for: .showCalendarLocations)
         }
     }
@@ -450,6 +468,7 @@ class Config {
             self.bool(for: .showUrlsInCalendarLocations)
         }
         set {
+            objectWillChange.send()
             self.set(newValue, for: .showUrlsInCalendarLocations)
         }
     }
@@ -460,14 +479,9 @@ class Config {
             self.integer(for: .maxLines)
         }
         set {
+            objectWillChange.send()
             self.set(newValue, for: .maxLines)
         }
-    }
-
-    enum PrivacyMode: Int, CaseIterable {
-        case redactLines = 0
-        case redactWords = 1
-        case customImage = 2
     }
 
     var privacyMode: PrivacyMode {
@@ -475,6 +489,7 @@ class Config {
             PrivacyMode.init(rawValue: self.integer(for: .privacyMode))!
         }
         set {
+            objectWillChange.send()
             self.set(newValue.rawValue, for: .privacyMode)
         }
     }
@@ -498,6 +513,7 @@ class Config {
         guard let data = image.pngData() else {
             throw StatusPanelError.invalidImage
         }
+        objectWillChange.send()
         try data.write(to: url, options: [.atomic])
     }
 
@@ -507,6 +523,7 @@ class Config {
 
     @MainActor func setLastUploadHash(for deviceid: String, to hash:String?) {
         dispatchPrecondition(condition: .onQueue(.main))
+        objectWillChange.send()
         let key = Config.getLastUploadHashKey(for: deviceid)
         if let hash = hash {
             self.userDefaults.set(hash, forKey: key)
@@ -521,6 +538,7 @@ class Config {
     }
 
     @MainActor func clearUploadHashes() {
+        objectWillChange.send()
         for device in devices {
             setLastUploadHash(for: device.id, to: nil)
         }
@@ -531,6 +549,7 @@ class Config {
             self.object(for: .lastBackgroundUpdate) as? Date
         }
         set {
+            objectWillChange.send()
             self.set(newValue, for: .lastBackgroundUpdate)
         }
     }
@@ -540,6 +559,7 @@ class Config {
     }
 
     func set(dataSources: [DataSourceInstance.Details]) throws {
+        objectWillChange.send()
         try self.set(codable: dataSources, for: .dataSources)
     }
 
@@ -552,6 +572,7 @@ class Config {
 
     func save<T: DataSourceSettings>(settings: T, instanceId: UUID) throws {
         let data = try JSONEncoder().encode(settings)
+        objectWillChange.send()
         set(data, for: .settings(instanceId))
     }
 

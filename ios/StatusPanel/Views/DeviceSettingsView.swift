@@ -92,17 +92,51 @@ struct DeviceSettingsView: View {
 
     }
 
-    let config: Config
+    enum SheetType: Identifiable {
+
+        public var id: Self { self }
+
+        case add
+    }
+
+    @ObservedObject var config: Config
+    @ObservedObject var dataSourceController: DataSourceController
 
     @StateObject var model: Model
+    @State var sheet: SheetType? = nil
+    @State var error: Error? = nil
 
-    init(config: Config) {
+    init(config: Config, dataSourceController: DataSourceController) {
         self.config = config
+        self.dataSourceController = dataSourceController
         _model = StateObject(wrappedValue: Model(config: config))
     }
 
     var body: some View {
         Form {
+            Section("Layout") {
+                ForEach(dataSourceController.instances) { dataSourceInstance in
+                    NavigationLink {
+                        try! dataSourceInstance.view(config: config)
+                    } label: {
+                        DataSourceInstanceRow(config: config, dataSourceInstance: dataSourceInstance)
+                    }
+                }
+                .onDelete { indexSet in
+                    do {
+                        try dataSourceController.removeInstances(atOffsets: indexSet)
+                    } catch {
+                        self.error = error
+                    }
+                }
+                .onMove { source, destination in
+                    do {
+                        try dataSourceController.moveInstances(fromOffsets: source, toOffset: destination)
+                    } catch {
+                        self.error = error
+                    }
+                }
+            }
             Section("Fonts") {
                 FontPicker("Title", selection: $model.titleFont)
                 FontPicker("Body", selection: $model.bodyFont)
@@ -143,7 +177,25 @@ struct DeviceSettingsView: View {
                     .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
             }
         }
+        .alert(isPresented: $error.mappedToBool()) {
+            Alert(error: error)
+        }
         .navigationTitle("Device Settings")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    sheet = .add
+                } label: {
+                    Label("Add", systemImage: "plus")
+                }
+            }
+        }
+        .sheet(item: $sheet) { sheet in
+            switch sheet {
+            case .add:
+                AddDataSourceView(config: config, dataSourceController: dataSourceController)
+            }
+        }
     }
 
 }

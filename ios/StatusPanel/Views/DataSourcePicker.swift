@@ -20,16 +20,38 @@
 
 import SwiftUI
 
-struct AddDataSourceView: UIViewControllerRepresentable {
+struct DataSourcePicker: View {
 
-    let config: Config
-    let dataSourceController: DataSourceController
+    var sourceController: DataSourceController
+    var completion: (AnyDataSource?) -> Void
 
-    func makeUIViewController(context: Context) -> some UIViewController {
-        return AddDataSourceViewController(config: config, dataSourceController: dataSourceController)
+    var sources: [AnyDataSource] {
+        sourceController.sources.sorted { $0.name < $1.name }
     }
 
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+    var body: some View {
+        Form {
+            ForEach(sources) { factory in
+                Button {
+                    completion(factory)
+                } label: {
+                    HStack(spacing: 0) {
+                        Image(uiImage: factory.image)
+                            .renderingMode(.template)
+                            .foregroundColor(.primary)
+                            .padding(.trailing)
+                        Text(factory.name)
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
+        }
+        .navigationBarTitle("Add Data Source", displayMode: .inline)
+        .navigationBarItems(leading: Button {
+            completion(nil)
+        } label: {
+            Text("Cancel")
+        })
     }
 
 }
