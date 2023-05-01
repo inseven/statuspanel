@@ -20,16 +20,24 @@
 
 import SwiftUI
 
-struct AddDataSourceView: UIViewControllerRepresentable {
+struct DataSourceInstanceRow: View {
 
     let config: Config
-    let dataSourceController: DataSourceController
+    let dataSourceInstance: DataSourceInstance
 
-    func makeUIViewController(context: Context) -> some UIViewController {
-        return AddDataSourceViewController(config: config, dataSourceController: dataSourceController)
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+    var body: some View {
+        HStack {
+            Image(uiImage: dataSourceInstance.dataSource.image)
+            VStack(alignment: .leading) {
+                Text(dataSourceInstance.dataSource.name)
+                if let summary = try? dataSourceInstance.dataSource.summary(config: config,
+                                                                            instanceId: dataSourceInstance.id) {
+                    Text(summary)
+                        .lineLimit(1)
+                        .font(.footnote)
+                }
+            }
+        }
     }
 
 }

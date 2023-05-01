@@ -23,11 +23,11 @@ import SwiftUI
 
 protocol AddDataSourceControllerDelegate: AnyObject {
 
-    func addDataSourceControllerDidComplete(_ addDataSourceController: AddDataSourceController)
+    func addDataSourceControllerDidComplete(_ addDataSourceViewController: AddDataSourceViewController)
 
 }
 
-class AddDataSourceController: UINavigationController {
+class AddDataSourceViewController: UINavigationController {
 
     private let config: Config
     private let dataSourceController: DataSourceController
@@ -54,7 +54,7 @@ class AddDataSourceController: UINavigationController {
         self.dataSourceController = dataSourceController
         super.init(rootViewController: UITableViewController())
 
-        let view = AddDataSourceView(sourceController: dataSourceController) { dataSource in
+        let view = DataSourcePicker(sourceController: dataSourceController) { dataSource in
             dispatchPrecondition(condition: .onQueue(.main))
             guard let dataSource = dataSource else {
                 self.dismiss(animated: true, completion: nil)
@@ -84,7 +84,6 @@ class AddDataSourceController: UINavigationController {
     func addDataSource(details: DataSourceInstance.Details) -> Bool {
         do {
             try dataSourceController.add(details)
-            try dataSourceController.save()
             return true
         } catch {
             present(error: error)
