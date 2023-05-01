@@ -176,7 +176,7 @@ class Service {
     }
 
     private static func makeMultipartUpload(parts: [Data], flags: UInt16) -> Data {
-        let wakeTime = Int(Config.getLocalWakeTime() / 60)
+        let wakeTime = Int(Config().getLocalWakeTime() / 60)
         // Header format is as below. Any fields beyond length can be omitted
         // providing the length is set appropriately.
         // FF 00 - indicating header present

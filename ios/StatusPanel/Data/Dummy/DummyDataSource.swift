@@ -104,9 +104,7 @@ final class DummyDataSource : DataSource {
                              accentColor: UIColor.red),
             ]
             data.append(contentsOf: dummyData)
-            if Config().showIcons {
-                data.append(specialCharsItem)
-            }
+            data.append(specialCharsItem)
         }
         completion(data, nil)
     }

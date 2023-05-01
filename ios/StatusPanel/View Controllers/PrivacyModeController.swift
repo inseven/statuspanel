@@ -40,8 +40,8 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
         }
     }
 
-    init(model: DeviceSettingsView.Model) {
-        self.config = Config()
+    init(config: Config, model: DeviceSettingsView.Model) {
+        self.config = config
         self.model = model
         super.init(style: .grouped)
         title = LocalizedString("privacy_mode_title")

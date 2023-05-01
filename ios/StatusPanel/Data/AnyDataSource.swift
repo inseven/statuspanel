@@ -28,9 +28,9 @@ class AnyDataSource: Identifiable {
     private var nameProxy: (() -> String)! = nil
     private var imageProxy: (() -> UIImage)! = nil
     private var configurableProxy: (() -> Bool)! = nil
-    private var dataProxy: ((UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
-    private var summaryProxy: ((UUID) throws -> String?)! = nil
-    private var settingsViewProxy: ((UUID) throws -> AnyView)! = nil
+    private var dataProxy: ((Config, UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
+    private var summaryProxy: ((Config, UUID) throws -> String?)! = nil
+    private var settingsViewProxy: ((Config, UUID) throws -> AnyView)! = nil
     private var validateSettingsProxy: ((DataSourceSettings) -> Bool)! = nil
 
     var id: DataSourceType {
@@ -49,16 +49,16 @@ class AnyDataSource: Identifiable {
         return configurableProxy()
     }
 
-    func data(for instanceId: UUID, completion: @escaping ([DataItemBase]?, Error?) -> Void) {
-        return dataProxy(instanceId, completion)
+    func data(config: Config, instanceId: UUID, completion: @escaping ([DataItemBase]?, Error?) -> Void) {
+        return dataProxy(config, instanceId, completion)
     }
 
-    func summary(for instanceId: UUID) throws -> String? {
-        return try summaryProxy(instanceId)
+    func summary(config: Config, instanceId: UUID) throws -> String? {
+        return try summaryProxy(config, instanceId)
     }
 
-    func settingsView(for instanceId: UUID) throws -> AnyView {
-        return try settingsViewProxy(instanceId)
+    func settingsView(config: Config, instanceId: UUID) throws -> AnyView {
+        return try settingsViewProxy(config, instanceId)
     }
 
     func validate(settings: DataSourceSettings) -> Bool {
@@ -72,9 +72,9 @@ class AnyDataSource: Identifiable {
         configurableProxy = {
             return dataSource.configurable
         }
-        dataProxy = { instanceId, completion in
+        dataProxy = { config, instanceId, completion in
             do {
-                let settings = try dataSource.settings(for: instanceId)
+                let settings = try dataSource.settings(config: config, instanceId: instanceId)
                 dataSource.data(settings: settings) { data, error in
                     if let error = error {
                         completion(nil, error)
@@ -93,13 +93,13 @@ class AnyDataSource: Identifiable {
         imageProxy = {
             return dataSource.image
         }
-        summaryProxy = { instanceId in
-            let settings = try dataSource.settings(for: instanceId)
+        summaryProxy = { config, instanceId in
+            let settings = try dataSource.settings(config: config, instanceId: instanceId)
             return dataSource.summary(settings: settings)
         }
-        settingsViewProxy = { instanceId in
-            let settings = try dataSource.settings(for: instanceId)
-            let store = DataSourceSettingsStore<T.Settings>(config: Config(), uuid: instanceId)
+        settingsViewProxy = { config, instanceId in
+            let settings = try dataSource.settings(config: config, instanceId: instanceId)
+            let store = DataSourceSettingsStore<T.Settings>(config: config, uuid: instanceId)
             let view = dataSource
                 .settingsView(store: store, settings: settings)
                 .navigationTitle(dataSource.name)

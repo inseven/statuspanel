@@ -23,17 +23,22 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    @MainActor static var shared: AppDelegate {
+        return UIApplication.shared.delegate as! AppDelegate
+    }
+
     private var background = false
 
     var window: UIWindow?
     var viewController: ViewController?
     var config = Config()
-    var sourceController = DataSourceController()
+    var sourceController: DataSourceController
     var apnsToken: Data?
     var client: Service = Service(baseUrl: "https://api.statuspanel.io/")
 
-    static var shared: AppDelegate {
-        return UIApplication.shared.delegate as! AppDelegate
+    override init() {
+        sourceController = DataSourceController(config: config)
+        super.init()
     }
 
     func application(_ application: UIApplication,
@@ -47,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Failed to migrate settings with error \(error)")
         }
 
-        let viewController = ViewController()
+        let viewController = ViewController(config: config)
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.navigationBar.prefersLargeTitles = true
         self.viewController = viewController
@@ -97,7 +102,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func addDevice(_ device: Device) {
-        let config = Config()
         var devices = config.devices
         devices.append(device)
         config.devices = devices
@@ -135,7 +139,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 
         // Record the last background update time.
-        Config().lastBackgroundUpdate = Date()
+        config.lastBackgroundUpdate = Date()
 
         // Re-register the device to ensure it doesn't time out on the server.
         if let deviceToken = apnsToken {
@@ -164,7 +168,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func updateDevices(completion: @escaping (UIBackgroundFetchResult) -> Void = { _ in }) {
         Task {
             do {
-                let config = Config()
                 let items = try await AppDelegate.shared.sourceController.fetch()
                 let updates = config.devices
                     .map { device in

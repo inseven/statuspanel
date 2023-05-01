@@ -27,7 +27,7 @@ struct DeviceSettingsView: View {
     // serve as the starting-point for the device configuration.
     class Model: ObservableObject {
 
-        let config = Config()
+        let config: Config
 
         @Published var displayTwoColumns: Bool {
             didSet {
@@ -78,7 +78,8 @@ struct DeviceSettingsView: View {
             }
         }
 
-        init() {
+        init(config: Config) {
+            self.config = config
             displayTwoColumns = config.displayTwoColumns
             showIcons = config.showIcons
             darkMode = config.darkMode
@@ -91,7 +92,14 @@ struct DeviceSettingsView: View {
 
     }
 
-    @StateObject var model = Model()
+    let config: Config
+
+    @StateObject var model: Model
+
+    init(config: Config) {
+        self.config = config
+        _model = StateObject(wrappedValue: Model(config: config))
+    }
 
     var body: some View {
         Form {
@@ -123,7 +131,7 @@ struct DeviceSettingsView: View {
                         .tag(0)
                 }
                 NavigationLink {
-                    PrivacyModeView(model: model)
+                    PrivacyModeView(config: config, model: model)
                         .edgesIgnoringSafeArea(.all)
                         .navigationTitle(LocalizedString("privacy_mode_title"))
                 } label: {

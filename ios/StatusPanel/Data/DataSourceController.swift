@@ -23,11 +23,13 @@ import Foundation
 
 class DataSourceController {
 
+    let config: Config
     var sources: [AnyDataSource] = []
     var instances: [DataSourceInstance] = []
     var syncQueue = DispatchQueue(label: "DataSourceController.syncQueue")
 
-    init() {
+    init(config: Config) {
+        self.config = config
 
         let configuration = try! Bundle.main.configuration()
         sources = [
@@ -40,8 +42,6 @@ class DataSourceController {
             WeatherDataSource().anyDataSource(),
             ZenQuotesDataSource().anyDataSource(),
         ].sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-
-        let config = Config()
 
         do {
             let instances = try config.dataSources() ?? []
@@ -120,7 +120,7 @@ class DataSourceController {
         if !dataSource.validate(settings: settings) {
             throw StatusPanelError.incorrectSettingsType
         }
-        try Config().save(settings: settings, instanceId: uuid)
+        try config.save(settings: settings, instanceId: uuid)
         instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
     }
 
@@ -137,7 +137,7 @@ class DataSourceController {
 
     func save() throws {
         dispatchPrecondition(condition: .onQueue(.main))
-        try Config().set(dataSources: self.instances.map { $0.details })
+        try config.set(dataSources: self.instances.map { $0.details })
     }
 
     func fetch() async throws -> [DataItemBase] {
@@ -166,7 +166,7 @@ class DataSourceController {
             var results: [UUID: Result<[DataItemBase], Error>] = [:]  // Synchronized on syncQueue.
             for source in sources {
                 dispatchGroup.enter()
-                source.fetch { data, error in
+                source.fetch(config: self.config) { data, error in
                     self.syncQueue.async {
                         if let error = error {
                             results[source.id] = .failure(error)

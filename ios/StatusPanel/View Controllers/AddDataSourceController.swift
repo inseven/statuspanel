@@ -29,6 +29,7 @@ protocol AddDataSourceControllerDelegate: AnyObject {
 
 class AddDataSourceController: UINavigationController {
 
+    private let config: Config
     private let dataSourceController: DataSourceController
 
     weak var addSourceDelegate: AddDataSourceControllerDelegate?
@@ -48,7 +49,8 @@ class AddDataSourceController: UINavigationController {
                                action: #selector(doneTapped(sender:)))
     }()
 
-    init(dataSourceController: DataSourceController) {
+    init(config: Config, dataSourceController: DataSourceController) {
+        self.config = config
         self.dataSourceController = dataSourceController
         super.init(rootViewController: UITableViewController())
 
@@ -100,7 +102,7 @@ class AddDataSourceController: UINavigationController {
                 }
                 return
             }
-            let settingsView = try dataSource.settingsView(for: details.id)
+            let settingsView = try dataSource.settingsView(config: config, instanceId: details.id)
             let settingsViewController = UIHostingController(rootView: settingsView)
             settingsViewController.navigationItem.rightBarButtonItem = self.doneButtonItem
             self.pushViewController(settingsViewController, animated: true)

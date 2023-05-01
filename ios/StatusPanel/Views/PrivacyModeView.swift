@@ -22,10 +22,11 @@ import SwiftUI
 
 struct PrivacyModeView: UIViewControllerRepresentable {
 
+    let config: Config
     let model: DeviceSettingsView.Model
 
     func makeUIViewController(context: Context) -> some UIViewController {
-        return PrivacyModeController(model: model)
+        return PrivacyModeController(config: config, model: model)
     }
 
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
