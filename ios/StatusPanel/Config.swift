@@ -24,13 +24,13 @@ import UIKit
 
 class Config: ObservableObject {
 
-    enum DarkMode: Int, CaseIterable {
+    enum DarkMode: Int, CaseIterable, Codable {
         case off = 0
         case on = 1
         case system = 2
     }
 
-    enum PrivacyMode: Int, CaseIterable {
+    enum PrivacyMode: Int, CaseIterable, Codable {
         case redactLines = 0
         case redactWords = 1
         case customImage = 2
@@ -55,8 +55,10 @@ class Config: ObservableObject {
         case showIcons
         case dataSources
         case settings(UUID)
+        case deviceSettings(String)
 
         static let settingsPrefix = "Settings-"
+        static let deviceSettingsPrefix = "DeviceSettings-"
 
         init?(rawValue: String) {
             switch rawValue {
@@ -97,6 +99,9 @@ class Config: ObservableObject {
                     return nil
                 }
                 self = .settings(uuid)
+            case _ where rawValue.starts(with: Self.deviceSettingsPrefix):
+                let deviceId = String(rawValue.dropFirst(Self.settingsPrefix.count))
+                self = .deviceSettings(deviceId)
             default:
                 return nil
             }
@@ -138,16 +143,9 @@ class Config: ObservableObject {
                 return "dataSources"
             case .settings(let uuid):
                 return "Settings-\(uuid.uuidString)"
+            case .deviceSettings(let deviceId):
+                return "Settings-\(deviceId)"
             }
-        }
-    }
-
-    struct TrainRoute {
-        var from: String?
-        var to: String?
-        init(from: String?, to: String?) {
-            self.from = from
-            self.to = to
         }
     }
 
@@ -191,19 +189,13 @@ class Config: ObservableObject {
         self.userDefaults.set(value, forKey: key.rawValue)
     }
 
-    private func set(_ value: Int, for key: Key) {
-        self.userDefaults.set(value, forKey: key.rawValue)
-    }
-
-    private func set(_ value: Bool, for key: Key) {
-        self.userDefaults.set(value, forKey: key.rawValue)
-    }
-
     private func set<T: Codable>(codable: T, for key: Key) throws {
         let data = try JSONEncoder().encode(codable)
         self.userDefaults.set(data, forKey: key.rawValue)
     }
 
+    // TODO: Extract privacy image generation and management to a separate utility #533
+    //       https://github.com/inseven/statuspanel/issues/533
     func migrate() throws {
         let fileManager = FileManager.default
         let documentsUrl = try fileManager.documentsUrl()
@@ -257,93 +249,6 @@ class Config: ObservableObject {
         get {
             self.object(for: .activeCalendars) as? [String] ?? []
         }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .activeCalendars)
-        }
-    }
-
-    var activeTFLLines: [String] {
-        get {
-            self.object(for: .activeTFLLines) as? [String] ?? []
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .activeTFLLines)
-        }
-    }
-
-    // The desired panel wake time, as a number of seconds since midnight (floating time)
-    var updateTime: TimeInterval {
-        get {
-            self.value(for: .updateTime) as? TimeInterval ?? (6 * 60 + 20) * 60
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .updateTime)
-        }
-    }
-
-    var showIcons: Bool {
-        get {
-            self.bool(for: .showIcons, default: true)
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .showIcons)
-        }
-    }
-
-    var trainRoutes: [TrainRoute] {
-        get {
-            guard let val = self.array(for: .trainRoutes) as? [Dictionary<String,String>] else {
-                return []
-            }
-            var result: [TrainRoute] = []
-            for dict in val {
-                result.append(TrainRoute(from: dict["from"], to: dict["to"]))
-            }
-            return result
-        }
-        set {
-            var val: [Dictionary<String,String>] = []
-            for route in newValue {
-                var dict = Dictionary<String,String>()
-                if (route.from != nil) {
-                    dict["from"] = route.from!
-                }
-                if (route.to != nil) {
-                    dict["to"] = route.to!
-                }
-                val.append(dict)
-            }
-            objectWillChange.send()
-            self.set(val, for: .trainRoutes)
-        }
-    }
-
-    var trainRoute: TrainRoute {
-        get {
-            let routes = trainRoutes
-            if routes.count > 0 {
-                return routes[0]
-            } else {
-                return TrainRoute(from: nil, to: nil)
-            }
-        }
-        set {
-            trainRoutes = [newValue]
-        }
-    }
-
-    // The wake time relative to start of day GMT. If waketime is 6*60*60 then this returns the offset from midnight GMT
-    // to 0600 local time. It is always positive.
-    func getLocalWakeTime() -> TimeInterval {
-        var result = updateTime - TimeInterval(TimeZone.current.secondsFromGMT())
-        if result < 0 {
-            result += 24 * 60 * 60
-        }
-        return result
     }
 
     // Old way of storing a single device and key
@@ -390,118 +295,17 @@ class Config: ObservableObject {
         }
     }
 
-    var displayTwoColumns: Bool {
-        get {
-            !self.bool(for: .displaySingleColumn)
-        }
-        set {
-            objectWillChange.send()
-            self.set(!newValue, for: .displaySingleColumn)
-        }
-    }
+    // TODO: Extract privacy image generation and management to a separate utility #533
+    //       https://github.com/inseven/statuspanel/issues/533
 
-    var titleFont: String {
-        get {
-            self.string(for: .titleFont) ?? Fonts.FontName.chiKareGo2
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .titleFont)
-        }
-    }
+    private static let privacyImageFilename = "privacy-image.png"
 
-    var bodyFont: String {
-        get {
-            self.string(for: .bodyFont) ?? Fonts.FontName.unifont16
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .bodyFont)
-        }
-    }
-
-    typealias Font = Fonts.Font
-
-    var darkMode: DarkMode {
-        get {
-            DarkMode.init(rawValue: self.integer(for: .darkMode))!
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue.rawValue, for: .darkMode)
-        }
-    }
-
-    var displaysInDarkMode: Bool {
-        switch darkMode {
-        case .off:
-            return false
-        case .on:
-            return true
-        case .system:
-            return UITraitCollection.current.userInterfaceStyle == UIUserInterfaceStyle.dark
-        }
-    }
-
-    var showDummyData: Bool {
-        get {
-            self.bool(for: .dummyData)
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .dummyData)
-        }
-    }
-
-    var showCalendarLocations: Bool {
-        get {
-            self.bool(for: .showCalendarLocations)
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .showCalendarLocations)
-        }
-    }
-
-    var showUrlsInCalendarLocations: Bool {
-        get {
-            self.bool(for: .showUrlsInCalendarLocations)
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .showUrlsInCalendarLocations)
-        }
-    }
-
-    // 0 means unlimited
-    var maxLines: Int {
-        get {
-            self.integer(for: .maxLines)
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .maxLines)
-        }
-    }
-
-    var privacyMode: PrivacyMode {
-        get {
-            PrivacyMode.init(rawValue: self.integer(for: .privacyMode))!
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue.rawValue, for: .privacyMode)
-        }
-    }
-
-    static let privacyImageFilename = "privacy-image.png"
-
-    func privacyImage() throws -> UIImage? {
+    private func privacyImage() throws -> UIImage? {
         let url = try FileManager.default.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
         return UIImage(contentsOfFile: url.path)
     }
 
-    func setPrivacyImage(_ image: UIImage?) throws {
+    private func setPrivacyImage(_ image: UIImage?) throws {
         let fileManager = FileManager.default
         let url = try fileManager.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
         guard let image = image else {
@@ -574,6 +378,42 @@ class Config: ObservableObject {
         let data = try JSONEncoder().encode(settings)
         objectWillChange.send()
         set(data, for: .settings(instanceId))
+    }
+
+    @MainActor func settings(forDevice deviceId: String) throws -> DeviceSettings {
+        guard let data = object(for: .deviceSettings(deviceId)) as? Data else {
+            var settings = DeviceSettings(deviceId: deviceId)
+            settings.displayTwoColumns = !bool(for: .displaySingleColumn)
+            settings.showIcons = bool(for: .showIcons, default: true)
+            settings.darkMode = DarkMode.init(rawValue: integer(for: .darkMode))!
+            settings.maxLines = integer(for: .maxLines)
+            settings.privacyMode = PrivacyMode.init(rawValue: integer(for: .privacyMode))!
+            settings.updateTime = Date(timeIntervalSinceReferenceDate: self.value(for: .updateTime) as? TimeInterval ?? DeviceSettings.defaultUpdateTime)
+            settings.titleFont = string(for: .titleFont) ?? Fonts.FontName.chiKareGo2
+            settings.bodyFont = string(for: .bodyFont) ?? Fonts.FontName.unifont16
+            if let dataSources = try dataSources() {
+                settings.dataSources = dataSources
+            }
+
+            // Migrate the privacy image.
+            // TODO: Extract privacy image generation and management to a separate utility #533
+            //       https://github.com/inseven/statuspanel/issues/533
+            let fileManager = FileManager.default
+            let url = try fileManager.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
+            let deviceUrl = try fileManager.documentsUrl().appendingPathComponent("\(deviceId).png")
+            if fileManager.fileExists(at: url) && !fileManager.fileExists(at: deviceUrl) {
+                try fileManager.copyItem(at: url, to: deviceUrl)
+            }
+
+            return settings
+        }
+        return try JSONDecoder().decode(DeviceSettings.self, from: data as Data)
+    }
+
+    @MainActor func save(settings: DeviceSettings, deviceId: String) throws {
+        let data = try JSONEncoder().encode(settings)
+        objectWillChange.send()
+        set(data, for: .deviceSettings(deviceId))
     }
 
 }

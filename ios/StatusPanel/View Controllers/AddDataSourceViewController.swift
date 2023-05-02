@@ -30,7 +30,8 @@ protocol AddDataSourceControllerDelegate: AnyObject {
 class AddDataSourceViewController: UINavigationController {
 
     private let config: Config
-    private let dataSourceController: DataSourceController
+
+    @Binding var dataSources: [DataSourceInstance]
 
     weak var addSourceDelegate: AddDataSourceControllerDelegate?
 
@@ -49,12 +50,12 @@ class AddDataSourceViewController: UINavigationController {
                                action: #selector(doneTapped(sender:)))
     }()
 
-    init(config: Config, dataSourceController: DataSourceController) {
+    init(config: Config, dataSources: Binding<[DataSourceInstance]>) {
         self.config = config
-        self.dataSourceController = dataSourceController
+        _dataSources = dataSources
         super.init(rootViewController: UITableViewController())
 
-        let view = DataSourcePicker(sourceController: dataSourceController) { dataSource in
+        let view = DataSourcePicker { dataSource in
             dispatchPrecondition(condition: .onQueue(.main))
             guard let dataSource = dataSource else {
                 self.dismiss(animated: true, completion: nil)
@@ -83,7 +84,8 @@ class AddDataSourceViewController: UINavigationController {
 
     func addDataSource(details: DataSourceInstance.Details) -> Bool {
         do {
-            try dataSourceController.add(details)
+            let dataSource = try DataSourceController.dataSourceInstance(for: details)
+            dataSources.append(dataSource)
             return true
         } catch {
             present(error: error)

@@ -29,7 +29,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     private var redactedImage: UIImage?
 
     let config: Config
-    let device = Device(kind: .einkV1)
 
     var sourceController: DataSourceController!
 
@@ -164,6 +163,16 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
 
     func fetch() {
         dispatchPrecondition(condition: .onQueue(.main))
+
+        // Use the first device for the previews.
+        guard let device = config.devices.first else {
+            imageView.isHidden = true
+            return
+        }
+
+        imageView.isHidden = false
+
+        let settings = (try? config.settings(forDevice: device.id)) ?? DeviceSettings(deviceId: UUID().uuidString)
         let blankImage = device.blankImage()
         self.image = blankImage
         self.redactedImage = blankImage
@@ -176,7 +185,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         activityIndicator.startAnimating()
 
         // Generate a preview update.
-        sourceController.fetch { items, error in
+        sourceController.fetch(details: settings.dataSources) { items, error in
             dispatchPrecondition(condition: .onQueue(.main))
 
             self.refreshButtonItem.isEnabled = true
@@ -187,8 +196,9 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
                 }
                 return
             }
-            let images = self.device.renderer.render(data: items, config: AppDelegate.shared.config,
-                                                     device: self.device)
+            let images = device.renderer.render(data: items, config: AppDelegate.shared.config,
+                                                device: device,
+                                                settings: settings)
             self.image = images[0]
             self.redactedImage = images[1]
             self.activityIndicator.stopAnimating()

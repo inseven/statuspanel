@@ -22,72 +22,46 @@ import SwiftUI
 
 struct DeviceSettingsView: View {
 
-    // N.B. This model currently uses the global `Config` object. It's doing this to allow the new device UI to be built
-    // out in advance of introducing per-device settings and associated data migrations. It's likely this model will be
-    // serve as the starting-point for the device configuration.
     class Model: ObservableObject {
 
-        let config: Config
+        private let config: Config
+        private let device: Device
 
-        @Published var displayTwoColumns: Bool {
+        @MainActor @Published var settings: DeviceSettings {
             didSet {
-                config.displayTwoColumns = displayTwoColumns
+                do {
+                    try config.save(settings: settings, deviceId: device.id)
+                } catch {
+                    self.error = error
+                }
             }
         }
 
-        @Published var showIcons: Bool {
+        @MainActor @Published var dataSources: [DataSourceInstance] {
             didSet {
-                config.showIcons = showIcons
-            }
-
-        }
-
-        @Published var darkMode: Config.DarkMode {
-            didSet {
-                config.darkMode = darkMode
+                settings.dataSources = dataSources.map { $0.details }
             }
         }
 
-        @Published var maxLines: Int {
-            didSet {
-                config.maxLines = maxLines
-            }
-        }
+        @Published var error: Error?
 
-        @Published var privacyMode: Config.PrivacyMode {
-            didSet {
-                config.privacyMode = privacyMode
-            }
-        }
-
-        @Published var updateTime: Date {
-            didSet {
-                config.updateTime = updateTime.timeIntervalSinceReferenceDate
-            }
-        }
-
-        @Published var titleFont: String {
-            didSet {
-                config.titleFont = titleFont
-            }
-        }
-
-        @Published var bodyFont: String {
-            didSet {
-                config.bodyFont = bodyFont
-            }
-        }
-
-        init(config: Config) {
+        @MainActor init(config: Config, device: Device) {
             self.config = config
-            displayTwoColumns = config.displayTwoColumns
-            showIcons = config.showIcons
-            darkMode = config.darkMode
-            maxLines = config.maxLines
-            privacyMode = config.privacyMode
-            updateTime = Date(timeIntervalSinceReferenceDate: config.updateTime)
-            titleFont = config.titleFont
-            bodyFont = config.bodyFont
+            self.device = device
+            let settings: DeviceSettings
+            do {
+                settings = try config.settings(forDevice: device.id)
+            } catch {
+                settings = DeviceSettings(deviceId: device.id)
+                self.error = error
+            }
+            self.settings = settings
+            do {
+                self.dataSources = try DataSourceController.dataSourceInstances(for: settings.dataSources)
+            } catch {
+                self.dataSources = []
+                self.error = error
+            }
         }
 
     }
@@ -101,50 +75,58 @@ struct DeviceSettingsView: View {
 
     @ObservedObject var config: Config
     @ObservedObject var dataSourceController: DataSourceController
+    var device: Device
 
     @StateObject var model: Model
     @State var sheet: SheetType? = nil
     @State var error: Error? = nil
 
-    init(config: Config, dataSourceController: DataSourceController) {
+    init(config: Config, dataSourceController: DataSourceController, device: Device) {
         self.config = config
         self.dataSourceController = dataSourceController
-        _model = StateObject(wrappedValue: Model(config: config))
+        self.device = device
+        _model = StateObject(wrappedValue: Model(config: config, device: device))
     }
 
     var body: some View {
         Form {
+            Section {
+                TextField(device.kind.description, text: $model.settings.name)
+            }
             Section("Layout") {
-                ForEach(dataSourceController.instances) { dataSourceInstance in
-                    NavigationLink {
-                        try! dataSourceInstance.view(config: config)
-                    } label: {
-                        DataSourceInstanceRow(config: config, dataSourceInstance: dataSourceInstance)
+                if !model.dataSources.isEmpty {
+                    ForEach(model.dataSources) { dataSourceInstance in
+                        NavigationLink {
+                            try! dataSourceInstance.view(config: config)
+                        } label: {
+                            DataSourceInstanceRow(config: config, dataSourceInstance: dataSourceInstance)
+                        }
                     }
-                }
-                .onDelete { indexSet in
-                    do {
-                        try dataSourceController.removeInstances(atOffsets: indexSet)
-                    } catch {
-                        self.error = error
+                    .onDelete { indexSet in
+                        model.dataSources.remove(atOffsets: indexSet)
                     }
-                }
-                .onMove { source, destination in
-                    do {
-                        try dataSourceController.moveInstances(fromOffsets: source, toOffset: destination)
-                    } catch {
-                        self.error = error
+                    .onMove { indexSet, offset in
+                        model.dataSources.move(fromOffsets: indexSet, toOffset: offset)
                     }
+                } else {
+                    Text("No Data Sources")
+                        .foregroundColor(.secondary)
                 }
+            }
+            Section {
+                Button("Add Data Source...") {
+                    sheet = .add
+                }
+                .foregroundColor(.primary)
             }
             Section("Fonts") {
-                FontPicker("Title", selection: $model.titleFont)
-                FontPicker("Body", selection: $model.bodyFont)
+                FontPicker("Title", selection: $model.settings.titleFont)
+                FontPicker("Body", selection: $model.settings.bodyFont)
             }
             Section("Display") {
-                Toggle("Use Two Columns", isOn: $model.displayTwoColumns)
-                Toggle("Show Icons", isOn: $model.showIcons)
-                Picker("Dark Mode", selection: $model.darkMode) {
+                Toggle("Use Two Columns", isOn: $model.settings.displayTwoColumns)
+                Toggle("Show Icons", isOn: $model.settings.showIcons)
+                Picker("Dark Mode", selection: $model.settings.darkMode) {
                     Text(Localized(Config.DarkMode.off))
                         .tag(Config.DarkMode.off)
                     Text(Localized(Config.DarkMode.on))
@@ -152,7 +134,7 @@ struct DeviceSettingsView: View {
                     Text(Localized(Config.DarkMode.system))
                         .tag(Config.DarkMode.system)
                 }
-                Picker("Maximum Lines Per Item", selection: $model.maxLines) {
+                Picker("Maximum Lines Per Item", selection: $model.settings.maxLines) {
                     Text("1")
                         .tag(1)
                     Text("2")
@@ -169,31 +151,26 @@ struct DeviceSettingsView: View {
                         .edgesIgnoringSafeArea(.all)
                         .navigationTitle(LocalizedString("privacy_mode_title"))
                 } label: {
-                    LabeledContent("Privacy Mode", value: Localized(model.privacyMode))
+                    LabeledContent("Privacy Mode", value: Localized(model.settings.privacyMode))
                 }
             }
             Section("Schedule") {
-                DatePicker("Device Update Time", selection: $model.updateTime, displayedComponents: .hourAndMinute)
+                DatePicker("Device Update Time", selection: $model.settings.updateTime, displayedComponents: .hourAndMinute)
                     .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
+            }
+            Section("Details") {
+                LabeledContent("Type", value: device.kind.description)
+                LabeledContent("Identifier", value: device.id)
             }
         }
         .alert(isPresented: $error.mappedToBool()) {
             Alert(error: error)
         }
         .navigationTitle("Device Settings")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    sheet = .add
-                } label: {
-                    Label("Add", systemImage: "plus")
-                }
-            }
-        }
         .sheet(item: $sheet) { sheet in
             switch sheet {
             case .add:
-                AddDataSourceView(config: config, dataSourceController: dataSourceController)
+                AddDataSourceView(config: config, dataSources: $model.dataSources)
             }
         }
     }
