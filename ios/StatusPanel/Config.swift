@@ -388,7 +388,7 @@ class Config: ObservableObject {
             settings.darkMode = DarkMode.init(rawValue: integer(for: .darkMode))!
             settings.maxLines = integer(for: .maxLines)
             settings.privacyMode = PrivacyMode.init(rawValue: integer(for: .privacyMode))!
-            settings.updateTime = Date(timeIntervalSinceReferenceDate: self.value(for: .updateTime) as? TimeInterval ?? (6 * 60 + 20) * 60)
+            settings.updateTime = Date(timeIntervalSinceReferenceDate: self.value(for: .updateTime) as? TimeInterval ?? DeviceSettings.defaultUpdateTime)
             settings.titleFont = string(for: .titleFont) ?? Fonts.FontName.chiKareGo2
             settings.bodyFont = string(for: .bodyFont) ?? Fonts.FontName.unifont16
             if let dataSources = try dataSources() {

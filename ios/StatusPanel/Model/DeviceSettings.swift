@@ -22,6 +22,8 @@ import SwiftUI
 
 struct DeviceSettings: Codable {
 
+    static let defaultUpdateTime: TimeInterval = 6 * 60 * 60  // 06:00
+
     enum CodingKeys: String, CodingKey {
         case deviceId
         case name
@@ -43,7 +45,7 @@ struct DeviceSettings: Codable {
     var darkMode: Config.DarkMode = .off
     var maxLines: Int = 0
     var privacyMode: Config.PrivacyMode = .redactLines
-    var updateTime: Date = Date(timeIntervalSinceReferenceDate: (6 * 60 + 20) * 60)
+    var updateTime: Date = Date(timeIntervalSinceReferenceDate: Self.defaultUpdateTime)
     var titleFont: String = Fonts.FontName.chiKareGo2
     var bodyFont: String =  Fonts.FontName.unifont16
     var dataSources: [DataSourceInstance.Details] = []
