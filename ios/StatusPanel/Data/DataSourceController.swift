@@ -24,16 +24,9 @@ import SwiftUI
 
 class DataSourceController: ObservableObject {
 
-    let config: Config
-    let sources: [AnyDataSource]
-    var instances: [DataSourceInstance] = []
-    var syncQueue = DispatchQueue(label: "DataSourceController.syncQueue")
-
-    init(config: Config) {
-        self.config = config
-
+    static let sources: [AnyDataSource] = {
         let configuration = try! Bundle.main.configuration()
-        sources = [
+        return [
             CalendarDataSource().anyDataSource(),
             CalendarHeaderSource().anyDataSource(),
             DummyDataSource().anyDataSource(),
@@ -44,125 +37,33 @@ class DataSourceController: ObservableObject {
             ZenQuotesDataSource().anyDataSource(),
         ].sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
 
-        do {
-            let instances = try config.dataSources() ?? []
-            do {
-                for instance in instances {
-                    try add(type: instance.type, uuid: instance.id)
-                }
-            } catch {
-                print("Failed to load data source details with error \(error).")
-            }
-        } catch {
-            print("Failed to load data sources with error \(error).")
+    }()
+
+    let config: Config
+    var syncQueue = DispatchQueue(label: "DataSourceController.syncQueue")
+
+    init(config: Config) {
+        self.config = config
+
+
+
+    }
+
+    static func dataSourceInstances(for dataSourceDetails: [DataSourceInstance.Details]) throws -> [DataSourceInstance] {
+        return try dataSourceDetails.map { try dataSourceInstance(for: $0) }
+    }
+
+    static func dataSourceInstance(for details: DataSourceInstance.Details) throws -> DataSourceInstance {
+        guard let dataSource = Self.sources.first(where: { $0.id == details.type }) else {
+            throw StatusPanelError.unknownDataSource(details.type)
         }
-
-        // Set up the initial data sources if necessary.
-        // This is a little inelegant as it presumes we'll only need to request access to EKEventStore and hard-codes
-        // that request here--a better approach would be to introduce a an asynchronous DataSource API that allows
-        // each source to request access to the stores it requires.
-        let eventStore = EKEventStore()
-        eventStore.requestAccess(to: EKEntityType.event) { granted, error in
-            DispatchQueue.main.async {
-                self.configureDefaultDataSourcesIfNecessary(config: config, eventStore: eventStore)
-            }
-        }
-
+        return DataSourceInstance(id: details.id, dataSource: dataSource)
     }
 
-    @MainActor func configureDefaultDataSourcesIfNecessary(config: Config, eventStore: EKEventStore) {
-        guard instances.isEmpty else {
-            return
-        }
-        do {
-            let calendars = eventStore.allCalendars().map { $0.calendarIdentifier }
-            try add(type: .calendarHeader,
-                    settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
-                                                            shortFormat: "yMMMMdEEE",
-                                                            offset: 0,
-                                                            flags: [.header, .spansColumns]))
-            try add(type: .calendar,
-                    settings: CalendarDataSource.Settings(showLocations: config.showCalendarLocations,
-                                                          showUrls: config.showUrlsInCalendarLocations,
-                                                          offset: 0,
-                                                          activeCalendars: Set(calendars)))
-            try add(type: .text,
-                    settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
-                                                      text: "Tomorrow:"))
-            try add(type: .calendar,
-                    settings: CalendarDataSource.Settings(showLocations: config.showCalendarLocations,
-                                                          showUrls: config.showUrlsInCalendarLocations,
-                                                          offset: 1,
-                                                          activeCalendars: Set(calendars)))
-            try save()
-        } catch {
-            print("Failed to add default data sources with error \(error).")
-        }
-    }
-
-    private func add(type: DataSourceType, uuid: UUID = UUID()) throws {
-        dispatchPrecondition(condition: .onQueue(.main))
-        guard let dataSource = sources.first(where: { $0.id == type }) else {
-            throw StatusPanelError.unknownDataSource(type)
-        }
-        objectWillChange.send()
-        instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
-        try save()
-    }
-
-    func add(_ details: DataSourceInstance.Details) throws {
-        try self.add(type: details.type, uuid: details.id)
-    }
-
-    private func add<T: DataSourceSettings>(type: DataSourceType, settings: T) throws {
-        dispatchPrecondition(condition: .onQueue(.main))
-        guard let dataSource = sources.first(where: { $0.id == type }) else {
-            throw StatusPanelError.unknownDataSource(type)
-        }
-        let uuid = UUID()
-        if !dataSource.validate(settings: settings) {
-            throw StatusPanelError.incorrectSettingsType
-        }
-        try config.save(settings: settings, instanceId: uuid)
-        objectWillChange.send()
-        instances.append(DataSourceInstance(id: uuid, dataSource: dataSource))
-        try save()
-    }
-
-    func add(_ dataSource: AnyDataSource) throws {
-        dispatchPrecondition(condition: .onQueue(.main))
-        try self.add(type: dataSource.id)
-    }
-
-    func remove(instance: DataSourceInstance) throws {
-        dispatchPrecondition(condition: .onQueue(.main))
-        let index = instances.firstIndex(of: instance)!
-        objectWillChange.send()
-        instances.remove(at: index)
-        try save()
-    }
-
-    public func removeInstances(atOffsets offsets: IndexSet) throws {
-        objectWillChange.send()
-        instances.remove(atOffsets: offsets)
-        try save()
-    }
-
-    public func moveInstances(fromOffsets source: IndexSet, toOffset destination: Int) throws {
-        objectWillChange.send()
-        instances.move(fromOffsets: source, toOffset: destination)
-        try save()
-    }
-
-    private func save() throws {
-        dispatchPrecondition(condition: .onQueue(.main))
-        try config.set(dataSources: self.instances.map { $0.details })
-    }
-
-    func fetch() async throws -> [DataItemBase] {
+    func fetch(details: [DataSourceInstance.Details]) async throws -> [DataItemBase] {
         return try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.main.async {
-                self.fetch() { items, error in
+                self.fetch(details: details) { items, error in
                     guard error == nil,
                           let items = items
                     else {
@@ -175,24 +76,29 @@ class DataSourceController: ObservableObject {
         }
     }
 
-    func fetch(completion: @escaping ([DataItemBase]?, Error?) -> Void) {
+    func fetch(details: [DataSourceInstance.Details], completion: @escaping ([DataItemBase]?, Error?) -> Void) {
         dispatchPrecondition(condition: .onQueue(.main))
-        let sources = Array(self.instances)  // Capture the ordered sources in case they change.
         syncQueue.async {
+            let dataSources: [DataSourceInstance]
+            do {
+                dataSources = try DataSourceController.dataSourceInstances(for: details)
+            } catch {
+                completion(nil, error)
+                return
+            }
 
             let dispatchGroup = DispatchGroup()
-
             var results: [UUID: Result<[DataItemBase], Error>] = [:]  // Synchronized on syncQueue.
-            for source in sources {
+            for dataSource in dataSources {
                 dispatchGroup.enter()
-                source.fetch(config: self.config) { data, error in
+                dataSource.fetch(config: self.config) { data, error in
                     self.syncQueue.async {
                         if let error = error {
-                            results[source.id] = .failure(error)
+                            results[dataSource.id] = .failure(error)
                         } else if let data = data {
-                            results[source.id] = .success(data)
+                            results[dataSource.id] = .success(data)
                         } else {
-                            results[source.id] = .failure(StatusPanelError.internalInconsistency)
+                            results[dataSource.id] = .failure(StatusPanelError.internalInconsistency)
                         }
                         dispatchGroup.leave()
                     }
@@ -200,7 +106,7 @@ class DataSourceController: ObservableObject {
             }
 
             dispatchGroup.notify(queue: self.syncQueue) {
-                let orderedResults = sources.compactMap { results[$0.id] }
+                let orderedResults = dataSources.compactMap { results[$0.id] }
                 let errors = orderedResults.compactMap { result -> Error? in
                     switch result {
                     case .success:

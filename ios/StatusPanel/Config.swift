@@ -149,15 +149,6 @@ class Config: ObservableObject {
         }
     }
 
-    struct TrainRoute {
-        var from: String?
-        var to: String?
-        init(from: String?, to: String?) {
-            self.from = from
-            self.to = to
-        }
-    }
-
     let userDefaults = UserDefaults.standard
 
     private func object(for key: Key) -> Any? {
@@ -198,19 +189,13 @@ class Config: ObservableObject {
         self.userDefaults.set(value, forKey: key.rawValue)
     }
 
-    private func set(_ value: Int, for key: Key) {
-        self.userDefaults.set(value, forKey: key.rawValue)
-    }
-
-    private func set(_ value: Bool, for key: Key) {
-        self.userDefaults.set(value, forKey: key.rawValue)
-    }
-
     private func set<T: Codable>(codable: T, for key: Key) throws {
         let data = try JSONEncoder().encode(codable)
         self.userDefaults.set(data, forKey: key.rawValue)
     }
 
+    // TODO: Extract privacy image generation and management to a separate utility #533
+    //       https://github.com/inseven/statuspanel/issues/533
     func migrate() throws {
         let fileManager = FileManager.default
         let documentsUrl = try fileManager.documentsUrl()
@@ -264,83 +249,6 @@ class Config: ObservableObject {
         get {
             self.object(for: .activeCalendars) as? [String] ?? []
         }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .activeCalendars)
-        }
-    }
-
-    var activeTFLLines: [String] {
-        get {
-            self.object(for: .activeTFLLines) as? [String] ?? []
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .activeTFLLines)
-        }
-    }
-
-    // The desired panel wake time, as a number of seconds since midnight (floating time)
-    var updateTime: TimeInterval {
-        get {
-            self.value(for: .updateTime) as? TimeInterval ?? (6 * 60 + 20) * 60
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .updateTime)
-        }
-    }
-
-    var trainRoutes: [TrainRoute] {
-        get {
-            guard let val = self.array(for: .trainRoutes) as? [Dictionary<String,String>] else {
-                return []
-            }
-            var result: [TrainRoute] = []
-            for dict in val {
-                result.append(TrainRoute(from: dict["from"], to: dict["to"]))
-            }
-            return result
-        }
-        set {
-            var val: [Dictionary<String,String>] = []
-            for route in newValue {
-                var dict = Dictionary<String,String>()
-                if (route.from != nil) {
-                    dict["from"] = route.from!
-                }
-                if (route.to != nil) {
-                    dict["to"] = route.to!
-                }
-                val.append(dict)
-            }
-            objectWillChange.send()
-            self.set(val, for: .trainRoutes)
-        }
-    }
-
-    var trainRoute: TrainRoute {
-        get {
-            let routes = trainRoutes
-            if routes.count > 0 {
-                return routes[0]
-            } else {
-                return TrainRoute(from: nil, to: nil)
-            }
-        }
-        set {
-            trainRoutes = [newValue]
-        }
-    }
-
-    // The wake time relative to start of day GMT. If waketime is 6*60*60 then this returns the offset from midnight GMT
-    // to 0600 local time. It is always positive.
-    func getLocalWakeTime() -> TimeInterval {
-        var result = updateTime - TimeInterval(TimeZone.current.secondsFromGMT())
-        if result < 0 {
-            result += 24 * 60 * 60
-        }
-        return result
     }
 
     // Old way of storing a single device and key
@@ -387,37 +295,8 @@ class Config: ObservableObject {
         }
     }
 
-    typealias Font = Fonts.Font
-
-    var showDummyData: Bool {
-        get {
-            self.bool(for: .dummyData)
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .dummyData)
-        }
-    }
-
-    var showCalendarLocations: Bool {
-        get {
-            self.bool(for: .showCalendarLocations)
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .showCalendarLocations)
-        }
-    }
-
-    var showUrlsInCalendarLocations: Bool {
-        get {
-            self.bool(for: .showUrlsInCalendarLocations)
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .showUrlsInCalendarLocations)
-        }
-    }
+    // TODO: Extract privacy image generation and management to a separate utility #533
+    //       https://github.com/inseven/statuspanel/issues/533
 
     private static let privacyImageFilename = "privacy-image.png"
 
@@ -509,15 +388,23 @@ class Config: ObservableObject {
             settings.darkMode = DarkMode.init(rawValue: integer(for: .darkMode))!
             settings.maxLines = integer(for: .maxLines)
             settings.privacyMode = PrivacyMode.init(rawValue: integer(for: .privacyMode))!
-            settings.updateTime = Date(timeIntervalSinceReferenceDate: updateTime)
+            settings.updateTime = Date(timeIntervalSinceReferenceDate: self.value(for: .updateTime) as? TimeInterval ?? (6 * 60 + 20) * 60)
             settings.titleFont = string(for: .titleFont) ?? Fonts.FontName.chiKareGo2
             settings.bodyFont = string(for: .bodyFont) ?? Fonts.FontName.unifont16
+            if let dataSources = try dataSources() {
+                settings.dataSources = dataSources
+            }
+
+            // Migrate the privacy image.
+            // TODO: Extract privacy image generation and management to a separate utility #533
+            //       https://github.com/inseven/statuspanel/issues/533
             let fileManager = FileManager.default
             let url = try fileManager.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
             let deviceUrl = try fileManager.documentsUrl().appendingPathComponent("\(deviceId).png")
-            if fileManager.fileExists(at: url) {
+            if fileManager.fileExists(at: url) && !fileManager.fileExists(at: deviceUrl) {
                 try fileManager.copyItem(at: url, to: deviceUrl)
             }
+
             return settings
         }
         return try JSONDecoder().decode(DeviceSettings.self, from: data as Data)

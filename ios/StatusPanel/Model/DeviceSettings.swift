@@ -33,6 +33,7 @@ struct DeviceSettings: Codable {
         case updateTime
         case titleFont
         case bodyFont
+        case dataSources
     }
 
     let deviceId: String
@@ -45,6 +46,7 @@ struct DeviceSettings: Codable {
     var updateTime: Date = Date(timeIntervalSinceReferenceDate: (6 * 60 + 20) * 60)
     var titleFont: String = Fonts.FontName.chiKareGo2
     var bodyFont: String =  Fonts.FontName.unifont16
+    var dataSources: [DataSourceInstance.Details] = []
 
     var displaysInDarkMode: Bool {
         switch darkMode {
@@ -73,6 +75,7 @@ struct DeviceSettings: Codable {
         updateTime = Date(timeIntervalSinceReferenceDate: try container.decode(TimeInterval.self, forKey: .updateTime))
         titleFont = try container.decode(String.self, forKey: .titleFont)
         bodyFont = try container.decode(String.self, forKey: .bodyFont)
+        dataSources = try container.decode([DataSourceInstance.Details].self, forKey: .dataSources)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -87,9 +90,11 @@ struct DeviceSettings: Codable {
         try container.encode(updateTime.timeIntervalSinceReferenceDate, forKey: .updateTime)
         try container.encode(titleFont, forKey: .titleFont)
         try container.encode(bodyFont, forKey: .bodyFont)
+        try container.encode(dataSources, forKey: .dataSources)
     }
 
-    // TODO: Move this into a common privacy mode manager that is used by config and these?
+    // TODO: Extract privacy image generation and management to a separate utility #533
+    //       https://github.com/inseven/statuspanel/issues/533
 
     func privacyImage() throws -> UIImage? {
         let url = try FileManager.default.documentsUrl().appendingPathComponent("privacy-image-\(deviceId).png")
@@ -109,6 +114,16 @@ struct DeviceSettings: Codable {
             throw StatusPanelError.invalidImage
         }
         try data.write(to: url, options: [.atomic])
+    }
+
+    // The wake time relative to start of day GMT. If waketime is 6*60*60 then this returns the offset from midnight GMT
+    // to 0600 local time. It is always positive.
+    func localUpdateTime() -> TimeInterval {
+        var result = updateTime.timeIntervalSinceReferenceDate - TimeInterval(TimeZone.current.secondsFromGMT())
+        if result < 0 {
+            result += 24 * 60 * 60
+        }
+        return result
     }
 
 }

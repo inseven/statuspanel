@@ -37,15 +37,29 @@ struct DeviceSettingsView: View {
             }
         }
 
+        @MainActor @Published var dataSources: [DataSourceInstance] {
+            didSet {
+                settings.dataSources = dataSources.map { $0.details }
+            }
+        }
+
         @Published var error: Error?
 
         @MainActor init(config: Config, device: Device) {
             self.config = config
             self.device = device
+            let settings: DeviceSettings
             do {
-                self.settings = try config.settings(forDevice: device.id)
+                settings = try config.settings(forDevice: device.id)
             } catch {
-                self.settings = DeviceSettings(deviceId: device.id)
+                settings = DeviceSettings(deviceId: device.id)
+                self.error = error
+            }
+            self.settings = settings
+            do {
+                self.dataSources = try DataSourceController.dataSourceInstances(for: settings.dataSources)
+            } catch {
+                self.dataSources = []
                 self.error = error
             }
         }
@@ -80,27 +94,30 @@ struct DeviceSettingsView: View {
                 TextField(device.kind.description, text: $model.settings.name)
             }
             Section("Layout") {
-                ForEach(dataSourceController.instances) { dataSourceInstance in
-                    NavigationLink {
-                        try! dataSourceInstance.view(config: config)
-                    } label: {
-                        DataSourceInstanceRow(config: config, dataSourceInstance: dataSourceInstance)
+                if !model.dataSources.isEmpty {
+                    ForEach(model.dataSources) { dataSourceInstance in
+                        NavigationLink {
+                            try! dataSourceInstance.view(config: config)
+                        } label: {
+                            DataSourceInstanceRow(config: config, dataSourceInstance: dataSourceInstance)
+                        }
                     }
-                }
-                .onDelete { indexSet in
-                    do {
-                        try dataSourceController.removeInstances(atOffsets: indexSet)
-                    } catch {
-                        self.error = error
+                    .onDelete { indexSet in
+                        model.dataSources.remove(atOffsets: indexSet)
                     }
-                }
-                .onMove { source, destination in
-                    do {
-                        try dataSourceController.moveInstances(fromOffsets: source, toOffset: destination)
-                    } catch {
-                        self.error = error
+                    .onMove { indexSet, offset in
+                        model.dataSources.move(fromOffsets: indexSet, toOffset: offset)
                     }
+                } else {
+                    Text("No Data Sources")
+                        .foregroundColor(.secondary)
                 }
+            }
+            Section {
+                Button("Add Data Source...") {
+                    sheet = .add
+                }
+                .foregroundColor(.primary)
             }
             Section("Fonts") {
                 FontPicker("Title", selection: $model.settings.titleFont)
@@ -150,19 +167,10 @@ struct DeviceSettingsView: View {
             Alert(error: error)
         }
         .navigationTitle("Device Settings")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    sheet = .add
-                } label: {
-                    Label("Add", systemImage: "plus")
-                }
-            }
-        }
         .sheet(item: $sheet) { sheet in
             switch sheet {
             case .add:
-                AddDataSourceView(config: config, dataSourceController: dataSourceController)
+                AddDataSourceView(config: config, dataSources: $model.dataSources)
             }
         }
     }

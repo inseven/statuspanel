@@ -165,9 +165,14 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         dispatchPrecondition(condition: .onQueue(.main))
 
         // Use the first device for the previews.
-        let device = config.devices.first ?? Device(kind: .einkV1)
-        let settings = (try? config.settings(forDevice: device.id)) ?? DeviceSettings(deviceId: UUID().uuidString)
+        guard let device = config.devices.first else {
+            imageView.isHidden = true
+            return
+        }
 
+        imageView.isHidden = false
+
+        let settings = (try? config.settings(forDevice: device.id)) ?? DeviceSettings(deviceId: UUID().uuidString)
         let blankImage = device.blankImage()
         self.image = blankImage
         self.redactedImage = blankImage
@@ -180,7 +185,7 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         activityIndicator.startAnimating()
 
         // Generate a preview update.
-        sourceController.fetch { items, error in
+        sourceController.fetch(details: settings.dataSources) { items, error in
             dispatchPrecondition(condition: .onQueue(.main))
 
             self.refreshButtonItem.isEnabled = true

@@ -18,18 +18,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import SwiftUI
+import Foundation
 
-struct AddDataSourceView: UIViewControllerRepresentable {
+// https://www.swiftbysundell.com/articles/async-and-concurrent-forEach-and-map/
+extension Sequence {
+    func asyncMap<T>(
+        _ transform: (Element) async throws -> T
+    ) async rethrows -> [T] {
+        var values = [T]()
 
-    let config: Config
-    @Binding var dataSources: [DataSourceInstance]
+        for element in self {
+            try await values.append(transform(element))
+        }
 
-    func makeUIViewController(context: Context) -> some UIViewController {
-        return AddDataSourceViewController(config: config, dataSources: $dataSources)
+        return values
     }
-
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-    }
-
 }

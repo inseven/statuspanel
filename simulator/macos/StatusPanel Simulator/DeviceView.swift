@@ -68,12 +68,8 @@ struct DeviceView: View {
                 }
                 .popover(isPresented: $isShowingInfo) {
                     Form {
-                        if let pairingURL = deviceModel.configuration.pairingURL.absoluteString {
-                            LabeledContent("Pairing URL", value: pairingURL)
-                        }
-                        if let identifier = deviceModel.configuration {
-                            LabeledContent("Identifier", value: identifier.id.uuidString)
-                        }
+                        LabeledContent("Pairing URL", value: deviceModel.configuration.pairingURL.absoluteString)
+                        LabeledContent("Identifier", value: deviceModel.configuration.id.uuidString)
                         if let update = deviceModel.lastUpdate {
                             LabeledContent("Wakeup Time", value: String(update.wakeupTime))
                         }

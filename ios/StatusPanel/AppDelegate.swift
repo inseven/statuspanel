@@ -18,22 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import EventKit
 import UIKit
-
-// https://www.swiftbysundell.com/articles/async-and-concurrent-forEach-and-map/
-extension Sequence {
-    func asyncMap<T>(
-        _ transform: (Element) async throws -> T
-    ) async rethrows -> [T] {
-        var values = [T]()
-
-        for element in self {
-            try await values.append(transform(element))
-        }
-
-        return values
-    }
-}
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -116,18 +102,64 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    func configureDataSourceInstance<T: DataSourceSettings>(type: DataSourceType,
+                                                            settings: T) throws -> DataSourceInstance.Details {
+        let instanceId = UUID()
+        let details = DataSourceInstance.Details(id: instanceId, type: type)
+        try config.save(settings: settings, instanceId: instanceId)
+        return details
+    }
+
     func addDevice(_ device: Device) {
-        var devices = config.devices
-        devices.append(device)
-        config.devices = devices
-        let alert = UIAlertController(title: "Device added",
-                                      message: "Device \(device.id) has been added.",
-                                      preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"),
-                                      style: .default) { action in
-            self.update()
-        })
-        window?.rootViewController?.present(alert, animated: true)
+
+        // Set up the initial data sources if necessary.
+        // This is a little inelegant as it presumes we'll only need to request access to EKEventStore and hard-codes
+        // that request here--a better approach would be to introduce a an asynchronous DataSource API that allows
+        // each source to request access to the stores it requires.
+        let eventStore = EKEventStore()
+        eventStore.requestAccess(to: EKEntityType.event) { granted, error in
+            DispatchQueue.main.async {
+
+                do {
+                    let calendars = eventStore.allCalendars().map { $0.calendarIdentifier }
+                    var settings = DeviceSettings(deviceId: device.id)
+                    settings.dataSources = [
+                        try self.configureDataSourceInstance(type: .calendarHeader,
+                                                        settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                                                                                shortFormat: "yMMMMdEEE",
+                                                                                                offset: 0,
+                                                                                                flags: [.header, .spansColumns])),
+                        try self.configureDataSourceInstance(type: .calendar,
+                                                             settings: CalendarDataSource.Settings(showLocations: true,
+                                                                                                   showUrls: false,
+                                                                                                   offset: 0,
+                                                                                                   activeCalendars: Set(calendars))),
+                        try self.configureDataSourceInstance(type: .text,
+                                                             settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
+                                                                                               text: "Tomorrow:")),
+                        try self.configureDataSourceInstance(type: .calendar,
+                                                             settings: CalendarDataSource.Settings(showLocations: true,
+                                                                                                   showUrls: false,
+                                                                                                   offset: 1,
+                                                                                                   activeCalendars: Set(calendars))),
+                    ]
+                    try self.config.save(settings: settings, deviceId: device.id)
+                } catch {
+                    self.window?.rootViewController?.present(error: error)
+                    return
+                }
+                self.config.devices.append(device)
+
+                let alert = UIAlertController(title: "Device added",
+                                              message: "Device \(device.id) has been added.",
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"),
+                                              style: .default) { action in
+                    self.update()
+                })
+                self.window?.rootViewController?.present(alert, animated: true)
+            }
+        }
     }
 
     func qrcodeParseFailed(_ url: URL) {
@@ -183,14 +215,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func updateDevices(completion: @escaping (UIBackgroundFetchResult) -> Void = { _ in }) {
         Task {
             do {
-                let items = try await AppDelegate.shared.dataSourceController.fetch()
                 let updates = try await config.devices
                     .asyncMap { device in
-                        // TODO: This should be on the main thread?
+                        print("Generating update for \(device.id)...")
                         let settings = try config.settings(forDevice: device.id)
+                        let items = try await AppDelegate.shared.dataSourceController.fetch(details: settings.dataSources)
                         let images = device.renderer.render(data: items, config: config, device: device, settings: settings)
                         let payloads = Panel.encode(images: images, encoding: device.encoding)
-                        return Service.Update(device: device, images: payloads)
+                        return Service.Update(device: device, settings: settings, images: payloads)
                     }
                 let change = await AppDelegate.shared.client.upload(updates)
                 completion(change ? .newData : .noData)

@@ -29,6 +29,7 @@ class Service {
 
     struct Update {
         let device: Device
+        let settings: DeviceSettings
         let images: [Data]
     }
 
@@ -87,21 +88,21 @@ class Service {
     func upload(_ updates: [Update]) async -> Bool {
         var result = false
         for update in updates {
-            let didUpload = await upload(update.images, device: update.device)
+            let didUpload = await upload(update.images, device: update.device, settings: update.settings)
             result = result || didUpload
         }
         return result
     }
 
-    func upload(_ images: [Data], device: Device) async -> Bool {
+    func upload(_ images: [Data], device: Device, settings: DeviceSettings) async -> Bool {
         return await withCheckedContinuation { continuation in
-            self.upload(images, device: device) { change in
+            self.upload(images, device: device, settings: settings) { change in
                 continuation.resume(with: .success(change))
             }
         }
     }
 
-    func upload(_ images: [Data], device: Device, completion: @escaping (Bool) -> Void) {
+    func upload(_ images: [Data], device: Device, settings: DeviceSettings, completion: @escaping (Bool) -> Void) {
         let flags = device.encoding == .png ? IMAGE_FLAG_PNG : 0
         let sodium = Sodium()
         guard let key = sodium.utils.base642bin(device.publicKey, variant: .ORIGINAL) else {
@@ -110,10 +111,15 @@ class Service {
             return
         }
 
+        let localUpdateTime = settings.localUpdateTime()
+
         // We can't just hash the resulting encryptedData because libsodium ensures it is different every time even
         // for identical input data (which normally is a good thing!) so we have to construct a unencrypted blob just
         // for the purposes of calculating the hash.
-        let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: Array(Self.makeMultipartUpload(parts: images, flags: flags)))!, variant: .ORIGINAL)!
+        let message = Array(Self.makeMultipartUpload(localUpdateTime: localUpdateTime,
+                                                     parts: images,
+                                                     flags: flags))
+        let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: message)!, variant: .ORIGINAL)!
         if hash == DispatchQueue.main.sync(execute: { return Config().getLastUploadHash(for: device.id) }) {
             print("Data for \(device.id) is the same as before, not uploading")
             completion(false)
@@ -130,7 +136,9 @@ class Service {
             }
             encryptedParts.append(Data(encryptedDataBytes!))
         }
-        let encryptedData = Self.makeMultipartUpload(parts: encryptedParts, flags: flags)
+        let encryptedData = Self.makeMultipartUpload(localUpdateTime: localUpdateTime,
+                                                     parts: encryptedParts,
+                                                     flags: flags)
         let path = "https://api.statuspanel.io/api/v2/\(device.id)"
         guard let url = URL(string: path) else {
             print("Unable to create URL")
@@ -175,8 +183,8 @@ class Service {
         task.resume()
     }
 
-    private static func makeMultipartUpload(parts: [Data], flags: UInt16) -> Data {
-        let wakeTime = Int(Config().getLocalWakeTime() / 60)
+    private static func makeMultipartUpload(localUpdateTime: TimeInterval, parts: [Data], flags: UInt16) -> Data {
+        let wakeTime = Int(localUpdateTime / 60)
         // Header format is as below. Any fields beyond length can be omitted
         // providing the length is set appropriately.
         // FF 00 - indicating header present

@@ -22,11 +22,10 @@ import SwiftUI
 
 struct DataSourcePicker: View {
 
-    var sourceController: DataSourceController
     var completion: (AnyDataSource?) -> Void
 
     var sources: [AnyDataSource] {
-        sourceController.sources.sorted { $0.name < $1.name }
+        DataSourceController.sources.sorted { $0.name < $1.name }
     }
 
     var body: some View {

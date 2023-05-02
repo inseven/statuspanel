@@ -193,17 +193,7 @@ class SettingsViewController: UITableViewController, UIAdaptivePresentationContr
         case DevicesSection:
             let prevCount = devices.count
             if indexPath.row == (prevCount == 0 ? 1 : prevCount) {
-                let device = Device()
-                devices.append(device)
-                config.devices = devices
-                tableView.performBatchUpdates {
-                    tableView.deselectRow(at: indexPath, animated: true)
-                    if prevCount == 0 {
-                        tableView.deleteRows(at: [IndexPath(row: prevCount, section: DevicesSection)], with: .fade)
-                    }
-                    tableView.insertRows(at: [IndexPath(row: prevCount, section: DevicesSection)], with: .fade)
-                }
-                let operation: ExternalOperation = .registerDeviceAndConfigureWiFi(device, ssid: device.publicKey)
+                let operation: ExternalOperation = .registerDevice(Device())
                 self.dismiss(animated: true) {
                     self.delegate?.didDismiss(settingsViewController: self)
                     UIApplication.shared.open(operation.url, options: [:])
