@@ -65,3 +65,16 @@ func Localized(_ style: DataItemFlags.Style) -> String {
         return LocalizedString("flags_section_style_value_body")
     }
 }
+
+func Localized(_ kind: Device.Kind) -> String {
+    switch kind {
+    case .einkV1:
+        return "eInk Version 1"
+    case .featherTft:
+        return "Feather TFT"
+    case .pimoroniInkyImpression4:
+        return "Pimoroni Inky Impression 4"
+    case .pimoroniInkyImpression4_rle:
+        return "Pimoroni Inky Impression 4 (ESP32)"
+    }
+}

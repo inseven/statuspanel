@@ -18,17 +18,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import UIKit
+import Combine
 import EventKit
+import SwiftUI
+import UIKit
 
 import Sodium
 
-class ViewController: UIViewController, SettingsViewControllerDelegate {
+class ViewController: UIViewController {
 
     private var image: UIImage?
     private var redactedImage: UIImage?
 
     let config: Config
+    var cancellables: Set<AnyCancellable> = []
 
     var sourceController: DataSourceController!
 
@@ -113,12 +116,20 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         fetch()
+
+        // Watch config for changes.
+        config.objectWillChange.debounce(for: 0.1, scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.fetch()
+            }
+            .store(in: &cancellables)
     }
 
     @objc func settingsTapped(sender: Any) {
-        let settingsViewController = SettingsViewController(config: config)
-        let viewController = UINavigationController(rootViewController: settingsViewController)
-        settingsViewController.delegate = self
+        let dataSourceController = AppDelegate.shared.dataSourceController
+        let viewController = UIHostingController(rootView: SettingsView(config: config,
+                                                                        dataSourceController: dataSourceController))
         present(viewController, animated: true, completion: nil)
     }
 
@@ -155,10 +166,6 @@ class ViewController: UIViewController, SettingsViewControllerDelegate {
         @unknown default:
             break
         }
-    }
-
-    func didDismiss(settingsViewController: SettingsViewController) {
-        fetch()
     }
 
     func fetch() {

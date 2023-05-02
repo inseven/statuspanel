@@ -19,7 +19,6 @@
 		D81DE20326E19F9200504703 /* Clibsodium in Frameworks */ = {isa = PBXBuildFile; productRef = D81DE20226E19F9200504703 /* Clibsodium */; };
 		D825A55D26F6811400B85206 /* DummyDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D825A55C26F6811400B85206 /* DummyDataSource.swift */; };
 		D8293A0C26F787D3008CE13B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8293A0B26F787D3008CE13B /* URL.swift */; };
-		D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */; };
 		D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D835EC972471D811003E402E /* NetworkExtension.framework */; };
 		D8383EBC270FB8E20007EBB7 /* DayPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBB270FB8E20007EBB7 /* DayPicker.swift */; };
 		D8383EBE270FBA1B0007EBB7 /* DataSourceSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBD270FBA1B0007EBB7 /* DataSourceSettingsStore.swift */; };
@@ -34,6 +33,8 @@
 		D862BF3F271B99700086BE48 /* Swift-Sodium.txt in Resources */ = {isa = PBXBuildFile; fileRef = D862BF3E271B99700086BE48 /* Swift-Sodium.txt */; };
 		D862BF41271B9B620086BE48 /* Binding+mappedToBool.txt in Resources */ = {isa = PBXBuildFile; fileRef = D862BF40271B9B620086BE48 /* Binding+mappedToBool.txt */; };
 		D866CA172A019536007819CD /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866CA162A019536007819CD /* Sequence.swift */; };
+		D866CA192A01AAE3007819CD /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866CA182A01AAE3007819CD /* SettingsView.swift */; };
+		D866CA1B2A01ABE8007819CD /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866CA1A2A01ABE8007819CD /* AboutView.swift */; };
 		D87439032730C3E400B676A5 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D87439022730C3E400B676A5 /* Diligence */; };
 		D87439052731006800B676A5 /* Diligence.txt in Resources */ = {isa = PBXBuildFile; fileRef = D87439042731006800B676A5 /* Diligence.txt */; };
 		D89104852707B9A00020A2CF /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104842707B99F0020A2CF /* UIViewController.swift */; };
@@ -143,7 +144,6 @@
 		D81DA7C2271297460052D32C /* ZenQuotesDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZenQuotesDataSource.swift; sourceTree = "<group>"; };
 		D825A55C26F6811400B85206 /* DummyDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyDataSource.swift; sourceTree = "<group>"; };
 		D8293A0B26F787D3008CE13B /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
-		D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		D835EC972471D811003E402E /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		D8383EBB270FB8E20007EBB7 /* DayPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPicker.swift; sourceTree = "<group>"; };
 		D8383EBD270FBA1B0007EBB7 /* DataSourceSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceSettingsStore.swift; sourceTree = "<group>"; };
@@ -158,6 +158,8 @@
 		D862BF3E271B99700086BE48 /* Swift-Sodium.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Swift-Sodium.txt"; sourceTree = "<group>"; };
 		D862BF40271B9B620086BE48 /* Binding+mappedToBool.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Binding+mappedToBool.txt"; sourceTree = "<group>"; };
 		D866CA162A019536007819CD /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
+		D866CA182A01AAE3007819CD /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D866CA1A2A01ABE8007819CD /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		D87439012730C3A100B676A5 /* diligence */ = {isa = PBXFileReference; lastKnownFileType = folder; path = diligence; sourceTree = "<group>"; };
 		D87439042731006800B676A5 /* Diligence.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Diligence.txt; sourceTree = "<group>"; };
 		D89104842707B99F0020A2CF /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
@@ -268,6 +270,7 @@
 		D812523427093BAB00C9D80A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D866CA1A2A01ABE8007819CD /* AboutView.swift */,
 				D8CE02C729FF129500D32A78 /* AddDataSourceView.swift */,
 				D8C20D24271C7A2000F3F22A /* CalendarSettingsView.swift */,
 				D8CE02C92A0025BB00D32A78 /* DataSourceInstanceRow.swift */,
@@ -278,6 +281,7 @@
 				D8ED8ACD29FE0D31007FDE06 /* FontPicker.swift */,
 				D8ED8ACF29FE0E75007FDE06 /* FontView.swift */,
 				D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */,
+				D866CA182A01AAE3007819CD /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -370,7 +374,6 @@
 				D83B6C34271A8E4800F48FB2 /* AddViewController.swift */,
 				DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */,
 				D8F57FE9271A009200847C67 /* QRCodeViewController.swift */,
-				D82D0BFE21EC170200B1C753 /* SettingsViewController.swift */,
 				DBCA987E2143E2920084B710 /* ViewController.swift */,
 				DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */,
 			);
@@ -724,11 +727,11 @@
 				D8FB0D7829D56C04000E66E6 /* Renderer.swift in Sources */,
 				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
 				D81CEBBA2906B31300E4B032 /* WeatherDataSource.swift in Sources */,
+				D866CA192A01AAE3007819CD /* SettingsView.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
 				D80380AB23E9B6D2002606C7 /* Service.swift in Sources */,
 				D89104852707B9A00020A2CF /* UIViewController.swift in Sources */,
 				D8C20D23271C6C1500F3F22A /* EKCalendar.swift in Sources */,
-				D82D0BFF21EC170200B1C753 /* SettingsViewController.swift in Sources */,
 				D83B6C35271A8E4800F48FB2 /* AddViewController.swift in Sources */,
 				D8ED8ACC29FDF2B7007FDE06 /* PrivacyModeView.swift in Sources */,
 				D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */,
@@ -751,6 +754,7 @@
 				DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */,
 				D8104E0529F3408100C394CC /* EKEvent.swift in Sources */,
 				D86278A82A0054A4003A9616 /* DeviceSettings.swift in Sources */,
+				D866CA1B2A01ABE8007819CD /* AboutView.swift in Sources */,
 				D83CC5202707532400260DC1 /* AnyDataSource.swift in Sources */,
 				DBCA98B321440CD90084B710 /* CalendarDataSource.swift in Sources */,
 				DB5E9DA1241562ED009F3807 /* StringUtils.swift in Sources */,

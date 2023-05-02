@@ -91,7 +91,7 @@ struct DeviceSettingsView: View {
     var body: some View {
         Form {
             Section {
-                TextField(device.kind.description, text: $model.settings.name)
+                TextField(Localized(device.kind), text: $model.settings.name)
             }
             Section("Layout") {
                 if !model.dataSources.isEmpty {
