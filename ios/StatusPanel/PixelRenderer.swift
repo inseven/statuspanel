@@ -82,7 +82,7 @@ struct PixelRenderer: Renderer {
                                                    font: font,
                                                    style: flags.labelStyle,
                                                    redactMode: redactMode)
-                prefixLabel.textColor = device.isFullColor ? (item.accentColor ?? foregroundColor) : foregroundColor
+                prefixLabel.textColor = (device.isFullColor && !redact) ? (item.accentColor ?? foregroundColor) : foregroundColor
                 prefixLabel.numberOfLines = numPrefixLines
                 prefixLabel.text = prefix + " "
                 prefixLabel.sizeToFit()
