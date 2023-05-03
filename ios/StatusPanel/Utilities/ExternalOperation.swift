@@ -79,11 +79,13 @@ enum ExternalOperation: Equatable {
             return URL(string: "statuspanel:r")!.settingQueryItems([
                 URLQueryItem(name: "id", value: device.id),
                 URLQueryItem(name: "pk", value: device.publicKey),
+                URLQueryItem(name: "t", value: device.kind.rawValue),
             ])!
         case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
             return URL(string: "statuspanel:r")!.settingQueryItems([
                 URLQueryItem(name: "id", value: device.id),
                 URLQueryItem(name: "pk", value: device.publicKey),
+                URLQueryItem(name: "t", value: device.kind.rawValue),
                 URLQueryItem(name: "s", value: ssid),
             ])!
         }

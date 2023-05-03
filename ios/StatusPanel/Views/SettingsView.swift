@@ -35,6 +35,7 @@ struct SettingsView: View {
     var dataSourceController: DataSourceController
 
     @State var sheet: SheetType? = nil
+    @State var add: Bool = false
 
     var body: some View {
         NavigationView {
@@ -60,7 +61,7 @@ struct SettingsView: View {
                         config.devices.remove(atOffsets: indexSet)
                     }
                     Button(LocalizedString("settings_add_dummy_device_label")) {
-                        UIApplication.shared.open(ExternalOperation.registerDevice(Device()).url, options: [:])
+                        add = true
                     }
                     .foregroundColor(.primary)
                 }
@@ -93,6 +94,15 @@ struct SettingsView: View {
                 case .about:
                     AboutView()
                 }
+            }
+            .actionSheet(isPresented: $add) {
+                let buttons: [ActionSheet.Button] = Device.Kind.allCases.map { kind in
+                    ActionSheet.Button.default(Text(kind.description)) {
+                        let operation = ExternalOperation.registerDevice(Device(kind: kind))
+                        UIApplication.shared.open(operation.url, options: [:])
+                    }
+                } + [.cancel()]
+                return ActionSheet(title: Text("Add Demo Device"), buttons: buttons)
             }
         }
     }
