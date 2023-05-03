@@ -112,8 +112,6 @@ struct DeviceSettingsView: View {
                     Text("No Data Sources")
                         .foregroundColor(.secondary)
                 }
-            }
-            Section {
                 Button("Add Data Source...") {
                     sheet = .add
                 }
