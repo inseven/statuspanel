@@ -27,7 +27,6 @@ class AnyDataSource: Identifiable {
     private var idProxy: (() -> DataSourceType)! = nil
     private var nameProxy: (() -> String)! = nil
     private var imageProxy: (() -> UIImage)! = nil
-    private var configurableProxy: (() -> Bool)! = nil
     private var dataProxy: ((Config, UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
     private var summaryProxy: ((Config, UUID) throws -> String?)! = nil
     private var settingsViewProxy: ((Config, UUID) throws -> AnyView)! = nil
@@ -43,10 +42,6 @@ class AnyDataSource: Identifiable {
 
     var image: UIImage {
         return imageProxy()
-    }
-
-    var configurable: Bool {
-        return configurableProxy()
     }
 
     func data(config: Config, instanceId: UUID, completion: @escaping ([DataItemBase]?, Error?) -> Void) {
@@ -68,9 +63,6 @@ class AnyDataSource: Identifiable {
     init<T: DataSource>(_ dataSource: T) {
         idProxy = {
             return dataSource.id
-        }
-        configurableProxy = {
-            return dataSource.configurable
         }
         dataProxy = { config, instanceId, completion in
             do {

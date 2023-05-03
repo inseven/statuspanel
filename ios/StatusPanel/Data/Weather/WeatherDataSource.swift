@@ -60,7 +60,6 @@ final class WeatherDataSource: DataSource {
     let id: DataSourceType = .weather
     let name = "Weather"
     let image = UIImage(systemName: "cloud.sun", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
-    let configurable = true
     let defaults = Settings(flags: [], address: "Bletchley Park, Sherwood Drive, Bletchley, Milton Keynes, MK3 6EB")
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {

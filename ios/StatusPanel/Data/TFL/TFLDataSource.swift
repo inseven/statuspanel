@@ -126,7 +126,6 @@ final class TFLDataSource: DataSource {
     let id: DataSourceType = .transportForLondon
     let name = "London Underground"
     let image = UIImage(systemName: "tram", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
-    let configurable = true
 
     let configuration: Configuration
 

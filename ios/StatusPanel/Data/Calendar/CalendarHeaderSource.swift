@@ -123,7 +123,6 @@ final class CalendarHeaderSource : DataSource {
     let name = "Date"
     let image = UIImage(systemName: "calendar.badge.clock",
                         withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
-    let configurable = true
 
     var defaults: Settings {
         return CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",

@@ -55,7 +55,6 @@ final class LastUpdateDataSource: DataSource {
     let id: DataSourceType = .lastUpdate
     let name = "Last Update"
     let image = UIImage(systemName: "clock", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
-    let configurable = true
     let defaults = Settings(flags: [], text: "")
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
