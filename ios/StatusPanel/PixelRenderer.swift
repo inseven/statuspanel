@@ -109,7 +109,7 @@ struct PixelRenderer: Renderer {
                 return size.width <= textFrame.width
             })
             label.textColor = foregroundColor
-            if flags.contains(.warning) {
+            if flags.contains(.warning) && !redact {
                 // Icons don't render well on the panel, use a coloured background instead
                 label.backgroundColor = UIColor.yellow
                 label.textColor = UIColor.black
