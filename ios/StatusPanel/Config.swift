@@ -151,6 +151,11 @@ class Config: ObservableObject {
 
     let userDefaults = UserDefaults.standard
 
+    @MainActor init() {
+        devices = Self.loadDevices()
+        lastBackgroundUpdate = object(for: .lastBackgroundUpdate) as? Date
+    }
+
     private func object(for key: Key) -> Any? {
         return self.userDefaults.object(forKey: key.rawValue)
     }
@@ -252,7 +257,8 @@ class Config: ObservableObject {
     }
 
     // Old way of storing a single device and key
-    @MainActor private func getDeviceAndKey() -> Device? {
+    @MainActor static private func getDeviceAndKey() -> Device? {
+        let userDefaults = UserDefaults.standard
         guard let deviceid = userDefaults.string(forKey: "deviceid"),
               let publickey = userDefaults.string(forKey: "publickey")
         else {
@@ -261,36 +267,37 @@ class Config: ObservableObject {
         return Device(kind: .einkV1, id: deviceid, publicKey: publickey)
     }
 
-    @MainActor var devices: [Device] {
-        get {
-            if let oldStyle = getDeviceAndKey() {
-                // Migrate
-                let devices = [oldStyle]
-                userDefaults.removeObject(forKey: "deviceid")
-                userDefaults.removeObject(forKey: "publickey")
-                self.devices = devices
-            }
-            guard let deviceObjs = userDefaults.array(forKey: "devices") as? [Dictionary<String, String>] else {
-                return []
-            }
-            var result: [Device] = []
-            for obj in deviceObjs {
-                guard let deviceid = obj["deviceid"],
-                      let publickey = obj["publickey"],
-                      let kind = Device.Kind(rawValue: obj["kind"] ?? Device.Kind.einkV1.rawValue)
-                else {
-                    continue
-                }
-                result.append(Device(kind: kind, id: deviceid, publicKey: publickey))
-            }
-            return result
+    @MainActor static private func loadDevices() -> [Device] {
+        let userDefaults = UserDefaults.standard
+        if let oldStyle = getDeviceAndKey() {
+            // Migrate
+            let devices = [oldStyle]
+            userDefaults.removeObject(forKey: "deviceid")
+            userDefaults.removeObject(forKey: "publickey")
+            return devices
         }
-        set {
+        guard let deviceObjs = userDefaults.array(forKey: "devices") as? [Dictionary<String, String>] else {
+            return []
+        }
+        var result: [Device] = []
+        for obj in deviceObjs {
+            guard let deviceid = obj["deviceid"],
+                  let publickey = obj["publickey"],
+                  let kind = Device.Kind(rawValue: obj["kind"] ?? Device.Kind.einkV1.rawValue)
+            else {
+                continue
+            }
+            result.append(Device(kind: kind, id: deviceid, publicKey: publickey))
+        }
+        return result
+    }
+
+    @MainActor @Published var devices: [Device] {
+        didSet {
             var objs: [Dictionary<String, String>] = []
-            for device in newValue {
+            for device in devices {
                 objs.append(["publickey": device.publicKey, "deviceid": device.id, "kind": device.kind.rawValue])
             }
-            objectWillChange.send()
             self.userDefaults.set(objs, forKey: "devices")
         }
     }
@@ -317,7 +324,6 @@ class Config: ObservableObject {
         guard let data = image.pngData() else {
             throw StatusPanelError.invalidImage
         }
-        objectWillChange.send()
         try data.write(to: url, options: [.atomic])
     }
 
@@ -348,13 +354,9 @@ class Config: ObservableObject {
         }
     }
 
-    var lastBackgroundUpdate: Date? {
-        get {
-            self.object(for: .lastBackgroundUpdate) as? Date
-        }
-        set {
-            objectWillChange.send()
-            self.set(newValue, for: .lastBackgroundUpdate)
+    @Published var lastBackgroundUpdate: Date? {
+        didSet {
+            self.set(lastBackgroundUpdate, for: .lastBackgroundUpdate)
         }
     }
 
