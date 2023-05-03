@@ -41,24 +41,29 @@ struct SettingsView: View {
         NavigationView {
             Form {
                 Section("Devices") {
-                    ForEach(config.devices) { device in
-                        NavigationLink {
-                            DeviceSettingsView(config: config,
-                                               dataSourceController: dataSourceController,
-                                               device: device)
-                        } label: {
-                            VStack(alignment: .leading) {
-                                if let deviceSettings = try? config.settings(forDevice: device.id),
-                                   !deviceSettings.name.isEmpty {
-                                    Text(deviceSettings.name)
-                                } else {
-                                    Text(Localized(device.kind))
+                    if !config.devices.isEmpty {
+                        ForEach(config.devices) { device in
+                            NavigationLink {
+                                DeviceSettingsView(config: config,
+                                                   dataSourceController: dataSourceController,
+                                                   device: device)
+                            } label: {
+                                VStack(alignment: .leading) {
+                                    if let deviceSettings = try? config.settings(forDevice: device.id),
+                                       !deviceSettings.name.isEmpty {
+                                        Text(deviceSettings.name)
+                                    } else {
+                                        Text(Localized(device.kind))
+                                    }
                                 }
                             }
                         }
-                    }
-                    .onDelete { indexSet in
-                        config.devices.remove(atOffsets: indexSet)
+                        .onDelete { indexSet in
+                            config.devices.remove(atOffsets: indexSet)
+                        }
+                    } else {
+                        Text("No Devices")
+                            .foregroundColor(.secondary)
                     }
                     Button(LocalizedString("settings_add_dummy_device_label")) {
                         add = true
