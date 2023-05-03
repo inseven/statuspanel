@@ -96,13 +96,14 @@ struct SettingsView: View {
                 }
             }
             .actionSheet(isPresented: $add) {
-                ActionSheet(title: Text("Add Demo Device"),
-                            buttons: Device.Kind.allCases.map { kind in
-                    Alert.Button.default(Text(kind.description), action: {
+                var buttons: [ActionSheet.Button] = Device.Kind.allCases.map { kind in
+                    ActionSheet.Button.default(Text(kind.description)) {
                         let operation = ExternalOperation.registerDevice(Device(kind: kind))
                         UIApplication.shared.open(operation.url, options: [:])
-                    })
-                })
+                    }
+                }
+                buttons.append(.cancel())
+                return ActionSheet(title: Text("Add Demo Device"), buttons: buttons)
             }
         }
     }
