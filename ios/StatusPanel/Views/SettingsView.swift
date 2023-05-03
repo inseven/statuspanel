@@ -53,9 +53,6 @@ struct SettingsView: View {
                                 } else {
                                     Text(Localized(device.kind))
                                 }
-                                Text(device.id)
-                                    .font(.footnote)
-                                    .foregroundColor(.secondary)
                             }
                         }
                     }
