@@ -38,9 +38,7 @@ final class DummyDataSource : DataSource {
             Form {
                 Toggle("Enabled", isOn: $settings.enabled)
             }
-            .alert(isPresented: $error.mappedToBool()) {
-                Alert(error: error)
-            }
+            .presents($error)
             .onChange(of: settings) { newValue in
                 do {
                     try store.save(settings: newValue)
