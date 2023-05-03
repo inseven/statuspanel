@@ -68,9 +68,7 @@ final class ZenQuotesDataSource: DataSource {
                     Text("Inspirational quotes provided by ZenQuotes API.")
                 }
             }
-            .alert(isPresented: $error.mappedToBool()) {
-                Alert(error: error)
-            }
+            .presents($error)
             .onChange(of: settings) { newValue in
                 do {
                     try store.save(settings: newValue)

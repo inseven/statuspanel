@@ -163,9 +163,7 @@ struct DeviceSettingsView: View {
                 LabeledContent("Identifier", value: device.id)
             }
         }
-        .alert(isPresented: $error.mappedToBool()) {
-            Alert(error: error)
-        }
+        .presents($error)
         .navigationTitle("Device Settings")
         .sheet(item: $sheet) { sheet in
             switch sheet {

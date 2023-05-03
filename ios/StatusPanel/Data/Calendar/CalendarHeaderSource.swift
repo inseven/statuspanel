@@ -107,9 +107,7 @@ final class CalendarHeaderSource : DataSource {
                 }
                 FlagsSection(flags: $settings.flags)
             }
-            .alert(isPresented: $error.mappedToBool()) {
-                Alert(error: error)
-            }
+            .presents($error)
             .onChange(of: settings) { newValue in
                 do {
                     try store.save(settings: newValue)
