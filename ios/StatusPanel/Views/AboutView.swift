@@ -27,6 +27,7 @@ struct AboutView: View {
     var body: some View {
         Diligence.AboutView(repository: "inseven/statuspanel",
                             copyright: "Copyright © 2018-2023\nJason Morley, Tom Sutcliffe") {
+            Action("Website", url: URL(string: "https://statuspanel.io")!)
             Action("InSeven Limited", url: URL(string: "https://inseven.co.uk")!)
             Action("GitHub", url: URL(string: "https://github.com/inseven/statuspanel")!)
         } acknowledgements: {
