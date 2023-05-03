@@ -123,8 +123,6 @@ final class CalendarDataSource : DataSource {
     let name = "Calendar"
     let image = UIImage(systemName: "calendar", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
 
-    let configurable = true
-
     let eventStore: EKEventStore
 
     var defaults: Settings {
