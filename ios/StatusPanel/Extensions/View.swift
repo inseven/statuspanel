@@ -20,37 +20,12 @@
 
 import SwiftUI
 
-struct DataSourcePicker: View {
+extension View {
 
-    var completion: (AnyDataSource?) -> Void
-
-    var sources: [AnyDataSource] {
-        DataSourceController.sources.sorted { $0.name < $1.name }
-    }
-
-    var body: some View {
-        Form {
-            ForEach(sources) { factory in
-                Button {
-                    completion(factory)
-                } label: {
-                    HStack(spacing: 0) {
-                        Image(uiImage: factory.image)
-                            .renderingMode(.template)
-                            .foregroundColor(.primary)
-                            .padding(.trailing)
-                        Text(factory.name)
-                            .foregroundColor(.primary)
-                    }
-                }
-            }
+    func presents(_ error: Binding<Error?>) -> some View {
+        return alert(isPresented: error.mappedToBool()) {
+            Alert(error: error.wrappedValue)
         }
-        .navigationBarTitle("Add Data Source", displayMode: .inline)
-        .navigationBarItems(leading: Button {
-            completion(nil)
-        } label: {
-            Text("Cancel")
-        })
     }
 
 }

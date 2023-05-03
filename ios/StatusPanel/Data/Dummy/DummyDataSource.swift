@@ -38,9 +38,7 @@ final class DummyDataSource : DataSource {
             Form {
                 Toggle("Enabled", isOn: $settings.enabled)
             }
-            .alert(isPresented: $error.mappedToBool()) {
-                Alert(error: error)
-            }
+            .presents($error)
             .onChange(of: settings) { newValue in
                 do {
                     try store.save(settings: newValue)
@@ -55,7 +53,6 @@ final class DummyDataSource : DataSource {
     let id: DataSourceType = .dummy
     let name = "Dummy Data"
     let image = UIImage(systemName: "text.alignleft", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
-    let configurable = true
 
     var defaults: Settings {
         return Settings()

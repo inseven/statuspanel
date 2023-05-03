@@ -20,16 +20,58 @@
 
 import SwiftUI
 
-struct AddDataSourceView: UIViewControllerRepresentable {
+struct AddDataSourceView: View {
 
-    let config: Config
+    @Environment(\.dismiss) var dismiss
+
+    var config: Config
     @Binding var dataSources: [DataSourceInstance]
 
-    func makeUIViewController(context: Context) -> some UIViewController {
-        return AddDataSourceViewController(config: config, dataSources: $dataSources)
-    }
+    @State var error: Error?
 
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+    var body: some View {
+        NavigationView {
+            Form {
+                ForEach(DataSourceController.sources) { dataSource in
+                    let uuid = UUID()
+                    NavigationLink {
+                        try! dataSource.settingsView(config: config, instanceId: uuid)
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Add") {
+                                        do {
+                                            let details = DataSourceInstance.Details(id: uuid, type: dataSource.id)
+                                            let dataSource = try DataSourceController.dataSourceInstance(for: details)
+                                            dataSources.append(dataSource)
+                                            dismiss()
+                                        } catch {
+                                            self.error = error
+                                        }
+                                    }
+                                }
+                            }
+                    } label: {
+                        HStack(spacing: 0) {
+                            Image(uiImage: dataSource.image)
+                                .renderingMode(.template)
+                                .foregroundColor(.primary)
+                                .padding(.trailing)
+                            Text(dataSource.name)
+                                .foregroundColor(.primary)
+                        }
+                    }
+                }
+            }
+            .navigationBarTitle("Add Data Source", displayMode: .inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+            }
+            .presents($error)
+        }
     }
 
 }

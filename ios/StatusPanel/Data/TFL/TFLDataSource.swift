@@ -82,9 +82,7 @@ final class TFLDataSource: DataSource {
                     Text("Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016' and Geomni UK Map data © and database rights [2019].")
                 }
             }
-            .alert(isPresented: $error.mappedToBool()) {
-                Alert(error: error)
-            }
+            .presents($error)
             .onChange(of: settings) { newValue in
                 do {
                     try store.save(settings: newValue)
@@ -128,7 +126,6 @@ final class TFLDataSource: DataSource {
     let id: DataSourceType = .transportForLondon
     let name = "London Underground"
     let image = UIImage(systemName: "tram", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
-    let configurable = true
 
     let configuration: Configuration
 

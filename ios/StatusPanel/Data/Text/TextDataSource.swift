@@ -42,9 +42,7 @@ final class TextDataSource: DataSource {
                 }
                 FlagsSection(flags: $settings.flags)
             }
-            .alert(isPresented: $error.mappedToBool()) {
-                Alert(error: error)
-            }
+            .presents($error)
             .onChange(of: settings) { newValue in
                 do {
                     try store.save(settings: newValue)
@@ -60,7 +58,6 @@ final class TextDataSource: DataSource {
     let id: DataSourceType = .text
     let name = "Text"
     let image = UIImage(systemName: "textformat", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
-    let configurable = true
     let defaults = Settings(flags: [], text: "")
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {

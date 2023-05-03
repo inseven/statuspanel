@@ -107,9 +107,7 @@ final class CalendarHeaderSource : DataSource {
                 }
                 FlagsSection(flags: $settings.flags)
             }
-            .alert(isPresented: $error.mappedToBool()) {
-                Alert(error: error)
-            }
+            .presents($error)
             .onChange(of: settings) { newValue in
                 do {
                     try store.save(settings: newValue)
@@ -125,7 +123,6 @@ final class CalendarHeaderSource : DataSource {
     let name = "Date"
     let image = UIImage(systemName: "calendar.badge.clock",
                         withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
-    let configurable = true
 
     var defaults: Settings {
         return CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
