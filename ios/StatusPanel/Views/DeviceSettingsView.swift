@@ -90,7 +90,7 @@ struct DeviceSettingsView: View {
 
     var body: some View {
         Form {
-            Section {
+            Section("Name") {
                 TextField(Localized(device.kind), text: $model.settings.name)
             }
             Section("Layout") {
