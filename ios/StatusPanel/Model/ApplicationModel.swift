@@ -44,15 +44,15 @@ class ApplicationModel: ObservableObject {
             .sink { [weak self] devices in
                 guard let self else { return }
                 var identifiers = Set(devices.map { $0.id })
-                deviceModels.removeAll { !identifiers.contains($0.id) }
-                deviceModels.forEach { identifiers.remove($0.id) }
+                self.deviceModels.removeAll { !identifiers.contains($0.id) }
+                self.deviceModels.forEach { identifiers.remove($0.id) }
                 let newDevices = devices.filter { identifiers.contains($0.id) }
                 let newDeviceModels = newDevices.map { device in
                     return DeviceModel(config: self.config,
                                        dataSourceController: self.dataSourceController,
                                        device: device)
                 }
-                deviceModels.append(contentsOf: newDeviceModels)
+                self.deviceModels.append(contentsOf: newDeviceModels)
                 newDeviceModels.forEach { $0.start() }
             }
             .store(in: &cancellables)

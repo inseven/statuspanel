@@ -65,7 +65,7 @@ class DeviceModel: ObservableObject, Identifiable {
             .sink { [weak self] _ in
                 guard let self else { return }
                 do {
-                    self.deviceSettings = try self.config.settings(forDevice: device.id)
+                    self.deviceSettings = try self.config.settings(forDevice: self.device.id)
                 } catch {
                     print("Failed to preview device with error \(error).")
                 }
@@ -80,7 +80,7 @@ class DeviceModel: ObservableObject, Identifiable {
                 guard let self else { return nil }
                 let semaphore = DispatchSemaphore(value: 0)
                 var result: [DataItemBase]?
-                dataSourceController.fetch(details: deviceSettings.dataSources) { items, error in
+                self.dataSourceController.fetch(details: deviceSettings.dataSources) { items, error in
                     result = items
                     semaphore.signal()
                 }
