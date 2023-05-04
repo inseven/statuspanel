@@ -140,7 +140,10 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         guard !running else {
             return
         }
-        session.startRunning()
+        DispatchQueue.global().async {
+            // AVCaptureSession is apparently meant to be started on a background thread to avoid blocking in the UI.
+            self.session.startRunning()
+        }
     }
 
     func stop() {
