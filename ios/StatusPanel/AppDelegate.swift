@@ -28,8 +28,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
 
-    private var background = false
-
     var window: UIWindow?
     var config = Config()
     var dataSourceController: DataSourceController
@@ -62,17 +60,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
 
         return true
-    }
-
-    func applicationWillResignActive(_ application: UIApplication) {
-    }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        // Setting a flag here means we can avoid taking action on temporary interruptions.
-        background = true
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
     }
 
     func application(_ application: UIApplication,
