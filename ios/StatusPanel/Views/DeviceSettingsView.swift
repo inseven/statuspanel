@@ -170,8 +170,7 @@ struct DeviceSettingsView: View {
                     dismiss()
                 } label: {
                     Text("Delete Device")
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
+                        .centerContent()
                 }
             }
         }

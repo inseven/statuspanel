@@ -34,8 +34,7 @@ struct DeviceView: View {
                 }
             }
             Text(deviceModel.name)
-                .frame(maxWidth: .infinity)
-                .multilineTextAlignment(.center)
+                .centerContent()
                 .foregroundColor(.secondary)
         }
     }

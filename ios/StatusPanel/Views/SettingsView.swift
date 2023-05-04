@@ -35,7 +35,6 @@ struct SettingsView: View {
     var dataSourceController: DataSourceController
 
     @State var sheet: SheetType? = nil
-    @State var add: Bool = false
 
     var body: some View {
         NavigationView {
@@ -62,10 +61,6 @@ struct SettingsView: View {
                         Text("No Devices")
                             .foregroundColor(.secondary)
                     }
-                    Button(LocalizedString("settings_add_dummy_device_label")) {
-                        add = true
-                    }
-                    .foregroundColor(.primary)
                 }
                 Section("Status") {
                     LabeledContent(LocalizedString("settings_last_background_update_label")) {
@@ -99,15 +94,6 @@ struct SettingsView: View {
                 case .about:
                     AboutView()
                 }
-            }
-            .actionSheet(isPresented: $add) {
-                let buttons: [ActionSheet.Button] = Device.Kind.allCases.map { kind in
-                    ActionSheet.Button.default(Text(kind.description)) {
-                        let operation = ExternalOperation.registerDevice(Device(kind: kind))
-                        UIApplication.shared.open(operation.url, options: [:])
-                    }
-                } + [.cancel()]
-                return ActionSheet(title: Text("Add Demo Device"), buttons: buttons)
             }
         }
     }

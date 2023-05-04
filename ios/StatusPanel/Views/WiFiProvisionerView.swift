@@ -19,40 +19,43 @@
 // SOFTWARE.
 
 import SwiftUI
-import UIKit
 
-struct AddView: UIViewControllerRepresentable {
+struct WiFiProvisionerView: UIViewControllerRepresentable {
 
-    @Environment(\.dismiss) private var dismiss
+    class Coordinator: NSObject, WifiProvisionerViewControllerDelegate {
 
-    class Coordinator: NSObject, AddViewControllerDelegate {
+        let parent: WiFiProvisionerView
 
-        var parent: AddView?
-
-        func addViewControllerDidCancel(_ addViewController: AddViewController) {
-            parent?.dismiss()
+        init(_ parent: WiFiProvisionerView) {
+            self.parent = parent
         }
 
-        @MainActor func addViewController(_ addViewController: AddViewController, didConfigureDevice device: Device) {
-            AppDelegate.shared.addDevice(device)
-            parent?.dismiss()
+        func wifiProvisionerViewController(_ wifiProvisionerViewController: WifiProvisionerViewController,
+                                       didConfigureDevice device: Device) {
+            parent.completion(device)
         }
 
+        func wifiProvisionerViewControllerDidCancel(_ wifiProvisionerViewController: WifiProvisionerViewController) {
+            parent.cancel()
+        }
+
+    }
+
+    let device: Device
+    let ssid: String
+
+    let completion: (Device) -> Void
+    let cancel: () -> Void
+
+    func makeUIViewController(context: Context) -> some UIViewController {
+        return WifiProvisionerViewController(device: device, ssid: ssid)
+    }
+
+    func updateUIViewController(_ viewController: UIViewControllerType, context: Context) {
     }
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator()
-    }
-
-    func makeUIViewController(context: Context) -> some UIViewController {
-        let addViewController = AddViewController()
-        addViewController.addDelegate = context.coordinator
-        context.coordinator.parent = self
-        return addViewController
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-        context.coordinator.parent = self
+        return Coordinator(self)
     }
 
 }

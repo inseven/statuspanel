@@ -24,19 +24,10 @@ import UIKit
 
 struct ContentView: View {
 
-    enum SheetType: Identifiable {
-        var id: Self { return self }
-
-        case settings
-        case add
-    }
-
     @ObservedObject var applicationModel: ApplicationModel
 
     let config: Config
     let dataSourceController: DataSourceController
-
-    @State var sheet: SheetType? = nil
 
     init(applicationModel: ApplicationModel, config: Config, dataSourceController: DataSourceController) {
         self.applicationModel = applicationModel
@@ -57,39 +48,25 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        sheet = .settings
+                        applicationModel.sheet = .settings
                     } label: {
                         Label("Settings", systemImage: "gear")
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button {
-                            sheet = .add
-                        } label: {
-                            Label("Scan QR Code", systemImage: "qrcode")
-                        }
-                        Button {
-                            guard let clipboard = UIPasteboard.general.string,
-                               let url = URL(string: clipboard) else {
-                                return
-                            }
-                            _ = AppDelegate.shared.application(UIApplication.shared, open: url, options: [:])
-                        } label: {
-                            Label("Add From Clipboard", systemImage: "doc.on.clipboard")
-                        }
+                    Button {
+                        applicationModel.showIntroduction()
                     } label: {
                         Label("Add", systemImage: "plus")
                     }
-
                 }
             }
-            .sheet(item: $sheet) { sheet in
+            .sheet(item: $applicationModel.sheet) { sheet in
                 switch sheet {
                 case .settings:
                     SettingsView(config: config, dataSourceController: dataSourceController)
                 case .add:
-                    AddView()
+                    AddDeviceView(applicationModel: applicationModel)
                 }
             }
         }

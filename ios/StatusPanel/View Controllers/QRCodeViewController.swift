@@ -21,22 +21,22 @@
 import AVFoundation
 import UIKit
 
-protocol QRCodeViewConrollerDelegate: AnyObject {
+protocol QRCodeViewControllerDelegate: AnyObject {
 
-    func qrCodeViewController(_ qrCodeViewController: QRCodeViewController, didDetectURL url: URL)
+    func qrCodeViewController(_ qrCodeViewController: QRCodeViewController, didDetectURL url: URL) -> Bool
     func qrCodeViewControllerDidCancel(_ qrCodeViewController: QRCodeViewController)
 
 }
 
 class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
 
-    weak var delegate: QRCodeViewConrollerDelegate? = nil
-    private let scheme: String
+    weak var delegate: QRCodeViewControllerDelegate? = nil
 
     private let session = AVCaptureSession()
     private var previewLayer: AVCaptureVideoPreviewLayer?
 
     private var running = false
+    private var isActive = true
 
     private lazy var cancelButtonItem: UIBarButtonItem = {
         let cancelButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
@@ -45,8 +45,7 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         return cancelButtonItem
     }()
 
-    init(scheme: String) {
-        self.scheme = scheme
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -57,17 +56,6 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = UIColor.clear
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
-        navigationItem.standardAppearance = appearance
-        navigationItem.scrollEdgeAppearance = appearance
-        navigationItem.compactAppearance = appearance
-
-        title = "Scan Code"
-        navigationItem.leftBarButtonItem = cancelButtonItem
 
         do {
             guard let captureDevice = AVCaptureDevice.default(for: .video) else {
@@ -140,6 +128,8 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         guard !running else {
             return
         }
+        running = true
+        isActive = true
         DispatchQueue.global().async {
             // AVCaptureSession is apparently meant to be started on a background thread to avoid blocking in the UI.
             self.session.startRunning()
@@ -150,6 +140,7 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
         guard running else {
             return
         }
+        running = false
         session.stopRunning()
     }
 
@@ -157,16 +148,22 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
                         didOutput metadataObjects: [AVMetadataObject],
                         from connection: AVCaptureConnection) {
         dispatchPrecondition(condition: .onQueue(.main))
+        guard isActive else {
+            return
+        }
         if let metaDataObject = metadataObjects.first {
             guard let readableObject = metaDataObject as? AVMetadataMachineReadableCodeObject,
                   let content = readableObject.stringValue,
                   let url = URL(string: content),
-                  url.scheme == scheme
+                  url.scheme == "statuspanel"
             else {
                 return
             }
-            session.stopRunning()
-            delegate?.qrCodeViewController(self, didDetectURL: url)
+            guard let delegate else {
+                isActive = false
+                return
+            }
+            isActive = !delegate.qrCodeViewController(self, didDetectURL: url)
         }
     }
 
