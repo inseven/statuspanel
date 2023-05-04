@@ -73,6 +73,8 @@ struct DeviceSettingsView: View {
         case add
     }
 
+    @Environment(\.dismiss) var dismiss
+
     @ObservedObject var config: Config
     @ObservedObject var dataSourceController: DataSourceController
     var device: Device
@@ -160,6 +162,16 @@ struct DeviceSettingsView: View {
                 Section("Details") {
                     LabeledContent("Type", value: device.kind.description)
                     LabeledContent("Identifier", value: device.id)
+                }
+            }
+            Section {
+                Button(role: .destructive) {
+                    config.removeDevice(device)
+                    dismiss()
+                } label: {
+                    Text("Delete Device")
+                        .frame(maxWidth: .infinity)
+                        .multilineTextAlignment(.center)
                 }
             }
         }
