@@ -44,9 +44,6 @@ class DataSourceController: ObservableObject {
 
     init(config: Config) {
         self.config = config
-
-
-
     }
 
     static func dataSourceInstances(for dataSourceDetails: [DataSourceInstance.Details]) throws -> [DataSourceInstance] {
@@ -77,7 +74,6 @@ class DataSourceController: ObservableObject {
     }
 
     func fetch(details: [DataSourceInstance.Details], completion: @escaping ([DataItemBase]?, Error?) -> Void) {
-        dispatchPrecondition(condition: .onQueue(.main))
         syncQueue.async {
             let dataSources: [DataSourceInstance]
             do {

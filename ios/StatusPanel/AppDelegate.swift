@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import EventKit
-import UIKit
+import SwiftUI
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,17 +28,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
 
-    private var background = false
-
     var window: UIWindow?
-    var viewController: ViewController?
     var config = Config()
     var dataSourceController: DataSourceController
+    var applicationModel: ApplicationModel
     var apnsToken: Data?
     var client: Service = Service(baseUrl: "https://api.statuspanel.io/")
 
     override init() {
         dataSourceController = DataSourceController(config: config)
+        applicationModel = ApplicationModel(dataSourceController: dataSourceController, config: config)
         super.init()
     }
 
@@ -53,32 +52,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Failed to migrate settings with error \(error)")
         }
 
-        let viewController = ViewController(config: config)
-        let navigationController = UINavigationController(rootViewController: viewController)
-        navigationController.navigationBar.prefersLargeTitles = true
-        self.viewController = viewController
-
         window = UIWindow()
-        window?.rootViewController = navigationController
+        window?.rootViewController = UIHostingController(rootView: ContentView(applicationModel: applicationModel,
+                                                                               config: config,
+                                                                               dataSourceController: dataSourceController))
         window?.tintColor = UIColor(named: "TintColor")
         window?.makeKeyAndVisible()
 
         return true
-    }
-
-    func applicationWillResignActive(_ application: UIApplication) {
-    }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        // Setting a flag here means we can avoid taking action on temporary interruptions.
-        background = true
-    }
-
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        viewController?.fetch()
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
     }
 
     func application(_ application: UIApplication,
@@ -154,9 +135,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                               message: "Device \(device.id) has been added.",
                                               preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"),
-                                              style: .default) { action in
-                    self.update()
-                })
+                                              style: .default))
                 self.window?.rootViewController?.present(alert, animated: true)
             }
         }
@@ -205,10 +184,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             print("Successfully registered device.")
         }
-    }
-
-    func update() {
-        viewController?.fetch()
     }
 
     // Fetch items, generate updates, and upload per-device updates.
