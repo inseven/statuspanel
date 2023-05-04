@@ -27,12 +27,12 @@ struct FlagsSection: View {
 
     func prefersEmptyColumn() -> Binding<Bool> {
         Binding {
-            flags.contains(.prefersEmptyColumn)
+            flags.contains(.prefersNewSection)
         } set: { newValue in
             if newValue == true {
-                flags.insert(.prefersEmptyColumn)
+                flags.insert(.prefersNewSection)
             } else {
-                flags.remove(.prefersEmptyColumn)
+                flags.remove(.prefersNewSection)
             }
         }
     }
@@ -57,7 +57,7 @@ struct FlagsSection: View {
                 Text(Localized(DataItemFlags.Style.body))
                     .tag(DataItemFlags.Style.body)
             }
-            Toggle(LocalizedString("flags_section_prefers_empty_column_label"), isOn: prefersEmptyColumn())
+            Toggle(LocalizedString("flags_section_prefers_new_section_label"), isOn: prefersEmptyColumn())
             Toggle(LocalizedString("flags_section_spans_columns_label"), isOn: spansColumns())
         }
     }

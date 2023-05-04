@@ -141,7 +141,7 @@ struct PixelRenderer: Renderer {
             }
             let sz = view.frame
             // Enough space for this item?
-            let itemIsColBreak = (columnItemCount > 0 && flags.contains(.prefersEmptyColumn))
+            let itemIsColBreak = (columnItemCount > 0 && flags.contains(.prefersNewSection))
             if (col == 0 && twoCols && (sz.height > maxy - y || itemIsColBreak)) {
                 // overflow to 2nd column
                 col += 1
@@ -160,7 +160,7 @@ struct PixelRenderer: Renderer {
 
             y = y + sz.height + itemGap
 
-            if flags.contains(.spansColumns) {
+            if twoCols && flags.contains(.spansColumns) {
                 // Update the verticial origin of the divider and columns, and start at column 0 again.
                 divider = .vertical(originY: y)
                 colStart = y

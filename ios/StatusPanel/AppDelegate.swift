@@ -135,7 +135,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                                                                    offset: 0,
                                                                                                    activeCalendars: Set(calendars))),
                         try self.configureDataSourceInstance(type: .text,
-                                                             settings: TextDataSource.Settings(flags: [.prefersEmptyColumn],
+                                                             settings: TextDataSource.Settings(flags: [.prefersNewSection],
                                                                                                text: "Tomorrow:")),
                         try self.configureDataSourceInstance(type: .calendar,
                                                              settings: CalendarDataSource.Settings(showLocations: true,
