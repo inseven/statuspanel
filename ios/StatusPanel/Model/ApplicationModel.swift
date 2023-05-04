@@ -86,7 +86,7 @@ class ApplicationModel: ObservableObject {
             .sink { [weak self] deviceModels in
                 guard let self else { return }
                 if deviceModels.isEmpty {
-                    sheet = .add
+                    self.sheet = .add
                 }
             }
             .store(in: &cancellables)
