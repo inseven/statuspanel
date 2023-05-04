@@ -23,7 +23,6 @@
 		D8383EBC270FB8E20007EBB7 /* DayPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBB270FB8E20007EBB7 /* DayPicker.swift */; };
 		D8383EBE270FBA1B0007EBB7 /* DataSourceSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBD270FBA1B0007EBB7 /* DataSourceSettingsStore.swift */; };
 		D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBF270FC50A0007EBB7 /* FormatEditor.swift */; };
-		D83B6C35271A8E4800F48FB2 /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83B6C34271A8E4800F48FB2 /* AddViewController.swift */; };
 		D83CC5202707532400260DC1 /* AnyDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC51F2707532400260DC1 /* AnyDataSource.swift */; };
 		D83CC5222707543E00260DC1 /* UIStoryboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83CC5212707543E00260DC1 /* UIStoryboard.swift */; };
 		D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D848A197270C8DB100681F62 /* TextDataSource.swift */; };
@@ -37,14 +36,18 @@
 		D866CA1B2A01ABE8007819CD /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866CA1A2A01ABE8007819CD /* AboutView.swift */; };
 		D866CA1D2A02B48F007819CD /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866CA1C2A02B48F007819CD /* View.swift */; };
 		D866CA1F2A02E9E4007819CD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866CA1E2A02E9E4007819CD /* ContentView.swift */; };
-		D866CA212A02EA03007819CD /* AddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866CA202A02EA03007819CD /* AddView.swift */; };
+		D866CA212A02EA03007819CD /* IntroductionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866CA202A02EA03007819CD /* IntroductionView.swift */; };
 		D87439032730C3E400B676A5 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D87439022730C3E400B676A5 /* Diligence */; };
 		D87439052731006800B676A5 /* Diligence.txt in Resources */ = {isa = PBXBuildFile; fileRef = D87439042731006800B676A5 /* Diligence.txt */; };
+		D8808DFA2A0440DD00F57C9A /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8808DF92A0440DD00F57C9A /* QRCodeView.swift */; };
+		D8808DFC2A04495300F57C9A /* WiFiProvisionerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8808DFB2A04495300F57C9A /* WiFiProvisionerView.swift */; };
 		D89104852707B9A00020A2CF /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104842707B99F0020A2CF /* UIViewController.swift */; };
 		D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104862707BAD50020A2CF /* DataSourceInstance.swift */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		D89FF2372721037B0028EC16 /* ExternalOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89FF2362721037B0028EC16 /* ExternalOperationTests.swift */; };
 		D8A88DFF27A838D8000495AD /* StatusPanel.txt in Resources */ = {isa = PBXBuildFile; fileRef = D8A88DFE27A838D8000495AD /* StatusPanel.txt */; };
+		D8A9B1462A04395400D306F8 /* AddDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9B1452A04395400D306F8 /* AddDeviceView.swift */; };
+		D8A9B1482A043C0600D306F8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8A9B1472A043C0500D306F8 /* AVFoundation.framework */; };
 		D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */; };
 		D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */; };
 		D8B9874B270FF88D00EC2BA4 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B9874A270FF88D00EC2BA4 /* Alert.swift */; };
@@ -105,7 +108,7 @@
 		DBCA98B321440CD90084B710 /* CalendarDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B221440CD90084B710 /* CalendarDataSource.swift */; };
 		DBCA98B52144421F0084B710 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B42144421F0084B710 /* DataSource.swift */; };
 		DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA98B6214518EF0084B710 /* DataSourceController.swift */; };
-		DBF15BC72471A61E004AA972 /* WifiProvisionerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */; };
+		DBF15BC72471A61E004AA972 /* WifiProvisionerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15BC62471A61E004AA972 /* WifiProvisionerViewController.swift */; };
 		DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */; };
 		DBFAEA84272446C5005B9E21 /* UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFAEA83272446C5005B9E21 /* UIFont.swift */; };
 		DBFCBB7C24B8B6AD00E3B3D3 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFCBB7B24B8B6AD00E3B3D3 /* Fonts.swift */; };
@@ -151,7 +154,6 @@
 		D8383EBB270FB8E20007EBB7 /* DayPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPicker.swift; sourceTree = "<group>"; };
 		D8383EBD270FBA1B0007EBB7 /* DataSourceSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceSettingsStore.swift; sourceTree = "<group>"; };
 		D8383EBF270FC50A0007EBB7 /* FormatEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatEditor.swift; sourceTree = "<group>"; };
-		D83B6C34271A8E4800F48FB2 /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
 		D83CC51F2707532400260DC1 /* AnyDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDataSource.swift; sourceTree = "<group>"; };
 		D83CC5212707543E00260DC1 /* UIStoryboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStoryboard.swift; sourceTree = "<group>"; };
 		D848A197270C8DB100681F62 /* TextDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDataSource.swift; sourceTree = "<group>"; };
@@ -165,15 +167,19 @@
 		D866CA1A2A01ABE8007819CD /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		D866CA1C2A02B48F007819CD /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		D866CA1E2A02E9E4007819CD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		D866CA202A02EA03007819CD /* AddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddView.swift; sourceTree = "<group>"; };
+		D866CA202A02EA03007819CD /* IntroductionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionView.swift; sourceTree = "<group>"; };
 		D87439012730C3A100B676A5 /* diligence */ = {isa = PBXFileReference; lastKnownFileType = folder; path = diligence; sourceTree = "<group>"; };
 		D87439042731006800B676A5 /* Diligence.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Diligence.txt; sourceTree = "<group>"; };
+		D8808DF92A0440DD00F57C9A /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
+		D8808DFB2A04495300F57C9A /* WiFiProvisionerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiProvisionerView.swift; sourceTree = "<group>"; };
 		D89104842707B99F0020A2CF /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		D89104862707BAD50020A2CF /* DataSourceInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceInstance.swift; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D89FF2342721037B0028EC16 /* StatusPanelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StatusPanelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D89FF2362721037B0028EC16 /* ExternalOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalOperationTests.swift; sourceTree = "<group>"; };
 		D8A88DFE27A838D8000495AD /* StatusPanel.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = StatusPanel.txt; sourceTree = "<group>"; };
+		D8A9B1452A04395400D306F8 /* AddDeviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDeviceView.swift; sourceTree = "<group>"; };
+		D8A9B1472A043C0500D306F8 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderSource.swift; sourceTree = "<group>"; };
 		D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+mappedToBool.swift"; sourceTree = "<group>"; };
 		D8B9874A270FF88D00EC2BA4 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
@@ -243,7 +249,7 @@
 		DBCA98B42144421F0084B710 /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		DBCA98B6214518EF0084B710 /* DataSourceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceController.swift; sourceTree = "<group>"; };
 		DBF15BBB2471A322004AA972 /* StatusPanel-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StatusPanel-Bridging-Header.h"; sourceTree = "<group>"; };
-		DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WifiProvisionerController.swift; sourceTree = "<group>"; };
+		DBF15BC62471A61E004AA972 /* WifiProvisionerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WifiProvisionerViewController.swift; sourceTree = "<group>"; };
 		DBF15BC82471CAB7004AA972 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		DBF15EFC21597808006B0A58 /* NationalRailDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalRailDataSource.swift; sourceTree = "<group>"; };
 		DBFAEA83272446C5005B9E21 /* UIFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIFont.swift; sourceTree = "<group>"; };
@@ -264,6 +270,7 @@
 			files = (
 				D8CD32D32471D0AA00D82722 /* ExternalAccessory.framework in Frameworks */,
 				D81DE20326E19F9200504703 /* Clibsodium in Frameworks */,
+				D8A9B1482A043C0600D306F8 /* AVFoundation.framework in Frameworks */,
 				D87439032730C3E400B676A5 /* Diligence in Frameworks */,
 				D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */,
 				D8EED7F12630EF19009E2166 /* Sodium in Frameworks */,
@@ -278,18 +285,21 @@
 			children = (
 				D866CA1A2A01ABE8007819CD /* AboutView.swift */,
 				D848A199270D16AD00681F62 /* AddDataSourceView.swift */,
-				D866CA202A02EA03007819CD /* AddView.swift */,
+				D8A9B1452A04395400D306F8 /* AddDeviceView.swift */,
 				D8C20D24271C7A2000F3F22A /* CalendarSettingsView.swift */,
 				D866CA1E2A02E9E4007819CD /* ContentView.swift */,
 				D8CE02C92A0025BB00D32A78 /* DataSourceInstanceRow.swift */,
 				D8383EBB270FB8E20007EBB7 /* DayPicker.swift */,
 				D8ED8AC929FDCBC5007FDE06 /* DeviceSettingsView.swift */,
+				D8FD46042A034FF200E5E97C /* DeviceView.swift */,
 				D848A19D270D213800681F62 /* FlagsSection.swift */,
 				D8ED8ACD29FE0D31007FDE06 /* FontPicker.swift */,
 				D8ED8ACF29FE0E75007FDE06 /* FontView.swift */,
+				D866CA202A02EA03007819CD /* IntroductionView.swift */,
 				D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */,
+				D8808DF92A0440DD00F57C9A /* QRCodeView.swift */,
 				D866CA182A01AAE3007819CD /* SettingsView.swift */,
-				D8FD46042A034FF200E5E97C /* DeviceView.swift */,
+				D8808DFB2A04495300F57C9A /* WiFiProvisionerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -378,10 +388,9 @@
 		D842A401265BE916009C1156 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				D83B6C34271A8E4800F48FB2 /* AddViewController.swift */,
 				DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */,
 				D8F57FE9271A009200847C67 /* QRCodeViewController.swift */,
-				DBF15BC62471A61E004AA972 /* WifiProvisionerController.swift */,
+				DBF15BC62471A61E004AA972 /* WifiProvisionerViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -496,6 +505,7 @@
 		DBB2D354217C9AC3009F7549 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D8A9B1472A043C0500D306F8 /* AVFoundation.framework */,
 				D835EC972471D811003E402E /* NetworkExtension.framework */,
 				D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */,
 				DBF15BC82471CAB7004AA972 /* NetworkExtension.framework */,
@@ -706,6 +716,7 @@
 				DB62F335224FB47A00CA5E64 /* Station.swift in Sources */,
 				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
 				D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */,
+				D8A9B1462A04395400D306F8 /* AddDeviceView.swift in Sources */,
 				D8EBFCC8272099B0000E120F /* TextFieldTableViewCell.swift in Sources */,
 				D848A19E270D213800681F62 /* FlagsSection.swift in Sources */,
 				D8293A0C26F787D3008CE13B /* URL.swift in Sources */,
@@ -716,6 +727,7 @@
 				D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
 				D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */,
+				D8808DFC2A04495300F57C9A /* WiFiProvisionerView.swift in Sources */,
 				D816655327277407005BDA9E /* UIActivityIndicatorView.swift in Sources */,
 				D816655527277632005BDA9E /* FileManager.swift in Sources */,
 				DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */,
@@ -735,6 +747,7 @@
 				D8D252B327146ED800C68EF9 /* Value1TableViewCell.swift in Sources */,
 				D8FB0D7829D56C04000E66E6 /* Renderer.swift in Sources */,
 				DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */,
+				D8808DFA2A0440DD00F57C9A /* QRCodeView.swift in Sources */,
 				D8FD46092A03509500E5E97C /* DeviceModel.swift in Sources */,
 				D81CEBBA2906B31300E4B032 /* WeatherDataSource.swift in Sources */,
 				D866CA192A01AAE3007819CD /* SettingsView.swift in Sources */,
@@ -742,7 +755,6 @@
 				D80380AB23E9B6D2002606C7 /* Service.swift in Sources */,
 				D89104852707B9A00020A2CF /* UIViewController.swift in Sources */,
 				D8C20D23271C6C1500F3F22A /* EKCalendar.swift in Sources */,
-				D83B6C35271A8E4800F48FB2 /* AddViewController.swift in Sources */,
 				D8FD46072A03501E00E5E97C /* ApplicationModel.swift in Sources */,
 				D8ED8ACC29FDF2B7007FDE06 /* PrivacyModeView.swift in Sources */,
 				D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */,
@@ -751,13 +763,13 @@
 				D8B9874B270FF88D00EC2BA4 /* Alert.swift in Sources */,
 				D8E285AF271A45CE001738A8 /* Device.swift in Sources */,
 				DB51C2E321749A2A00F016DB /* JSONRequest.swift in Sources */,
-				DBF15BC72471A61E004AA972 /* WifiProvisionerController.swift in Sources */,
+				DBF15BC72471A61E004AA972 /* WifiProvisionerViewController.swift in Sources */,
 				D8ED8AD029FE0E75007FDE06 /* FontView.swift in Sources */,
 				D8FB0D7B29D58216000E66E6 /* LastUpdateDataSource.swift in Sources */,
 				D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */,
 				D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */,
 				DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */,
-				D866CA212A02EA03007819CD /* AddView.swift in Sources */,
+				D866CA212A02EA03007819CD /* IntroductionView.swift in Sources */,
 				D8C20D25271C7A2000F3F22A /* CalendarSettingsView.swift in Sources */,
 				D83CC5222707543E00260DC1 /* UIStoryboard.swift in Sources */,
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,

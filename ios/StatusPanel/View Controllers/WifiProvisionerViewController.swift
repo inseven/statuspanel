@@ -22,15 +22,14 @@ import UIKit
 import CoreLocation
 import NetworkExtension
 
-protocol WifiProvisionerControllerDelegate: AnyObject {
+protocol WifiProvisionerViewControllerDelegate: AnyObject {
 
-    func wifiProvisionerController(_ wifiProvisionerController: WifiProvisionerController,
+    func wifiProvisionerViewController(_ wifiProvisionerViewController: WifiProvisionerViewController,
                                    didConfigureDevice device: Device)
-    func wifiProvisionerControllerDidCancel(_ wifiProvisionerController: WifiProvisionerController)
 
 }
 
-class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
+class WifiProvisionerViewController: UITableViewController, UITextFieldDelegate {
 
     struct NetworkDetails {
         var ssid: String
@@ -58,12 +57,6 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
         return cell
     }()
 
-    private lazy var cancelButtonItem: UIBarButtonItem = {
-        return UIBarButtonItem(barButtonSystemItem: .cancel,
-                               target: self,
-                               action: #selector(cancelTapped(sender:)))
-    }()
-
     private lazy var nextButtonItem: UIBarButtonItem = {
         return UIBarButtonItem(title: LocalizedString("setup_wifi_next_button_title"),
                                style: .done,
@@ -87,7 +80,7 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
         return NetworkDetails(ssid: ssid, password: password)
     }
 
-    weak var delegate: WifiProvisionerControllerDelegate?
+    weak var delegate: WifiProvisionerViewControllerDelegate?
 
     private var device: Device
     private var hotspotSsid: String
@@ -122,7 +115,6 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
 
         super.init(style: .insetGrouped)
 
-        navigationItem.leftBarButtonItem = cancelButtonItem
         navigationItem.rightBarButtonItem = nextButtonItem
         title = LocalizedString("setup_wifi_title")
 
@@ -163,6 +155,13 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
     override func viewDidDisappear(_ animated: Bool) {
         disconnectHotspot()
         super.viewDidDisappear(animated)
+    }
+
+    override func didMove(toParent parent: UIViewController?) {
+        // This ugly hack is a side effect of the way SwiftUI's UIViewControllerRepresentable works.
+        // Ultimately this works poorly enough that we will probably want to re-implement this view in SwiftUI.
+        parent?.navigationItem.rightBarButtonItem = navigationItem.rightBarButtonItem
+        parent?.navigationItem.title = LocalizedString("setup_wifi_title")
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -245,7 +244,7 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
                 case .success:
                     print("Successfully configured network!")
                     DispatchQueue.main.async {
-                        self.delegate?.wifiProvisionerController(self, didConfigureDevice: self.device)
+                        self.delegate?.wifiProvisionerViewController(self, didConfigureDevice: self.device)
                     }
                 case .failure(let error):
                     print("Failed to configure network with error '\(error)'.")
@@ -270,10 +269,6 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
         } else {
             nextButtonItem.isEnabled = false
         }
-    }
-
-    @objc func cancelTapped(sender: UIBarButtonItem) {
-        delegate?.wifiProvisionerControllerDidCancel(self)
     }
 
     @objc func nextTapped(sender: UIBarButtonItem) {
@@ -303,7 +298,7 @@ class WifiProvisionerController: UITableViewController, UITextFieldDelegate {
 
 }
 
-extension WifiProvisionerController: CLLocationManagerDelegate {
+extension WifiProvisionerViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if (status == .authorizedWhenInUse) {

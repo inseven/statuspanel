@@ -23,12 +23,20 @@ import UIKit
 
 class ApplicationModel: ObservableObject {
 
+    enum SheetType: Identifiable {
+        var id: Self { return self }
+
+        case settings
+        case add
+    }
+
     private let dataSourceController: DataSourceController
     private let config: Config
 
     private var cancellables: Set<AnyCancellable> = []
 
     @Published var deviceModels: [DeviceModel] = []
+    @Published var sheet: SheetType? = nil
 
     init(dataSourceController: DataSourceController, config: Config) {
         self.dataSourceController = dataSourceController
@@ -72,6 +80,36 @@ class ApplicationModel: ObservableObject {
                 appDelegate.updateDevices()
             }
             .store(in: &cancellables)
+
+        $deviceModels
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .sink { [weak self] deviceModels in
+                guard let self else { return }
+                if deviceModels.isEmpty {
+                    sheet = .add
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    @MainActor func addFromClipboard() {
+        guard let clipboard = UIPasteboard.general.string,
+           let url = URL(string: clipboard) else {
+            return
+        }
+        _ = AppDelegate.shared.application(UIApplication.shared, open: url, options: [:])
+    }
+
+    @MainActor func addDemoDevice(kind: Device.Kind) {
+        AppDelegate.shared.addDevice(Device(kind: kind))
+    }
+
+    @MainActor func showIntroduction() {
+        sheet = .add
+    }
+
+    @MainActor func addDevice(_ device: Device) {
+        AppDelegate.shared.addDevice(device)
     }
 
 }
