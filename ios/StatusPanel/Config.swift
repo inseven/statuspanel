@@ -56,6 +56,7 @@ class Config: ObservableObject {
         case dataSources
         case settings(UUID)
         case deviceSettings(String)
+        case showDebugInformation
 
         static let settingsPrefix = "Settings-"
         static let deviceSettingsPrefix = "DeviceSettings-"
@@ -145,6 +146,8 @@ class Config: ObservableObject {
                 return "Settings-\(uuid.uuidString)"
             case .deviceSettings(let deviceId):
                 return "Settings-\(deviceId)"
+            case .showDebugInformation:
+                return "showDebugInformation"
             }
         }
     }
@@ -154,6 +157,7 @@ class Config: ObservableObject {
     @MainActor init() {
         devices = Self.loadDevices()
         lastBackgroundUpdate = object(for: .lastBackgroundUpdate) as? Date
+        showDebugInformation = bool(for: .showDebugInformation)
     }
 
     private func object(for key: Key) -> Any? {
@@ -299,6 +303,12 @@ class Config: ObservableObject {
                 objs.append(["publickey": device.publicKey, "deviceid": device.id, "kind": device.kind.rawValue])
             }
             self.userDefaults.set(objs, forKey: "devices")
+        }
+    }
+
+    @MainActor @Published var showDebugInformation: Bool = false {
+        didSet {
+            set(showDebugInformation, for: .showDebugInformation)
         }
     }
 

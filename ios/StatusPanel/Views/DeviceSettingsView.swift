@@ -156,9 +156,11 @@ struct DeviceSettingsView: View {
                 DatePicker("Device Update Time", selection: $model.settings.updateTime, displayedComponents: .hourAndMinute)
                     .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
             }
-            Section("Details") {
-                LabeledContent("Type", value: device.kind.description)
-                LabeledContent("Identifier", value: device.id)
+            if config.showDebugInformation {
+                Section("Details") {
+                    LabeledContent("Type", value: device.kind.description)
+                    LabeledContent("Identifier", value: device.id)
+                }
             }
         }
         .presents($error)

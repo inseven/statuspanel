@@ -79,6 +79,9 @@ struct SettingsView: View {
                         }
                     }
                 }
+                Section("Debug") {
+                    Toggle("Show Debug Information", isOn: $config.showDebugInformation)
+                }
                 Button("About StatusPanel...") {
                     sheet = .about
                 }
