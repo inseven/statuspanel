@@ -312,6 +312,10 @@ class Config: ObservableObject {
         }
     }
 
+    @MainActor func removeDevice(_ device: Device) {
+        self.devices.removeAll { $0.id == device.id }
+    }
+
     // TODO: Extract privacy image generation and management to a separate utility #533
     //       https://github.com/inseven/statuspanel/issues/533
 

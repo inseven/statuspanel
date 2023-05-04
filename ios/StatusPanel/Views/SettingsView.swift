@@ -58,9 +58,6 @@ struct SettingsView: View {
                                 }
                             }
                         }
-                        .onDelete { indexSet in
-                            config.devices.remove(atOffsets: indexSet)
-                        }
                     } else {
                         Text("No Devices")
                             .foregroundColor(.secondary)
