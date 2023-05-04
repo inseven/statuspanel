@@ -38,8 +38,13 @@ struct IntroductionView: View {
 
     var body: some View {
         ScrollView {
-            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Viverra maecenas accumsan lacus vel facilisis volutpat est velit egestas. Sit amet facilisis magna etiam tempor. Rutrum quisque non tellus orci ac auctor augue. Vulputate dignissim suspendisse in est ante in nibh mauris cursus. Aenean sed adipiscing diam donec adipiscing. A condimentum vitae sapien pellentesque habitant morbi tristique senectus. Consequat id porta nibh venenatis.")
-                .padding()
+            VStack {
+                Image("Hero")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Viverra maecenas accumsan lacus vel facilisis volutpat est velit egestas. Sit amet facilisis magna etiam tempor. Rutrum quisque non tellus orci ac auctor augue.")
+                    .padding()
+            }
         }
         .safeAreaInset(edge: .bottom) {
             VStack {
@@ -74,7 +79,7 @@ struct IntroductionView: View {
             Text("Scan QR Code")
         }
 
-        .navigationTitle("Add Device")
+        .navigationTitle("StatusPanel")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
 
