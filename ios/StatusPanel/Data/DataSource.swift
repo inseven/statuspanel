@@ -63,7 +63,7 @@ class DataSourceModel<T: DataSourceSettings>: ObservableObject {
             .sink { [weak self] dataSourceSettings in
                 guard let self else { return }
                 do {
-                    try self.store.save(settings: settings)
+                    try self.store.save(settings: self.settings)
                 } catch {
                     print("Failed to save data source settings with error \(error).")
                     self.error = error
