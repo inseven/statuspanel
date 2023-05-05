@@ -43,6 +43,14 @@ final class TFLDataSource: DataSource {
 
         var lines: Set<String>
 
+        var summary: String {
+            let activeLines = lines.compactMap { linesById[$0] }.sorted()
+            guard !activeLines.isEmpty else {
+                return "None"
+            }
+            return activeLines.map { $0.title }.joined(separator: ", ")
+        }
+
         init(lines: Set<String>) {
             self.lines = lines
         }
@@ -53,24 +61,28 @@ final class TFLDataSource: DataSource {
 
     }
 
+    struct SettingsItem: View {
+
+        @ObservedObject var model: Model
+
+        var body: some View {
+            DataSourceInstanceRow(image: TFLDataSource.image,
+                                  title: TFLDataSource.name,
+                                  summary: model.settings.summary)
+        }
+
+    }
+
     struct SettingsView: View {
 
-        var store: DataSourceSettingsStore<TFLDataSource.Settings>
-        @State var settings: TFLDataSource.Settings
+        @ObservedObject var model: Model
 
-        private var lines: [TFLDataSource.Line]
-        @State var error: Error? = nil
-
-        init(store: DataSourceSettingsStore<TFLDataSource.Settings>, settings: TFLDataSource.Settings) {
-            self.store = store
-            _settings = State(wrappedValue: settings)
-            self.lines = TFLDataSource.lines.sorted()
-        }
+        private let lines = TFLDataSource.lines.sorted()
 
         var body: some View {
             Form {
                 ForEach(lines) { line in
-                    Toggle(line.title, isOn: $settings.lines.binding(for: line.id))
+                    Toggle(line.title, isOn: $model.settings.lines.binding(for: line.id))
                         .toggleStyle(ColoredCheckbox(color: line.color))
                 }
                 Section {
@@ -82,15 +94,7 @@ final class TFLDataSource: DataSource {
                     Text("Powered by TfL Open Data. Contains OS data © Crown copyright and database rights 2016' and Geomni UK Map data © and database rights [2019].")
                 }
             }
-            .presents($error)
-            .onChange(of: settings) { newValue in
-                do {
-                    try store.save(settings: newValue)
-                } catch {
-                    self.error = error
-                }
-            }
-
+            .presents($model.error)
         }
 
     }
@@ -121,11 +125,11 @@ final class TFLDataSource: DataSource {
         Line(id: "waterloo-city", title: "Waterloo & City Line", color: Color(hex: 0x95cdba)),
     ]
 
-    private var linesById: [String: Line] = [:]
+    static let linesById: [String: Line] = lines.reduce(into: [String: Line]()) {  $0[$1.id] = $1 }
 
-    let id: DataSourceType = .transportForLondon
-    let name = "London Underground"
-    let image = UIImage(systemName: "tram", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
+    static let id: DataSourceType = .transportForLondon
+    static let name = "London Underground"
+    static let image = Image(systemName: "tram")
 
     let configuration: Configuration
 
@@ -135,13 +139,12 @@ final class TFLDataSource: DataSource {
 
     init(configuration: Configuration) {
         self.configuration = configuration
-        linesById = Self.lines.reduce(into: [String: Line]()) {  $0[$1.id] = $1 }
     }
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
 
         // Remove any unknown lines.
-        let lines = settings.lines.filter { self.linesById[$0] != nil }
+        let lines = settings.lines.filter { Self.linesById[$0] != nil }
 
         guard !lines.isEmpty else {
             completion([], nil)
@@ -176,12 +179,12 @@ final class TFLDataSource: DataSource {
                     flags.insert(.warning)
                 }
 
-                guard let name = self.linesById[line.id]?.title else {
+                guard let name = Self.linesById[line.id]?.title else {
                     completion([], StatusPanelError.invalidResponse)
                     return
                 }
 
-                guard let accentColor = self.linesById[line.id]?.color.cgColor else {
+                guard let accentColor = Self.linesById[line.id]?.color.cgColor else {
                     completion([], StatusPanelError.invalidResponse)
                     return
                 }
@@ -197,16 +200,12 @@ final class TFLDataSource: DataSource {
         JSONRequest.makeRequest(url: safeUrl, completion: gotLineData)
     }
 
-    func summary(settings: Settings) -> String? {
-        let activeLines = settings.lines.compactMap { linesById[$0] }.sorted()
-        guard !activeLines.isEmpty else {
-            return "None"
-        }
-        return activeLines.map { $0.title }.joined(separator: ", ")
+    func settingsView(model: Model) -> SettingsView {
+        return SettingsView(model: model)
     }
 
-    func settingsView(store: Store, settings: Settings) -> SettingsView {
-        return SettingsView(store: store, settings: settings)
+    func settingsItem(model: Model) -> SettingsItem {
+        return SettingsItem(model: model)
     }
 
 }

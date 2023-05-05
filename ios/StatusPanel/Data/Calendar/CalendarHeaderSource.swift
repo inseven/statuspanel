@@ -80,49 +80,45 @@ final class CalendarHeaderSource : DataSource {
 
     struct SettingsView: View {
 
-        var store: DataSourceSettingsStore<CalendarHeaderSource.Settings>
-        @State var settings: CalendarHeaderSource.Settings
-        @State var error: Error? = nil
-
-        init(store: DataSourceSettingsStore<CalendarHeaderSource.Settings>, settings: CalendarHeaderSource.Settings) {
-            self.store = store
-            _settings = State(initialValue: settings)
-        }
+        @ObservedObject var model: Model
 
         var body: some View {
             Form {
                 Section {
-                    Picker("Day", selection: $settings.offset) {
+                    Picker("Day", selection: $model.settings.offset) {
                         Text(LocalizedOffset(0)).tag(0)
                         Text(LocalizedOffset(1)).tag(1)
                     }
-                    NavigationLink(destination: FormatEditor(settings: $settings)) {
+                    NavigationLink(destination: FormatEditor(settings: $model.settings)) {
                         HStack {
                             Text("Format")
                             Spacer()
-                            Text(settings.longFormat)
+                            Text(model.settings.longFormat)
                                 .foregroundColor(.secondary)
                         }
                     }
                 }
-                FlagsSection(flags: $settings.flags)
+                FlagsSection(flags: $model.settings.flags)
             }
-            .presents($error)
-            .onChange(of: settings) { newValue in
-                do {
-                    try store.save(settings: newValue)
-                } catch {
-                    self.error = error
-                }
-            }
+            .presents($model.error)
+        }
+    }
+
+    struct SettingsItem: View {
+
+        @ObservedObject var model: Model
+
+        var body: some View {
+            DataSourceInstanceRow(image: CalendarHeaderSource.image,
+                                  title: CalendarHeaderSource.name,
+                                  summary: "\(LocalizedOffset(model.settings.offset)): \(model.settings.longFormat)")
         }
 
     }
 
-    let id: DataSourceType = .calendarHeader
-    let name = "Date"
-    let image = UIImage(systemName: "calendar.badge.clock",
-                        withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
+    static let id: DataSourceType = .calendarHeader
+    static let name = "Date"
+    static let image = Image(systemName: "calendar.badge.clock")
 
     var defaults: Settings {
         return CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
@@ -148,12 +144,12 @@ final class CalendarHeaderSource : DataSource {
         completion(data, nil)
     }
 
-    func summary(settings: Settings) -> String? {
-        return "\(LocalizedOffset(settings.offset)): \(settings.longFormat)"
+    func settingsView(model: Model) -> SettingsView {
+        return SettingsView(model: model)
     }
 
-    func settingsView(store: Store, settings: Settings) -> SettingsView {
-        return SettingsView(store: store, settings: settings)
+    func settingsItem(model: Model) -> SettingsItem {
+        return SettingsItem(model: model)
     }
 
 }

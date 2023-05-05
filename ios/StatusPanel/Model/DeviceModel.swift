@@ -26,18 +26,41 @@ class DeviceModel: ObservableObject, Identifiable {
     @ObservedObject var config: Config
 
     private let dataSourceController: DataSourceController
-    private let device: Device
+    let device: Device
 
-    @Published var deviceSettings: DeviceSettings? = nil
+    // TODO: Is the force unwrap acceptable?
+    @Published var deviceSettings: DeviceSettings
     @Published var images: [UIImage] = []
+    @Published var error: Error? = nil
 
+    @MainActor var dataSources: [DataSourceInstance] {
+        get {
+            do {
+                return try deviceSettings.dataSources.map { dataSourceDetails in
+                    if let dataSourceInstance = dataSourceCache[dataSourceDetails.id] {
+                        return dataSourceInstance
+                    }
+                    let dataSourceInstance = try dataSourceController.dataSourceInstance(for: dataSourceDetails)
+                    dataSourceCache[dataSourceDetails.id] = dataSourceInstance
+                    return dataSourceInstance
+                }
+            } catch {
+                self.error = error
+                return []
+            }
+        }
+    }
+
+    @MainActor private var dataSourceCache: [UUID: DataSourceInstance] = [:]
+
+    private let updateQueue = DispatchQueue(label: "updateQueue")
     private var cancellables: [AnyCancellable] = []
+    private var dataSourceSubscriptions: [AnyCancellable] = []
 
     var id: String { device.id }
 
     var name: String {
-        guard let deviceSettings,
-              !deviceSettings.name.isEmpty
+        guard !deviceSettings.name.isEmpty
         else {
             return Localized(device.kind)
         }
@@ -49,35 +72,45 @@ class DeviceModel: ObservableObject, Identifiable {
         self.dataSourceController = dataSourceController
         self.device = device
         self.images = [device.blankImage()]
+
+        do {
+            // TODO: It might actually be right to do this lazily
+            let deviceSettings = try config.settings(forDevice: device.id)
+//            let dataSources = try DataSourceController.dataSourceInstances(for: deviceSettings.dataSources)
+            self.deviceSettings = deviceSettings
+//            self.dataSources = dataSources
+        } catch {
+            // TODO: Report this error here.
+            deviceSettings = DeviceSettings(deviceId: device.id)
+//            dataSources = []
+        }
     }
 
     func start() {
         dispatchPrecondition(condition: .onQueue(.main))
 
-        // Fetch settings.
-        config
-            .objectWillChange
-            .prepend(())
-            .combineLatest(NotificationCenter.default
-                .publisher(for: UIApplication.willEnterForegroundNotification)
-                .prepend(NSNotification(name: UIApplication.willEnterForegroundNotification, object: nil) as NotificationCenter.Publisher.Output))
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
+        // Write the settings to disk.
+        $deviceSettings
+            .debounce(for: 1, scheduler: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { [weak self] deviceSettings in
                 guard let self else { return }
                 do {
-                    self.deviceSettings = try self.config.settings(forDevice: self.device.id)
+                    try self.config.save(settings: deviceSettings, deviceId: device.id)
                 } catch {
-                    print("Failed to preview device with error \(error).")
+                    self.error = error
                 }
             }
             .store(in: &cancellables)
 
         // Generate previews.
+        // TODO: Regenerate previews when the app enters the foreground.
         $deviceSettings
-            .receive(on: DispatchQueue.global(qos: .userInitiated))
+            .debounce(for: 1, scheduler: updateQueue)
             .compactMap { $0 }
             .compactMap { [weak self] deviceSettings -> (DeviceSettings, [DataItemBase])? in
                 guard let self else { return nil }
+                dispatchPrecondition(condition: .onQueue(self.updateQueue))
                 let semaphore = DispatchSemaphore(value: 0)
                 var result: [DataItemBase]?
                 self.dataSourceController.fetch(details: deviceSettings.dataSources) { items, error in
@@ -100,6 +133,31 @@ class DeviceModel: ObservableObject, Identifiable {
                 self.images = images
             }
             .store(in: &cancellables)
+
+        // Purge the data source instance cache.
+        $deviceSettings
+            .receive(on: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { [weak self] deviceSettings in
+                guard let self else { return }
+                let dataSourceDetails = deviceSettings.dataSources
+                let identifiers = Set(dataSourceDetails.map { $0.id })
+                let deletions = self.dataSourceCache.keys.filter { !identifiers.contains($0) }
+                deletions.forEach { self.dataSourceCache.removeValue(forKey: $0) }
+
+                // Subscribe to all the data sources
+                // TODO: This is a blunt stick and it would be better to do something more elegant.
+                self.dataSourceSubscriptions = dataSourceCache
+                    .values
+                    .compactMap { dataSourceInstance in
+                        return dataSourceInstance.model?.subscribe { [weak self] in
+                            guard let self else { return }
+                            self.objectWillChange.send()
+                        }
+                    }
+            }
+            .store(in: &cancellables)
+
     }
 
 }

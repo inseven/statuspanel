@@ -30,29 +30,32 @@ final class DummyDataSource : DataSource {
 
     struct SettingsView: View {
 
-        var store: DataSourceSettingsStore<DummyDataSource.Settings>
-        @State var settings: DummyDataSource.Settings
-        @State var error: Error? = nil
+        @ObservedObject var model: Model
 
         var body: some View {
             Form {
-                Toggle("Enabled", isOn: $settings.enabled)
+                Toggle("Enabled", isOn: $model.settings.enabled)
             }
-            .presents($error)
-            .onChange(of: settings) { newValue in
-                do {
-                    try store.save(settings: newValue)
-                } catch {
-                    self.error = error
-                }
-            }
+            .presents($model.error)
         }
 
     }
 
-    let id: DataSourceType = .dummy
-    let name = "Dummy Data"
-    let image = UIImage(systemName: "text.alignleft", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
+    struct SettingsItem: View {
+
+        @ObservedObject var model: Model
+
+        var body: some View {
+            DataSourceInstanceRow(image: DummyDataSource.image,
+                                  title: DummyDataSource.name,
+                                  summary: model.settings.enabled ? "Enabled" : "Disabled")
+        }
+
+    }
+
+    static let id: DataSourceType = .dummy
+    static let name = "Dummy Data"
+    static let image = Image(systemName: "text.alignleft")
 
     var defaults: Settings {
         return Settings()
@@ -106,12 +109,12 @@ final class DummyDataSource : DataSource {
         completion(data, nil)
     }
 
-    func summary(settings: Settings) -> String? {
-        return settings.enabled ? "Enabled" : "Disabled"
+    func settingsView(model: Model) -> SettingsView {
+        return SettingsView(model: model)
     }
 
-    func settingsView(store: Store, settings: Settings) -> SettingsView {
-        return SettingsView(store: store, settings: settings)
+    func settingsItem(model: Model) -> SettingsItem {
+        return SettingsItem(model: model)
     }
 
 }

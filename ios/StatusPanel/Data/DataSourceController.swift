@@ -46,15 +46,15 @@ class DataSourceController: ObservableObject {
         self.config = config
     }
 
-    static func dataSourceInstances(for dataSourceDetails: [DataSourceInstance.Details]) throws -> [DataSourceInstance] {
+    func dataSourceInstances(for dataSourceDetails: [DataSourceInstance.Details]) throws -> [DataSourceInstance] {
         return try dataSourceDetails.map { try dataSourceInstance(for: $0) }
     }
 
-    static func dataSourceInstance(for details: DataSourceInstance.Details) throws -> DataSourceInstance {
+    func dataSourceInstance(for details: DataSourceInstance.Details) throws -> DataSourceInstance {
         guard let dataSource = Self.sources.first(where: { $0.id == details.type }) else {
             throw StatusPanelError.unknownDataSource(details.type)
         }
-        return DataSourceInstance(id: details.id, dataSource: dataSource)
+        return DataSourceInstance(config: config, id: details.id, dataSource: dataSource)
     }
 
     func fetch(details: [DataSourceInstance.Details]) async throws -> [DataItemBase] {
@@ -77,7 +77,7 @@ class DataSourceController: ObservableObject {
         syncQueue.async {
             let dataSources: [DataSourceInstance]
             do {
-                dataSources = try DataSourceController.dataSourceInstances(for: details)
+                dataSources = try self.dataSourceInstances(for: details)
             } catch {
                 completion(nil, error)
                 return

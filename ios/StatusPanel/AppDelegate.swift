@@ -131,6 +131,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 self.config.devices.append(device)
 
+                // TODO: Remove this.
                 let alert = UIAlertController(title: "Device added",
                                               message: "Device \(device.id) has been added.",
                                               preferredStyle: .alert)

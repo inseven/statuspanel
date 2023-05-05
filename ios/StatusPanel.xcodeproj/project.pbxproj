@@ -75,10 +75,11 @@
 		D8E285AF271A45CE001738A8 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E285AE271A45CE001738A8 /* Device.swift */; };
 		D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6839B270DF11800504B5E /* DataSourceType.swift */; };
 		D8E6D673271FBD3300AB6452 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6D672271FBD3300AB6452 /* Color.swift */; };
+		D8E975422A0530550064A317 /* DeviceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E975412A0530550064A317 /* DeviceSettingsView.swift */; };
 		D8EBFCC8272099B0000E120F /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */; };
 		D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EBFCC92720A6F8000E120F /* Network.swift */; };
 		D8ED8AC829FDC484007FDE06 /* EKEventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */; };
-		D8ED8ACA29FDCBC5007FDE06 /* DeviceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8AC929FDCBC5007FDE06 /* DeviceSettingsView.swift */; };
+		D8ED8ACA29FDCBC5007FDE06 /* DeviceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8AC929FDCBC5007FDE06 /* DeviceDetailView.swift */; };
 		D8ED8ACC29FDF2B7007FDE06 /* PrivacyModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */; };
 		D8ED8ACE29FE0D31007FDE06 /* FontPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8ACD29FE0D31007FDE06 /* FontPicker.swift */; };
 		D8ED8AD029FE0E75007FDE06 /* FontView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8ACF29FE0E75007FDE06 /* FontView.swift */; };
@@ -211,10 +212,11 @@
 		D8E285AE271A45CE001738A8 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		D8E6839B270DF11800504B5E /* DataSourceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceType.swift; sourceTree = "<group>"; };
 		D8E6D672271FBD3300AB6452 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		D8E975412A0530550064A317 /* DeviceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingsView.swift; sourceTree = "<group>"; };
 		D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		D8EBFCC92720A6F8000E120F /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEventStore.swift; sourceTree = "<group>"; };
-		D8ED8AC929FDCBC5007FDE06 /* DeviceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingsView.swift; sourceTree = "<group>"; };
+		D8ED8AC929FDCBC5007FDE06 /* DeviceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailView.swift; sourceTree = "<group>"; };
 		D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyModeView.swift; sourceTree = "<group>"; };
 		D8ED8ACD29FE0D31007FDE06 /* FontPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPicker.swift; sourceTree = "<group>"; };
 		D8ED8ACF29FE0E75007FDE06 /* FontView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontView.swift; sourceTree = "<group>"; };
@@ -290,7 +292,8 @@
 				D866CA1E2A02E9E4007819CD /* ContentView.swift */,
 				D8CE02C92A0025BB00D32A78 /* DataSourceInstanceRow.swift */,
 				D8383EBB270FB8E20007EBB7 /* DayPicker.swift */,
-				D8ED8AC929FDCBC5007FDE06 /* DeviceSettingsView.swift */,
+				D8ED8AC929FDCBC5007FDE06 /* DeviceDetailView.swift */,
+				D8E975412A0530550064A317 /* DeviceSettingsView.swift */,
 				D8FD46042A034FF200E5E97C /* DeviceView.swift */,
 				D848A19D270D213800681F62 /* FlagsSection.swift */,
 				D8ED8ACD29FE0D31007FDE06 /* FontPicker.swift */,
@@ -733,6 +736,7 @@
 				DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */,
 				D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */,
 				D8DCA7D629CBEA92002010A5 /* LabelStyle.swift in Sources */,
+				D8E975422A0530550064A317 /* DeviceSettingsView.swift in Sources */,
 				D8E6D673271FBD3300AB6452 /* Color.swift in Sources */,
 				D8DCA7DE29CBEE4D002010A5 /* UILabel.swift in Sources */,
 				D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */,
@@ -793,7 +797,7 @@
 				D81DA7C02712953D0052D32C /* Localization.swift in Sources */,
 				D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */,
 				D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */,
-				D8ED8ACA29FDCBC5007FDE06 /* DeviceSettingsView.swift in Sources */,
+				D8ED8ACA29FDCBC5007FDE06 /* DeviceDetailView.swift in Sources */,
 				D8ED8AC829FDC484007FDE06 /* EKEventStore.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
 				D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */,

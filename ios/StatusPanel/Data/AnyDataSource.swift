@@ -21,15 +21,23 @@
 import Foundation
 import SwiftUI
 
+struct DataSourceViews {
+
+    let model: AnyDataSourceModel
+
+    let settingsView: AnyView
+    let settingsItem: AnyView
+
+}
+
 /// Type erasing wrapper for `DataSource`
 class AnyDataSource: Identifiable {
 
     private var idProxy: (() -> DataSourceType)! = nil
     private var nameProxy: (() -> String)! = nil
-    private var imageProxy: (() -> UIImage)! = nil
+    private var imageProxy: (() -> Image)! = nil
     private var dataProxy: ((Config, UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
-    private var summaryProxy: ((Config, UUID) throws -> String?)! = nil
-    private var settingsViewProxy: ((Config, UUID) throws -> AnyView)! = nil
+    private var settingsViewProxy: ((Config, UUID) throws -> DataSourceViews)! = nil
     private var validateSettingsProxy: ((DataSourceSettings) -> Bool)! = nil
 
     var id: DataSourceType {
@@ -40,7 +48,7 @@ class AnyDataSource: Identifiable {
         return nameProxy()
     }
 
-    var image: UIImage {
+    var image: Image {
         return imageProxy()
     }
 
@@ -48,11 +56,7 @@ class AnyDataSource: Identifiable {
         return dataProxy(config, instanceId, completion)
     }
 
-    func summary(config: Config, instanceId: UUID) throws -> String? {
-        return try summaryProxy(config, instanceId)
-    }
-
-    func settingsView(config: Config, instanceId: UUID) throws -> AnyView {
+    func settingsView(config: Config, instanceId: UUID) throws -> DataSourceViews {
         return try settingsViewProxy(config, instanceId)
     }
 
@@ -62,7 +66,7 @@ class AnyDataSource: Identifiable {
 
     init<T: DataSource>(_ dataSource: T) {
         idProxy = {
-            return dataSource.id
+            return type(of: dataSource).id
         }
         dataProxy = { config, instanceId, completion in
             do {
@@ -80,22 +84,30 @@ class AnyDataSource: Identifiable {
             }
         }
         nameProxy = {
-            return dataSource.name
+            return type(of: dataSource).name
         }
         imageProxy = {
-            return dataSource.image
-        }
-        summaryProxy = { config, instanceId in
-            let settings = try dataSource.settings(config: config, instanceId: instanceId)
-            return dataSource.summary(settings: settings)
+            return type(of: dataSource).image
         }
         settingsViewProxy = { config, instanceId in
             let settings = try dataSource.settings(config: config, instanceId: instanceId)
             let store = DataSourceSettingsStore<T.Settings>(config: config, uuid: instanceId)
-            let view = dataSource
-                .settingsView(store: store, settings: settings)
-                .navigationTitle(dataSource.name)
-            return AnyView(view)
+            // TODO: Consider moving this into a wrapper view controller which doesn't throw?
+
+            let model = T.Model(store: store, settings: settings)
+            model.start()
+
+            let settingsView = dataSource
+                .settingsView(model: model)
+                .navigationTitle(type(of: dataSource).name)
+                .navigationBarTitleDisplayMode(.inline)
+
+            let settingsItem = dataSource
+                .settingsItem(model: model)
+
+            return DataSourceViews(model: AnyDataSourceModel(model),
+                                   settingsView: AnyView(settingsView),
+                                   settingsItem: AnyView(settingsItem))
         }
         validateSettingsProxy = { settings in
             return type(of: settings) == type(of: dataSource).Settings

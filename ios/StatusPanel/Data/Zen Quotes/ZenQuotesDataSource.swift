@@ -45,16 +45,26 @@ final class ZenQuotesDataSource: DataSource {
 
     }
 
+    struct SettingsItem: View {
+
+        @ObservedObject var model: Model
+
+        var body: some View {
+            DataSourceInstanceRow(image: ZenQuotesDataSource.image,
+                                  title: ZenQuotesDataSource.name,
+                                  summary: model.settings.mode.localizedName)
+        }
+
+    }
+
     struct SettingsView: View {
 
-        var store: Store
-        @State var settings: Settings
-        @State var error: Error? = nil
+        @ObservedObject var model: Model
 
         var body: some View {
             Form {
                 Section {
-                    Picker("Mode", selection: $settings.mode) {
+                    Picker("Mode", selection: $model.settings.mode) {
                         Text(Settings.Mode.today.localizedName).tag(Settings.Mode.today)
                         Text(Settings.Mode.random.localizedName).tag(Settings.Mode.random)
                     }
@@ -68,14 +78,7 @@ final class ZenQuotesDataSource: DataSource {
                     Text("Inspirational quotes provided by ZenQuotes API.")
                 }
             }
-            .presents($error)
-            .onChange(of: settings) { newValue in
-                do {
-                    try store.save(settings: newValue)
-                } catch {
-                    self.error = error
-                }
-            }
+            .presents($model.error)  // TODO: This could be moved out to the owning controller.
         }
 
     }
@@ -92,9 +95,10 @@ final class ZenQuotesDataSource: DataSource {
 
     }
 
-    let id: DataSourceType = .zenQuotes
-    let name = "ZenQuotes"
-    let image = UIImage(systemName: "quote.bubble", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
+    static let id: DataSourceType = .zenQuotes
+    static let name = "ZenQuotes"
+    static let image = Image(systemName: "quote.bubble")
+    
     let defaults = Settings(mode: .today)
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
@@ -126,12 +130,12 @@ final class ZenQuotesDataSource: DataSource {
         }
     }
 
-    func summary(settings: Settings) -> String? {
-        return settings.mode.localizedName
+    func settingsView(model: Model) -> SettingsView {
+        return SettingsView(model: model)
     }
 
-    func settingsView(store: Store, settings: Settings) -> SettingsView {
-        return SettingsView(store: store, settings: settings)
+    func settingsItem(model: Model) -> SettingsItem {
+        return SettingsItem(model: model)
     }
 
 }

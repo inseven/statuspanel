@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import Combine
 import Foundation
 import EventKit
 import SwiftUI
@@ -119,9 +120,21 @@ final class CalendarDataSource : DataSource {
 
     typealias SettingsView = CalendarSettingsView
 
-    let id: DataSourceType = .calendar
-    let name = "Calendar"
-    let image = UIImage(systemName: "calendar", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
+    struct SettingsItem: View {
+
+        @ObservedObject var model: Model
+
+        var body: some View {
+            DataSourceInstanceRow(image: CalendarDataSource.image,
+                                  title: CalendarDataSource.name,
+                                  summary: "\(LocalizedOffset(model.settings.offset)): \(model.settings.calendarNames)")
+        }
+
+    }
+
+    static let id: DataSourceType = .calendar
+    static let name = "Calendar"
+    static let image = Image(systemName: "calendar")
 
     let eventStore: EKEventStore
 
@@ -262,14 +275,12 @@ final class CalendarDataSource : DataSource {
         return result
     }
 
-    func summary(settings: Settings) -> String? {
-        return "\(LocalizedOffset(settings.offset)): \(settings.calendarNames)"
+    func settingsView(model: Model) -> SettingsView {
+        return SettingsView(model: model)
     }
 
-    func settingsView(store: Store, settings: Settings) -> CalendarSettingsView {
-        return CalendarSettingsView(store: store,
-                                    settings: settings,
-                                    eventStore: EKEventStore())
+    func settingsItem(model: Model) -> SettingsItem {
+        return SettingsItem(model: model)
     }
 
 }

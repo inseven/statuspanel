@@ -22,16 +22,22 @@ import SwiftUI
 
 struct DataSourceInstanceRow: View {
 
-    let config: Config
-    let dataSourceInstance: DataSourceInstance
+    let image: Image
+    let name: String
+    let summary: String?
+
+    init(image: Image, title: String, summary: String? = nil) {
+        self.image = image
+        self.name = title
+        self.summary = summary
+    }
 
     var body: some View {
         HStack {
-            Image(uiImage: dataSourceInstance.dataSource.image)
+            image
             VStack(alignment: .leading) {
-                Text(dataSourceInstance.dataSource.name)
-                if let summary = try? dataSourceInstance.dataSource.summary(config: config,
-                                                                            instanceId: dataSourceInstance.id) {
+                Text(name)
+                if let summary {
                     Text(summary)
                         .lineLimit(1)
                         .font(.footnote)

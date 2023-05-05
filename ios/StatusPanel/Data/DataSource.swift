@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import Combine
 import Foundation
 import UIKit
 import SwiftUI
@@ -26,25 +27,74 @@ protocol DataSourceSettings: Codable {
 
 }
 
+class AnyDataSourceModel {
+
+    let subscribe: (@escaping () -> Void) -> AnyCancellable
+
+    init<T: DataSourceSettings>(_ dataSourceModel: DataSourceModel<T>) {
+        subscribe = { action in
+            return dataSourceModel
+                .objectWillChange
+                .sink { _ in
+                    action()
+                }
+        }
+    }
+
+}
+
+class DataSourceModel<T: DataSourceSettings>: ObservableObject {
+
+    let store: DataSourceSettingsStore<T>
+
+    @Published var settings: T
+    @Published var error: Error? = nil
+
+    var cancellables: Set<AnyCancellable> = []
+
+    init(store: DataSourceSettingsStore<T>, settings: T) {
+        self.store = store
+        self.settings = settings
+    }
+
+    func start() {
+        $settings
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] dataSourceSettings in
+                guard let self else { return }
+                do {
+                    try self.store.save(settings: settings)
+                } catch {
+                    print("Failed to save data source settings with error \(error).")
+                    self.error = error
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+}
+
+
 protocol DataSource: AnyObject, Identifiable {
 
+    typealias Model = DataSourceModel<Settings>
     typealias Store = DataSourceSettingsStore<Settings>
 
     associatedtype Settings: DataSourceSettings
     associatedtype SettingsView: View
+    associatedtype SettingsItem: View
 
-    var id: DataSourceType { get }
-
-    var name: String { get }
-    var image: UIImage { get }
+    static var id: DataSourceType { get }
+    static var name: String { get }
+    static var image: Image { get }
 
     var defaults: Settings { get }
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void)
 
-    func summary(settings: Settings) -> String?
+    func settingsView(model: Model) -> SettingsView
 
-    func settingsView(store: Store, settings: Settings) -> SettingsView
+    func settingsItem(model: Model) -> SettingsItem
 
 }
 
