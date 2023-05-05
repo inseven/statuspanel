@@ -96,7 +96,7 @@ class DeviceModel: ObservableObject, Identifiable {
             .sink { [weak self] deviceSettings in
                 guard let self else { return }
                 do {
-                    try self.config.save(settings: deviceSettings, deviceId: device.id)
+                    try self.config.save(settings: deviceSettings, deviceId: self.device.id)
                 } catch {
                     self.error = error
                 }
@@ -147,7 +147,7 @@ class DeviceModel: ObservableObject, Identifiable {
 
                 // Subscribe to all the data sources
                 // TODO: This is a blunt stick and it would be better to do something more elegant.
-                self.dataSourceSubscriptions = dataSourceCache
+                self.dataSourceSubscriptions = self.dataSourceCache
                     .values
                     .compactMap { dataSourceInstance in
                         return dataSourceInstance.model?.subscribe { [weak self] in
