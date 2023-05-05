@@ -86,6 +86,7 @@ struct SettingsView: View {
                     Button("Done") {
                         dismiss()
                     }
+                    .fontWeight(.bold)
                     .keyboardShortcut(.cancelAction)
                 }
             }
