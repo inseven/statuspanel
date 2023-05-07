@@ -53,6 +53,7 @@ struct AddDeviceView: View {
     enum Page: Hashable {
         case scan
         case configureWiFi(Device, String)
+        case demoDevice
     }
 
     @Environment(\.dismiss) var dismiss
@@ -66,6 +67,8 @@ struct AddDeviceView: View {
         NavigationStack(path: $pages) {
             IntroductionView(applicationModel: applicationModel) {
                 pages.append(.scan)
+            } onAddDemoDevice: {
+                pages.append(.demoDevice)
             }
             .navigationDestination(for: Page.self) { page in
                 switch page {
@@ -95,6 +98,21 @@ struct AddDeviceView: View {
                         dismiss()
                     }
                     .edgesIgnoringSafeArea(.all)
+                case .demoDevice:
+                    ScrollView {
+                        ForEach(Device.Kind.allCases) { kind in
+                            Button {
+                                applicationModel.addDemoDevice(kind: kind)
+                            } label: {
+                                Text(Localized(kind))
+                                    .centerContent()
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.large)
+                        .padding()
+                    }
+                    .navigationTitle("Add Demo Device")
                 }
             }
         }
