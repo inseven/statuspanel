@@ -54,7 +54,7 @@ struct DataSourceInstance: Identifiable, Equatable {
         self.dataSource = dataSource
 
         do {
-            let views = try dataSource.settingsView(config: config, instanceId: id)
+            let views = try dataSource.views(config: config, instanceId: id)
             self.model = views.model
             self.settingsView = views.settingsView
             self.settingsItem = views.settingsItem

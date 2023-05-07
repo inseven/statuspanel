@@ -37,7 +37,7 @@ struct AddDataSourceView: View {
                 ForEach(DataSourceController.sources) { dataSource in
                     let uuid = UUID()
                     NavigationLink {
-                        try! dataSource.settingsView(config: config, instanceId: uuid).settingsView
+                        try! dataSource.views(config: config, instanceId: uuid).settingsView
                             .toolbar {
                                 ToolbarItem(placement: .navigationBarTrailing) {
                                     Button("Add") {

@@ -37,7 +37,7 @@ class AnyDataSource: Identifiable {
     private var nameProxy: (() -> String)! = nil
     private var imageProxy: (() -> Image)! = nil
     private var dataProxy: ((Config, UUID, @escaping ([DataItemBase]?, Error?) -> Void) -> Void)! = nil
-    private var settingsViewProxy: ((Config, UUID) throws -> DataSourceViews)! = nil
+    private var viewsProxy: ((Config, UUID) throws -> DataSourceViews)! = nil
     private var validateSettingsProxy: ((DataSourceSettings) -> Bool)! = nil
 
     var id: DataSourceType {
@@ -56,8 +56,8 @@ class AnyDataSource: Identifiable {
         return dataProxy(config, instanceId, completion)
     }
 
-    func settingsView(config: Config, instanceId: UUID) throws -> DataSourceViews {
-        return try settingsViewProxy(config, instanceId)
+    func views(config: Config, instanceId: UUID) throws -> DataSourceViews {
+        return try viewsProxy(config, instanceId)
     }
 
     func validate(settings: DataSourceSettings) -> Bool {
@@ -89,7 +89,7 @@ class AnyDataSource: Identifiable {
         imageProxy = {
             return type(of: dataSource).image
         }
-        settingsViewProxy = { config, instanceId in
+        viewsProxy = { config, instanceId in
             let settings = try dataSource.settings(config: config, instanceId: instanceId)
             let store = DataSourceSettingsStore<T.Settings>(config: config, uuid: instanceId)
 
