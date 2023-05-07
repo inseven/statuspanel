@@ -246,14 +246,14 @@ class Config: ObservableObject {
         return Device(kind: .einkV1, id: deviceid, publicKey: publickey)
     }
 
-    @MainActor static private func loadDevices() -> [Device] {
+    @MainActor static private func loadDevices() -> Set<Device> {
         let userDefaults = UserDefaults.standard
         if let oldStyle = getDeviceAndKey() {
             // Migrate
             let devices = [oldStyle]
             userDefaults.removeObject(forKey: "deviceid")
             userDefaults.removeObject(forKey: "publickey")
-            return devices
+            return Set(devices)
         }
         guard let deviceObjs = userDefaults.array(forKey: "devices") as? [Dictionary<String, String>] else {
             return []
@@ -268,10 +268,10 @@ class Config: ObservableObject {
             }
             result.append(Device(kind: kind, id: deviceid, publicKey: publickey))
         }
-        return result
+        return Set(result)
     }
 
-    @MainActor @Published var devices: [Device] {
+    @MainActor @Published var devices: Set<Device> {
         didSet {
             var objs: [Dictionary<String, String>] = []
             for device in devices {
@@ -288,7 +288,7 @@ class Config: ObservableObject {
     }
 
     @MainActor func removeDevice(_ device: Device) {
-        self.devices.removeAll { $0.id == device.id }
+        self.devices.remove(device)
     }
 
     // TODO: Extract privacy image generation and management to a separate utility #533
