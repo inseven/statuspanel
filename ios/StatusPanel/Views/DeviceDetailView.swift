@@ -52,6 +52,7 @@ struct DeviceDetailView: View {
     @ObservedObject var dataSourceController: DataSourceController
     @ObservedObject var deviceModel: DeviceModel
 
+    @State var editMode: EditMode = .inactive
     @State var sheet: SheetType? = nil
 
     init(config: Config, dataSourceController: DataSourceController, deviceModel: DeviceModel) {
@@ -99,21 +100,29 @@ struct DeviceDetailView: View {
             }
             Section {
                 Button("Add Data Source") {
+                    withAnimation {
+                        editMode = .inactive
+                    }
                     sheet = .add
+                }
+            }
+            Section {
+                Button("Device Settings") {
+                    withAnimation {
+                        editMode = .inactive
+                    }
+                    sheet = .settings
                 }
             }
         }
         .presents($deviceModel.error)
         .navigationTitle(deviceModel.name)
         .toolbar {
-            ToolbarItem {
-                Button {
-                    sheet = .settings
-                } label: {
-                    Label("Device Settings", systemImage: "checklist")
-                }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                EditButton()
             }
         }
+        .environment(\.editMode, $editMode)
         .sheet(item: $sheet) { sheet in
             switch sheet {
             case .add:
