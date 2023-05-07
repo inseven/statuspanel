@@ -25,6 +25,9 @@ import Diligence
 final class LastUpdateDataSource: DataSource {
 
     struct Settings: DataSourceSettings & Equatable {
+
+        static let dataSourceType: DataSourceType = .lastUpdate
+
         var flags: DataItemFlags
         var text: String
     }

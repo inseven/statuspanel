@@ -116,10 +116,6 @@ struct Device: Identifiable, Equatable, Hashable {
         }
     }
 
-    func blankImage() -> UIImage {
-        return UIImage.blankImage(size: size, scale: 1.0)
-    }
-
     init(kind: Kind, id: String, publicKey: String) {
         self.kind = kind
         self.id = id
@@ -132,6 +128,77 @@ struct Device: Identifiable, Equatable, Hashable {
         let sodium = Sodium()
         let keyPair = sodium.box.keyPair()!
         publicKey = sodium.utils.bin2base64(keyPair.publicKey, variant: .ORIGINAL)!
+    }
+
+    func blankImage() -> UIImage {
+        return UIImage.blankImage(size: size, scale: 1.0)
+    }
+
+    func defaultSettings() -> DeviceSettings {
+        var settings = DeviceSettings(deviceId: self.id)
+        switch kind {
+        case .einkV1:
+            break
+        case .featherTft:
+            settings.titleFont = Fonts.FontName.unifont16
+            settings.bodyFont = Fonts.FontName.unifont16
+        case .pimoroniInkyImpression4, .pimoroniInkyImpression4_rle:
+            settings.titleFont = Fonts.FontName.chiKareGo2
+            settings.bodyFont = Fonts.FontName.unifont32
+            settings.displayTwoColumns = false
+        }
+        return settings
+    }
+
+    func defaultDataSourceSettings(calendars: [String]) -> [AnyDataSourceSettings] {
+        switch kind {
+        case .einkV1:
+            return [
+                CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                              shortFormat: "yMMMMdEEE",
+                                              offset: 0,
+                                              flags: [.header, .spansColumns]).anyDataSourceSettings(),
+                WeatherDataSource.Settings(flags: [],
+                                           address: "Bletchley Park, Sherwood Drive, Bletchley, Milton Keynes, MK3 6EB").anyDataSourceSettings(),
+                CalendarDataSource.Settings(showLocations: true,
+                                            showUrls: false,
+                                            offset: 0,
+                                            activeCalendars: Set(calendars)).anyDataSourceSettings(),
+                TextDataSource.Settings(flags: [.prefersNewSection],
+                                        text: "Tomorrow:").anyDataSourceSettings(),
+                CalendarDataSource.Settings(showLocations: true,
+                                            showUrls: false,
+                                            offset: 1,
+                                            activeCalendars: Set(calendars)).anyDataSourceSettings(),
+            ]
+        case .featherTft:
+            return [
+                CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                              shortFormat: "yMMMMdEEE",
+                                              offset: 0,
+                                              flags: [.header, .spansColumns]).anyDataSourceSettings(),
+                WeatherDataSource.Settings(flags: [],
+                                           address: "Bletchley Park, Sherwood Drive, Bletchley, Milton Keynes, MK3 6EB").anyDataSourceSettings(),
+                CalendarDataSource.Settings(showLocations: true,
+                                            showUrls: false,
+                                            offset: 0,
+                                            activeCalendars: Set(calendars)).anyDataSourceSettings(),
+            ]
+        case .pimoroniInkyImpression4, .pimoroniInkyImpression4_rle:
+            return [
+                CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
+                                              shortFormat: "yMMMMdEEE",
+                                              offset: 0,
+                                              flags: [.header, .spansColumns]).anyDataSourceSettings(),
+                WeatherDataSource.Settings(flags: [],
+                                           address: "Bletchley Park, Sherwood Drive, Bletchley, Milton Keynes, MK3 6EB").anyDataSourceSettings(),
+                ZenQuotesDataSource.Settings(mode: .today).anyDataSourceSettings(),
+                CalendarDataSource.Settings(showLocations: true,
+                                            showUrls: false,
+                                            offset: 0,
+                                            activeCalendars: Set(calendars)).anyDataSourceSettings(),
+            ]
+        }
     }
 
 }

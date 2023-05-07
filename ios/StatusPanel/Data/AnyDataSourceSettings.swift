@@ -22,39 +22,34 @@ import Foundation
 import UIKit
 import SwiftUI
 
-protocol DataSourceSettings: Codable {
+class AnyDataSourceSettings: Encodable {
 
-    static var dataSourceType: DataSourceType { get }
+    private let dataSourceTypeProxy: (() -> DataSourceType)
+    private let encodeProxy: ((Encoder) throws -> Void)
 
-}
+    var dataSourceType: DataSourceType {
+        return dataSourceTypeProxy()
+    }
 
-protocol DataSource: AnyObject, Identifiable {
-
-    typealias Model = DataSourceModel<Settings>
-    typealias Store = DataSourceSettingsStore<Settings>
-
-    associatedtype Settings: DataSourceSettings
-    associatedtype SettingsView: View
-    associatedtype SettingsItem: View
-
-    static var id: DataSourceType { get }
-    static var name: String { get }
-    static var image: Image { get }
-
-    var defaults: Settings { get }
-    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void)
-    func settingsView(model: Model) -> SettingsView
-    func settingsItem(model: Model) -> SettingsItem
-
-}
-
-extension DataSource {
-
-    func settings(config: Config, instanceId: UUID) throws -> Settings {
-        guard let settings: Settings = try? config.settings(for: instanceId) else {
-            return defaults
+    init<T: DataSourceSettings>(_ dataSourceSettings: T) {
+        dataSourceTypeProxy = {
+            return type(of: dataSourceSettings).dataSourceType
         }
-        return settings
+        encodeProxy = { encoder in
+            try dataSourceSettings.encode(to: encoder)
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        try encodeProxy(encoder)
+    }
+
+}
+
+extension DataSourceSettings {
+
+    func anyDataSourceSettings() -> AnyDataSourceSettings {
+        return AnyDataSourceSettings(self)
     }
 
 }

@@ -41,6 +41,8 @@ final class TFLDataSource: DataSource {
 
     struct Settings: DataSourceSettings & Equatable {
 
+        static let dataSourceType: DataSourceType = .transportForLondon
+
         var lines: Set<String>
 
         var summary: String {

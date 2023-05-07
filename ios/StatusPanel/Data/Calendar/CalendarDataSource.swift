@@ -75,6 +75,8 @@ final class CalendarDataSource : DataSource {
             case activeCalendars
         }
 
+        static let dataSourceType: DataSourceType = .calendar
+
         var showLocations: Bool
         var showUrls: Bool
         var offset: Int

@@ -25,6 +25,9 @@ import Diligence
 final class TextDataSource: DataSource {
 
     struct Settings: DataSourceSettings & Equatable {
+
+        static let dataSourceType: DataSourceType = .text
+
         var flags: DataItemFlags
         var text: String
     }

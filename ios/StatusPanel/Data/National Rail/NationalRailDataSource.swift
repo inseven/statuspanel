@@ -28,6 +28,8 @@ final class NationalRailDataSource : DataSource {
 
     struct Settings: DataSourceSettings {
 
+        static let dataSourceType: DataSourceType = .nationalRail
+
         var from: String?
         var to: String?
 
