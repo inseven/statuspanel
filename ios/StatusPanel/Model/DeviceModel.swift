@@ -32,7 +32,7 @@ class DeviceModel: ObservableObject, Identifiable {
     @Published var images: [UIImage] = []
     @Published var error: Error? = nil
 
-    @Published private var settingsDidChange: UUID = UUID()
+    @Published var settingsDidChange: UUID = UUID()
 
     // Creates data source instances on-the-fly to ensure the array always matches the device settings.
     // Instances are cached to ensure this performs and cache cleanup is performed by a subscription.
