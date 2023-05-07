@@ -92,7 +92,6 @@ class AnyDataSource: Identifiable {
         settingsViewProxy = { config, instanceId in
             let settings = try dataSource.settings(config: config, instanceId: instanceId)
             let store = DataSourceSettingsStore<T.Settings>(config: config, uuid: instanceId)
-            // TODO: Consider moving this into a wrapper view controller which doesn't throw?
 
             let model = T.Model(store: store, settings: settings)
             model.start()

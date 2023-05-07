@@ -57,33 +57,6 @@ extension DataSource {
 
 }
 
-protocol DataItemBase : AnyObject {
-
-    var icon: String? { get }
-    var prefix: String { get }
-    var flags: DataItemFlags { get }
-    var subText: String? { get }
-    var accentColor: UIColor? { get }
-
-    func getText(checkFit: (String) -> Bool) -> String
-}
-
-extension DataItemBase {
-
-    var iconAndPrefix: String {
-        var elements: [String] = []
-        if let icon = self.icon {
-            elements.append(icon)
-        }
-        let prefix = self.prefix
-        if !prefix.isEmpty {
-            elements.append(prefix)
-        }
-        return elements.joined(separator: " ")
-    }
-
-}
-
 class DataItem : Equatable, DataItemBase {
 
     let icon: String?
