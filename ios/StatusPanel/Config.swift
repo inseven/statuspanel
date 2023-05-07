@@ -39,18 +39,13 @@ class Config: ObservableObject {
     private enum Key: RawRepresentable {
 
         case activeCalendars
-        case activeTFLLines
         case darkMode
         case displaySingleColumn
-        case dummyData
         case titleFont
         case bodyFont
         case lastBackgroundUpdate
         case maxLines
         case privacyMode
-        case showCalendarLocations
-        case showUrlsInCalendarLocations
-        case trainRoutes
         case updateTime
         case showIcons
         case dataSources
@@ -65,14 +60,10 @@ class Config: ObservableObject {
             switch rawValue {
             case "activeCalendars":
                 self = .activeCalendars
-            case "activeTFLLines":
-                self = .activeTFLLines
             case "darkMode":
                 self = .darkMode
             case "displaySingleColumn":
                 self = .displaySingleColumn
-            case "dummyData":
-                self = .dummyData
             case "titleFont":
                 self = .titleFont
             case "font":
@@ -83,12 +74,6 @@ class Config: ObservableObject {
                 self = .maxLines
             case "privacyMode":
                 self = .privacyMode
-            case "showCalendarLocations":
-                self = .showCalendarLocations
-            case "showUrlsInCalendarLocations":
-                self = .showUrlsInCalendarLocations
-            case "trainRoutes":
-                self = .trainRoutes
             case "updateTime":
                 self = .updateTime
             case "showIcons":
@@ -112,14 +97,10 @@ class Config: ObservableObject {
             switch self {
             case .activeCalendars:
                 return "activeCalendars"
-            case .activeTFLLines:
-                return "activeTFLLines"
             case .darkMode:
                 return "darkMode"
             case .displaySingleColumn:
                 return "displaySingleColumn"
-            case .dummyData:
-                return "dummyData"
             case .titleFont:
                 return "titleFont"
             case .bodyFont:
@@ -130,12 +111,6 @@ class Config: ObservableObject {
                 return "maxLines"
             case .privacyMode:
                 return "privacyMode"
-            case .showCalendarLocations:
-                return "showCalendarLocations"
-            case .showUrlsInCalendarLocations:
-                return "showUrlsInCalendarLocations"
-            case .trainRoutes:
-                return "trainRoutes"
             case .updateTime:
                 return "updateTime"
             case .showIcons:
@@ -347,7 +322,6 @@ class Config: ObservableObject {
 
     @MainActor func setLastUploadHash(for deviceid: String, to hash:String?) {
         dispatchPrecondition(condition: .onQueue(.main))
-        objectWillChange.send()
         let key = Config.getLastUploadHashKey(for: deviceid)
         if let hash = hash {
             self.userDefaults.set(hash, forKey: key)
@@ -362,7 +336,6 @@ class Config: ObservableObject {
     }
 
     @MainActor func clearUploadHashes() {
-        objectWillChange.send()
         for device in devices {
             setLastUploadHash(for: device.id, to: nil)
         }
@@ -374,15 +347,6 @@ class Config: ObservableObject {
         }
     }
 
-    func dataSources() throws -> [DataSourceInstance.Details]? {
-        return try self.decodeObject(for: .dataSources)
-    }
-
-    func set(dataSources: [DataSourceInstance.Details]) throws {
-        objectWillChange.send()
-        try self.set(codable: dataSources, for: .dataSources)
-    }
-
     func settings<T: DataSourceSettings>(for instanceId: UUID) throws -> T? {
         guard let data = object(for: .settings(instanceId)) as? Data else {
             return nil
@@ -392,7 +356,6 @@ class Config: ObservableObject {
 
     func save<T: DataSourceSettings>(settings: T, instanceId: UUID) throws {
         let data = try JSONEncoder().encode(settings)
-        objectWillChange.send()
         set(data, for: .settings(instanceId))
     }
 
@@ -408,7 +371,7 @@ class Config: ObservableObject {
             settings.updateTime = Date(timeIntervalSinceReferenceDate: self.value(for: .updateTime) as? TimeInterval ?? DeviceSettings.defaultUpdateTime)
             settings.titleFont = string(for: .titleFont) ?? Fonts.FontName.chiKareGo2
             settings.bodyFont = string(for: .bodyFont) ?? Fonts.FontName.unifont16
-            if let dataSources = try dataSources() {
+            if let dataSources = try self.decodeObject(for: .dataSources) as [DataSourceInstance.Details]? {
                 settings.dataSources = dataSources
             }
 
@@ -427,9 +390,9 @@ class Config: ObservableObject {
         return try JSONDecoder().decode(DeviceSettings.self, from: data as Data)
     }
 
-    @MainActor func save(settings: DeviceSettings, deviceId: String) throws {
+    func save(settings: DeviceSettings, deviceId: String) throws {
+        dispatchPrecondition(condition: .onQueue(.main))
         let data = try JSONEncoder().encode(settings)
-        objectWillChange.send()
         set(data, for: .deviceSettings(deviceId))
     }
 

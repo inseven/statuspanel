@@ -26,18 +26,53 @@ class DeviceModel: ObservableObject, Identifiable {
     @ObservedObject var config: Config
 
     private let dataSourceController: DataSourceController
-    private let device: Device
+    let device: Device
 
-    @Published var deviceSettings: DeviceSettings? = nil
+    @Published var deviceSettings: DeviceSettings
     @Published var images: [UIImage] = []
+    @Published var error: Error? = nil
 
+    @Published var settingsDidChange: UUID = UUID()
+
+    // Creates data source instances on-the-fly to ensure the array always matches the device settings.
+    // Instances are cached to ensure this performs and cache cleanup is performed by a subscription.
+    @MainActor var dataSources: [DataSourceInstance] {
+        get {
+            do {
+                return try deviceSettings.dataSources.map { dataSourceDetails in
+                    if let dataSourceInstance = dataSourceCache[dataSourceDetails.id] {
+                        return dataSourceInstance
+                    }
+                    let dataSourceInstance = try dataSourceController.dataSourceInstance(for: dataSourceDetails)
+                    let cancellable = dataSourceInstance.model?.subscribe { [weak self] in
+                        guard let self else { return }
+                        self.settingsDidChange = UUID()
+                    }
+                    if let cancellable {
+                        dataSourceSubscriptions.append(cancellable)
+                    }
+                    dataSourceCache[dataSourceDetails.id] = dataSourceInstance
+                    return dataSourceInstance
+                }
+            } catch {
+                self.error = error
+                return []
+            }
+        }
+    }
+
+//    @MainActor var dataSources: [DataSourceInstance] = []
+
+    @MainActor private var dataSourceCache: [UUID: DataSourceInstance] = [:]
+
+    private let updateQueue = DispatchQueue(label: "updateQueue")
     private var cancellables: [AnyCancellable] = []
+    private var dataSourceSubscriptions: [AnyCancellable] = []
 
     var id: String { device.id }
 
     var name: String {
-        guard let deviceSettings,
-              !deviceSettings.name.isEmpty
+        guard !deviceSettings.name.isEmpty
         else {
             return Localized(device.kind)
         }
@@ -49,35 +84,41 @@ class DeviceModel: ObservableObject, Identifiable {
         self.dataSourceController = dataSourceController
         self.device = device
         self.images = [device.blankImage()]
+
+        do {
+            self.deviceSettings = try config.settings(forDevice: device.id)
+        } catch {
+            deviceSettings = DeviceSettings(deviceId: device.id)
+            self.error = error
+        }
     }
 
     func start() {
         dispatchPrecondition(condition: .onQueue(.main))
 
-        // Fetch settings.
-        config
-            .objectWillChange
-            .prepend(())
-            .combineLatest(NotificationCenter.default
-                .publisher(for: UIApplication.willEnterForegroundNotification)
-                .prepend(NSNotification(name: UIApplication.willEnterForegroundNotification, object: nil) as NotificationCenter.Publisher.Output))
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
+        // Write the settings to disk.
+        $deviceSettings
+            .debounce(for: 1, scheduler: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { [weak self] deviceSettings in
                 guard let self else { return }
                 do {
-                    self.deviceSettings = try self.config.settings(forDevice: self.device.id)
+                    try self.config.save(settings: deviceSettings, deviceId: self.device.id)
                 } catch {
-                    print("Failed to preview device with error \(error).")
+                    self.error = error
                 }
             }
             .store(in: &cancellables)
 
-        // Generate previews.
+        // Generate previews whenever the device settings or individual data source settings change, or the app
+        // enters the foreground.
         $deviceSettings
-            .receive(on: DispatchQueue.global(qos: .userInitiated))
-            .compactMap { $0 }
+            .combineLatest($settingsDidChange, NotificationCenter.default.willEnterForegroundPublisher())
+            .debounce(for: 1, scheduler: updateQueue)
+            .compactMap { $0.0 }
             .compactMap { [weak self] deviceSettings -> (DeviceSettings, [DataItemBase])? in
                 guard let self else { return nil }
+                dispatchPrecondition(condition: .onQueue(self.updateQueue))
                 let semaphore = DispatchSemaphore(value: 0)
                 var result: [DataItemBase]?
                 self.dataSourceController.fetch(details: deviceSettings.dataSources) { items, error in
@@ -100,6 +141,21 @@ class DeviceModel: ObservableObject, Identifiable {
                 self.images = images
             }
             .store(in: &cancellables)
+
+        // Purge the data source instance cache when data sources chanege and subscribe to the data source models
+        // to ensure we can respond to changes in data source instance settings.
+        $deviceSettings
+            .receive(on: DispatchQueue.main)
+            .compactMap { $0 }
+            .sink { [weak self] deviceSettings in
+                guard let self else { return }
+                let dataSourceDetails = deviceSettings.dataSources
+                let identifiers = Set(dataSourceDetails.map { $0.id })
+                let deletions = self.dataSourceCache.keys.filter { !identifiers.contains($0) }
+                deletions.forEach { self.dataSourceCache.removeValue(forKey: $0) }
+            }
+            .store(in: &cancellables)
+
     }
 
 }

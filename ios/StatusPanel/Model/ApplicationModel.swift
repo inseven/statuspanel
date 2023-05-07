@@ -34,6 +34,7 @@ class ApplicationModel: ObservableObject {
     private let config: Config
 
     private var cancellables: Set<AnyCancellable> = []
+    private var updateCancellable: AnyCancellable? = nil
 
     @Published var deviceModels: [DeviceModel] = []
     @Published var sheet: SheetType? = nil
@@ -65,19 +66,26 @@ class ApplicationModel: ObservableObject {
             }
             .store(in: &cancellables)
 
-        // Generate per-device updates for upload.
-        // Ultimately we may wish to push this update generate down to the device models to avoid duplicate effort and
-        // guarantee that what's displayed in the UI matches what's shown on-device.
-        config
-            .objectWillChange
-            .prepend(())
-            .combineLatest(NotificationCenter.default
-                .publisher(for: UIApplication.willEnterForegroundNotification)
-                .prepend(NSNotification(name: UIApplication.willEnterForegroundNotification, object: nil) as NotificationCenter.Publisher.Output))
+        // Subscribe to all the device models to ensure we generate updates whenever they change.
+        // This is a pretty gnarly implementation to ensure we're not trigger happy. Specifically, it doesn't watch the
+        // top-level device model `objectWillChange` publisher as this also includes the preview images; instead, it
+        // watches just the `deviceSettings` and `settingsDidChange` publishers as these model config changes.
+        $deviceModels
             .receive(on: DispatchQueue.main)
-            .sink { _ in
-                let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                appDelegate.updateDevices()
+            .sink { [weak self] deviceModels in
+                guard let self else { return }
+                let deviceModelChangePublishers = self.deviceModels.map { deviceModel in
+                    return deviceModel
+                        .$deviceSettings
+                        .combineLatest(deviceModel.$settingsDidChange)
+                }
+                self.updateCancellable = Publishers.MergeMany(deviceModelChangePublishers)
+                    .combineLatest(NotificationCenter.default.willEnterForegroundPublisher())
+                    .debounce(for: 1, scheduler: DispatchQueue.main)
+                    .sink { _ in
+                        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                        appDelegate.updateDevices()
+                    }
             }
             .store(in: &cancellables)
 

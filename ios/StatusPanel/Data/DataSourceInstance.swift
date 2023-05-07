@@ -41,26 +41,34 @@ struct DataSourceInstance: Identifiable, Equatable {
 
     var id: UUID { details.id }
 
+    let config: Config
     let details: Details
     let dataSource: AnyDataSource
+    let model: AnyDataSourceModel?
+    let settingsView: AnyView
+    let settingsItem: AnyView
 
-    init(id: UUID, dataSource: AnyDataSource) {
+    init(config: Config, id: UUID, dataSource: AnyDataSource) {
+        self.config = config
         self.details = Details(id: id, type: dataSource.id)
         self.dataSource = dataSource
+
+        do {
+            let views = try dataSource.views(config: config, instanceId: id)
+            self.model = views.model
+            self.settingsView = views.settingsView
+            self.settingsItem = views.settingsItem
+        } catch {
+            self.model = nil
+            self.settingsView = AnyView(Text(String(describing: error)))
+            self.settingsItem = AnyView(Text(String(describing: error)))
+        }
     }
 
     func fetch(config: Config, completion: @escaping ([DataItemBase]?, Error?) -> Void) {
         DispatchQueue.global().async {
             self.dataSource.data(config: config, instanceId: id, completion: completion)
         }
-    }
-
-    func view(config: Config) throws -> AnyView {
-        try dataSource.settingsView(config: config, instanceId: id)
-    }
-
-    func settingsViewController(config: Config) throws -> UIViewController {
-        return UIHostingController(rootView: try view(config: config))
     }
 
 }

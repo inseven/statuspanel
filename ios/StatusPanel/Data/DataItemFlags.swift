@@ -19,40 +19,43 @@
 // SOFTWARE.
 
 import Foundation
-import UIKit
-import SwiftUI
 
-protocol DataSourceSettings: Codable {
+struct DataItemFlags: OptionSet, Codable {
 
-}
+    enum Style {
+        case title
+        case body
+    }
 
-protocol DataSource: AnyObject, Identifiable {
+    let rawValue: Int
 
-    typealias Model = DataSourceModel<Settings>
-    typealias Store = DataSourceSettingsStore<Settings>
+    static let warning = DataItemFlags(rawValue: 1 << 0)
+    static let header = DataItemFlags(rawValue: 1 << 1)
+    static let prefersNewSection = DataItemFlags(rawValue: 1 << 2)
+    static let spansColumns = DataItemFlags(rawValue: 1 << 3)
 
-    associatedtype Settings: DataSourceSettings
-    associatedtype SettingsView: View
-    associatedtype SettingsItem: View
-
-    static var id: DataSourceType { get }
-    static var name: String { get }
-    static var image: Image { get }
-
-    var defaults: Settings { get }
-    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void)
-    func settingsView(model: Model) -> SettingsView
-    func settingsItem(model: Model) -> SettingsItem
-
-}
-
-extension DataSource {
-
-    func settings(config: Config, instanceId: UUID) throws -> Settings {
-        guard let settings: Settings = try? config.settings(for: instanceId) else {
-            return defaults
+    var labelStyle: LabelStyle {
+        if contains(.header) {
+            return .header
         }
-        return settings
+        return .text
+    }
+
+    var style: Style {
+        get {
+            if contains(.header) {
+                return .title
+            }
+            return .body
+        }
+        set {
+            switch newValue {
+            case .title:
+                insert(.header)
+            case .body:
+                remove(.header)
+            }
+        }
     }
 
 }

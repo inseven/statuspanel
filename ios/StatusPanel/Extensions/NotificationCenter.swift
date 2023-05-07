@@ -18,41 +18,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import Combine
 import Foundation
 import UIKit
-import SwiftUI
 
-protocol DataSourceSettings: Codable {
+extension NotificationCenter {
 
-}
-
-protocol DataSource: AnyObject, Identifiable {
-
-    typealias Model = DataSourceModel<Settings>
-    typealias Store = DataSourceSettingsStore<Settings>
-
-    associatedtype Settings: DataSourceSettings
-    associatedtype SettingsView: View
-    associatedtype SettingsItem: View
-
-    static var id: DataSourceType { get }
-    static var name: String { get }
-    static var image: Image { get }
-
-    var defaults: Settings { get }
-    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void)
-    func settingsView(model: Model) -> SettingsView
-    func settingsItem(model: Model) -> SettingsItem
-
-}
-
-extension DataSource {
-
-    func settings(config: Config, instanceId: UUID) throws -> Settings {
-        guard let settings: Settings = try? config.settings(for: instanceId) else {
-            return defaults
-        }
-        return settings
+    func willEnterForegroundPublisher() -> Publishers.Concatenate<Publishers.Sequence<Array<Notification>, Never>, NotificationCenter.Publisher> {
+        let notification = NSNotification(name: UIApplication.willEnterForegroundNotification, object: nil)
+        return publisher(for: UIApplication.willEnterForegroundNotification)
+            .prepend(notification as NotificationCenter.Publisher.Output)
     }
 
 }

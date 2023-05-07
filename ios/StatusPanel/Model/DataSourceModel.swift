@@ -18,41 +18,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import Combine
 import Foundation
 import UIKit
 import SwiftUI
 
-protocol DataSourceSettings: Codable {
+class DataSourceModel<T: DataSourceSettings>: ObservableObject {
 
-}
+    let store: DataSourceSettingsStore<T>
 
-protocol DataSource: AnyObject, Identifiable {
+    @Published var settings: T
+    @Published var error: Error? = nil
 
-    typealias Model = DataSourceModel<Settings>
-    typealias Store = DataSourceSettingsStore<Settings>
+    var cancellables: Set<AnyCancellable> = []
 
-    associatedtype Settings: DataSourceSettings
-    associatedtype SettingsView: View
-    associatedtype SettingsItem: View
+    init(store: DataSourceSettingsStore<T>, settings: T) {
+        self.store = store
+        self.settings = settings
+    }
 
-    static var id: DataSourceType { get }
-    static var name: String { get }
-    static var image: Image { get }
-
-    var defaults: Settings { get }
-    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void)
-    func settingsView(model: Model) -> SettingsView
-    func settingsItem(model: Model) -> SettingsItem
-
-}
-
-extension DataSource {
-
-    func settings(config: Config, instanceId: UUID) throws -> Settings {
-        guard let settings: Settings = try? config.settings(for: instanceId) else {
-            return defaults
-        }
-        return settings
+    func start() {
+        $settings
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] dataSourceSettings in
+                guard let self else { return }
+                do {
+                    try self.store.save(settings: self.settings)
+                } catch {
+                    print("Failed to save data source settings with error \(error).")
+                    self.error = error
+                }
+            }
+            .store(in: &cancellables)
     }
 
 }

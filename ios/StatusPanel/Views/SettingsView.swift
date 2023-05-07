@@ -39,29 +39,6 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section("Devices") {
-                    if !config.devices.isEmpty {
-                        ForEach(config.devices) { device in
-                            NavigationLink {
-                                DeviceSettingsView(config: config,
-                                                   dataSourceController: dataSourceController,
-                                                   device: device)
-                            } label: {
-                                VStack(alignment: .leading) {
-                                    if let deviceSettings = try? config.settings(forDevice: device.id),
-                                       !deviceSettings.name.isEmpty {
-                                        Text(deviceSettings.name)
-                                    } else {
-                                        Text(Localized(device.kind))
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        Text("No Devices")
-                            .foregroundColor(.secondary)
-                    }
-                }
                 Section("Status") {
                     LabeledContent(LocalizedString("settings_last_background_update_label")) {
                         if let lastUpdate = config.lastBackgroundUpdate {

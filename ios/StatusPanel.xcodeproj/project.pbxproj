@@ -37,6 +37,12 @@
 		D866CA1D2A02B48F007819CD /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866CA1C2A02B48F007819CD /* View.swift */; };
 		D866CA1F2A02E9E4007819CD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866CA1E2A02E9E4007819CD /* ContentView.swift */; };
 		D866CA212A02EA03007819CD /* IntroductionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866CA202A02EA03007819CD /* IntroductionView.swift */; };
+		D866E9CE2A07BB5C004B47D7 /* DataSourceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866E9CD2A07BB5C004B47D7 /* DataSourceModel.swift */; };
+		D866E9D02A07BBC0004B47D7 /* AnyDataSourceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866E9CF2A07BBC0004B47D7 /* AnyDataSourceModel.swift */; };
+		D866E9D22A07BC9A004B47D7 /* DataItemFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866E9D12A07BC9A004B47D7 /* DataItemFlags.swift */; };
+		D866E9D42A07BD96004B47D7 /* DataItemBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866E9D32A07BD96004B47D7 /* DataItemBase.swift */; };
+		D866E9D62A07BE02004B47D7 /* DataItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866E9D52A07BE02004B47D7 /* DataItem.swift */; };
+		D866E9D82A07C931004B47D7 /* NotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866E9D72A07C931004B47D7 /* NotificationCenter.swift */; };
 		D87439032730C3E400B676A5 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D87439022730C3E400B676A5 /* Diligence */; };
 		D87439052731006800B676A5 /* Diligence.txt in Resources */ = {isa = PBXBuildFile; fileRef = D87439042731006800B676A5 /* Diligence.txt */; };
 		D8808DFA2A0440DD00F57C9A /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8808DF92A0440DD00F57C9A /* QRCodeView.swift */; };
@@ -75,10 +81,11 @@
 		D8E285AF271A45CE001738A8 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E285AE271A45CE001738A8 /* Device.swift */; };
 		D8E6839C270DF11800504B5E /* DataSourceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6839B270DF11800504B5E /* DataSourceType.swift */; };
 		D8E6D673271FBD3300AB6452 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E6D672271FBD3300AB6452 /* Color.swift */; };
+		D8E975422A0530550064A317 /* DeviceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E975412A0530550064A317 /* DeviceSettingsView.swift */; };
 		D8EBFCC8272099B0000E120F /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */; };
 		D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EBFCC92720A6F8000E120F /* Network.swift */; };
 		D8ED8AC829FDC484007FDE06 /* EKEventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */; };
-		D8ED8ACA29FDCBC5007FDE06 /* DeviceSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8AC929FDCBC5007FDE06 /* DeviceSettingsView.swift */; };
+		D8ED8ACA29FDCBC5007FDE06 /* DeviceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8AC929FDCBC5007FDE06 /* DeviceDetailView.swift */; };
 		D8ED8ACC29FDF2B7007FDE06 /* PrivacyModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */; };
 		D8ED8ACE29FE0D31007FDE06 /* FontPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8ACD29FE0D31007FDE06 /* FontPicker.swift */; };
 		D8ED8AD029FE0E75007FDE06 /* FontView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8ACF29FE0E75007FDE06 /* FontView.swift */; };
@@ -168,6 +175,12 @@
 		D866CA1C2A02B48F007819CD /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		D866CA1E2A02E9E4007819CD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D866CA202A02EA03007819CD /* IntroductionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroductionView.swift; sourceTree = "<group>"; };
+		D866E9CD2A07BB5C004B47D7 /* DataSourceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceModel.swift; sourceTree = "<group>"; };
+		D866E9CF2A07BBC0004B47D7 /* AnyDataSourceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDataSourceModel.swift; sourceTree = "<group>"; };
+		D866E9D12A07BC9A004B47D7 /* DataItemFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataItemFlags.swift; sourceTree = "<group>"; };
+		D866E9D32A07BD96004B47D7 /* DataItemBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataItemBase.swift; sourceTree = "<group>"; };
+		D866E9D52A07BE02004B47D7 /* DataItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataItem.swift; sourceTree = "<group>"; };
+		D866E9D72A07C931004B47D7 /* NotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenter.swift; sourceTree = "<group>"; };
 		D87439012730C3A100B676A5 /* diligence */ = {isa = PBXFileReference; lastKnownFileType = folder; path = diligence; sourceTree = "<group>"; };
 		D87439042731006800B676A5 /* Diligence.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Diligence.txt; sourceTree = "<group>"; };
 		D8808DF92A0440DD00F57C9A /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
@@ -211,10 +224,11 @@
 		D8E285AE271A45CE001738A8 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		D8E6839B270DF11800504B5E /* DataSourceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceType.swift; sourceTree = "<group>"; };
 		D8E6D672271FBD3300AB6452 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		D8E975412A0530550064A317 /* DeviceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingsView.swift; sourceTree = "<group>"; };
 		D8EBFCC7272099B0000E120F /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		D8EBFCC92720A6F8000E120F /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEventStore.swift; sourceTree = "<group>"; };
-		D8ED8AC929FDCBC5007FDE06 /* DeviceSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingsView.swift; sourceTree = "<group>"; };
+		D8ED8AC929FDCBC5007FDE06 /* DeviceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailView.swift; sourceTree = "<group>"; };
 		D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyModeView.swift; sourceTree = "<group>"; };
 		D8ED8ACD29FE0D31007FDE06 /* FontPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPicker.swift; sourceTree = "<group>"; };
 		D8ED8ACF29FE0E75007FDE06 /* FontView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontView.swift; sourceTree = "<group>"; };
@@ -290,7 +304,8 @@
 				D866CA1E2A02E9E4007819CD /* ContentView.swift */,
 				D8CE02C92A0025BB00D32A78 /* DataSourceInstanceRow.swift */,
 				D8383EBB270FB8E20007EBB7 /* DayPicker.swift */,
-				D8ED8AC929FDCBC5007FDE06 /* DeviceSettingsView.swift */,
+				D8ED8AC929FDCBC5007FDE06 /* DeviceDetailView.swift */,
+				D8E975412A0530550064A317 /* DeviceSettingsView.swift */,
 				D8FD46042A034FF200E5E97C /* DeviceView.swift */,
 				D848A19D270D213800681F62 /* FlagsSection.swift */,
 				D8ED8ACD29FE0D31007FDE06 /* FontPicker.swift */,
@@ -367,6 +382,9 @@
 			isa = PBXGroup;
 			children = (
 				D83CC51F2707532400260DC1 /* AnyDataSource.swift */,
+				D866E9D52A07BE02004B47D7 /* DataItem.swift */,
+				D866E9D32A07BD96004B47D7 /* DataItemBase.swift */,
+				D866E9D12A07BC9A004B47D7 /* DataItemFlags.swift */,
 				DBCA98B42144421F0084B710 /* DataSource.swift */,
 				DBCA98B6214518EF0084B710 /* DataSourceController.swift */,
 				D89104862707BAD50020A2CF /* DataSourceInstance.swift */,
@@ -406,7 +424,9 @@
 		D86278A62A005496003A9616 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				D866E9CF2A07BBC0004B47D7 /* AnyDataSourceModel.swift */,
 				D8FD46062A03501E00E5E97C /* ApplicationModel.swift */,
+				D866E9CD2A07BB5C004B47D7 /* DataSourceModel.swift */,
 				D8FD46082A03509500E5E97C /* DeviceModel.swift */,
 				D86278A72A0054A4003A9616 /* DeviceSettings.swift */,
 			);
@@ -472,6 +492,7 @@
 				D8104E0429F3408100C394CC /* EKEvent.swift */,
 				D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */,
 				D816655427277632005BDA9E /* FileManager.swift */,
+				D866E9D72A07C931004B47D7 /* NotificationCenter.swift */,
 				D866CA162A019536007819CD /* Sequence.swift */,
 				D816655227277407005BDA9E /* UIActivityIndicatorView.swift */,
 				DBFAEA83272446C5005B9E21 /* UIFont.swift */,
@@ -710,9 +731,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D866E9D02A07BBC0004B47D7 /* AnyDataSourceModel.swift in Sources */,
 				DBFCBB7C24B8B6AD00E3B3D3 /* Fonts.swift in Sources */,
 				D825A55D26F6811400B85206 /* DummyDataSource.swift in Sources */,
 				DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */,
+				D866E9D62A07BE02004B47D7 /* DataItem.swift in Sources */,
 				DB62F335224FB47A00CA5E64 /* Station.swift in Sources */,
 				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
 				D8DAED7726E3F3D40002F388 /* Bundle.swift in Sources */,
@@ -729,10 +752,12 @@
 				D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */,
 				D8808DFC2A04495300F57C9A /* WiFiProvisionerView.swift in Sources */,
 				D816655327277407005BDA9E /* UIActivityIndicatorView.swift in Sources */,
+				D866E9D22A07BC9A004B47D7 /* DataItemFlags.swift in Sources */,
 				D816655527277632005BDA9E /* FileManager.swift in Sources */,
 				DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */,
 				D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */,
 				D8DCA7D629CBEA92002010A5 /* LabelStyle.swift in Sources */,
+				D8E975422A0530550064A317 /* DeviceSettingsView.swift in Sources */,
 				D8E6D673271FBD3300AB6452 /* Color.swift in Sources */,
 				D8DCA7DE29CBEE4D002010A5 /* UILabel.swift in Sources */,
 				D848A198270C8DB100681F62 /* TextDataSource.swift in Sources */,
@@ -768,6 +793,7 @@
 				D8FB0D7B29D58216000E66E6 /* LastUpdateDataSource.swift in Sources */,
 				D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */,
 				D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */,
+				D866E9D82A07C931004B47D7 /* NotificationCenter.swift in Sources */,
 				DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */,
 				D866CA212A02EA03007819CD /* IntroductionView.swift in Sources */,
 				D8C20D25271C7A2000F3F22A /* CalendarSettingsView.swift in Sources */,
@@ -775,6 +801,7 @@
 				DBCA98B7214518EF0084B710 /* DataSourceController.swift in Sources */,
 				DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */,
 				D8104E0529F3408100C394CC /* EKEvent.swift in Sources */,
+				D866E9D42A07BD96004B47D7 /* DataItemBase.swift in Sources */,
 				D866CA1D2A02B48F007819CD /* View.swift in Sources */,
 				D86278A82A0054A4003A9616 /* DeviceSettings.swift in Sources */,
 				D866CA1B2A01ABE8007819CD /* AboutView.swift in Sources */,
@@ -793,8 +820,9 @@
 				D81DA7C02712953D0052D32C /* Localization.swift in Sources */,
 				D8C20D2B271CC1E600F3F22A /* FontLabelTableViewCell.swift in Sources */,
 				D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */,
-				D8ED8ACA29FDCBC5007FDE06 /* DeviceSettingsView.swift in Sources */,
+				D8ED8ACA29FDCBC5007FDE06 /* DeviceDetailView.swift in Sources */,
 				D8ED8AC829FDC484007FDE06 /* EKEventStore.swift in Sources */,
+				D866E9CE2A07BB5C004B47D7 /* DataSourceModel.swift in Sources */,
 				DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */,
 				D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */,
 				D8DCA7DC29CBEBDD002010A5 /* RedactMode.swift in Sources */,

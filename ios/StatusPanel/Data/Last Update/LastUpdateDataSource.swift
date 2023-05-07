@@ -31,30 +31,32 @@ final class LastUpdateDataSource: DataSource {
 
     struct SettingsView: View {
 
-        var store: Store
-        @State var settings: Settings
-        @State var error: Error? = nil
+        @ObservedObject var model: Model
 
         var body: some View {
             Form {
-                FlagsSection(flags: $settings.flags)
+                FlagsSection(flags: $model.settings.flags)
             }
-            .presents($error)
-            .onChange(of: settings) { newValue in
-                do {
-                    try store.save(settings: newValue)
-                } catch {
-                    self.error = error
-                }
-            }
-
+            .presents($model.error)
         }
 
     }
 
-    let id: DataSourceType = .lastUpdate
-    let name = "Last Update"
-    let image = UIImage(systemName: "clock", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
+    struct SettingsItem: View {
+
+        @ObservedObject var model: Model
+
+        var body: some View {
+            DataSourceInstanceRow(image: LastUpdateDataSource.image,
+                                  title: LastUpdateDataSource.name)
+        }
+
+    }
+
+    static let id: DataSourceType = .lastUpdate
+    static let name = "Last Update"
+    static let image = Image(systemName: "clock")
+    
     let defaults = Settings(flags: [], text: "")
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
@@ -66,12 +68,12 @@ final class LastUpdateDataSource: DataSource {
         completion([DataItem(text: "Last updated \(dateString)", flags: settings.flags)], nil)
     }
 
-    func summary(settings: Settings) -> String? {
-        return nil
+    func settingsView(model: Model) -> SettingsView {
+        return SettingsView(model: model)
     }
 
-    func settingsView(store: Store, settings: Settings) -> SettingsView {
-        return SettingsView(store: store, settings: settings)
+    func settingsItem(model: Model) -> SettingsItem {
+        return SettingsItem(model: model)
     }
 
 }

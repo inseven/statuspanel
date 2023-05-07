@@ -26,23 +26,23 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
     private let kImageRowHeight: CGFloat = 200
 
     private let config: Config
-    private let model: DeviceSettingsView.Model
+    private let deviceModel: DeviceModel
 
     private var firstRun = true
 
     private var privacyImage: UIImage? = nil {
         didSet {
             dispatchPrecondition(condition: .onQueue(.main))
-            guard model.settings.privacyMode == .customImage else {
+            guard deviceModel.deviceSettings.privacyMode == .customImage else {
                 return
             }
             self.tableView.reloadRows(at: [IndexPath(row: 3, section: 0)], with: .fade)
         }
     }
 
-    init(config: Config, model: DeviceSettingsView.Model) {
+    init(config: Config, deviceModel: DeviceModel) {
         self.config = config
-        self.model = model
+        self.deviceModel = deviceModel
         super.init(style: .grouped)
         title = LocalizedString("privacy_mode_title")
         tableView.register(ImageViewTableViewCell.self, forCellReuseIdentifier: Self.imageCellReuseIdentifier)
@@ -64,7 +64,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
         }
         firstRun = false
         DispatchQueue.global(qos: .userInteractive).async {
-            let image = try? self.model.settings.privacyImage() ?? Device().blankImage()
+            let image = try? self.deviceModel.deviceSettings.privacyImage() ?? Device().blankImage()
             DispatchQueue.main.async {
                 self.privacyImage = image
             }
@@ -81,14 +81,14 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
             picker.modalPresentationStyle = .popover
             present(picker, animated: true)
         } else {
-            let prevMode = model.settings.privacyMode
+            let prevMode = deviceModel.deviceSettings.privacyMode
             let prevIndexPath = IndexPath(row: prevMode.rawValue, section: 0)
             let newMode = Config.PrivacyMode(rawValue: indexPath.row)!
             if newMode == prevMode {
                 tableView.deselectRow(at: indexPath, animated: true)
                 return
             }
-            model.settings.privacyMode = Config.PrivacyMode(rawValue: indexPath.row)!
+            deviceModel.deviceSettings.privacyMode = Config.PrivacyMode(rawValue: indexPath.row)!
             tableView.performBatchUpdates {
                 tableView.deselectRow(at: indexPath, animated: true)
                 let imgCellIndexPath = IndexPath(row: 3, section: 0)
@@ -107,7 +107,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return model.settings.privacyMode == .customImage ? 4 : 3
+        return deviceModel.deviceSettings.privacyMode == .customImage ? 4 : 3
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -121,14 +121,14 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row < 2 {
             let redactMode: RedactMode = (indexPath.row == 0) ? .redactLines : .redactWords
-            let cell = FontLabelTableViewCell(font: Fonts.font(named: model.settings.bodyFont), redactMode: redactMode)
+            let cell = FontLabelTableViewCell(font: Fonts.font(named: deviceModel.deviceSettings.bodyFont), redactMode: redactMode)
             cell.label.text = "Redact text good"
-            cell.accessoryType = indexPath.row == model.settings.privacyMode.rawValue ? .checkmark : .none
+            cell.accessoryType = indexPath.row == deviceModel.deviceSettings.privacyMode.rawValue ? .checkmark : .none
             return cell
         } else if (indexPath.row == 2) {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.textLabel?.text = "Custom Image"
-            cell.accessoryType = indexPath.row == model.settings.privacyMode.rawValue ? .checkmark : .none
+            cell.accessoryType = indexPath.row == deviceModel.deviceSettings.privacyMode.rawValue ? .checkmark : .none
             return cell
         } else if (indexPath.row == 3) {
             let cell = tableView.dequeueReusableCell(withIdentifier: Self.imageCellReuseIdentifier,
@@ -161,7 +161,7 @@ extension PrivacyModeController: UIImagePickerControllerDelegate {
             }
             DispatchQueue.main.async {
                 do {
-                    try self.model.settings.setPrivacyImage(privacyImage)
+                    try self.deviceModel.deviceSettings.setPrivacyImage(privacyImage)
                     self.privacyImage = privacyImage
                 } catch {
                     self.present(error: error)

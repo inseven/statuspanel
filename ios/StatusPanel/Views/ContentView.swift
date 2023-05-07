@@ -29,6 +29,8 @@ struct ContentView: View {
     let config: Config
     let dataSourceController: DataSourceController
 
+    @State var selection: String? = nil
+
     init(applicationModel: ApplicationModel, config: Config, dataSourceController: DataSourceController) {
         self.applicationModel = applicationModel
         self.config = config
@@ -36,14 +38,21 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationView {
-            List {
+        NavigationSplitView(columnVisibility: Binding.constant(NavigationSplitViewVisibility.all)) {
+            List(selection: $selection) {
                 ForEach(applicationModel.deviceModels) { deviceModel in
                     Section {
                         DeviceView(deviceModel: deviceModel)
+                            .id(deviceModel.id)
+                    }
+                }
+                Section {
+                    Button("Add Device") {
+                        applicationModel.sheet = .add
                     }
                 }
             }
+            .listStyle(.insetGrouped)
             .navigationTitle("StatusPanel")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -51,13 +60,6 @@ struct ContentView: View {
                         applicationModel.sheet = .settings
                     } label: {
                         Label("Settings", systemImage: "gear")
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        applicationModel.showIntroduction()
-                    } label: {
-                        Label("Add", systemImage: "plus")
                     }
                 }
             }
@@ -69,10 +71,21 @@ struct ContentView: View {
                     AddDeviceView(applicationModel: applicationModel)
                 }
             }
+        } detail: {
+            if let selection,
+               let deviceModel = applicationModel.deviceModels.first(where: {$0.id == selection }) {
+                DeviceDetailView(config: config, dataSourceController: dataSourceController, deviceModel: deviceModel)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .id(deviceModel.id)
+            } else {
+                Text("No Device Selected")
+                    .foregroundColor(.secondary)
+            }
         }
         .onAppear {
             applicationModel.start()
         }
+        .navigationSplitViewStyle(.balanced)
     }
 
 }

@@ -32,22 +32,11 @@ struct CalendarSettingsView: View {
 
     }
 
-    var store: DataSourceSettingsStore<CalendarDataSource.Settings>
-    @State var settings: CalendarDataSource.Settings
+    @ObservedObject var model: CalendarDataSource.Model
 
-    private var eventStore: EKEventStore
-
-    @State var error: Error? = nil
+    private let eventStore = EKEventStore()
 
     @State private var sources: [Source] = []
-
-    init(store: DataSourceSettingsStore<CalendarDataSource.Settings>,
-         settings: CalendarDataSource.Settings,
-         eventStore: EKEventStore) {
-        self.store = store
-        self.settings = settings
-        self.eventStore = eventStore
-    }
 
     private func loadSources() -> [Source] {
         var sources: [Source] = []
@@ -66,32 +55,25 @@ struct CalendarSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Picker(LocalizedString("calendar_day_label"), selection: $settings.offset) {
+                Picker(LocalizedString("calendar_day_label"), selection: $model.settings.offset) {
                     Text(LocalizedOffset(0)).tag(0)
                     Text(LocalizedOffset(1)).tag(1)
                 }
-                Toggle(LocalizedString("calendar_show_locations_label"), isOn: $settings.showLocations)
-                if settings.showLocations {
-                    Toggle(LocalizedString("calendar_show_urls_label"), isOn: $settings.showUrls)
+                Toggle(LocalizedString("calendar_show_locations_label"), isOn: $model.settings.showLocations)
+                if model.settings.showLocations {
+                    Toggle(LocalizedString("calendar_show_urls_label"), isOn: $model.settings.showUrls)
                 }
             }
             ForEach(sources) { source in
                 Section(header: Text(source.source.title)) {
                     ForEach(source.calendars) { calendar in
-                        Toggle(calendar.title, isOn: $settings.activeCalendars.binding(for: calendar.calendarIdentifier))
+                        Toggle(calendar.title, isOn: $model.settings.activeCalendars.binding(for: calendar.calendarIdentifier))
                             .toggleStyle(ColoredCheckbox(color: calendar.color))
                     }
                 }
             }
         }
-        .presents($error)
-        .onChange(of: settings) { newValue in
-            do {
-                try store.save(settings: newValue)
-            } catch {
-                self.error = error
-            }
-        }
+        .presents($model.error)
         .onAppear {
             sources = loadSources()
         }

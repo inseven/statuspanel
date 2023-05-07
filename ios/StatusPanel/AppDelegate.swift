@@ -187,6 +187,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // Fetch items, generate updates, and upload per-device updates.
+    // Counter-intuitively, this is now called from the `ApplicationModel` instance as application lifecycle is now
+    // split between the model and delegate.
+    // Ultimately, this functionality should probably be pushed into `ApplicationModel`.
     func updateDevices(completion: @escaping (UIBackgroundFetchResult) -> Void = { _ in }) {
         Task {
             do {

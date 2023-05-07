@@ -20,39 +20,38 @@
 
 import Foundation
 import UIKit
-import SwiftUI
 
-protocol DataSourceSettings: Codable {
+class DataItem : Equatable, DataItemBase {
 
-}
+    let icon: String?
+    let text: String
+    let flags: DataItemFlags
+    let accentColor: UIColor?
 
-protocol DataSource: AnyObject, Identifiable {
-
-    typealias Model = DataSourceModel<Settings>
-    typealias Store = DataSourceSettingsStore<Settings>
-
-    associatedtype Settings: DataSourceSettings
-    associatedtype SettingsView: View
-    associatedtype SettingsItem: View
-
-    static var id: DataSourceType { get }
-    static var name: String { get }
-    static var image: Image { get }
-
-    var defaults: Settings { get }
-    func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void)
-    func settingsView(model: Model) -> SettingsView
-    func settingsItem(model: Model) -> SettingsItem
-
-}
-
-extension DataSource {
-
-    func settings(config: Config, instanceId: UUID) throws -> Settings {
-        guard let settings: Settings = try? config.settings(for: instanceId) else {
-            return defaults
-        }
-        return settings
+    init(icon: String?, text: String, flags: DataItemFlags = [], accentColor: UIColor? = nil) {
+        self.icon = icon
+        self.text = text
+        self.flags = flags
+        self.accentColor = accentColor
     }
 
+    convenience init(text: String, flags: DataItemFlags = []) {
+        self.init(icon: nil, text: text, flags: flags)
+    }
+
+    var prefix: String {
+        return ""
+    }
+
+    var subText: String? {
+        nil
+    }
+
+    func getText(checkFit: (String) -> Bool) -> String {
+        return text
+    }
+
+    static func == (lhs: DataItem, rhs: DataItem) -> Bool {
+        return lhs.text == rhs.text && lhs.flags == rhs.flags
+    }
 }

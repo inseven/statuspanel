@@ -31,18 +31,23 @@ final class NationalRailDataSource : DataSource {
         var from: String?
         var to: String?
 
+        var summary: String {
+            if let from,
+               let to {
+                return "\(from) to \(to)"
+            } else {
+                return "Not configured"
+            }
+        }
+
     }
 
     struct NationalRailSettingsView: UIViewControllerRepresentable {
 
-        let store: NationalRailDataSource.Store
-        let settings: NationalRailDataSource.Settings
+        let model: Model
 
         func makeUIViewController(context: Context) -> some UIViewController {
-            let viewController = NationalRailSettingsController()
-            viewController.store = store
-            viewController.settings = settings
-            return viewController
+            return NationalRailSettingsController(model: model)
         }
 
         func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
@@ -52,12 +57,23 @@ final class NationalRailDataSource : DataSource {
 
     struct SettingsView: View {
 
-        let store: NationalRailDataSource.Store
-        let settings: NationalRailDataSource.Settings
+        let model: Model
 
         var body: some View {
-            NationalRailSettingsView(store: store, settings: settings)
+            NationalRailSettingsView(model: model)
                 .edgesIgnoringSafeArea(.all)
+        }
+
+    }
+
+    struct SettingsItem: View {
+
+        @ObservedObject var model: Model
+
+        var body: some View {
+            DataSourceInstanceRow(image: NationalRailDataSource.image,
+                                  title: NationalRailDataSource.name,
+                                  summary: model.settings.summary)
         }
 
     }
@@ -75,9 +91,9 @@ final class NationalRailDataSource : DataSource {
         }
     }
 
-    let id: DataSourceType = .nationalRail
-    let name = "National Rail"
-    let image = UIImage(systemName: "tram.fill", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
+    static let id: DataSourceType = .nationalRail
+    static let name = "National Rail"
+    static let image = Image(systemName: "tram.fill")
 
     let configuration: Configuration
 
@@ -147,16 +163,12 @@ final class NationalRailDataSource : DataSource {
         JSONRequest.makeRequest(url: safeUrl, completion: gotDelays)
     }
 
-    func summary(settings: Settings) -> String? {
-        guard let from = settings.from,
-              let to = settings.to else {
-            return "Not configured"
-        }
-        return "\(from) to \(to)"
+    func settingsView(model: Model) -> SettingsView {
+        return SettingsView(model: model)
     }
 
-    func settingsView(store: Store, settings: Settings) -> SettingsView {
-        return SettingsView(store: store, settings: settings)
+    func settingsItem(model: Model) -> SettingsItem {
+        return SettingsItem(model: model)
     }
 
 }

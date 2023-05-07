@@ -25,12 +25,12 @@ class NationalRailSettingsController : UITableViewController {
 
     static let valueCellReuseIdentifier = "ValueCell"
 
-    var store: DataSourceSettingsStore<NationalRailDataSource.Settings>!
-    var settings: NationalRailDataSource.Settings!
+    var model: NationalRailDataSource.Model
     var stationPickerShowing: StationPickerController?
     var pickingDest = false
 
-    init() {
+    init(model: NationalRailDataSource.Model) {
+        self.model = model
         super.init(style: .insetGrouped)
         tableView.register(Value1TableViewCell.self, forCellReuseIdentifier: Self.valueCellReuseIdentifier)
     }
@@ -49,16 +49,11 @@ class NationalRailSettingsController : UITableViewController {
             }
             var indexPath: IndexPath? = nil
             if pickingDest {
-                settings.to = station.code
+                model.settings.to = station.code
                 indexPath = IndexPath(row: 1, section: 0)
             } else {
-                settings.from = station.code
+                model.settings.from = station.code
                 indexPath = IndexPath(row: 0, section: 0)
-            }
-            do {
-                try store.save(settings: settings)
-            } catch {
-                self.present(error: error)
             }
             if let indexPath = indexPath {
                 tableView.reloadRows(at: [indexPath], with: .fade)
@@ -79,10 +74,10 @@ class NationalRailSettingsController : UITableViewController {
         switch indexPath.row {
         case 0:
             cell.textLabel?.text = "From"
-            cell.detailTextLabel?.text = StationsList.lookup(code: settings.from)?.nameAndCode
+            cell.detailTextLabel?.text = StationsList.lookup(code: model.settings.from)?.nameAndCode
         case 1:
             cell.textLabel?.text = "To"
-            cell.detailTextLabel?.text = StationsList.lookup(code: settings.to)?.nameAndCode
+            cell.detailTextLabel?.text = StationsList.lookup(code: model.settings.to)?.nameAndCode
         default:
             break
         }

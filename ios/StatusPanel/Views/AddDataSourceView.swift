@@ -24,8 +24,10 @@ struct AddDataSourceView: View {
 
     @Environment(\.dismiss) var dismiss
 
-    var config: Config
-    @Binding var dataSources: [DataSourceInstance]
+    let config: Config
+    let dataSourceController: DataSourceController
+    
+    @Binding var dataSources: [DataSourceInstance.Details]
 
     @State var error: Error?
 
@@ -35,14 +37,14 @@ struct AddDataSourceView: View {
                 ForEach(DataSourceController.sources) { dataSource in
                     let uuid = UUID()
                     NavigationLink {
-                        try! dataSource.settingsView(config: config, instanceId: uuid)
+                        try! dataSource.views(config: config, instanceId: uuid).settingsView
                             .toolbar {
                                 ToolbarItem(placement: .navigationBarTrailing) {
                                     Button("Add") {
                                         do {
                                             let details = DataSourceInstance.Details(id: uuid, type: dataSource.id)
-                                            let dataSource = try DataSourceController.dataSourceInstance(for: details)
-                                            dataSources.append(dataSource)
+                                            let dataSource = try dataSourceController.dataSourceInstance(for: details)
+                                            dataSources.append(dataSource.details)
                                             dismiss()
                                         } catch {
                                             self.error = error
@@ -52,7 +54,7 @@ struct AddDataSourceView: View {
                             }
                     } label: {
                         HStack(spacing: 0) {
-                            Image(uiImage: dataSource.image)
+                            dataSource.image
                                 .renderingMode(.template)
                                 .foregroundColor(.primary)
                                 .padding(.trailing)

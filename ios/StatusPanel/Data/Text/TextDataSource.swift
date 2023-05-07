@@ -31,45 +31,48 @@ final class TextDataSource: DataSource {
 
     struct SettingsView: View {
 
-        var store: Store
-        @State var settings: Settings
-        @State var error: Error? = nil
+        @ObservedObject var model: Model
 
         var body: some View {
             Form {
                 Section {
-                    TextField("Text", text: $settings.text)
+                    TextField("Text", text: $model.settings.text)
                 }
-                FlagsSection(flags: $settings.flags)
+                FlagsSection(flags: $model.settings.flags)
             }
-            .presents($error)
-            .onChange(of: settings) { newValue in
-                do {
-                    try store.save(settings: newValue)
-                } catch {
-                    self.error = error
-                }
-            }
-
+            .presents($model.error)
         }
 
     }
 
-    let id: DataSourceType = .text
-    let name = "Text"
-    let image = UIImage(systemName: "textformat", withConfiguration: UIImage.SymbolConfiguration(scale: .large))!
+    struct SettingsItem: View {
+
+        @ObservedObject var model: Model
+
+        var body: some View {
+            DataSourceInstanceRow(image: TextDataSource.image,
+                                  title: TextDataSource.name,
+                                  summary: model.settings.text)
+        }
+
+    }
+
+    static let id: DataSourceType = .text
+    static let name = "Text"
+    static let image = Image(systemName: "textformat")
+    
     let defaults = Settings(flags: [], text: "")
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
         completion([DataItem(text: settings.text, flags: settings.flags)], nil)
     }
 
-    func summary(settings: Settings) -> String? {
-        return "\"\(settings.text)\""
+    func settingsView(model: Model) -> SettingsView {
+        return SettingsView(model: model)
     }
 
-    func settingsView(store: Store, settings: Settings) -> SettingsView {
-        return SettingsView(store: store, settings: settings)
+    func settingsItem(model: Model) -> SettingsItem {
+        return SettingsItem(model: model)
     }
 
 }
