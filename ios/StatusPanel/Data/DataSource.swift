@@ -18,7 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Combine
 import Foundation
 import UIKit
 import SwiftUI
@@ -26,54 +25,6 @@ import SwiftUI
 protocol DataSourceSettings: Codable {
 
 }
-
-class AnyDataSourceModel {
-
-    let subscribe: (@escaping () -> Void) -> AnyCancellable
-
-    init<T: DataSourceSettings>(_ dataSourceModel: DataSourceModel<T>) {
-        subscribe = { action in
-            return dataSourceModel
-                .objectWillChange
-                .sink { _ in
-                    action()
-                }
-        }
-    }
-
-}
-
-class DataSourceModel<T: DataSourceSettings>: ObservableObject {
-
-    let store: DataSourceSettingsStore<T>
-
-    @Published var settings: T
-    @Published var error: Error? = nil
-
-    var cancellables: Set<AnyCancellable> = []
-
-    init(store: DataSourceSettingsStore<T>, settings: T) {
-        self.store = store
-        self.settings = settings
-    }
-
-    func start() {
-        $settings
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] dataSourceSettings in
-                guard let self else { return }
-                do {
-                    try self.store.save(settings: self.settings)
-                } catch {
-                    print("Failed to save data source settings with error \(error).")
-                    self.error = error
-                }
-            }
-            .store(in: &cancellables)
-    }
-
-}
-
 
 protocol DataSource: AnyObject, Identifiable {
 
@@ -89,11 +40,8 @@ protocol DataSource: AnyObject, Identifiable {
     static var image: Image { get }
 
     var defaults: Settings { get }
-
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void)
-
     func settingsView(model: Model) -> SettingsView
-
     func settingsItem(model: Model) -> SettingsItem
 
 }
@@ -107,46 +55,6 @@ extension DataSource {
         return settings
     }
 
-}
-
-struct DataItemFlags: OptionSet, Codable {
-
-    enum Style {
-        case title
-        case body
-    }
-
-    let rawValue: Int
-
-    static let warning = DataItemFlags(rawValue: 1 << 0)
-    static let header = DataItemFlags(rawValue: 1 << 1)
-    static let prefersNewSection = DataItemFlags(rawValue: 1 << 2)
-    static let spansColumns = DataItemFlags(rawValue: 1 << 3)
-
-    var labelStyle: LabelStyle {
-        if contains(.header) {
-            return .header
-        }
-        return .text
-    }
-
-    var style: Style {
-        get {
-            if contains(.header) {
-                return .title
-            }
-            return .body
-        }
-        set {
-            switch newValue {
-            case .title:
-                insert(.header)
-            case .body:
-                remove(.header)
-            }
-        }
-    }
-    
 }
 
 protocol DataItemBase : AnyObject {
