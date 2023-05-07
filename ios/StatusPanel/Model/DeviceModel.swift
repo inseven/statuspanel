@@ -28,11 +28,14 @@ class DeviceModel: ObservableObject, Identifiable {
     private let dataSourceController: DataSourceController
     let device: Device
 
-    // TODO: Is the force unwrap acceptable?
     @Published var deviceSettings: DeviceSettings
     @Published var images: [UIImage] = []
     @Published var error: Error? = nil
 
+    @Published private var settingsDidChange: UUID = UUID()
+
+    // Creates data source instances on-the-fly to ensure the array always matches the device settings.
+    // Instances are cached to ensure this performs and cache cleanup is performed by a subscription.
     @MainActor var dataSources: [DataSourceInstance] {
         get {
             do {
@@ -41,6 +44,13 @@ class DeviceModel: ObservableObject, Identifiable {
                         return dataSourceInstance
                     }
                     let dataSourceInstance = try dataSourceController.dataSourceInstance(for: dataSourceDetails)
+                    let cancellable = dataSourceInstance.model?.subscribe { [weak self] in
+                        guard let self else { return }
+                        self.settingsDidChange = UUID()
+                    }
+                    if let cancellable {
+                        dataSourceSubscriptions.append(cancellable)
+                    }
                     dataSourceCache[dataSourceDetails.id] = dataSourceInstance
                     return dataSourceInstance
                 }
@@ -50,6 +60,8 @@ class DeviceModel: ObservableObject, Identifiable {
             }
         }
     }
+
+//    @MainActor var dataSources: [DataSourceInstance] = []
 
     @MainActor private var dataSourceCache: [UUID: DataSourceInstance] = [:]
 
@@ -74,15 +86,10 @@ class DeviceModel: ObservableObject, Identifiable {
         self.images = [device.blankImage()]
 
         do {
-            // TODO: It might actually be right to do this lazily
-            let deviceSettings = try config.settings(forDevice: device.id)
-//            let dataSources = try DataSourceController.dataSourceInstances(for: deviceSettings.dataSources)
-            self.deviceSettings = deviceSettings
-//            self.dataSources = dataSources
+            self.deviceSettings = try config.settings(forDevice: device.id)
         } catch {
-            // TODO: Report this error here.
             deviceSettings = DeviceSettings(deviceId: device.id)
-//            dataSources = []
+            self.error = error
         }
     }
 
@@ -103,11 +110,12 @@ class DeviceModel: ObservableObject, Identifiable {
             }
             .store(in: &cancellables)
 
-        // Generate previews.
-        // TODO: Regenerate previews when the app enters the foreground.
+        // Generate previews whenever the device settings or individual data source settings change, or the app
+        // enters the foreground.
         $deviceSettings
+            .combineLatest($settingsDidChange, NotificationCenter.default.willEnterForegroundPublisher())
             .debounce(for: 1, scheduler: updateQueue)
-            .compactMap { $0 }
+            .compactMap { $0.0 }
             .compactMap { [weak self] deviceSettings -> (DeviceSettings, [DataItemBase])? in
                 guard let self else { return nil }
                 dispatchPrecondition(condition: .onQueue(self.updateQueue))
@@ -134,7 +142,8 @@ class DeviceModel: ObservableObject, Identifiable {
             }
             .store(in: &cancellables)
 
-        // Purge the data source instance cache.
+        // Purge the data source instance cache when data sources chanege and subscribe to the data source models
+        // to ensure we can respond to changes in data source instance settings.
         $deviceSettings
             .receive(on: DispatchQueue.main)
             .compactMap { $0 }
@@ -144,17 +153,6 @@ class DeviceModel: ObservableObject, Identifiable {
                 let identifiers = Set(dataSourceDetails.map { $0.id })
                 let deletions = self.dataSourceCache.keys.filter { !identifiers.contains($0) }
                 deletions.forEach { self.dataSourceCache.removeValue(forKey: $0) }
-
-                // Subscribe to all the data sources
-                // TODO: This is a blunt stick and it would be better to do something more elegant.
-                self.dataSourceSubscriptions = self.dataSourceCache
-                    .values
-                    .compactMap { dataSourceInstance in
-                        return dataSourceInstance.model?.subscribe { [weak self] in
-                            guard let self else { return }
-                            self.objectWillChange.send()
-                        }
-                    }
             }
             .store(in: &cancellables)
 

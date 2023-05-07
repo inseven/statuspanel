@@ -42,6 +42,7 @@
 		D866E9D22A07BC9A004B47D7 /* DataItemFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866E9D12A07BC9A004B47D7 /* DataItemFlags.swift */; };
 		D866E9D42A07BD96004B47D7 /* DataItemBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866E9D32A07BD96004B47D7 /* DataItemBase.swift */; };
 		D866E9D62A07BE02004B47D7 /* DataItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866E9D52A07BE02004B47D7 /* DataItem.swift */; };
+		D866E9D82A07C931004B47D7 /* NotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D866E9D72A07C931004B47D7 /* NotificationCenter.swift */; };
 		D87439032730C3E400B676A5 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D87439022730C3E400B676A5 /* Diligence */; };
 		D87439052731006800B676A5 /* Diligence.txt in Resources */ = {isa = PBXBuildFile; fileRef = D87439042731006800B676A5 /* Diligence.txt */; };
 		D8808DFA2A0440DD00F57C9A /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8808DF92A0440DD00F57C9A /* QRCodeView.swift */; };
@@ -179,6 +180,7 @@
 		D866E9D12A07BC9A004B47D7 /* DataItemFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataItemFlags.swift; sourceTree = "<group>"; };
 		D866E9D32A07BD96004B47D7 /* DataItemBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataItemBase.swift; sourceTree = "<group>"; };
 		D866E9D52A07BE02004B47D7 /* DataItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataItem.swift; sourceTree = "<group>"; };
+		D866E9D72A07C931004B47D7 /* NotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenter.swift; sourceTree = "<group>"; };
 		D87439012730C3A100B676A5 /* diligence */ = {isa = PBXFileReference; lastKnownFileType = folder; path = diligence; sourceTree = "<group>"; };
 		D87439042731006800B676A5 /* Diligence.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Diligence.txt; sourceTree = "<group>"; };
 		D8808DF92A0440DD00F57C9A /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
@@ -490,6 +492,7 @@
 				D8104E0429F3408100C394CC /* EKEvent.swift */,
 				D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */,
 				D816655427277632005BDA9E /* FileManager.swift */,
+				D866E9D72A07C931004B47D7 /* NotificationCenter.swift */,
 				D866CA162A019536007819CD /* Sequence.swift */,
 				D816655227277407005BDA9E /* UIActivityIndicatorView.swift */,
 				DBFAEA83272446C5005B9E21 /* UIFont.swift */,
@@ -790,6 +793,7 @@
 				D8FB0D7B29D58216000E66E6 /* LastUpdateDataSource.swift in Sources */,
 				D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */,
 				D8F57FEA271A009200847C67 /* QRCodeViewController.swift in Sources */,
+				D866E9D82A07C931004B47D7 /* NotificationCenter.swift in Sources */,
 				DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */,
 				D866CA212A02EA03007819CD /* IntroductionView.swift in Sources */,
 				D8C20D25271C7A2000F3F22A /* CalendarSettingsView.swift in Sources */,

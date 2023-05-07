@@ -26,7 +26,7 @@ class PrivacyModeController : UITableViewController, UINavigationControllerDeleg
     private let kImageRowHeight: CGFloat = 200
 
     private let config: Config
-    private let deviceModel: DeviceModel  // TODO: Binding?
+    private let deviceModel: DeviceModel
 
     private var firstRun = true
 

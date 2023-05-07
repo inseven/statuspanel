@@ -71,9 +71,7 @@ class ApplicationModel: ObservableObject {
         config
             .objectWillChange
             .prepend(())
-            .combineLatest(NotificationCenter.default
-                .publisher(for: UIApplication.willEnterForegroundNotification)
-                .prepend(NSNotification(name: UIApplication.willEnterForegroundNotification, object: nil) as NotificationCenter.Publisher.Output))
+            .combineLatest(NotificationCenter.default.willEnterForegroundPublisher())
             .receive(on: DispatchQueue.main)
             .sink { _ in
                 let appDelegate = UIApplication.shared.delegate as! AppDelegate

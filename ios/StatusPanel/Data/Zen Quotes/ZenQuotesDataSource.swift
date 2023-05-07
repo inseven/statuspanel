@@ -78,7 +78,7 @@ final class ZenQuotesDataSource: DataSource {
                     Text("Inspirational quotes provided by ZenQuotes API.")
                 }
             }
-            .presents($model.error)  // TODO: This could be moved out to the owning controller.
+            .presents($model.error)
         }
 
     }
