@@ -3,7 +3,7 @@ import { tintColorAtom } from "../tintColorAtom"
 import { View, Text } from "react-native"
 
 export const Settings = ({ children }: Children) => {
-	return <View>{children}</View>
+	return <View className="mx-3">{children}</View>
 }
 
 interface SettingsSectionProps {
@@ -13,7 +13,9 @@ interface SettingsSectionProps {
 const Section = ({ title, children }: SettingsSectionProps & Children) => {
 	return (
 		<View>
-			<Text style={{ fontSize: 12 }}>{title.toUpperCase()}</Text>
+			<Text className="mx-2 mb-1 text-xs text-gray-500">
+				{title.toUpperCase()}
+			</Text>
 			{children}
 		</View>
 	)
@@ -27,7 +29,7 @@ interface SettingsItemProps {
 
 const Item = ({ label, value }: SettingsItemProps) => {
 	return (
-		<View>
+		<View className="flex-row rounded-md bg-white p-3">
 			<Text>{label}</Text>
 			<Text>{value}</Text>
 		</View>
