@@ -21,7 +21,11 @@
 import Combine
 import SwiftUI
 
-class DeviceModel: ObservableObject, Identifiable {
+class DeviceModel: ObservableObject, Identifiable, Equatable {
+
+    static func == (lhs: DeviceModel, rhs: DeviceModel) -> Bool {
+        return lhs.id == rhs.id
+    }
 
     @ObservedObject var config: Config
 
@@ -60,8 +64,6 @@ class DeviceModel: ObservableObject, Identifiable {
             }
         }
     }
-
-//    @MainActor var dataSources: [DataSourceInstance] = []
 
     @MainActor private var dataSourceCache: [UUID: DataSourceInstance] = [:]
 

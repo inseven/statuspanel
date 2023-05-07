@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 import Combine
+import SwiftUI
 import UIKit
 
 class ApplicationModel: ObservableObject {
@@ -62,6 +63,7 @@ class ApplicationModel: ObservableObject {
                                        device: device)
                 }
                 self.deviceModels.append(contentsOf: newDeviceModels)
+                self.deviceModels.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
                 newDeviceModels.forEach { $0.start() }
             }
             .store(in: &cancellables)
@@ -82,9 +84,18 @@ class ApplicationModel: ObservableObject {
                 self.updateCancellable = Publishers.MergeMany(deviceModelChangePublishers)
                     .combineLatest(NotificationCenter.default.willEnterForegroundPublisher())
                     .debounce(for: 1, scheduler: DispatchQueue.main)
-                    .sink { _ in
+                    .sink { [weak self] _ in
+                        guard let self else { return }
                         let appDelegate = UIApplication.shared.delegate as! AppDelegate
                         appDelegate.updateDevices()
+                        withAnimation {
+                            let sortedDeviceModels = self.deviceModels.sorted {
+                                $0.name.localizedStandardCompare($1.name) == .orderedAscending
+                            }
+                            if self.deviceModels != sortedDeviceModels {
+                                self.deviceModels = sortedDeviceModels
+                            }
+                        }
                     }
             }
             .store(in: &cancellables)
