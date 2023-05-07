@@ -111,7 +111,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let eventStore = EKEventStore()
         eventStore.requestAccess(to: EKEntityType.event) { granted, error in
             DispatchQueue.main.async {
-
                 do {
                     let calendars = eventStore.allCalendars().map { $0.calendarIdentifier }
                     var settings = device.defaultSettings()
@@ -123,13 +122,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     return
                 }
                 self.config.devices.insert(device)
-
-                let alert = UIAlertController(title: "Device added",
-                                              message: "Device \(device.id) has been added.",
-                                              preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"),
-                                              style: .default))
-                self.window?.rootViewController?.present(alert, animated: true)
             }
         }
     }
