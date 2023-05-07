@@ -62,6 +62,7 @@ struct IntroductionView: View {
                         .centerContent()
                 }
                 .buttonStyle(.bordered)
+#if DEBUG
                 Button {
                     dismiss()
                     applicationModel.addFromClipboard()
@@ -70,6 +71,7 @@ struct IntroductionView: View {
                         .centerContent()
                 }
                 .buttonStyle(.bordered)
+#endif
             }
             .controlSize(.large)
             .padding()
@@ -82,7 +84,7 @@ struct IntroductionView: View {
         .navigationTitle("StatusPanel")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-
+            
             // Don't allow the view to be dismissed if there are no devices.
             if !applicationModel.deviceModels.isEmpty {
                 ToolbarItem(placement: .navigationBarLeading) {
