@@ -5,6 +5,7 @@ export default function Layout() {
 		<Stack>
 			<Stack.Screen name="index" />
 			<Stack.Screen name="settings" options={{ presentation: "modal" }} />
+			<Stack.Screen name="about" options={{ presentation: "modal" }} />
 		</Stack>
 	)
 }

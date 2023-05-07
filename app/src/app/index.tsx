@@ -2,7 +2,7 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { Link, Stack } from "expo-router"
 import Ionicons from "@expo/vector-icons/Ionicons"
 import { useAtom } from "jotai"
-import { tintColorAtom } from "../tintColorAtom"
+import { tintColorAtom } from "../atoms/tintColorAtom"
 
 export default function Page() {
 	const [tintColor] = useAtom(tintColorAtom)
@@ -11,7 +11,7 @@ export default function Page() {
 		<>
 			<Stack.Screen
 				options={{
-					title: "My hme",
+					title: "My home",
 					headerLargeTitle: true,
 					headerLeft: () => (
 						<Link href="/settings" asChild>
