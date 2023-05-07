@@ -129,7 +129,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     self.window?.rootViewController?.present(error: error)
                     return
                 }
-                self.config.devices.append(device)
+                self.config.devices.insert(device)
 
                 let alert = UIAlertController(title: "Device added",
                                               message: "Device \(device.id) has been added.",
