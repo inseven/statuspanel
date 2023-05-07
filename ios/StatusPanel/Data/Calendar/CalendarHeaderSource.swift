@@ -26,6 +26,8 @@ final class CalendarHeaderSource : DataSource {
 
     struct Settings: DataSourceSettings & Equatable {
 
+        static let dataSourceType: DataSourceType = .calendarHeader
+
         var longFormat: String
         var shortFormat: String
         var offset: Int

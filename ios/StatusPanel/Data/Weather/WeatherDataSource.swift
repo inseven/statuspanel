@@ -27,6 +27,9 @@ import Diligence
 final class WeatherDataSource: DataSource {
 
     struct Settings: DataSourceSettings & Equatable {
+
+        static let dataSourceType: DataSourceType = .weather
+
         var flags: DataItemFlags
         var address: String
     }

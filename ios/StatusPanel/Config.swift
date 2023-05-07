@@ -359,6 +359,11 @@ class Config: ObservableObject {
         set(data, for: .settings(instanceId))
     }
 
+    func save(settings: AnyDataSourceSettings, instanceId: UUID) throws {
+        let data = try JSONEncoder().encode(settings)
+        set(data, for: .settings(instanceId))
+    }
+
     func settings(forDevice deviceId: String) throws -> DeviceSettings {
         dispatchPrecondition(condition: .onQueue(.main))
         guard let data = object(for: .deviceSettings(deviceId)) as? Data else {

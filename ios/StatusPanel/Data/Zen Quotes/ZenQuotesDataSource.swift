@@ -41,6 +41,8 @@ final class ZenQuotesDataSource: DataSource {
 
         }
 
+        static let dataSourceType: DataSourceType = .zenQuotes
+
         var mode: Mode
 
     }

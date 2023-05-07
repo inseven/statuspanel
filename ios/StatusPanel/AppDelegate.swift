@@ -91,6 +91,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return details
     }
 
+    func configureDataSourceInstances(_ dataSourceSettings: [AnyDataSourceSettings]) throws -> [DataSourceInstance.Details] {
+        var result: [DataSourceInstance.Details] = []
+        for settings in dataSourceSettings {
+            let instanceId = UUID()
+            let details = DataSourceInstance.Details(id: instanceId, type: settings.dataSourceType)
+            try config.save(settings: settings, instanceId: instanceId)
+            result.append(details)
+        }
+        return result
+    }
+
     func addDevice(_ device: Device) {
 
         // Set up the initial data sources if necessary.
@@ -103,27 +114,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 do {
                     let calendars = eventStore.allCalendars().map { $0.calendarIdentifier }
-                    var settings = DeviceSettings(deviceId: device.id)
-                    settings.dataSources = [
-                        try self.configureDataSourceInstance(type: .calendarHeader,
-                                                        settings: CalendarHeaderSource.Settings(longFormat: "yMMMMdEEEE",
-                                                                                                shortFormat: "yMMMMdEEE",
-                                                                                                offset: 0,
-                                                                                                flags: [.header, .spansColumns])),
-                        try self.configureDataSourceInstance(type: .calendar,
-                                                             settings: CalendarDataSource.Settings(showLocations: true,
-                                                                                                   showUrls: false,
-                                                                                                   offset: 0,
-                                                                                                   activeCalendars: Set(calendars))),
-                        try self.configureDataSourceInstance(type: .text,
-                                                             settings: TextDataSource.Settings(flags: [.prefersNewSection],
-                                                                                               text: "Tomorrow:")),
-                        try self.configureDataSourceInstance(type: .calendar,
-                                                             settings: CalendarDataSource.Settings(showLocations: true,
-                                                                                                   showUrls: false,
-                                                                                                   offset: 1,
-                                                                                                   activeCalendars: Set(calendars))),
-                    ]
+                    var settings = device.defaultSettings()
+                    let dataSourceSettings = device.defaultDataSourceSettings(calendars: calendars)
+                    settings.dataSources = try self.configureDataSourceInstances(dataSourceSettings)
                     try self.config.save(settings: settings, deviceId: device.id)
                 } catch {
                     self.window?.rootViewController?.present(error: error)
