@@ -114,6 +114,22 @@ struct DeviceDetailView: View {
                     sheet = .settings
                 }
             }
+            if config.showDebugInformation {
+                Section {
+                    LabeledContent("Type", value: deviceModel.device.kind.description)
+                    LabeledContent("Identifier", value: deviceModel.device.id)
+                }
+            }
+            Section {
+                Button(role: .destructive) {
+                    withAnimation {
+                        editMode = .inactive
+                    }
+                    config.removeDevice(deviceModel.device)
+                } label: {
+                    Text("Delete Device")
+                }
+            }
         }
         .presents($deviceModel.error)
         .navigationTitle(deviceModel.name)
@@ -166,4 +182,3 @@ struct DeviceDetailView: View {
     }
 
 }
-

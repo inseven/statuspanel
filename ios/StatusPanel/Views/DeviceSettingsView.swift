@@ -81,21 +81,6 @@ struct DeviceSettingsView: View {
                            displayedComponents: .hourAndMinute)
                     .environment(\.timeZone, TimeZone(secondsFromGMT: 0)!)
             }
-            if config.showDebugInformation {
-                Section("Debug") {
-                    LabeledContent("Type", value: deviceModel.device.kind.description)
-                    LabeledContent("Identifier", value: deviceModel.device.id)
-                }
-            }
-            Section {
-                Button(role: .destructive) {
-                    config.removeDevice(deviceModel.device)
-                    dismiss()
-                } label: {
-                    Text("Delete Device")
-                        .centerContent()
-                }
-            }
         }
         .presents($error)
         .navigationTitle("Device Settings")
