@@ -103,6 +103,7 @@ struct AddDeviceView: View {
                         ForEach(Device.Kind.allCases) { kind in
                             Button {
                                 applicationModel.addDemoDevice(kind: kind)
+                                dismiss()
                             } label: {
                                 Text(Localized(kind))
                                     .centerContent()
