@@ -38,6 +38,7 @@ struct AboutView: View {
             Acknowledgements("Thanks") {
                 Credit("Lukas Fittl")
                 Credit("Pavlos Vinieratos", url: URL(string: "https://github.com/pvinis"))
+                Credit("Sarah Barbour")
             }
         } licenses: {
             LicenseGroup("Fonts") {
