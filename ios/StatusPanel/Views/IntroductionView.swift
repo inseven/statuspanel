@@ -26,14 +26,15 @@ struct IntroductionView: View {
 
     @ObservedObject var applicationModel: ApplicationModel
 
-    let completion: () -> Void
+    let onScanQRCode: () -> Void
+    let onAddDemoDevice: () -> Void
 
     @State var scanQRCode: Bool = false
-    @State var addDemoDevice: Bool = false
 
-    init(applicationModel: ApplicationModel, completion: @escaping () -> Void) {
+    init(applicationModel: ApplicationModel, completion: @escaping () -> Void, onAddDemoDevice: @escaping () -> Void) {
         self.applicationModel = applicationModel
-        self.completion = completion
+        self.onScanQRCode = completion
+        self.onAddDemoDevice = onAddDemoDevice
     }
 
     var body: some View {
@@ -49,14 +50,14 @@ struct IntroductionView: View {
         .safeAreaInset(edge: .bottom) {
             VStack {
                 Button {
-                    completion()
+                    onScanQRCode()
                 } label: {
                     Text("Scan QR Code")
                         .centerContent()
                 }
                 .buttonStyle(.borderedProminent)
                 Button {
-                    addDemoDevice = true
+                    onAddDemoDevice()
                 } label: {
                     Text("Add Demo Device")
                         .centerContent()
@@ -96,15 +97,6 @@ struct IntroductionView: View {
 
         }
         .interactiveDismissDisabled(applicationModel.deviceModels.isEmpty)
-        .actionSheet(isPresented: $addDemoDevice) {
-            let buttons: [ActionSheet.Button] = Device.Kind.allCases.map { kind in
-                ActionSheet.Button.default(Text(kind.description)) {
-                    applicationModel.addDemoDevice(kind: kind)
-                    dismiss()
-                }
-            } + [.cancel()]
-            return ActionSheet(title: Text("Add Demo Device"), buttons: buttons)
-        }
     }
 
 }

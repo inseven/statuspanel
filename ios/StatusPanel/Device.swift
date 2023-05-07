@@ -25,7 +25,10 @@ import Sodium
 
 struct Device: Identifiable, Equatable, Hashable {
 
-    enum Kind: String, CaseIterable {
+    enum Kind: String, CaseIterable, Identifiable {
+
+        var id: Self { self }
+
         case einkV1 = "0"
         case featherTft = "1"
         case pimoroniInkyImpression4 = "2"
