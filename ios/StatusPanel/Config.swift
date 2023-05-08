@@ -19,7 +19,6 @@
 // SOFTWARE.
 
 import Foundation
-import Network
 import UIKit
 
 class Config: ObservableObject {
@@ -178,57 +177,6 @@ class Config: ObservableObject {
         self.userDefaults.set(data, forKey: key.rawValue)
     }
 
-    // TODO: Extract privacy image generation and management to a separate utility #533
-    //       https://github.com/inseven/statuspanel/issues/533
-    func migrate() throws {
-        let fileManager = FileManager.default
-        let documentsUrl = try fileManager.documentsUrl()
-
-        let privacyImageV1 = documentsUrl.appendingPathComponent("customPrivacyImage.png")
-        let privacyImageV2 = documentsUrl.appendingPathComponent("customPrivacyImage.jpg")
-        let privacyImageV3 = documentsUrl.appendingPathComponent(Self.privacyImageFilename)
-
-        let hasPrivacyImageV1 = fileManager.fileExists(at: privacyImageV1)
-        let hasPrivacyImageV2 = fileManager.fileExists(at: privacyImageV2)
-        let hasPrivacyImageV3 = fileManager.fileExists(at: privacyImageV3)
-
-        let needsPrivacyImageMigration = hasPrivacyImageV1 || hasPrivacyImageV2
-        if needsPrivacyImageMigration {
-
-            // If the user hasn't already set a new privacy image...
-            if !hasPrivacyImageV3 {
-
-                // ... first migrate the v1 privacy image if it exists...
-                if hasPrivacyImageV1 {
-                    print("Migrating v1 privacy image...")
-                    if let image = UIImage(contentsOfFile: privacyImageV1.path) {
-                        try setPrivacyImage(Panel.privacyImage(from: image, size: Device().size))
-                    } else {
-                        print("Failed to load v1 privacy image.")
-                    }
-                }
-
-                // ... then migrate the second privacy image if it exists.
-                if hasPrivacyImageV2 {
-                    print("Migrating v2 privacy image...")
-                    if let image = UIImage(contentsOfFile: privacyImageV2.path) {
-                        try setPrivacyImage(Panel.privacyImage(from: image, size: Device().size))
-                    } else {
-                        print("Failed to load v2 privacy image.")
-                    }
-                }
-
-            }
-
-            // Once we've migrated the images, we can safely delete them.
-            print("Removing old privacy images...")
-            if hasPrivacyImageV1 { try fileManager.removeItem(at: privacyImageV1) }
-            if hasPrivacyImageV2 { try fileManager.removeItem(at: privacyImageV2) }
-
-        }
-
-    }
-
     var activeCalendars: [String] {
         get {
             self.object(for: .activeCalendars) as? [String] ?? []
@@ -289,31 +237,6 @@ class Config: ObservableObject {
 
     @MainActor func removeDevice(_ device: Device) {
         self.devices.remove(device)
-    }
-
-    // TODO: Extract privacy image generation and management to a separate utility #533
-    //       https://github.com/inseven/statuspanel/issues/533
-
-    private static let privacyImageFilename = "privacy-image.png"
-
-    private func privacyImage() throws -> UIImage? {
-        let url = try FileManager.default.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
-        return UIImage(contentsOfFile: url.path)
-    }
-
-    private func setPrivacyImage(_ image: UIImage?) throws {
-        let fileManager = FileManager.default
-        let url = try fileManager.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
-        guard let image = image else {
-            if fileManager.fileExists(at: url) {
-                try fileManager.removeItem(at: url)
-            }
-            return
-        }
-        guard let data = image.pngData() else {
-            throw StatusPanelError.invalidImage
-        }
-        try data.write(to: url, options: [.atomic])
     }
 
     private static func getLastUploadHashKey(for deviceid: String) -> String {
@@ -379,17 +302,6 @@ class Config: ObservableObject {
             if let dataSources = try self.decodeObject(for: .dataSources) as [DataSourceInstance.Details]? {
                 settings.dataSources = dataSources
             }
-
-            // Migrate the privacy image.
-            // TODO: Extract privacy image generation and management to a separate utility #533
-            //       https://github.com/inseven/statuspanel/issues/533
-            let fileManager = FileManager.default
-            let url = try fileManager.documentsUrl().appendingPathComponent(Self.privacyImageFilename)
-            let deviceUrl = try fileManager.documentsUrl().appendingPathComponent("\(deviceId).png")
-            if fileManager.fileExists(at: url) && !fileManager.fileExists(at: deviceUrl) {
-                try fileManager.copyItem(at: url, to: deviceUrl)
-            }
-
             return settings
         }
         return try JSONDecoder().decode(DeviceSettings.self, from: data as Data)

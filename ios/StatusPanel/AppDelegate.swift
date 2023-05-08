@@ -45,13 +45,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         application.registerForRemoteNotifications()
-
-        do {
-            try config.migrate()
-        } catch {
-            print("Failed to migrate settings with error \(error)")
-        }
-
         window = UIWindow()
         window?.rootViewController = UIHostingController(rootView: ContentView(applicationModel: applicationModel,
                                                                                config: config,

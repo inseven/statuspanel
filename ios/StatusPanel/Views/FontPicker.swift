@@ -37,7 +37,7 @@ struct FontPicker: View {
                         dismiss()
                     } label: {
                         HStack {
-                            FontView(font: font.configName, text: font.humanReadableName, color: .primary)
+                            FontView(font.humanReadableName, font: font.configName)
                                 .tag(font.configName)
                             Spacer()
                             if font.configName == selection {
@@ -67,7 +67,7 @@ struct FontPicker: View {
             FontList(title: title, selection: $selection)
         } label: {
             LabeledContent(title) {
-                FontView(font: selection, text: Fonts.font(named: selection).humanReadableName, color: .secondary)
+                FontView(Fonts.font(named: selection).humanReadableName, font: selection, color: .secondary)
                     .id(selection)
             }
         }
