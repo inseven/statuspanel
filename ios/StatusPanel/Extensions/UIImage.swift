@@ -107,14 +107,43 @@ extension UIImage: Transferable {
         return resultImage
     }
 
-    func scale(to size: CGSize, grayscale: Bool) -> UIImage? {
+    func scale(to size: CGSize, grayscale: Bool, contentMode: ContentMode) -> UIImage? {
         guard let cgImage = self.cgImage else {
             return nil
         }
+
+        let ratio = self.size.width / self.size.height
+        let outputRatio = size.width / size.height
+
+        // Determine the correct scale key.
+        let scale: CGFloat
+        switch contentMode {
+        case .fit:
+            if ratio > outputRatio {
+                scale = size.width / self.size.width
+            } else {
+                scale = size.height / self.size.height
+            }
+        case .fill:
+            if ratio > outputRatio {
+                scale = size.height / self.size.height
+            } else {
+                scale = size.width / self.size.width
+            }
+        case .center:
+            scale = 1.0
+        }
+
+        let scaledSize = CGSize(width: self.size.width * scale, height: self.size.height * scale)
+
         var image = CIImage(cgImage: cgImage)
             .applyingFilter("CILanczosScaleTransform", parameters: [
                 kCIInputAspectRatioKey: 1.0,
-                kCIInputScaleKey: size.width / self.size.width,
+                kCIInputScaleKey: scale,
+            ])
+            .applyingFilter("CIAffineTransform", parameters: [
+                kCIInputTransformKey: CGAffineTransformMakeTranslation(-(scaledSize.width - size.width) / 2,
+                                                                       -(scaledSize.height - size.height) / 2)
             ])
         if grayscale {
             image = image

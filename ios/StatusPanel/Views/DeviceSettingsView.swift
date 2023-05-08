@@ -90,22 +90,28 @@ struct DeviceSettingsView: View {
                              font: deviceModel.deviceSettings.bodyFont,
                              color: .secondary,
                              redactMode: .redactWords)
-                        .id("redact-words-\(deviceModel.deviceSettings.bodyFont)")
+                    .id("redact-words-\(deviceModel.deviceSettings.bodyFont)")
                     .centerContent()
                 case .customImage:
-                    VStack {
-                        PrivacyImagePicker(image: $deviceModel.deviceSettings.privacyImage) {
-                            if let privacyImageURL = deviceModel.deviceSettings.privacyImageURL {
-                                AsyncImage(url: privacyImageURL) { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                } placeholder: {
-                                    ProgressView()
-                                }
-                            } else {
-                                Text("Choose Image")
+                    Picker("Display", selection: $deviceModel.deviceSettings.privacyImageContentMode) {
+                        Text("Fill Screen")
+                            .tag(ContentMode.fill)
+                        Text("Fit to Screen")
+                            .tag(ContentMode.fit)
+                        Text("Center")
+                            .tag(ContentMode.center)
+                    }
+                    PrivacyImagePicker(image: $deviceModel.deviceSettings.privacyImage) {
+                        if let privacyImageURL = deviceModel.deviceSettings.privacyImageURL {
+                            AsyncImage(url: privacyImageURL) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                            } placeholder: {
+                                ProgressView()
                             }
+                        } else {
+                            Text("Choose Image")
                         }
                     }
                 }

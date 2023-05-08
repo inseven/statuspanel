@@ -215,13 +215,17 @@ struct PixelRenderer: Renderer {
             }
 
             if device.isFullColor {
-                if let image = privacyImage.scale(to: device.size, grayscale: false) {
+                if let image = privacyImage.scale(to: device.size,
+                                                  grayscale: false,
+                                                  contentMode: settings.privacyImageContentMode) {
                     return image
                 }
                 print("Failed to scale privacy image.")
                 return device.blankImage()
             } else {
-                if let image = Panel.privacyImage(from: privacyImage, size: device.size) {
+                if let image = Panel.privacyImage(from: privacyImage,
+                                                  size: device.size,
+                                                  contentMode: settings.privacyImageContentMode) {
                     return image
                 }
                 print("Failed to generate privacy image.")
