@@ -33,6 +33,7 @@ struct DeviceSettings: Codable {
         case maxLines
         case privacyMode
         case privacyImage
+        case privacyImageContentMode
         case updateTime
         case titleFont
         case bodyFont
@@ -47,6 +48,7 @@ struct DeviceSettings: Codable {
     var maxLines: Int = 0
     var privacyMode: Config.PrivacyMode = .redactLines
     var privacyImage: String?
+    var privacyImageContentMode: ContentMode = .fill
     var updateTime: Date = Date(timeIntervalSinceReferenceDate: Self.defaultUpdateTime)
     var titleFont: String = Fonts.FontName.chiKareGo2
     var bodyFont: String =  Fonts.FontName.unifont16
@@ -86,6 +88,9 @@ struct DeviceSettings: Codable {
         if container.contains(.privacyImage) {
             privacyImage = try container.decode(String.self, forKey: .privacyImage)
         }
+        if container.contains(.privacyImageContentMode) {
+            privacyImageContentMode = try container.decode(ContentMode.self, forKey: .privacyImageContentMode)
+        }
         updateTime = Date(timeIntervalSinceReferenceDate: try container.decode(TimeInterval.self, forKey: .updateTime))
         titleFont = try container.decode(String.self, forKey: .titleFont)
         bodyFont = try container.decode(String.self, forKey: .bodyFont)
@@ -104,6 +109,7 @@ struct DeviceSettings: Codable {
         if let privacyImage {
             try container.encode(privacyImage, forKey: .privacyImage)
         }
+        try container.encode(privacyImageContentMode, forKey: .privacyImageContentMode)
         try container.encode(updateTime.timeIntervalSinceReferenceDate, forKey: .updateTime)
         try container.encode(titleFont, forKey: .titleFont)
         try container.encode(bodyFont, forKey: .bodyFont)

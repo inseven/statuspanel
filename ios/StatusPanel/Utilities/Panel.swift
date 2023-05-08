@@ -28,10 +28,10 @@ class Panel {
         case png
     }
 
-    static func privacyImage(from image: UIImage, size: CGSize) -> UIImage? {
+    static func privacyImage(from image: UIImage, size: CGSize, contentMode: ContentMode) -> UIImage? {
         guard let source = image
             .normalizeOrientation()?
-            .scale(to: size, grayscale: true)?
+            .scale(to: size, grayscale: true, contentMode: contentMode)?
             .atkinsonDither()
         else {
             return nil
