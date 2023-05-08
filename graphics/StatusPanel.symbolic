@@ -1,0 +1,34 @@
+{
+  "symbol" : {
+    "name" : "calendar_month",
+    "variant" : "default",
+    "family" : "material-icons"
+  },
+  "iconScale" : 0.82655056808425964,
+  "topColor" : {
+    "red" : 0.011124921962618828,
+    "alpha" : 1,
+    "blue" : 0.87942177057266235,
+    "green" : 1
+  },
+  "id" : "24670896-9CE6-40DD-86CB-111B3E0DEB8D",
+  "symbolColor" : {
+    "red" : 0,
+    "alpha" : 1,
+    "blue" : 0,
+    "green" : 0
+  },
+  "iconOffset" : [
+    0,
+    0
+  ],
+  "shadowOpacity" : 0.31671549479166666,
+  "shadowHeight" : 0.15080859375,
+  "bottomColor" : {
+    "red" : 0.011124921962618828,
+    "alpha" : 1,
+    "blue" : 0.87942177057266235,
+    "green" : 1
+  },
+  "version" : 1
+}

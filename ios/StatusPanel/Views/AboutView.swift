@@ -48,6 +48,7 @@ struct AboutView: View {
             }
             LicenseGroup("Licenses", includeDiligenceLicense: true) {
                 License(name: "Binding+mappedToBool", author: "Joseph Duffy", filename: "Binding+mappedToBool.txt")
+                License(name: "Material Icons", author: "Google", filename: "Material-Icons.txt")
                 License(name: "StatusPanel", author: "Jason Morley, Tom Sutcliffe", filename: "StatusPanel.txt")
                 License(name: "Swift-Sodium", author: "Frank Denis", filename: "Swift-Sodium.txt")
             }
