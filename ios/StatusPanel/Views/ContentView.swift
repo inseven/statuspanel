@@ -74,7 +74,7 @@ struct ContentView: View {
                 case .settings:
                     SettingsView(config: config, dataSourceController: dataSourceController)
                 case .add:
-                    AddDeviceView(applicationModel: applicationModel)
+                    AddDeviceView(config: config, applicationModel: applicationModel)
                 }
             }
         } detail: {

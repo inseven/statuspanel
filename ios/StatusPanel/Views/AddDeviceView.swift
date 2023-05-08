@@ -58,6 +58,7 @@ struct AddDeviceView: View {
 
     @Environment(\.dismiss) var dismiss
 
+    var config: Config
     var applicationModel: ApplicationModel
 
     @StateObject var model = Model()
@@ -65,7 +66,7 @@ struct AddDeviceView: View {
 
     var body: some View {
         NavigationStack(path: $pages) {
-            IntroductionView(applicationModel: applicationModel) {
+            IntroductionView(config: config, applicationModel: applicationModel) {
                 pages.append(.scan)
             } onAddDemoDevice: {
                 pages.append(.demoDevice)

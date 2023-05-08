@@ -48,8 +48,8 @@ struct SettingsView: View {
                         }
                     }
                 }
-                Section("Debug") {
-                    Toggle("Show Debug Information", isOn: $config.showDebugInformation)
+                Section("Developer") {
+                    Toggle("Show Developer Tools", isOn: $config.showDeveloperTools)
                 }
                 Button("About StatusPanel...") {
                     sheet = .about

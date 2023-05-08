@@ -24,6 +24,7 @@ struct IntroductionView: View {
 
     @Environment(\.dismiss) var dismiss
 
+    @ObservedObject var config: Config
     @ObservedObject var applicationModel: ApplicationModel
 
     let onScanQRCode: () -> Void
@@ -31,7 +32,11 @@ struct IntroductionView: View {
 
     @State var scanQRCode: Bool = false
 
-    init(applicationModel: ApplicationModel, completion: @escaping () -> Void, onAddDemoDevice: @escaping () -> Void) {
+    init(config: Config,
+         applicationModel: ApplicationModel,
+         completion: @escaping () -> Void,
+         onAddDemoDevice: @escaping () -> Void) {
+        self.config = config
         self.applicationModel = applicationModel
         self.onScanQRCode = completion
         self.onAddDemoDevice = onAddDemoDevice
@@ -63,16 +68,16 @@ struct IntroductionView: View {
                         .centerContent()
                 }
                 .buttonStyle(.bordered)
-#if DEBUG
-                Button {
-                    dismiss()
-                    applicationModel.addFromClipboard()
-                } label: {
-                    Text("Add From Clipboard")
-                        .centerContent()
+                if config.showDeveloperTools {
+                    Button {
+                        dismiss()
+                        applicationModel.addFromClipboard()
+                    } label: {
+                        Text("Add From Clipboard")
+                            .centerContent()
+                    }
+                    .buttonStyle(.bordered)
                 }
-                .buttonStyle(.bordered)
-#endif
             }
             .controlSize(.large)
             .padding()

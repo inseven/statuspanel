@@ -18,39 +18,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import SwiftUI
 import UIKit
 
-class DataView {
+extension UIImage: Transferable {
 
-    let pointer: UnsafeMutableRawPointer
-    let bytesPerPixel: Int
-    let height: Int
-    let width: Int
-
-    init(pointer: UnsafeMutableRawPointer, bytesPerPixel: Int, width: Int, height: Int) {
-        self.pointer = pointer
-        self.bytesPerPixel = bytesPerPixel
-        self.width = width
-        self.height = height
-    }
-
-    func map(transform: (UInt8, UInt8, UInt8) -> (UInt8, UInt8, UInt8)) {
-        for index in 0 ..< width * height {
-            let offset = index * bytesPerPixel
-            let red = pointer.load(fromByteOffset: offset, as: UInt8.self)
-            let green = pointer.load(fromByteOffset: offset + 1, as: UInt8.self)
-            let blue = pointer.load(fromByteOffset: offset + 2, as: UInt8.self)
-
-            let (newRed, newGreen, newBlue) = transform(red, green, blue)
-            pointer.storeBytes(of: newRed, toByteOffset: offset, as: UInt8.self)
-            pointer.storeBytes(of: newGreen, toByteOffset: offset + 1, as: UInt8.self)
-            pointer.storeBytes(of: newBlue, toByteOffset: offset + 2, as: UInt8.self)
+    public static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(exportedContentType: .png) { image in
+            guard let data = image.pngData() else {
+                throw StatusPanelError.invalidImage
+            }
+            return data
         }
     }
-
-}
-
-extension UIImage {
 
     static func blankImage(size: CGSize, scale: CGFloat) -> UIImage {
         let format = UIGraphicsImageRendererFormat()
