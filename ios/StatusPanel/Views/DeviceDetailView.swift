@@ -125,7 +125,7 @@ struct DeviceDetailView: View {
                 }
                 Section {
                     ShareLink(items: deviceModel.images) { image in
-                        SharePreview(deviceModel.name, image: Image(uiImage: uiImage))
+                        SharePreview(deviceModel.name, image: Image(uiImage: image))
                     } label: {
                         Text("Share Previews")
                     }
