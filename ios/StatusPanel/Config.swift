@@ -322,7 +322,6 @@ class Config: ObservableObject {
 
     func settings(forDevice deviceId: String) throws -> DeviceSettings {
         dispatchPrecondition(condition: .onQueue(.main))
-        let key = Key.deviceSettings(deviceId)
         guard let data = object(for: .deviceSettings(deviceId)) as? Data else {
             var settings = DeviceSettings(deviceId: deviceId)
             settings.displayTwoColumns = !bool(for: .displaySingleColumn)
