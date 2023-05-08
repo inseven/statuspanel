@@ -53,6 +53,7 @@
 		D8808DFC2A04495300F57C9A /* WiFiProvisionerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8808DFB2A04495300F57C9A /* WiFiProvisionerView.swift */; };
 		D89104852707B9A00020A2CF /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104842707B99F0020A2CF /* UIViewController.swift */; };
 		D89104872707BAD50020A2CF /* DataSourceInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89104862707BAD50020A2CF /* DataSourceInstance.swift */; };
+		D8967EC92A09A5EE0081B2D1 /* Material-Icons.txt in Resources */ = {isa = PBXBuildFile; fileRef = D8967EC82A09A5EE0081B2D1 /* Material-Icons.txt */; };
 		D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89CAF1021ABDDA200B4B314 /* Config.swift */; };
 		D89FF2372721037B0028EC16 /* ExternalOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89FF2362721037B0028EC16 /* ExternalOperationTests.swift */; };
 		D8A88DFF27A838D8000495AD /* StatusPanel.txt in Resources */ = {isa = PBXBuildFile; fileRef = D8A88DFE27A838D8000495AD /* StatusPanel.txt */; };
@@ -194,6 +195,7 @@
 		D8808DFB2A04495300F57C9A /* WiFiProvisionerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiProvisionerView.swift; sourceTree = "<group>"; };
 		D89104842707B99F0020A2CF /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		D89104862707BAD50020A2CF /* DataSourceInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceInstance.swift; sourceTree = "<group>"; };
+		D8967EC82A09A5EE0081B2D1 /* Material-Icons.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Material-Icons.txt"; sourceTree = "<group>"; };
 		D89CAF1021ABDDA200B4B314 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		D89FF2342721037B0028EC16 /* StatusPanelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StatusPanelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D89FF2362721037B0028EC16 /* ExternalOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalOperationTests.swift; sourceTree = "<group>"; };
@@ -447,6 +449,7 @@
 			children = (
 				D862BF40271B9B620086BE48 /* Binding+mappedToBool.txt */,
 				D87439042731006800B676A5 /* Diligence.txt */,
+				D8967EC82A09A5EE0081B2D1 /* Material-Icons.txt */,
 				D8A88DFE27A838D8000495AD /* StatusPanel.txt */,
 				D862BF3E271B99700086BE48 /* Swift-Sodium.txt */,
 			);
@@ -718,6 +721,7 @@
 				D8C20D1E271C2A6200F3F22A /* Localizable.strings in Resources */,
 				D81665582727B7D1005BDA9E /* Localizable.stringsdict in Resources */,
 				DBCA98842143E2920084B710 /* Assets.xcassets in Resources */,
+				D8967EC92A09A5EE0081B2D1 /* Material-Icons.txt in Resources */,
 				D87439052731006800B676A5 /* Diligence.txt in Resources */,
 				D8DAED7026E3EAA90002F388 /* configuration.json in Resources */,
 				D862BF3F271B99700086BE48 /* Swift-Sodium.txt in Resources */,
