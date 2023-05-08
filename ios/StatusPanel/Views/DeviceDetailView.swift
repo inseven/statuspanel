@@ -114,10 +114,21 @@ struct DeviceDetailView: View {
                     sheet = .settings
                 }
             }
-            if config.showDebugInformation {
+            if config.showDeveloperTools {
                 Section {
-                    LabeledContent("Type", value: deviceModel.device.kind.description)
                     LabeledContent("Identifier", value: deviceModel.device.id)
+                    LabeledContent("Type", value: deviceModel.device.kind.description)
+                    LabeledContent("Size") {
+                        let size = deviceModel.device.size
+                        Text(String(format: "%.0f x %.0f", size.width, size.height))
+                    }
+                }
+                Section {
+                    ShareLink(items: deviceModel.images) { image in
+                        SharePreview(deviceModel.name, image: Image(uiImage: image))
+                    } label: {
+                        Text("Share Previews")
+                    }
                 }
             }
             Section {
