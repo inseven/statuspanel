@@ -18,18 +18,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import SwiftUI
+import UIKit
 
-struct PrivacyModeView: UIViewControllerRepresentable {
+class PrivacyImageManager {
 
-    let config: Config
-    let deviceModel: DeviceModel
-
-    func makeUIViewController(context: Context) -> some UIViewController {
-        return PrivacyModeController(config: config, deviceModel: deviceModel)
+    static func privacyImageURL(_ filename: String) throws -> URL {
+        return try FileManager.default.documentsUrl().appendingPathComponent(filename)
     }
 
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+    static func privacyImage(filename: String) throws -> UIImage? {
+        let url = try privacyImageURL(filename)
+        return UIImage(contentsOfFile: url.path)
+    }
+
+    static func writePrivacyImage(_ data: Data) throws -> String {
+        guard
+            let rawImage = UIImage(data: data),
+            let image = rawImage.normalizeOrientation()
+        else {
+            throw StatusPanelError.invalidImage
+        }
+        let filename = "privacy-image-\(UUID().uuidString).png"
+        let url = try privacyImageURL(filename)
+        guard let data = image.pngData() else {
+            throw StatusPanelError.invalidImage
+        }
+        try data.write(to: url, options: [.atomic])
+        return filename
+    }
+
+    static func removePrivacyImage(_ filename: String) throws {
+        let url = try privacyImageURL(filename)
+        try FileManager.default.removeItem(at: url)
     }
 
 }

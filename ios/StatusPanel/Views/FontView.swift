@@ -22,16 +22,25 @@ import SwiftUI
 
 struct FontView: UIViewRepresentable {
 
-    let font: String
     let text: String
+    let font: String
 
     // N.B. Unfortunately SwiftUI doesn't seem to expose the foreground color (as set by the `.foregroundColor` view
     // modifier, so it's necessary to make it explicit. Hopefully this can be replaced with an officail API in the
     // future.
     let color: Color
 
+    let redactMode: RedactMode
+
+    init(_ text: String, font: String, color: Color = .primary, redactMode: RedactMode = .none) {
+        self.text = text
+        self.font = font
+        self.color = color
+        self.redactMode = redactMode
+    }
+
     func makeUIView(context: Context) -> UILabel {
-        let label = UILabel.getLabel(frame: .zero, font: font, style: .text)
+        let label = UILabel.getLabel(frame: .zero, font: font, style: .text, redactMode: redactMode)
         label.text = text
         label.textColor = UIColor(color)
         return label

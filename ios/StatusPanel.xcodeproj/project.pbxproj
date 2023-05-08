@@ -20,6 +20,8 @@
 		D825A55D26F6811400B85206 /* DummyDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D825A55C26F6811400B85206 /* DummyDataSource.swift */; };
 		D8293A0C26F787D3008CE13B /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8293A0B26F787D3008CE13B /* URL.swift */; };
 		D835EC982471D811003E402E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D835EC972471D811003E402E /* NetworkExtension.framework */; };
+		D83672552A0947CF00778858 /* PrivacyImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83672542A0947CF00778858 /* PrivacyImagePicker.swift */; };
+		D83672572A094CDC00778858 /* PrivacyImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83672562A094CDC00778858 /* PrivacyImageManager.swift */; };
 		D8383EBC270FB8E20007EBB7 /* DayPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBB270FB8E20007EBB7 /* DayPicker.swift */; };
 		D8383EBE270FBA1B0007EBB7 /* DataSourceSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBD270FBA1B0007EBB7 /* DataSourceSettingsStore.swift */; };
 		D8383EC0270FC50A0007EBB7 /* FormatEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8383EBF270FC50A0007EBB7 /* FormatEditor.swift */; };
@@ -88,7 +90,6 @@
 		D8EBFCCA2720A6F8000E120F /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EBFCC92720A6F8000E120F /* Network.swift */; };
 		D8ED8AC829FDC484007FDE06 /* EKEventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */; };
 		D8ED8ACA29FDCBC5007FDE06 /* DeviceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8AC929FDCBC5007FDE06 /* DeviceDetailView.swift */; };
-		D8ED8ACC29FDF2B7007FDE06 /* PrivacyModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */; };
 		D8ED8ACE29FE0D31007FDE06 /* FontPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8ACD29FE0D31007FDE06 /* FontPicker.swift */; };
 		D8ED8AD029FE0E75007FDE06 /* FontView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ED8ACF29FE0E75007FDE06 /* FontView.swift */; };
 		D8EED7F12630EF19009E2166 /* Sodium in Frameworks */ = {isa = PBXBuildFile; productRef = D8EED7F02630EF19009E2166 /* Sodium */; };
@@ -107,7 +108,6 @@
 		DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB62F33B224FCEBA00CA5E64 /* NationalRailSettingsController.swift */; };
 		DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB62F33D224FEA4400CA5E64 /* StationsList.swift */; };
 		DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */; };
-		DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */; };
 		DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB981489270887590029BA0A /* UnicodeExtensions.swift */; };
 		DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B35F26F5FA4600BC5FF0 /* BitmapFontCache.swift */; };
 		DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987C2143E2920084B710 /* AppDelegate.swift */; };
@@ -160,6 +160,8 @@
 		D825A55C26F6811400B85206 /* DummyDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyDataSource.swift; sourceTree = "<group>"; };
 		D8293A0B26F787D3008CE13B /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D835EC972471D811003E402E /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		D83672542A0947CF00778858 /* PrivacyImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyImagePicker.swift; sourceTree = "<group>"; };
+		D83672562A094CDC00778858 /* PrivacyImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyImageManager.swift; sourceTree = "<group>"; };
 		D8383EBB270FB8E20007EBB7 /* DayPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPicker.swift; sourceTree = "<group>"; };
 		D8383EBD270FBA1B0007EBB7 /* DataSourceSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceSettingsStore.swift; sourceTree = "<group>"; };
 		D8383EBF270FC50A0007EBB7 /* FormatEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatEditor.swift; sourceTree = "<group>"; };
@@ -233,7 +235,6 @@
 		D8EBFCC92720A6F8000E120F /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		D8ED8AC729FDC484007FDE06 /* EKEventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEventStore.swift; sourceTree = "<group>"; };
 		D8ED8AC929FDCBC5007FDE06 /* DeviceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailView.swift; sourceTree = "<group>"; };
-		D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyModeView.swift; sourceTree = "<group>"; };
 		D8ED8ACD29FE0D31007FDE06 /* FontPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPicker.swift; sourceTree = "<group>"; };
 		D8ED8ACF29FE0E75007FDE06 /* FontView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontView.swift; sourceTree = "<group>"; };
 		D8EED7EF2630EEFF009E2166 /* swift-sodium */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "swift-sodium"; sourceTree = "<group>"; };
@@ -254,7 +255,6 @@
 		DB62F33D224FEA4400CA5E64 /* StationsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationsList.swift; sourceTree = "<group>"; };
 		DB62F33F2258FD6100CA5E64 /* StatusPanel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatusPanel.entitlements; sourceTree = "<group>"; };
 		DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapFontLabel.swift; sourceTree = "<group>"; };
-		DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyModeController.swift; sourceTree = "<group>"; };
 		DB981489270887590029BA0A /* UnicodeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnicodeExtensions.swift; sourceTree = "<group>"; };
 		DBC3B35F26F5FA4600BC5FF0 /* BitmapFontCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapFontCache.swift; sourceTree = "<group>"; };
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -315,7 +315,7 @@
 				D8ED8ACD29FE0D31007FDE06 /* FontPicker.swift */,
 				D8ED8ACF29FE0E75007FDE06 /* FontView.swift */,
 				D866CA202A02EA03007819CD /* IntroductionView.swift */,
-				D8ED8ACB29FDF2B7007FDE06 /* PrivacyModeView.swift */,
+				D83672542A0947CF00778858 /* PrivacyImagePicker.swift */,
 				D8808DF92A0440DD00F57C9A /* QRCodeView.swift */,
 				D866CA182A01AAE3007819CD /* SettingsView.swift */,
 				D8808DFB2A04495300F57C9A /* WiFiProvisionerView.swift */,
@@ -340,6 +340,7 @@
 				D81DA7BF2712953D0052D32C /* Localization.swift */,
 				D8EBFCC92720A6F8000E120F /* Network.swift */,
 				D8CC37B02717887A00938C5D /* Panel.swift */,
+				D83672562A094CDC00778858 /* PrivacyImageManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -412,7 +413,6 @@
 		D842A401265BE916009C1156 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				DB8AA5EF249DFED100431F63 /* PrivacyModeController.swift */,
 				D8F57FE9271A009200847C67 /* QRCodeViewController.swift */,
 				DBF15BC62471A61E004AA972 /* WifiProvisionerViewController.swift */,
 			);
@@ -753,7 +753,6 @@
 				D8DD98FF271EF8CD004088CD /* ColoredCheckbox.swift in Sources */,
 				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
 				D8383EBC270FB8E20007EBB7 /* DayPicker.swift in Sources */,
-				DB8AA5F0249DFED100431F63 /* PrivacyModeController.swift in Sources */,
 				D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
 				D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */,
@@ -765,6 +764,7 @@
 				D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */,
 				D8DCA7D629CBEA92002010A5 /* LabelStyle.swift in Sources */,
 				D859FC362A08225500A221E6 /* AnyDataSourceSettings.swift in Sources */,
+				D83672572A094CDC00778858 /* PrivacyImageManager.swift in Sources */,
 				D8E975422A0530550064A317 /* DeviceSettingsView.swift in Sources */,
 				D8E6D673271FBD3300AB6452 /* Color.swift in Sources */,
 				D8DCA7DE29CBEE4D002010A5 /* UILabel.swift in Sources */,
@@ -783,13 +783,13 @@
 				D8808DFA2A0440DD00F57C9A /* QRCodeView.swift in Sources */,
 				D8FD46092A03509500E5E97C /* DeviceModel.swift in Sources */,
 				D81CEBBA2906B31300E4B032 /* WeatherDataSource.swift in Sources */,
+				D83672552A0947CF00778858 /* PrivacyImagePicker.swift in Sources */,
 				D866CA192A01AAE3007819CD /* SettingsView.swift in Sources */,
 				D89CAF1621ABDDA200B4B314 /* Config.swift in Sources */,
 				D80380AB23E9B6D2002606C7 /* Service.swift in Sources */,
 				D89104852707B9A00020A2CF /* UIViewController.swift in Sources */,
 				D8C20D23271C6C1500F3F22A /* EKCalendar.swift in Sources */,
 				D8FD46072A03501E00E5E97C /* ApplicationModel.swift in Sources */,
-				D8ED8ACC29FDF2B7007FDE06 /* PrivacyModeView.swift in Sources */,
 				D8D98E432493019A00F853CA /* NetworkProvisioner.swift in Sources */,
 				D866CA172A019536007819CD /* Sequence.swift in Sources */,
 				D8383EBE270FBA1B0007EBB7 /* DataSourceSettingsStore.swift in Sources */,

@@ -67,12 +67,47 @@ struct DeviceSettingsView: View {
                     Text(LocalizedString("maximum_lines_unlimited_label"))
                         .tag(0)
                 }
-                NavigationLink {
-                    PrivacyModeView(config: config, deviceModel: deviceModel)
-                        .edgesIgnoringSafeArea(.all)
-                        .navigationTitle(LocalizedString("privacy_mode_title"))
-                } label: {
-                    LabeledContent("Privacy Mode", value: Localized(deviceModel.deviceSettings.privacyMode))
+            }
+            Section("Privacy") {
+                Picker("Privacy Mode", selection: $deviceModel.deviceSettings.privacyMode) {
+                    Text(Localized(Config.PrivacyMode.redactLines))
+                        .tag(Config.PrivacyMode.redactLines)
+                    Text(Localized(Config.PrivacyMode.redactWords))
+                        .tag(Config.PrivacyMode.redactWords)
+                    Text(Localized(Config.PrivacyMode.customImage))
+                        .tag(Config.PrivacyMode.customImage)
+                }
+                switch deviceModel.deviceSettings.privacyMode {
+                case .redactLines:
+                    FontView("Redact text good",
+                             font: deviceModel.deviceSettings.bodyFont,
+                             color: .secondary,
+                             redactMode: .redactLines)
+                    .id("redact-lines-\(deviceModel.deviceSettings.bodyFont)")
+                    .centerContent()
+                case .redactWords:
+                    FontView("Redact text good",
+                             font: deviceModel.deviceSettings.bodyFont,
+                             color: .secondary,
+                             redactMode: .redactWords)
+                        .id("redact-words-\(deviceModel.deviceSettings.bodyFont)")
+                    .centerContent()
+                case .customImage:
+                    VStack {
+                        PrivacyImagePicker(image: $deviceModel.deviceSettings.privacyImage) {
+                            if let privacyImageURL = deviceModel.deviceSettings.privacyImageURL {
+                                AsyncImage(url: privacyImageURL) { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                } placeholder: {
+                                    ProgressView()
+                                }
+                            } else {
+                                Text("Choose Image")
+                            }
+                        }
+                    }
                 }
             }
             Section("Schedule") {

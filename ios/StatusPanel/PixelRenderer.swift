@@ -208,7 +208,9 @@ struct PixelRenderer: Renderer {
             return renderImage(data: data, config: config, device: device, settings: settings, redact: true)
         case .customImage:
 
-            guard let privacyImage = try? settings.privacyImage() else {
+            guard let privacyImageFilename = settings.privacyImage,
+                  let privacyImage = try? PrivacyImageManager.privacyImage(filename: privacyImageFilename)
+            else {
                 return device.blankImage()
             }
 

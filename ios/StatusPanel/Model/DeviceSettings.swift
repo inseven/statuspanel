@@ -32,6 +32,7 @@ struct DeviceSettings: Codable {
         case darkMode
         case maxLines
         case privacyMode
+        case privacyImage
         case updateTime
         case titleFont
         case bodyFont
@@ -45,6 +46,7 @@ struct DeviceSettings: Codable {
     var darkMode: Config.DarkMode = .off
     var maxLines: Int = 0
     var privacyMode: Config.PrivacyMode = .redactLines
+    var privacyImage: String?
     var updateTime: Date = Date(timeIntervalSinceReferenceDate: Self.defaultUpdateTime)
     var titleFont: String = Fonts.FontName.chiKareGo2
     var bodyFont: String =  Fonts.FontName.unifont16
@@ -61,6 +63,13 @@ struct DeviceSettings: Codable {
         }
     }
 
+    var privacyImageURL: URL? {
+        guard let privacyImage else {
+            return nil
+        }
+        return try? PrivacyImageManager.privacyImageURL(privacyImage)
+    }
+
     init(deviceId: String) {
         self.deviceId = deviceId
     }
@@ -74,6 +83,9 @@ struct DeviceSettings: Codable {
         darkMode = try container.decode(Config.DarkMode.self, forKey: .darkMode)
         maxLines = try container.decode(Int.self, forKey: .maxLines)
         privacyMode = try container.decode(Config.PrivacyMode.self, forKey: .privacyMode)
+        if container.contains(.privacyImage) {
+            privacyImage = try container.decode(String.self, forKey: .privacyImage)
+        }
         updateTime = Date(timeIntervalSinceReferenceDate: try container.decode(TimeInterval.self, forKey: .updateTime))
         titleFont = try container.decode(String.self, forKey: .titleFont)
         bodyFont = try container.decode(String.self, forKey: .bodyFont)
@@ -89,33 +101,13 @@ struct DeviceSettings: Codable {
         try container.encode(darkMode, forKey: .darkMode)
         try container.encode(maxLines, forKey: .maxLines)
         try container.encode(privacyMode, forKey: .privacyMode)
+        if let privacyImage {
+            try container.encode(privacyImage, forKey: .privacyImage)
+        }
         try container.encode(updateTime.timeIntervalSinceReferenceDate, forKey: .updateTime)
         try container.encode(titleFont, forKey: .titleFont)
         try container.encode(bodyFont, forKey: .bodyFont)
         try container.encode(dataSources, forKey: .dataSources)
-    }
-
-    // TODO: Extract privacy image generation and management to a separate utility #533
-    //       https://github.com/inseven/statuspanel/issues/533
-
-    func privacyImage() throws -> UIImage? {
-        let url = try FileManager.default.documentsUrl().appendingPathComponent("privacy-image-\(deviceId).png")
-        return UIImage(contentsOfFile: url.path)
-    }
-
-    func setPrivacyImage(_ image: UIImage?) throws {
-        let fileManager = FileManager.default
-        let url = try fileManager.documentsUrl().appendingPathComponent("privacy-image-\(deviceId).png")
-        guard let image = image else {
-            if fileManager.fileExists(at: url) {
-                try fileManager.removeItem(at: url)
-            }
-            return
-        }
-        guard let data = image.pngData() else {
-            throw StatusPanelError.invalidImage
-        }
-        try data.write(to: url, options: [.atomic])
     }
 
     // The wake time relative to start of day GMT. If waketime is 6*60*60 then this returns the offset from midnight GMT
