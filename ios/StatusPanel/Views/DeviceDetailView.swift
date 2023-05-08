@@ -123,13 +123,11 @@ struct DeviceDetailView: View {
                         Text(String(format: "%.0f x %.0f", size.width, size.height))
                     }
                 }
-                if let uiImage = deviceModel.images.first {
-                    Section {
-                        ShareLink(items: deviceModel.images) { image in
-                            SharePreview(deviceModel.name, image: Image(uiImage: uiImage))
-                        } label: {
-                            Text("Share Previews")
-                        }
+                Section {
+                    ShareLink(items: deviceModel.images) { image in
+                        SharePreview(deviceModel.name, image: Image(uiImage: uiImage))
+                    } label: {
+                        Text("Share Previews")
                     }
                 }
             }
