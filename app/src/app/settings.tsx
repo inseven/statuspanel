@@ -16,8 +16,8 @@ export default function Page() {
 			<Stack.Screen
 				options={{
 					title: "Settings",
-					// headerTransparent: true,
-					// headerBlurEffect: "systemUltraThinMaterial",
+					headerTransparent: true,
+					headerBlurEffect: "systemMaterial",
 					headerRight: () => (
 						<Button
 							title="Done"
