@@ -85,7 +85,7 @@ class Config: ObservableObject {
                 }
                 self = .settings(uuid)
             case _ where rawValue.starts(with: Self.deviceSettingsPrefix):
-                let deviceId = String(rawValue.dropFirst(Self.settingsPrefix.count))
+                let deviceId = String(rawValue.dropFirst(Self.deviceSettingsPrefix.count))
                 self = .deviceSettings(deviceId)
             default:
                 return nil
@@ -117,9 +117,9 @@ class Config: ObservableObject {
             case .dataSources:
                 return "dataSources"
             case .settings(let uuid):
-                return "Settings-\(uuid.uuidString)"
+                return "\(Self.settingsPrefix)\(uuid.uuidString)"
             case .deviceSettings(let deviceId):
-                return "Settings-\(deviceId)"
+                return "\(Self.deviceSettingsPrefix)\(deviceId)"
             case .showDeveloperTools:
                 return "showDeveloperTools"
             }
@@ -132,6 +132,39 @@ class Config: ObservableObject {
         devices = Self.loadDevices()
         lastBackgroundUpdate = object(for: .lastBackgroundUpdate) as? Date
         showDeveloperTools = bool(for: .showDeveloperTools)
+
+        // Migrate the valid device keys.
+        // This addresses a legacy bug where device settings were incorrectly prefixed with 'Settings-' not
+        // 'DeviceSettings-'.
+        let legacyDeviceKeys = devices.map { "Settings-\($0.id)" }
+        for legacyKey in legacyDeviceKeys {
+            guard let data = userDefaults.object(forKey: legacyKey) as? Data else {
+                continue
+            }
+            let newKey = "Device" + legacyKey
+            print("Migrating legacy device key from '\(legacyKey)' to '\(newKey)'...")
+            userDefaults.set(data, forKey: newKey)
+            userDefaults.removeObject(forKey: legacyKey)
+        }
+
+        // Determine the valid device and data source settings identifiers.
+        let deviceSettingsKeys = devices.map { Key.deviceSettings($0.id).rawValue }
+        let dataSourceSettingsKeys = devices
+            .map { (try? settings(forDevice: $0.id).dataSources.map { Key.settings($0.id).rawValue }) ?? [] }
+            .reduce([], +)
+        let settingsKeys = Set(deviceSettingsKeys + dataSourceSettingsKeys)
+
+        // Clean up orphaned settings.
+        for key in userDefaults.dictionaryRepresentation().keys {
+            guard
+                key.starts(with: Key.settingsPrefix) || key.starts(with: Key.deviceSettingsPrefix),
+                  !settingsKeys.contains(key)
+            else {
+                continue
+            }
+            print("Cleaning up '\(key)'...")
+            userDefaults.removeObject(forKey: key)
+        }
     }
 
     private func object(for key: Key) -> Any? {
