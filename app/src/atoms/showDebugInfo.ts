@@ -1,5 +1,3 @@
-import { atom } from "jotai"
+import { atomWithAsyncStorage } from "./atomWithAsyncStorage"
 
-export const showDebugInfoAtom = atom(false)
-
-/////persist
+export const showDebugInfoAtom = atomWithAsyncStorage("show-debug-info", false)
