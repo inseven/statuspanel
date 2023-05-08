@@ -116,8 +116,8 @@ struct DeviceDetailView: View {
             }
             if config.showDeveloperTools {
                 Section {
-                    LabeledContent("Type", value: deviceModel.device.kind.description)
                     LabeledContent("Identifier", value: deviceModel.device.id)
+                    LabeledContent("Type", value: deviceModel.device.kind.description)
                     LabeledContent("Size") {
                         let size = deviceModel.device.size
                         Text(String(format: "%.0f x %.0f", size.width, size.height))
