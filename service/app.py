@@ -35,6 +35,7 @@ collections.MutableMapping = collections.abc.MutableMapping
 import psycopg2
 import werkzeug
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, send_from_directory, request, redirect, abort, jsonify, g, make_response
 
 import collections.abc
@@ -73,7 +74,7 @@ app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
 
 # Create a scheduler to run periodic tasks like database clean up and device notification.
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=task.run_periodic_tasks, trigger="interval", seconds=60 * 60)  # Runs every hour.
+scheduler.add_job(func=task.run_periodic_tasks, trigger="interval", seconds=5) #60 * 60)  # Runs every hour.
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
