@@ -18,6 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import contextlib
 import datetime
 import io
 import os
@@ -44,37 +45,6 @@ import app
 import database
 
 
-class DevelopmentClient(object):
-
-    def __init__(self):
-        self.container = docker.PostgresContainer()
-        self.container.run()
-        os.environ["DATABASE_URL"] = self.container.url
-        self.client = app.app.test_client()
-
-    def get(self, url, *args, **kwargs):
-        response = self.client.get(url, *args, **kwargs)
-        response.content = response.data
-        return response
-
-    def post(self, url, *args, **kwargs):
-        response = self.client.post(url, *args, **kwargs)
-        response.content = response.data
-        return response
-
-    def upload(self, url, data):
-        return self.post(url,
-                         content_type="multipart/form-data",
-                         buffered=True,
-                         follow_redirects=False,
-                         data={
-                             'file': (io.BytesIO(data), "example.bin")
-                         })
-
-    def close(self):
-        self.container.stop()
-
-
 class RemoteClient(object):
 
     def __init__(self, base_url):
@@ -96,13 +66,35 @@ class RemoteClient(object):
         self.session.close()
 
 
+@contextlib.contextmanager
+def chdir(path):
+    pwd = os.getcwd()
+    try:
+        os.chdir(path)
+        yield path
+    except:
+        os.chdir(pwd)
+
+
 class TestAPI(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        pass
+        with chdir(path.SERVICE_DIR):
+            subprocess.check_call(["docker", "compose",
+                                   "-f", "docker-compose.yaml",
+                                   "-f", "docker-compose-test.yaml",
+                                   "up", "-d",
+                                   "--build"])
+
+    @classmethod
+    def tearDownClass(cls):
+        with chdir(path.SERVICE_DIR):
+            subprocess.check_call(["docker", "compose", "stop"])
+
     def setUp(self):
-        if "TEST_BASE_URL" in os.environ:
-            self.client = RemoteClient(os.environ["TEST_BASE_URL"])
-        else:
-            self.client = DevelopmentClient()
+        self.client = RemoteClient(os.environ["TEST_BASE_URL"])
 
     def tearDown(self):
         self.client.close()

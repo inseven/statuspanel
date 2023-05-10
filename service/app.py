@@ -36,6 +36,12 @@ import werkzeug
 
 from flask import Flask, send_from_directory, request, redirect, abort, jsonify, g, make_response
 
+import collections.abc
+collections.Iterable = collections.abc.Iterable
+collections.Mapping = collections.abc.Mapping
+collections.MutableSet = collections.abc.MutableSet
+collections.MutableMapping = collections.abc.MutableMapping
+
 import apns
 import database
 

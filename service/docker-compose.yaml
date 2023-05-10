@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  web:
+    build: web
+    command: gunicorn --bind 0.0.0.0:5000 --pythonpath . app:app
+    working_dir: /usr/src/app/
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - 5000:5000
+    environment:
+      - DATABASE_URL=postgresql://hello_flask:hello_flask@database:5432/hello_flask_dev
+    # env_file:
+    #   - ./.env.dev
+    depends_on:
+      - database
+  database:
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=hello_flask
+      - POSTGRES_PASSWORD=hello_flask
+      - POSTGRES_DB=hello_flask_dev
+
+volumes:
+  postgres_data:

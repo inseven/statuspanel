@@ -28,8 +28,14 @@ set -u
 SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
+TESTS_DIRECTORY="${ROOT_DIRECTORY}/service/tests"
 
-cd "$ROOT_DIRECTORY"
+cd "$TESTS_DIRECTORY"
 
+# Update the dependencies.
 pipenv sync
-pipenv run python -m unittest discover --verbose --start-directory service/tests
+
+# Run the tests against the Docker container.
+export TEST_BASE_URL=http://localhost:5000
+export DATABASE_URL=postgresql://hello_flask:hello_flask@localhost:5432/hello_flask_dev
+pipenv run python -m unittest discover --verbose --start-directory .
