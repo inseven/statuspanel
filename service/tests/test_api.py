@@ -38,7 +38,7 @@ import requests
 import docker
 import path
 
-sys.path.append(path.SERVICE_DIR)
+sys.path.append(path.WEB_SERVICE_DIR)
 
 import apns
 import database
