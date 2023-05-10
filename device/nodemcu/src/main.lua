@@ -338,8 +338,9 @@ if NeoPixelPin ~= nil then
     statusColours = {
         idle = neorgb(0, 0, 0), -- off
         hotspot = neorgb(0, 0, 255), -- blue
-        fetching = neorgb(0, 0, 255), -- blue
         goodWifiCreds = neorgb(0, 255, 0), -- green
+        fetching = neorgb(0, 0, 255), -- blue
+        decoding = neorgb(255, 0, 255), -- purple
         drawing = neorgb(255, 0, 255), -- purple
         unpairing = neorgb(255, 0, 0), -- red
     }
