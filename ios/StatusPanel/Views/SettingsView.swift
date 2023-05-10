@@ -36,13 +36,20 @@ struct SettingsView: View {
 
     @State var sheet: SheetType? = nil
 
+    var dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .short
+        dateFormatter.timeStyle = .short
+        return dateFormatter
+    }()
+
     var body: some View {
         NavigationView {
             Form {
                 Section("Status") {
                     LabeledContent(LocalizedString("settings_last_background_update_label")) {
                         if let lastUpdate = config.lastBackgroundUpdate {
-                            Text(lastUpdate, style: .time)
+                            Text(dateFormatter.string(from: lastUpdate))
                         } else {
                             Text(LocalizedString("settings_last_background_update_value_never"))
                         }
