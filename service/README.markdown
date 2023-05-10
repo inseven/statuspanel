@@ -63,42 +63,26 @@ pipenv run python3 service/task.py --database-url <database_url>
 Install the Python dependencies:
 
 ```bash
-pipenv install
+cd service/tests
+pipenv sync
 ```
 
-Local API tests make use of a named docker container (creating and deleting the container where appropriate), and the Flask test client:
+The full test suite can be run as follows:
 
 ```bash
-pipenv run python -m unittest discover --verbose --start-directory service/tests
+scripts/test-service.sh
 ```
+
+Tests will automatically start and stop Docker.
 
 Sometimes, it can be quite useful to run individual unit tests. This can be done as follows:
 
 ```bash
-pipenv run python service/tests/test_api.py --verbose TestAPI.test_index
+cd service/tests
+pipenv run python test_api.py --verbose TestAPI.test_index
 ```
 
-Tests can also be run on the live environments by selecting the correct `.env` file. In this scenario, the Python `requests` client is used and tests are performed against the live databases.
-
-It is encouraged to run the tests on staging prior to promoting to production.
-
-Staging:
-
-```bash
-PIPENV_DOTENV_LOCATION=.env.staging pipenv run \
-    python -m unittest discover \
-    --verbose \
-    --start-directory service/tests
-```
-
-Production:
-
-```bash
-PIPENV_DOTENV_LOCATION=.env.production pipenv run \
-    python -m unittest discover \
-    --verbose \
-    --start-directory service/tests
-```
+The necessary environment variables that tell the tests where to find the service and database are stored in 'service/tests/.env'
 
 ### Command-line
 

@@ -36,6 +36,5 @@ cd "$TESTS_DIRECTORY"
 pipenv sync
 
 # Run the tests against the Docker container.
-export TEST_BASE_URL=http://localhost:5000
-export DATABASE_URL=postgresql://hello_flask:hello_flask@localhost:5432/hello_flask_dev
+# This reads environment variables from the '.env' file.
 pipenv run python -m unittest discover --verbose --start-directory .
