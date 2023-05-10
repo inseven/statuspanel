@@ -26,23 +26,18 @@ StatusPanel uses a shared script for installing and managing dependencies. Follo
 
 ### Running Locally
 
-When running the service locally using the `heroku local` command, it uses the environment variables configured in `.env`. These are currently configured to use a local Postgres instance.
-
-You can use the following command to create a suitably configured docker container for testing:
-
 ```bash
-docker run \
-    --name some-postgres \
-    -p 5432:5432 \
-    -e POSTGRES_PASSWORD=0EFDA2E7-9700-4F06-ADCB-55D8E38A37DF \
-    -d postgres
+cd service
+docker compose up --build
 ```
 
-Once your docker container is running, you can run the local service as follows:
+If you need to inspect the database, you can expose it with the overlay configuration file:
 
-```bash
-pipenv run heroku local
 ```
+docker-compose -f docker-compose.yaml -f docker-compose-test.yaml up --build
+```
+
+The database will now be available at 'postgresql://hello_flask:hello_flask@localhost:5432/hello_flask_dev'.
 
 ### Testing APNS
 
