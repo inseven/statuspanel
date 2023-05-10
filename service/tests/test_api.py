@@ -41,7 +41,6 @@ import path
 sys.path.append(path.SERVICE_DIR)
 
 import apns
-import app
 import database
 
 

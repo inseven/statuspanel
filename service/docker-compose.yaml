@@ -11,8 +11,8 @@ services:
       - 5000:5000
     environment:
       - DATABASE_URL=postgresql://hello_flask:hello_flask@database:5432/hello_flask_dev
-    # env_file:
-    #   - ./.env.dev
+    env_file:
+      - .env
     depends_on:
       - database
   database:
