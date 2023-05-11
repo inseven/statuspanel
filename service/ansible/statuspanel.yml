@@ -1,0 +1,52 @@
+- name: statuspanel.io
+  hosts: inseven
+
+  tasks:
+
+    - name: Create destination directory
+      file:
+        path: /opt/statuspanel
+        state: directory
+        owner: "{{ ansible_ssh_user }}"
+        group: "{{ ansible_ssh_user }}"
+      become: yes
+
+    - name: Synchronize files
+      synchronize: src="{{ playbook_dir }}/../" dest="/opt/statuspanel/" delete=yes
+
+    - name: Install service
+      template:
+        src: "statuspanel.service"
+        dest: /etc/systemd/system/statuspanel.service
+      become: yes
+
+    # TODO: Ensure the container exists
+    # TODO: Ensure the machine is backed up
+
+    - name: Create virtual host
+      template:
+        src: virtualhost.conf
+        dest: "/etc/nginx/sites-available/statuspanel.conf"
+      become: yes
+
+    - name: Enable site
+      file:
+        src: /etc/nginx/sites-available/statuspanel.conf
+        dest: /etc/nginx/sites-enabled/statuspanel.conf
+        owner: root
+        group: root
+        state: link
+      become: yes
+
+    - name: Start service
+      systemd:
+        state: started
+        name: statuspanel.service
+        daemon_reload: yes
+      become: yes
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+      become: yes

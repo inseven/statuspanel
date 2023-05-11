@@ -35,7 +35,6 @@ import dateutil.parser
 import pytz
 import requests
 
-import docker
 import path
 
 sys.path.append(path.WEB_SERVICE_DIR)
