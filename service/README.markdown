@@ -7,20 +7,11 @@ The StatusPanel service provides two pieces of functionality:
 
 ## Infrastructure
 
-The StatusPanel service is currently hosted using [Heroku](https://heroku.com). There are two apps in the pipeline:
-
-- [statuspanel-staging](https://staging.statuspanel.io) - auto-deploys master
-- [statuspanel-production](https://api.statuspanel.io) - manual deploy from staging
-
-The environments for these can be set up using the `configure-heroku-app`:
-
-```bash
-scripts/configure-heroku-app statuspanel-staging
-```
+StatusPanel is hosted using Docker behind an nginx reverse proxy. Deployment is performed using an Ansible playbook located in the 'ansible' directory.
 
 ## Development
 
-### Installing dependencies
+### Installing Dependencies
 
 StatusPanel uses a shared script for installing and managing dependencies. Follow the instructions [here](/README.markdown#installing-dependencies).
 
@@ -51,12 +42,6 @@ export APNS_KEY=`cat apns.p8`
 ```
 
 N.B. This assumes the APNS private key is in `apns.p8` and these commands are executed from the root directory.
-
-If you wish to test notification deployment, you will also need to pass the database URL when running the APNS periodic command:
-
-```bash
-pipenv run python3 service/task.py --database-url <database_url>
-```
 
 ### Tests
 
