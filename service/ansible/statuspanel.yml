@@ -22,6 +22,7 @@
 
     # TODO: Ensure the container exists
     # TODO: Ensure the machine is backed up
+    # TODO: Set up HTTPS somehow
 
     - name: Create virtual host
       template:
