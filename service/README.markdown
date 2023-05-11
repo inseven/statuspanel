@@ -9,6 +9,8 @@ The StatusPanel service provides two pieces of functionality:
 
 StatusPanel is hosted using Docker behind an nginx reverse proxy. Deployment is performed using an Ansible playbook located in the 'ansible' directory.
 
+The production service is hosted on a DigitalOcean droplet and backups are achieved by enabling droplet backups.
+
 ## Development
 
 ### Installing Dependencies
