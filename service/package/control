@@ -7,4 +7,4 @@ Essential: no
 Installed-Size: 1024
 Maintainer: inseven.co.uk
 Description: StatusPanel web service
-Depends: docker-ce
+Depends: docker
