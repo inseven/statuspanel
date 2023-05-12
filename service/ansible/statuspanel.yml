@@ -1,7 +1,17 @@
 - name: statuspanel.io
   hosts: inseven
 
+  # As of right now, the server uses ufw for firewall management.
+  # sudo ufw allow 443
+
   tasks:
+
+    - name: Install dependencies
+      apt:
+        pkg:
+          - python3-certbot
+          - python3-certbot-nginx
+      become: yes
 
     - name: Create destination directory
       file:
@@ -12,7 +22,10 @@
       become: yes
 
     - name: Synchronize files
-      synchronize: src="{{ playbook_dir }}/../" dest="/opt/statuspanel/" delete=yes
+      synchronize:
+        src: "{{ playbook_dir }}/../"
+        dest: /opt/statuspanel/
+        delete: yes
 
     - name: Install service
       template:
@@ -23,9 +36,10 @@
     # TODO: Ensure the container exists
     # TODO: Set up HTTPS somehow
 
+    # TODO: Rename this to include the domain name?
     - name: Create virtual host
       template:
-        src: virtualhost.conf
+        src: statuspanel.conf
         dest: "/etc/nginx/sites-available/statuspanel.conf"
       become: yes
 
@@ -37,6 +51,21 @@
         group: root
         state: link
       become: yes
+
+    - name: Register certbot
+      shell: |
+        /usr/bin/certbot -n register --agree-tos --email webmaster@inseven.co.uk
+        touch /etc/letsencrypt/.registered
+      args:
+        creates: /etc/letsencrypt/.registered
+      become: yes
+
+    - name: Create certificate
+      command: '/usr/bin/certbot -n --nginx certonly -d staging.statuspanel.io'
+      args:
+        creates: '/etc/letsencrypt/live/staging.statuspanel.io'
+      ignore_errors: true
+      become: true
 
     - name: Start service
       systemd:
