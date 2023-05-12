@@ -28,6 +28,7 @@ SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 SERVICE_DIRECTORY="${ROOT_DIRECTORY}/service"
+WEB_SERVICE_DIRECTORY="${SERVICE_DIRECTORY}/web"
 BUILD_DIRECTORY="${SERVICE_DIRECTORY}/build"
 TESTS_DIRECTORY="${SERVICE_DIRECTORY}/tests"
 
@@ -42,9 +43,9 @@ set -x
 
 export BUILD_NUMBER=`build-tools generate-build-number`
 
-# Build the and export docker images..
-cd "${SERVICE_DIRECTORY}"
-docker compose build
+# Build the and export docker images.
+cd "${WEB_SERVICE_DIRECTORY}"
+docker build -t jbmorley/statuspanel-web .
 docker tag jbmorley/statuspanel-web "jbmorley/statuspanel-web:${BUILD_NUMBER}"
 # docker save statuspanel-web | gzip > "${BUILD_DIRECTORY}/statuspanel-web-latest.tar.gz"
 # docker push jbmorley/statuspanel-web
@@ -55,9 +56,7 @@ envsubst < "${SERVICE_DIRECTORY}/docker-compose.yaml" > "${BUILD_DIRECTORY}/dock
 # Run the tests.
 cd "$TESTS_DIRECTORY"
 
-# Update the test dependencies.
-pipenv sync
-
 # Run the tests against the Docker container.
 # This reads environment variables from the '.env' file.
+pipenv sync
 pipenv run python -m unittest discover --verbose --start-directory .

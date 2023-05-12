@@ -3,7 +3,6 @@ name: statuspanel
 
 services:
   web:
-    build: web
     image: jbmorley/statuspanel-web:$BUILD_NUMBER
     ports:
       - 5000:5000
