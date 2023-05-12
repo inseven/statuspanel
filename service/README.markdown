@@ -54,10 +54,10 @@ cd service/tests
 pipenv sync
 ```
 
-The full test suite can be run as follows:
+The full test suite is run as part of the build script:
 
 ```bash
-scripts/test-service.sh
+scripts/build-service.sh
 ```
 
 Tests will automatically start and stop Docker.

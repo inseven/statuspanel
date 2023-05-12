@@ -29,11 +29,11 @@ jobs:
       run: |
         python -m pip install --upgrade pipenv wheel
 
-    - name: Run tests
+    - name: Build and test
       env:
         APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
         APNS_BUNDLE_ID: ${{ secrets.APNS_BUNDLE_ID }}
         ANPS_KEY_ID: ${{ secrets.ANPS_KEY_ID }}
         APNS_KEY: ${{ secrets.APNS_KEY }}
       run: |
-        scripts/test-service.sh
+        scripts/build-service.sh

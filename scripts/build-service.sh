@@ -29,15 +29,23 @@ SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 SERVICE_DIRECTORY="${ROOT_DIRECTORY}/service"
+BUILD_DIRECTORY="${SERVICE_DIRECTORY}/build"
 TESTS_DIRECTORY="${SERVICE_DIRECTORY}/tests"
 
+if [ -d "${BUILD_DIRECTORY}" ] ; then
+    rm -r "${BUILD_DIRECTORY}"
+fi
+mkdir -p "${BUILD_DIRECTORY}"
+
+# Build the and export docker images..
 cd "${SERVICE_DIRECTORY}"
 docker compose build
+docker save statuspanel-web | gzip > "${BUILD_DIRECTORY}/statuspanel-web-latest.tar.gz"
 
-
+# Run the tests.
 cd "$TESTS_DIRECTORY"
 
-# Update the dependencies.
+# Update the test dependencies.
 pipenv sync
 
 # Run the tests against the Docker container.

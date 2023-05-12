@@ -83,8 +83,7 @@ class TestAPI(unittest.TestCase):
             subprocess.check_call(["docker", "compose",
                                    "-f", "docker-compose.yaml",
                                    "-f", "docker-compose-test.yaml",
-                                   "up", "-d",
-                                   "--build"])
+                                   "up", "-d"])
             time.sleep(1)
 
     @classmethod
