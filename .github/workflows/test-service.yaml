@@ -48,6 +48,5 @@ jobs:
     - name: Archive the Debian package
       uses: actions/upload-artifact@v3
       with:
-        name: statuspanel-service
-        path: service/build/*
+        path: service/build/statuspanel-service-*.deb
         if-no-files-found: error
