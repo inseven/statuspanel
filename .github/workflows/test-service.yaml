@@ -45,8 +45,13 @@ jobs:
       run: |
         scripts/build-service.sh
 
+    - name: Install the package for testing
+      run: |
+        sudo dpkg --install service/build/statuspanel-service-*.deb
+
     - name: Archive the Debian package
       uses: actions/upload-artifact@v3
       with:
-        path: service/build/statuspanel-service-1.0.0.deb
+        name: package
+        path: service/build/statuspanel-service-*.deb
         if-no-files-found: error
