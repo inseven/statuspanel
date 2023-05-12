@@ -46,6 +46,7 @@ export BUILD_NUMBER=`build-tools generate-build-number`
 
 # Build the and export docker images.
 # TODO: Just reference the image by SHA here as that's guaranteed stable and will allow us to simplify versioning issues.
+# dockerSHA=$(docker inspect --format='{{index .RepoDigests 0}}' mySuperCoolTag  | perl -wnE'say /sha256.*/g')
 cd "${WEB_SERVICE_DIRECTORY}"
 docker build -t jbmorley/statuspanel-web .
 docker tag jbmorley/statuspanel-web "jbmorley/statuspanel-web:${BUILD_NUMBER}"
@@ -59,6 +60,7 @@ envsubst < "${SERVICE_DIRECTORY}/docker-compose.yaml" > "${BUILD_DIRECTORY}/dock
 cd "$TESTS_DIRECTORY"
 
 # Run the tests against the Docker container.
+# TODO: Consider running these tests against the Debian package as that would be more complete!
 # This reads environment variables from the '.env' file.
 pipenv sync
 pipenv run python -m unittest discover --verbose --start-directory .
