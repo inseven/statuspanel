@@ -45,6 +45,7 @@ set -x
 export BUILD_NUMBER=`build-tools generate-build-number`
 
 # Build the and export docker images.
+# TODO: Just reference the image by SHA here as that's guaranteed stable and will allow us to simplify versioning issues.
 cd "${WEB_SERVICE_DIRECTORY}"
 docker build -t jbmorley/statuspanel-web .
 docker tag jbmorley/statuspanel-web "jbmorley/statuspanel-web:${BUILD_NUMBER}"
@@ -67,5 +68,4 @@ export VERSION="1.0.0"
 envsubst < "${PACKAGE_DIRECTORY}/control" > "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/control"
 cd "$PACKAGE_DIRECTORY"
 dpkg-deb --build statuspanel-service
-#PACKAGE="$BUILD_DIRECTORY/elsewhere_$VERSION.deb"
-#mv elsewhere.deb "$PACKAGE"
+mv statuspanel-service.deb "$BUILD_DIRECTORY/statuspanel-service-$VERSION.deb"
