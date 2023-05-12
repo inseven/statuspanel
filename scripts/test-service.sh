@@ -28,7 +28,12 @@ set -u
 SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
-TESTS_DIRECTORY="${ROOT_DIRECTORY}/service/tests"
+SERVICE_DIRECTORY="${ROOT_DIRECTORY}/service"
+TESTS_DIRECTORY="${SERVICE_DIRECTORY}/tests"
+
+cd "${SERVICE_DIRECTORY}"
+docker compose build
+
 
 cd "$TESTS_DIRECTORY"
 
