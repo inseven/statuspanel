@@ -29,6 +29,9 @@ jobs:
       run: |
         python -m pip install --upgrade pipenv wheel
 
+    - name: Install dependencies
+      run: scripts/install-dependencies.sh
+
     - name: Build and test
       env:
         APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
