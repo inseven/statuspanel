@@ -64,7 +64,7 @@ pipenv run python -m unittest discover --verbose --start-directory .
 
 # Create the Debian package.
 export VERSION="1.0.0"
-cat "${PACKAGE_DIRECTORY}/control" | envsubst > "${PACKAGE_DIRECTORY}/elsewhere/DEBIAN/control"
+envsubst < "${PACKAGE_DIRECTORY}/control" > "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/control"
 cd "$PACKAGE_DIRECTORY"
 dpkg-deb --build statuspanel-service
 #PACKAGE="$BUILD_DIRECTORY/elsewhere_$VERSION.deb"
