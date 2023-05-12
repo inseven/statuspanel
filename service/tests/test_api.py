@@ -35,9 +35,13 @@ import dateutil.parser
 import pytz
 import requests
 
-import path
 
-sys.path.append(path.WEB_SERVICE_DIR)
+TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+SERVICE_DIR = os.path.dirname(TESTS_DIR)
+WEB_SERVICE_DIR = os.path.join(SERVICE_DIR, "web", "src")
+BUILD_DIR = os.path.join(SERVICE_DIR, "build")
+
+sys.path.append(WEB_SERVICE_DIR)
 
 import apns
 import database
@@ -78,18 +82,18 @@ class TestAPI(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # pass
-        with chdir(path.SERVICE_DIR):
-            subprocess.check_call(["docker", "compose",
-                                   "-f", "docker-compose.yaml",
-                                   "-f", "docker-compose-test.yaml",
-                                   "up", "-d"])
-            time.sleep(1)
+        subprocess.check_call(["docker", "compose",
+                               "-f", os.path.join(BUILD_DIR, "docker-compose.yaml"),
+                               "-f", os.path.join(SERVICE_DIR, "docker-compose-test.yaml"),
+                               "up", "-d"])
+        time.sleep(1)
 
     @classmethod
     def tearDownClass(cls):
-        with chdir(path.SERVICE_DIR):
-            subprocess.check_call(["docker", "compose", "stop"])
+        subprocess.check_call(["docker", "compose",
+                               "-f", os.path.join(BUILD_DIR, "docker-compose.yaml"),
+                               "-f", os.path.join(SERVICE_DIR, "docker-compose-test.yaml"),
+                               "stop"])
 
     def setUp(self):
         self.client = RemoteClient(os.environ["TEST_BASE_URL"])

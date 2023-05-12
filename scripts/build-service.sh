@@ -22,7 +22,6 @@
 
 set -e
 set -o pipefail
-set -x
 set -u
 
 SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -32,15 +31,26 @@ SERVICE_DIRECTORY="${ROOT_DIRECTORY}/service"
 BUILD_DIRECTORY="${SERVICE_DIRECTORY}/build"
 TESTS_DIRECTORY="${SERVICE_DIRECTORY}/tests"
 
+source "${SCRIPTS_DIRECTORY}/environment.sh"
+
 if [ -d "${BUILD_DIRECTORY}" ] ; then
     rm -r "${BUILD_DIRECTORY}"
 fi
 mkdir -p "${BUILD_DIRECTORY}"
 
+set -x
+
+export BUILD_NUMBER=`build-tools generate-build-number`
+
 # Build the and export docker images..
 cd "${SERVICE_DIRECTORY}"
 docker compose build
-docker save statuspanel-web | gzip > "${BUILD_DIRECTORY}/statuspanel-web-latest.tar.gz"
+docker tag jbmorley/statuspanel-web "jbmorley/statuspanel-web:${BUILD_NUMBER}"
+# docker save statuspanel-web | gzip > "${BUILD_DIRECTORY}/statuspanel-web-latest.tar.gz"
+# docker push jbmorley/statuspanel-web
+
+# Generate a docker compose file explicitly targeting our tagged image.
+envsubst < "${SERVICE_DIRECTORY}/docker-compose.yaml" > "${BUILD_DIRECTORY}/docker-compose.yaml"
 
 # Run the tests.
 cd "$TESTS_DIRECTORY"
