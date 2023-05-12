@@ -23,18 +23,21 @@
 
     - name: Synchronize files
       synchronize:
-        src: "{{ playbook_dir }}/../"
+        src: "{{ playbook_dir }}/../build/"
         dest: /opt/statuspanel/
         delete: yes
+
+    - name: Stop service
+      systemd:
+        state: stopped
+        name: statuspanel.service
+      become: yes
 
     - name: Install service
       template:
         src: "statuspanel.service"
         dest: /etc/systemd/system/statuspanel.service
       become: yes
-
-    # TODO: Ensure the container exists
-    # TODO: Set up HTTPS somehow
 
     # TODO: Rename this to include the domain name?
     - name: Create virtual host

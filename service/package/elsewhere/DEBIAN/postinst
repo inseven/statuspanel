@@ -1,0 +1,9 @@
+#!/bin/sh
+
+systemctl enable atx-monitor.service
+systemctl enable elsewhere-splash.service
+systemctl enable elsewhere.service
+
+systemctl start atx-monitor.service
+systemctl start elsewhere-splash.service
+systemctl start elsewhere.service

@@ -30,6 +30,7 @@ ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 SERVICE_DIRECTORY="${ROOT_DIRECTORY}/service"
 WEB_SERVICE_DIRECTORY="${SERVICE_DIRECTORY}/web"
 BUILD_DIRECTORY="${SERVICE_DIRECTORY}/build"
+PACKAGE_DIRECTORY="${SERVICE_DIRECTORY}/package"
 TESTS_DIRECTORY="${SERVICE_DIRECTORY}/tests"
 
 source "${SCRIPTS_DIRECTORY}/environment.sh"
@@ -60,3 +61,10 @@ cd "$TESTS_DIRECTORY"
 # This reads environment variables from the '.env' file.
 pipenv sync
 pipenv run python -m unittest discover --verbose --start-directory .
+
+# Create the Debian package.
+#PACKAGE="$BUILD_DIRECTORY/elsewhere_$VERSION.deb"
+export VERSION="1.0.0"
+cd "$PACKAGE_DIRECTORY"
+dpkg-deb --build statuspanel-service
+#mv elsewhere.deb "$PACKAGE"
