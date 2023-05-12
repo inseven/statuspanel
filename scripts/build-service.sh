@@ -63,8 +63,9 @@ pipenv sync
 pipenv run python -m unittest discover --verbose --start-directory .
 
 # Create the Debian package.
-#PACKAGE="$BUILD_DIRECTORY/elsewhere_$VERSION.deb"
 export VERSION="1.0.0"
+cat "${PACKAGE_DIRECTORY}/control" | envsubst > "${PACKAGE_DIRECTORY}/elsewhere/DEBIAN/control"
 cd "$PACKAGE_DIRECTORY"
 dpkg-deb --build statuspanel-service
+#PACKAGE="$BUILD_DIRECTORY/elsewhere_$VERSION.deb"
 #mv elsewhere.deb "$PACKAGE"
