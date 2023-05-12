@@ -44,3 +44,10 @@ jobs:
         APNS_KEY: ${{ secrets.APNS_KEY }}
       run: |
         scripts/build-service.sh
+
+    - name: Archive the Debian package
+      uses: actions/upload-artifact@v3
+      with:
+        name: statuspanel-service
+        path: service/build/*
+        if-no-files-found: error
