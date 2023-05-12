@@ -47,7 +47,7 @@ jobs:
 
     - name: Install the package for testing
       run: |
-        sudo dpkg --install service/build/statuspanel-service-*.deb
+        sudo apt-get install ./service/build/statuspanel-service-*.deb
 
     - name: Archive the Debian package
       uses: actions/upload-artifact@v3
