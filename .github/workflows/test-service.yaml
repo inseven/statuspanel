@@ -20,6 +20,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Checkout required submodules
+      run: |
+        git submodule update --init --depth 1 scripts/build-tools
+
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
