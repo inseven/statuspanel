@@ -49,7 +49,7 @@ export BUILD_NUMBER=`build-tools generate-build-number`
 cd "${WEB_SERVICE_DIRECTORY}"
 docker build -t jbmorley/statuspanel-web .
 docker tag jbmorley/statuspanel-web "jbmorley/statuspanel-web:${BUILD_NUMBER}"
-# docker save statuspanel-web | gzip > "${BUILD_DIRECTORY}/statuspanel-web-latest.tar.gz"
+
 # docker push jbmorley/statuspanel-web
 
 # Generate a docker compose file explicitly targeting our tagged image.
@@ -62,6 +62,11 @@ cd "$TESTS_DIRECTORY"
 # This reads environment variables from the '.env' file.
 pipenv sync
 pipenv run python -m unittest discover --verbose --start-directory .
+
+# Docker image and compose file.
+mkdir -p "${PACKAGE_DIRECTORY}/usr/share/statuspanel-service"
+docker save statuspanel-web | gzip > "${PACKAGE_DIRECTORY}/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
+cp "${BUILD_DIRECTORY}/docker-compose.yaml" "${PACKAGE_DIRECTORY}/usr/share/statuspanel-service/docker-compose.yaml"
 
 # Create the Debian package.
 export VERSION="1.0.0"
