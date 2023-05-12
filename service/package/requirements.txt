@@ -1,5 +1,0 @@
-streamlink
-adafruit-blinka
-jinja2
-pyftdi
-pyusb

@@ -64,9 +64,9 @@ pipenv sync
 pipenv run python -m unittest discover --verbose --start-directory .
 
 # Docker image and compose file.
-mkdir -p "${PACKAGE_DIRECTORY}/usr/share/statuspanel-service"
-docker save "jbmorley/statuspanel-web:${BUILD_NUMBER}" | gzip > "${PACKAGE_DIRECTORY}/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
-cp "${BUILD_DIRECTORY}/docker-compose.yaml" "${PACKAGE_DIRECTORY}/usr/share/statuspanel-service/docker-compose.yaml"
+mkdir -p "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service"
+docker save "jbmorley/statuspanel-web:${BUILD_NUMBER}" | gzip > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
+cp "${BUILD_DIRECTORY}/docker-compose.yaml" "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml"
 
 # Create the Debian package.
 export VERSION="1.0.0"
