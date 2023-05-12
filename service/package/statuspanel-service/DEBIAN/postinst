@@ -1,9 +1,6 @@
 #!/bin/sh
 
-systemctl enable atx-monitor.service
-systemctl enable elsewhere-splash.service
-systemctl enable elsewhere.service
+# TODO: Expand the Docker image
 
-systemctl start atx-monitor.service
-systemctl start elsewhere-splash.service
-systemctl start elsewhere.service
+systemctl enable statuspanel-service.service
+systemctl start statuspanel-service.service
