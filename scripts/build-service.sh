@@ -39,6 +39,24 @@ if [ -d "${BUILD_DIRECTORY}" ] ; then
 fi
 mkdir -p "${BUILD_DIRECTORY}"
 
+# Process the command line arguments.
+POSITIONAL=()
+BUILD_PACKAGE=${BUILD_PACKAGE:-false}
+while [[ $# -gt 0 ]]
+do
+    key="$1"
+    case $key in
+        -p|--build-package)
+        BUILD_PACKAGE=true
+        shift
+        ;;
+        *)
+        POSITIONAL+=("$1")
+        shift
+        ;;
+    esac
+done
+
 set -x
 
 # Build the and export docker images.
@@ -54,16 +72,12 @@ envsubst < "${PACKAGE_DIRECTORY}/control" > "${PACKAGE_DIRECTORY}/statuspanel-se
 envsubst < "${PACKAGE_DIRECTORY}/prerm" > "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/prerm"
 chmod 0755 "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/prerm"
 
-# Export the image the Docker image.
-docker save "${IMAGE_SHA}" | gzip > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
+if $BUILD_PACKAGE ; then
 
-# Create the Debian package.
-cd "$PACKAGE_DIRECTORY"
-dpkg-deb --build statuspanel-service
-mv statuspanel-service.deb "$BUILD_DIRECTORY/statuspanel-service-$VERSION.deb"
+    docker save "${IMAGE_SHA}" | gzip > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
 
-# TODO: Remove the image we've just created.
-docker system prune --all --force
-docker image prune --all --force
-docker container ls
-docker image ls
+    cd "$PACKAGE_DIRECTORY"
+    dpkg-deb --build statuspanel-service
+    mv statuspanel-service.deb "$BUILD_DIRECTORY/statuspanel-service-$VERSION.deb"
+
+fi
