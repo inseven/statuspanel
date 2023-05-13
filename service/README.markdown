@@ -47,9 +47,13 @@ Tests can be run as follows:
 scripts/tests-service.sh
 ```
 
-This will install the tests' Python dependencies.
+This will install the tests' Python dependencies. Note that the tests expect the service to be running on localhost.
 
-By default, the tests will automatically start and stop Docker. This behaviour can be disabled to enable testing against a local resident instance by setting the environment variable `USE_SYSTEM_SERVICE=1`.
+If you wish to build, run, and test, you can use the `build-service.sh` script:
+
+```bash
+scripts/build-service.sh --test
+```
 
 Sometimes, it can be quite useful to run individual unit tests. This can be done as follows:
 
