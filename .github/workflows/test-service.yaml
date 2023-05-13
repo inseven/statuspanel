@@ -24,6 +24,10 @@ jobs:
       run: |
         git submodule update --init --depth 1 scripts/build-tools
 
+    - name: Show the version of Docker
+      run: |
+        sudo apt search docker
+
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
