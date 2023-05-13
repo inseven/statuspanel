@@ -42,9 +42,9 @@ mkdir -p "${BUILD_DIRECTORY}"
 set -x
 
 # Build the and export docker images.
-export IMAGE_SHA=`docker images -q jbmorley/statuspanel-web:latest`
 cd "${WEB_SERVICE_DIRECTORY}"
 docker build -t jbmorley/statuspanel-web .
+export IMAGE_SHA=`docker images -q jbmorley/statuspanel-web:latest`
 
 # Generate the Docker compose file.
 mkdir -p "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service"
