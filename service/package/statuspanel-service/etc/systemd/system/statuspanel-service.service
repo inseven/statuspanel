@@ -5,7 +5,7 @@ Requires=docker.service
 
 [Service]
 ExecStart=/bin/bash -c "docker compose -f /opt/statuspanel/docker-compose.yaml up"
-User={{ ansible_ssh_user }}
+User=www-data
 
 [Install]
 WantedBy=multi-user.target
