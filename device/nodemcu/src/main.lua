@@ -77,7 +77,7 @@ function shortPressUnpair()
     if id == nil then
         go()
         return
-    elseif id:match("^img_1,") then
+    elseif id:match("^img_1") then
         imageToShow = imageFilename(2)
     else
         imageToShow = imageFilename(1)
