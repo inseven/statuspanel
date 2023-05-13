@@ -1,12 +1,53 @@
+<!DOCTYPE html>
 <html>
     <head>
     	<style>
     		body {
-    			background-color: aquamarine;
     		}
     	</style>
     </head>
     <body>
+        <h1>StatusPanel API</h1>
+        <table>
+            <tr>
+                <th>Build Number</th>
+                <td id="build-number"></td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td id="build-date"></td>
+            </tr>
+            <tr>
+                <th>Commit</th>
+                <td id="commit"></td>
+            </tr>
+        </table>
     </body>
-</html>
 
+    <script type="module">
+
+        const response = await fetch("/api/v3/service/about");
+        const about = await response.json();
+        const version = about["version"];
+        const [year, month, day, hour, minute, commit] = [
+            Number(version.substring(0, 2)),
+            Number(version.substring(2, 4)),
+            Number(version.substring(4, 6)),
+            Number(version.substring(6, 8)),
+            Number(version.substring(8, 10)),
+            Number(version.substring(10, 18)),
+        ];
+        const date = new Date(Date.UTC(year + 2000, month, day, hour, minute));
+        document.getElementById("build-number").innerHTML = version;
+        document.getElementById("build-date").innerHTML = date.toString();
+
+        const commitLink = document.createElement('a');
+        const linkText = document.createTextNode(commit.toString(16));
+        commitLink.appendChild(linkText);
+        commitLink.title = "Commit";
+        commitLink.href = "https://github.com/inseven/statuspanel/commit/" + commit.toString(16);
+        commitLink.target = "_blank";
+        document.getElementById("commit").appendChild(commitLink);
+
+    </script>
+</html>
