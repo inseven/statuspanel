@@ -82,7 +82,7 @@ class TestAPI(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        if "USE_SYSTEM_SERVICE" in os.environ and os.environ["USE_SYSTEM_SERVICE"] == "1"
+        if "USE_SYSTEM_SERVICE" in os.environ and os.environ["USE_SYSTEM_SERVICE"] == "1":
             return
         subprocess.check_call(["docker", "compose",
                                "-f", os.path.join(BUILD_DIR, "docker-compose.yaml"),
@@ -92,7 +92,7 @@ class TestAPI(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        if "USE_SYSTEM_SERVICE" in os.environ and os.environ["USE_SYSTEM_SERVICE"] == "1"
+        if "USE_SYSTEM_SERVICE" in os.environ and os.environ["USE_SYSTEM_SERVICE"] == "1":
             return
         subprocess.check_call(["docker", "compose",
                                "-f", os.path.join(BUILD_DIR, "docker-compose.yaml"),

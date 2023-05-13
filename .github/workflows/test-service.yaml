@@ -54,6 +54,8 @@ jobs:
         sudo apt-get install ./service/build/statuspanel-service-*.deb
 
     - name: Run the tests against the local service
+      env:
+        USE_SYSTEM_SERVICE: 1
       run: |
         cd service/tests
         pipenv run python -m unittest discover --verbose --start-directory .
