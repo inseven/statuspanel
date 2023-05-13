@@ -6,10 +6,14 @@
 
   tasks:
 
-    - name: Stop service
-      systemd:
-        state: stopped
-        name: statuspanel.service
+    - name: Copy the Debian package
+      copy:
+        src: "{{ package_path }}"
+        dest: /tmp/statuspanel-service.deb
+
+    - name: Install the service
+      apt:
+        deb: /tmp/statuspanel-service.deb
       become: yes
 
     - name: Enable site
@@ -35,13 +39,6 @@
         creates: '/etc/letsencrypt/live/staging.statuspanel.io'
       ignore_errors: true
       become: true
-
-    - name: Start service
-      systemd:
-        state: started
-        name: statuspanel.service
-        daemon_reload: yes
-      become: yes
 
     - name: Restart nginx
       service:
