@@ -179,6 +179,12 @@ function configurePins_inky(chiptype)
         })
         gpio.write(NeoPixelPowerPin, 0)
     end
+    if chiptype == "esp32s3" then
+        -- Disable STEMMA QT port to save a bit more power
+        local i2cPower = 7
+        gpio.config({ gpio = i2cPower, dir = gpio.OUT })
+        gpio.write(i2cPower, 0)
+    end
 
     local spimaster = spi.master(spiHost, {
         sclk = Sclk,
