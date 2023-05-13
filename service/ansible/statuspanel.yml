@@ -6,7 +6,6 @@
 
   tasks:
 
-
     - name: Stop service
       systemd:
         state: stopped
@@ -15,8 +14,8 @@
 
     - name: Enable site
       file:
-        src: /etc/nginx/sites-available/statuspanel.conf
-        dest: /etc/nginx/sites-enabled/statuspanel.conf
+        src: /etc/nginx/sites-available/staging.statuspanel.io.conf
+        dest: /etc/nginx/sites-enabled/staging.statuspanel.io.conf
         owner: root
         group: root
         state: link
