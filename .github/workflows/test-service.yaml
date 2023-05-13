@@ -51,7 +51,7 @@ jobs:
 
     - name: Install the package for testing
       run: |
-        sudo apt-get install ./service/build/statuspanel-service-*.deb docker-ce-
+        sudo apt-get install ./service/build/statuspanel-service-*.deb
 
     - name: Archive the Debian package
       uses: actions/upload-artifact@v3
