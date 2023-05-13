@@ -5,4 +5,4 @@ systemctl stop statuspanel-service.service
 systemctl disable statuspanel-service.service
 
 # Remove the image.
-docker rm jbmorley/statuspanel-web
+docker rm $IMAGE_SHA

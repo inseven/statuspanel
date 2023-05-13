@@ -46,16 +46,17 @@ cd "${WEB_SERVICE_DIRECTORY}"
 docker build -t jbmorley/statuspanel-web .
 export IMAGE_SHA=`docker images -q jbmorley/statuspanel-web:latest`
 
-# Generate the Docker compose file.
+# Generate the Docker compose and package files.
+export VERSION=`build-tools generate-build-number`
 mkdir -p "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service"
 envsubst < "${SERVICE_DIRECTORY}/docker-compose.yaml" > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml"
+envsubst < "${PACKAGE_DIRECTORY}/control" > "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/control"
+envsubst < "${PACKAGE_DIRECTORY}/prerm" > "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/prerm"
 
 # Export the image the Docker image.
 docker save "${IMAGE_SHA}" | gzip > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
 
 # Create the Debian package.
-export VERSION=`build-tools generate-build-number`
-envsubst < "${PACKAGE_DIRECTORY}/control" > "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/control"
 cd "$PACKAGE_DIRECTORY"
 dpkg-deb --build statuspanel-service
 mv statuspanel-service.deb "$BUILD_DIRECTORY/statuspanel-service-$VERSION.deb"

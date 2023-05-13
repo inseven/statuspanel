@@ -4,7 +4,10 @@
 /device/nodemcu/build
 /ios/StatusPanel/configuration.json
 /service/build
+/service/package/statuspanel-service/DEBIAN/control
+/service/package/statuspanel-service/DEBIAN/prerm
 /service/package/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml
+/service/package/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz
 
 .DS_Store
 .env*
