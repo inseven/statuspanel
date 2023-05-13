@@ -1,32 +1,102 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     	<style>
     		body {
+                background-color: #eee;
+                font-family: 'Wix Madefor Display', sans-serif;
+                max-width: 800px;
+                margin: auto;
+                padding: 0 2em;
     		}
+
+            table {
+                margin: auto;
+            }
+
+            th {
+                text-align: right;
+            }
+
+            td {
+                padding: 0.4em;
+                text-align: left;
+            }
+
+            a {
+                color: rgb(32, 214, 151);
+            }
+
+            ul {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1em;
+            }
+
+            li {
+                background-color: #fff;
+                padding: 1em;
+                border-radius: 1em;
+                flex: 50%;
+                text-align: center;
+            }
+
+            .footer {
+                color: #aaa;
+                text-align: center;
+            }
+
+            .highlight {
+                font-size: 2em;
+                font-weight: 600;
+            }
+
     	</style>
     </head>
     <body>
         <h1>StatusPanel API</h1>
-        <table>
-            <tr>
-                <th>Build Number</th>
-                <td id="build-number"></td>
-            </tr>
-            <tr>
-                <th>Date</th>
-                <td id="build-date"></td>
-            </tr>
-            <tr>
-                <th>Commit</th>
-                <td id="commit"></td>
-            </tr>
-        </table>
+        <ul>
+            <li>
+                <table>
+                    <tr>
+                        <th>Build Number</th>
+                        <td id="build-number"></td>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <td id="build-date"></td>
+                    </tr>
+                    <tr>
+                        <th>Commit</th>
+                        <td id="commit"></td>
+                    </tr>
+                </table>
+            </li>
+            <li>
+                <p class="highlight"><span id="device-count">0</span> devices</p>
+            </li>
+            <li>
+                <p class="highlight"><span id="status-count">0</span> images</p>
+                <p class="highlight"><span id="status-size">0</span> MB</p>
+            </li>
+        </ul>
+        <div class="footer">
+            <p>&copy; 2018-2023 <a href="https://jbmorley.co.uk" target="_blank">Jason Morley</a>, <a href="https://github.com/tomsci" target="_blank">Tom Sutcliffe</a></p>
+            <p><a href="https://statuspanel.io" target="_blank">https://statuspanel.io</a></p>
+            <p>Published by <a href="https://inseven.co.uk" target="_blank">InSeven Limited</a></p>
+        </div>
     </body>
 
     <script type="module">
 
         const response = await fetch("/api/v3/service/about");
+        // const response = await fetch("https://staging.statuspanel.io/api/v3/service/about");
         const about = await response.json();
         const version = about["version"];
         const [year, month, day, hour, minute, commit] = [
@@ -39,7 +109,7 @@
         ];
         const date = new Date(Date.UTC(year + 2000, month, day, hour, minute));
         document.getElementById("build-number").innerHTML = version;
-        document.getElementById("build-date").innerHTML = date.toString();
+        document.getElementById("build-date").innerHTML = date.toLocaleString();
 
         const commitLink = document.createElement('a');
         const linkText = document.createTextNode(commit.toString(16));
@@ -48,6 +118,13 @@
         commitLink.href = "https://github.com/inseven/statuspanel/commit/" + commit.toString(16);
         commitLink.target = "_blank";
         document.getElementById("commit").appendChild(commitLink);
+
+        const statusResponse = await fetch("/api/v3/service/status");
+        const status = await statusResponse.json();
+        console.log(status);
+        document.getElementById("device-count").innerHTML = status["deviceCount"];
+        document.getElementById("status-count").innerHTML = status["statusCount"];
+        document.getElementById("status-size").innerHTML = (status["statusSize"] / 1000000).toFixed(2);
 
     </script>
 </html>
