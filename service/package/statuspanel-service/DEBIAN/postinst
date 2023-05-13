@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# TODO: Expand the Docker image
+# Load the Docker image.
+docker load < /usr/share/statuspanel-service/statuspanel-web-latest.tar.gz
 
+# Enable and start the service.
 systemctl enable statuspanel-service.service
 systemctl start statuspanel-service.service
-
-docker load < /usr/share/statuspanel-service/statuspanel-web-latest.tar.gz

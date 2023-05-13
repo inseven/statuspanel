@@ -53,6 +53,11 @@ jobs:
       run: |
         sudo apt-get install ./service/build/statuspanel-service-*.deb
 
+    - name: Run the tests against the local service
+      run: |
+        cd service/tests
+        pipenv run python -m unittest discover --verbose --start-directory .
+
     - name: Archive the Debian package
       uses: actions/upload-artifact@v3
       with:
