@@ -4,3 +4,5 @@
 
 systemctl enable statuspanel-service.service
 systemctl start statuspanel-service.service
+
+docker load < /usr/share/statuspanel-service/statuspanel-web-latest.tar.gz
