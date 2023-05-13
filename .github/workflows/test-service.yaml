@@ -27,6 +27,7 @@ jobs:
     - name: Show the version of Docker
       run: |
         sudo apt search docker
+        cat /etc/passwd
 
     - name: Setup Python
       uses: actions/setup-python@v4
