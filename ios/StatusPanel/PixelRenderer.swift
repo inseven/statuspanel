@@ -21,6 +21,17 @@
 import Foundation
 import UIKit
 
+// These must match the order of colours defined in inky.lua (and thus what colours the panel supports)
+private let InkyPalette: [UIColor] = [
+    .black,
+    .white,
+    .green,
+    .blue,
+    .red,
+    .yellow,
+    .orange
+]
+
 struct PixelRenderer: Renderer {
 
     private enum DividerStyle {
@@ -32,6 +43,11 @@ struct PixelRenderer: Renderer {
         dispatchPrecondition(condition: .onQueue(.main))
         let image = Self.renderImage(data: data, config: config, device: device, settings: settings)
         let privacyImage = Self.renderPrivacyImage(data: data, config: config, device: device, settings: settings)
+        if device.kind == .pimoroniInkyImpression4 {
+            let imagePalettized = Self.palettize(image: image.cgImage!, colours: InkyPalette)
+            let privacyPalettized = Self.palettize(image: privacyImage.cgImage!, colours: InkyPalette)
+            return [UIImage(cgImage: imagePalettized), UIImage(cgImage: privacyPalettized)]
+        }
         return [image, privacyImage]
     }
 
@@ -233,5 +249,126 @@ struct PixelRenderer: Renderer {
             }
         }
     }
-    
+
+    private static func colourClosestTo(_ r: Int, _ g: Int, _ b: Int, _ palette: [UInt8]) -> UInt8 {
+        var closestDistance = 256*256*3
+        var idx: UInt8? = nil
+        let numColours = palette.count / 3
+        for i in 0 ..< numColours {
+            let pos = i * 3
+            let deltar = Int(palette[pos]) - r
+            let deltag = Int(palette[pos + 1]) - g
+            let deltab = Int(palette[pos + 2]) - b
+            let distance = deltar*deltar + deltag*deltag + deltab*deltab
+            if distance < closestDistance {
+                closestDistance = distance
+                idx = UInt8(i)
+            }
+        }
+        return idx!
+    }
+
+    // Alternative algorithm attempting to match on closeness of hue rather than manhattan proximity in the RGB colour space
+    private static func colourClosestTo(_ r: Int, _ g: Int, _ b: Int, _ hsbColours: [CGFloat]) -> UInt8 {
+        var closestDistance: CGFloat = 1.0
+        var idx: UInt8? = nil
+        let numColours = hsbColours.count / 3
+        for i in 0 ..< numColours {
+            let pos = i * 3
+            let colour = UIColor(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: 1.0)
+            var h: CGFloat = 0
+            var s: CGFloat = 0
+            var b: CGFloat = 0
+            colour.getHue(&h, saturation: &s, brightness: &b, alpha: nil)
+            if hsbColours[pos+2] < 0.2 {
+                // Black
+                if b < 0.2 {
+                    return UInt8(i)
+                } else {
+                    // Don't compare the hue on black
+                    continue
+                }
+            } else if (hsbColours[pos + 2] > 0.9 && hsbColours[pos + 1] < 0.1) {
+                // White
+                if b > 0.8 && s < 0.2 {
+                    return UInt8(i)
+                } else {
+                    // Don't compare hue on white
+                    continue
+                }
+            }
+            var hDistance = abs(h - hsbColours[pos])
+            if hDistance > 0.5 {
+                hDistance = 1 - hDistance
+            }
+
+            if hDistance < closestDistance {
+                closestDistance = hDistance
+                idx = UInt8(i)
+            }
+        }
+        return idx!
+    }
+
+    private static func palettize(image: CGImage, colours: [UIColor]) -> CGImage {
+        // let startTime = Date.now
+        let palette = [UInt8](unsafeUninitializedCapacity: colours.count * 3) { buffer, initializedCount in
+            var i = 0
+            for colour in colours {
+                var r: CGFloat = 0
+                var g: CGFloat = 0
+                var b: CGFloat = 0
+                colour.getRed(&r, green: &g, blue: &b, alpha: nil)
+                buffer[i] = UInt8(r * 255)
+                buffer[i+1] = UInt8(g * 255)
+                buffer[i+2] = UInt8(b * 255)
+                i = i + 3
+            }
+            initializedCount = i
+        }
+        let hsbColours = [CGFloat](unsafeUninitializedCapacity: colours.count * 3) { buffer, initializedCount in
+            var i = 0
+            for colour in colours {
+                var h: CGFloat = 0
+                var s: CGFloat = 0
+                var b: CGFloat = 0
+                colour.getHue(&h, saturation: &s, brightness: &b, alpha: nil)
+                buffer[i] = h
+                buffer[i+1] = s
+                buffer[i+2] = b
+                i = i + 3
+            }
+            initializedCount = i
+        }
+        // Divide each channel into 8 buckets, hence 512 entries in total (8^3)
+        let lookupTable = [UInt8](unsafeUninitializedCapacity: 512) { buffer, initializedCount in
+            for r in 0 ..< 8 {
+                for g in 0 ..< 8 {
+                    for b in 0 ..< 8 {
+                        buffer[(r * 8 * 8) + (g * 8) + b] = colourClosestTo(r * 32, g * 32, b * 32, hsbColours)
+                    }
+                }
+            }
+            initializedCount = 512
+        }
+        let spc = CGColorSpace(indexedBaseSpace: CGColorSpace(name: CGColorSpace.sRGB)!, last: colours.count - 1, colorTable: palette)!
+        let w = image.width
+        let h = image.height
+        var data = Data()
+        let pixelData = CFDataGetBytePtr(image.dataProvider!.data!)!
+        for i in 0 ..< w * h {
+            let pos = i * 4
+            let r = Int(pixelData[pos + 0] / 32)
+            let g = Int(pixelData[pos + 1] / 32)
+            let b = Int(pixelData[pos + 2] / 32)
+            let c = lookupTable[(r * 8 * 8) + (g * 8) + b]
+            data.append(c)
+        }
+        // let elapsed = startTime.distance(to: Date.now)
+        // print("Palettize took \(elapsed)")
+        let provider = CGDataProvider(data: data as CFData)!
+        return CGImage(width: w, height: h, bitsPerComponent: 8, bitsPerPixel: 8, bytesPerRow: w, space: spc,
+                       bitmapInfo: .byteOrderDefault, provider: provider, decode: nil, shouldInterpolate: false,
+                       intent: .defaultIntent)!
+    }
 }
