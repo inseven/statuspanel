@@ -187,5 +187,16 @@ class Database(object):
         with Transaction(self.connection) as cursor:
             cursor.execute("DELETE FROM devices WHERE token = %s", (token, ))
 
+    def status(self):
+        with Transaction(self.connection) as cursor:
+            result = {}
+            cursor.execute("SELECT COUNT(*) FROM devices")
+            result["deviceCount"] = cursor.fetchone()[0]
+            cursor.execute("SELECT COUNT(*) FROM data")
+            result["statusCount"] = cursor.fetchone()[0]
+            cursor.execute("SELECT SUM(pg_column_size(data)) FROM data")
+            result["statusSize"] = cursor.fetchone()[0]
+            return result
+
     def close(self):
         self.connection.close()

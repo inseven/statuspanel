@@ -162,8 +162,12 @@ def device():
     return jsonify(request.get_json())
 
 @app.route('/api/v3/service/about', methods=['GET'])
-def service_metadata():
+def service_about():
     return jsonify(METADATA)
+
+@app.route('/api/v3/service/status', methods=['GET'])
+def service_status():
+    return jsonify(get_database().status())
 
 
 if __name__ == '__main__':
