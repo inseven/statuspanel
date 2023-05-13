@@ -51,6 +51,8 @@ cd "${WEB_SERVICE_DIRECTORY}"
 docker build -t jbmorley/statuspanel-web .
 docker tag jbmorley/statuspanel-web "jbmorley/statuspanel-web:${BUILD_NUMBER}"
 
+# TODO: Make this conditional
+
 # Generate the Docker image and compose file.
 mkdir -p "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service"
 docker save "jbmorley/statuspanel-web:${BUILD_NUMBER}" | gzip > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
@@ -62,3 +64,9 @@ envsubst < "${PACKAGE_DIRECTORY}/control" > "${PACKAGE_DIRECTORY}/statuspanel-se
 cd "$PACKAGE_DIRECTORY"
 dpkg-deb --build statuspanel-service
 mv statuspanel-service.deb "$BUILD_DIRECTORY/statuspanel-service-$VERSION.deb"
+
+# TODO: Remove the image we've just created.
+docker system prune --all --force
+docker image prune --all --force
+docker container ls
+docker image ls
