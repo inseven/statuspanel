@@ -4,7 +4,7 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-ExecStart=/bin/bash -c "docker compose -f /opt/statuspanel/docker-compose.yaml up"
+ExecStart=/bin/bash -c "docker compose -f /usr/share/statuspanel-service/docker-compose.yaml up"
 User=www-data
 
 [Install]
