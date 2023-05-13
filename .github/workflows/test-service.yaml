@@ -59,8 +59,7 @@ jobs:
       env:
         USE_SYSTEM_SERVICE: 1
       run: |
-        cd service/tests
-        pipenv run python -m unittest discover --verbose --start-directory .
+        scripts/test-service.sh
 
     - name: Archive the Debian package
       uses: actions/upload-artifact@v3
