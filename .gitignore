@@ -1,23 +1,22 @@
-arduino
-saleae
-StatusPanel.xcodeproj/xcuserdata
-node_modules
-apns.p8
-.DS_Store
-console.log
-xcuserdata
-.env*
 /.local
 /build
+/device/nodemcu/.espressif/
 /device/nodemcu/build
 /ios/StatusPanel/configuration.json
-/device/nodemcu/.espressif/
+/service/build
+/service/package/statuspanel-service/DEBIAN/control
+/service/package/statuspanel-service/DEBIAN/prerm
+/service/package/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml
+/service/package/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz
 
-# Site
-_site
+.DS_Store
+.env*
 .jekyll-cache
-
-# Website
-# Right now we can't actually ignore these as there's no way to force add them using git-auto-commit.
-# /docs/simulator
-# /docs/release-notes
+StatusPanel.xcodeproj/xcuserdata
+_site
+apns.p8
+arduino
+console.log
+node_modules
+saleae
+xcuserdata

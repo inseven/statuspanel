@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Stop and disable the service
+systemctl stop statuspanel-service.service
+systemctl disable statuspanel-service.service
+
+# Remove the image.
+docker rm $IMAGE_SHA

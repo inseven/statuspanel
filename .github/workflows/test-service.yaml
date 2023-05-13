@@ -20,6 +20,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Checkout required submodules
+      run: |
+        git submodule update --init --depth 1 scripts/build-tools
+
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
@@ -29,6 +33,40 @@ jobs:
       run: |
         python -m pip install --upgrade pipenv wheel
 
-    - name: Run tests
+    - name: Install dependencies
+      run: scripts/install-dependencies.sh
+
+    - name: Build and test
+      env:
+        BUILD_PACKAGE: true
+        APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
+        APNS_BUNDLE_ID: ${{ secrets.APNS_BUNDLE_ID }}
+        ANPS_KEY_ID: ${{ secrets.ANPS_KEY_ID }}
+        APNS_KEY: ${{ secrets.APNS_KEY }}
+      run: |
+        scripts/build-service.sh
+
+    - name: Purge all Docker images
+      run: |
+        docker system prune --all --force
+        docker image prune --all --force
+        docker container ls
+        docker image ls
+
+    - name: Install the package for testing
+      run: |
+        sudo apt-get install ./service/build/statuspanel-service-*.deb
+        sudo systemctl status statuspanel-service.service
+
+    - name: Run the tests against the local service
+      env:
+        USE_SYSTEM_SERVICE: 1
       run: |
         scripts/test-service.sh
+
+    - name: Archive the Debian package
+      uses: actions/upload-artifact@v3
+      with:
+        name: package
+        path: service/build/statuspanel-service-*.deb
+        if-no-files-found: error

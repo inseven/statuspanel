@@ -1,0 +1,10 @@
+[Unit]
+Description=StatusPanel service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStart=/bin/bash -c "docker compose -f /usr/share/statuspanel-service/docker-compose.yaml up"
+
+[Install]
+WantedBy=multi-user.target

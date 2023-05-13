@@ -28,8 +28,10 @@ set -u
 SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
+SERVICE_DIRECTORY="${ROOT_DIRECTORY}/service"
+TESTS_DIRECTORY="${SERVICE_DIRECTORY}/tests"
 
-cd "$ROOT_DIRECTORY"
+cd "$TESTS_DIRECTORY"
 
 pipenv sync
-pipenv run python -m unittest discover --verbose --start-directory service/tests
+pipenv run python -m unittest discover --verbose --start-directory .

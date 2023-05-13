@@ -18,6 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import atexit
 import functools
 import logging
 import os
@@ -34,10 +35,18 @@ collections.MutableMapping = collections.abc.MutableMapping
 import psycopg2
 import werkzeug
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, send_from_directory, request, redirect, abort, jsonify, g, make_response
+
+import collections.abc
+collections.Iterable = collections.abc.Iterable
+collections.Mapping = collections.abc.Mapping
+collections.MutableSet = collections.abc.MutableSet
+collections.MutableMapping = collections.abc.MutableMapping
 
 import apns
 import database
+import task
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(process)d] [%(levelname)s] %(message)s", datefmt='%Y-%m-%d %H:%M:%S %z')
 
@@ -57,9 +66,17 @@ def get_database():
     return g.database
 
 
+# Create the Flask app.
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
+
+
+# Create a scheduler to run periodic tasks like database clean up and device notification.
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=task.run_periodic_tasks, trigger="interval", seconds=60 * 60)  # Runs every hour.
+scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
 
 
 @app.teardown_appcontext

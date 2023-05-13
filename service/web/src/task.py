@@ -39,13 +39,8 @@ def send_keepalive(db, use_sandbox, tokens):
                 db.delete_device(token=device_token)
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Periodic task for StatusPanel.")
-    parser.add_argument('--database-url', default=None, help="use alternative database URL; the DATABASE_URL environment variable will be used otherwise")
-    options = parser.parse_args()
-
-    # Connect to the database.
-    db = database.Database(database_url=options.database_url)
+def run_periodic_tasks():
+    db = database.Database()
 
     # Delete any devices that haven't been seen in a month.
     print("Purging stale devices...")
@@ -60,7 +55,3 @@ def main():
 
     print("Sending tokens...")
     send_keepalive(db, use_sandbox=False, tokens=[device["token"] for device in devices if not device["use_sandbox"]])
-
-
-if __name__=="__main__":
-    main()

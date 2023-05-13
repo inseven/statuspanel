@@ -18,6 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import contextlib
 import datetime
 import io
 import os
@@ -34,45 +35,16 @@ import dateutil.parser
 import pytz
 import requests
 
-import docker
-import path
 
-sys.path.append(path.SERVICE_DIR)
+TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+SERVICE_DIR = os.path.dirname(TESTS_DIR)
+WEB_SERVICE_DIR = os.path.join(SERVICE_DIR, "web", "src")
+BUILD_DIR = os.path.join(SERVICE_DIR, "build")
+
+sys.path.append(WEB_SERVICE_DIR)
 
 import apns
-import app
 import database
-
-
-class DevelopmentClient(object):
-
-    def __init__(self):
-        self.container = docker.PostgresContainer()
-        self.container.run()
-        os.environ["DATABASE_URL"] = self.container.url
-        self.client = app.app.test_client()
-
-    def get(self, url, *args, **kwargs):
-        response = self.client.get(url, *args, **kwargs)
-        response.content = response.data
-        return response
-
-    def post(self, url, *args, **kwargs):
-        response = self.client.post(url, *args, **kwargs)
-        response.content = response.data
-        return response
-
-    def upload(self, url, data):
-        return self.post(url,
-                         content_type="multipart/form-data",
-                         buffered=True,
-                         follow_redirects=False,
-                         data={
-                             'file': (io.BytesIO(data), "example.bin")
-                         })
-
-    def close(self):
-        self.container.stop()
 
 
 class RemoteClient(object):
@@ -96,13 +68,37 @@ class RemoteClient(object):
         self.session.close()
 
 
+@contextlib.contextmanager
+def chdir(path):
+    pwd = os.getcwd()
+    try:
+        os.chdir(path)
+        yield path
+    except:
+        os.chdir(pwd)
+
+
 class TestAPI(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        if "USE_SYSTEM_SERVICE" in os.environ and os.environ["USE_SYSTEM_SERVICE"] == "1":
+            return
+        subprocess.check_call(["docker", "compose",
+                               "-f", os.path.join(BUILD_DIR, "docker-compose.yaml"),
+                               "up", "-d"])
+        time.sleep(1)
+
+    @classmethod
+    def tearDownClass(cls):
+        if "USE_SYSTEM_SERVICE" in os.environ and os.environ["USE_SYSTEM_SERVICE"] == "1":
+            return
+        subprocess.check_call(["docker", "compose",
+                               "-f", os.path.join(BUILD_DIR, "docker-compose.yaml"),
+                               "stop"])
+
     def setUp(self):
-        if "TEST_BASE_URL" in os.environ:
-            self.client = RemoteClient(os.environ["TEST_BASE_URL"])
-        else:
-            self.client = DevelopmentClient()
+        self.client = RemoteClient(os.environ["TEST_BASE_URL"])
 
     def tearDown(self):
         self.client.close()

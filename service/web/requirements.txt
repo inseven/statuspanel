@@ -1,0 +1,9 @@
+APScheduler
+Flask
+gobiko.apns
+gunicorn
+psycopg2-binary
+py-dateutil
+pytest
+pytz
+requests

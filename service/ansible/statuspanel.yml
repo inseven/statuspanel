@@ -1,0 +1,47 @@
+- name: statuspanel.io
+  hosts: inseven
+
+  # As of right now, the server uses ufw for firewall management.
+  # sudo ufw allow 443
+
+  tasks:
+
+    - name: Copy the Debian package
+      copy:
+        src: "{{ package_path }}"
+        dest: /tmp/statuspanel-service.deb
+
+    - name: Install the service
+      apt:
+        deb: /tmp/statuspanel-service.deb
+      become: yes
+
+    - name: Enable site
+      file:
+        src: /etc/nginx/sites-available/staging.statuspanel.io.conf
+        dest: /etc/nginx/sites-enabled/staging.statuspanel.io.conf
+        owner: root
+        group: root
+        state: link
+      become: yes
+
+    - name: Register certbot
+      shell: |
+        /usr/bin/certbot -n register --agree-tos --email webmaster@inseven.co.uk
+        touch /etc/letsencrypt/.registered
+      args:
+        creates: /etc/letsencrypt/.registered
+      become: yes
+
+    - name: Create certificate
+      command: '/usr/bin/certbot -n --nginx certonly -d staging.statuspanel.io'
+      args:
+        creates: '/etc/letsencrypt/live/staging.statuspanel.io'
+      ignore_errors: true
+      become: true
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+      become: yes

@@ -1,0 +1,10 @@
+Package: statuspanel-service
+Version: $VERSION
+Section: custom
+Priority: optional
+Architecture: all
+Essential: no
+Installed-Size: 1024
+Maintainer: inseven.co.uk
+Description: StatusPanel web service
+Depends: docker-ce | moby-cli, python3-certbot, python3-certbot-nginx

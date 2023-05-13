@@ -7,42 +7,24 @@ The StatusPanel service provides two pieces of functionality:
 
 ## Infrastructure
 
-The StatusPanel service is currently hosted using [Heroku](https://heroku.com). There are two apps in the pipeline:
+StatusPanel is hosted using Docker behind an nginx reverse proxy. Deployment is performed using an Ansible playbook located in the 'ansible' directory.
 
-- [statuspanel-staging](https://staging.statuspanel.io) - auto-deploys master
-- [statuspanel-production](https://api.statuspanel.io) - manual deploy from staging
-
-The environments for these can be set up using the `configure-heroku-app`:
-
-```bash
-scripts/configure-heroku-app statuspanel-staging
-```
+The production service is hosted on a DigitalOcean droplet and backups are achieved by enabling droplet backups.
 
 ## Development
 
-### Installing dependencies
+### Installing Dependencies
 
 StatusPanel uses a shared script for installing and managing dependencies. Follow the instructions [here](/README.markdown#installing-dependencies).
 
 ### Running Locally
 
-When running the service locally using the `heroku local` command, it uses the environment variables configured in `.env`. These are currently configured to use a local Postgres instance.
-
-You can use the following command to create a suitably configured docker container for testing:
-
 ```bash
-docker run \
-    --name some-postgres \
-    -p 5432:5432 \
-    -e POSTGRES_PASSWORD=0EFDA2E7-9700-4F06-ADCB-55D8E38A37DF \
-    -d postgres
+cd service
+docker compose up --build
 ```
 
-Once your docker container is running, you can run the local service as follows:
-
-```bash
-pipenv run heroku local
-```
+The database is exposed to the local machine as 'postgresql://hello_flask:hello_flask@localhost:54320/hello_flask_dev'.
 
 ### Testing APNS
 
@@ -57,53 +39,26 @@ export APNS_KEY=`cat apns.p8`
 
 N.B. This assumes the APNS private key is in `apns.p8` and these commands are executed from the root directory.
 
-If you wish to test notification deployment, you will also need to pass the database URL when running the APNS periodic command:
-
-```bash
-pipenv run python3 service/task.py --database-url <database_url>
-```
-
 ### Tests
 
-Install the Python dependencies:
+Tests can be run as follows:
 
 ```bash
-pipenv install
+scripts/tests-service.sh
 ```
 
-Local API tests make use of a named docker container (creating and deleting the container where appropriate), and the Flask test client:
+This will install the tests' Python dependencies.
 
-```bash
-pipenv run python -m unittest discover --verbose --start-directory service/tests
-```
+By default, the tests will automatically start and stop Docker. This behaviour can be disabled to enable testing against a local resident instance by setting the environment variable `USE_SYSTEM_SERVICE=1`.
 
 Sometimes, it can be quite useful to run individual unit tests. This can be done as follows:
 
 ```bash
-pipenv run python service/tests/test_api.py --verbose TestAPI.test_index
+cd service/tests
+pipenv run python test_api.py --verbose TestAPI.test_index
 ```
 
-Tests can also be run on the live environments by selecting the correct `.env` file. In this scenario, the Python `requests` client is used and tests are performed against the live databases.
-
-It is encouraged to run the tests on staging prior to promoting to production.
-
-Staging:
-
-```bash
-PIPENV_DOTENV_LOCATION=.env.staging pipenv run \
-    python -m unittest discover \
-    --verbose \
-    --start-directory service/tests
-```
-
-Production:
-
-```bash
-PIPENV_DOTENV_LOCATION=.env.production pipenv run \
-    python -m unittest discover \
-    --verbose \
-    --start-directory service/tests
-```
+The necessary environment variables that tell the tests where to find the service and database are stored in 'service/tests/.env'
 
 ### Command-line
 
