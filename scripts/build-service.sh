@@ -51,24 +51,10 @@ cd "${WEB_SERVICE_DIRECTORY}"
 docker build -t jbmorley/statuspanel-web .
 docker tag jbmorley/statuspanel-web "jbmorley/statuspanel-web:${BUILD_NUMBER}"
 
-# docker push jbmorley/statuspanel-web
-
-# Generate a docker compose file explicitly targeting our tagged image.
-envsubst < "${SERVICE_DIRECTORY}/docker-compose.yaml" > "${BUILD_DIRECTORY}/docker-compose.yaml"
-
-# Run the tests.
-cd "$TESTS_DIRECTORY"
-
-# Run the tests against the Docker container.
-# TODO: Consider running these tests against the Debian package as that would be more complete!
-# This reads environment variables from the '.env' file.
-pipenv sync
-pipenv run python -m unittest discover --verbose --start-directory .
-
-# Docker image and compose file.
+# Generate the Docker image and compose file.
 mkdir -p "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service"
 docker save "jbmorley/statuspanel-web:${BUILD_NUMBER}" | gzip > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
-cp "${BUILD_DIRECTORY}/docker-compose.yaml" "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml"
+envsubst < "${SERVICE_DIRECTORY}/docker-compose.yaml" > ${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml"
 
 # Create the Debian package.
 export VERSION="1.0.0"

@@ -54,7 +54,7 @@ The full test suite is run as part of the build script:
 scripts/build-service.sh
 ```
 
-Tests will automatically start and stop Docker.
+By default, the tests will automatically start and stop Docker. This behaviour can be disabled to enable testing against a local resident instance by setting the environment variable `USE_SYSTEM_SERVICE=1`.
 
 Sometimes, it can be quite useful to run individual unit tests. This can be done as follows:
 
