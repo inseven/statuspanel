@@ -139,12 +139,9 @@ class Service {
         let encryptedData = Self.makeMultipartUpload(localUpdateTime: localUpdateTime,
                                                      parts: encryptedParts,
                                                      flags: flags)
-        let path = "https://api.statuspanel.io/api/v2/\(device.id)"
-        guard let url = URL(string: path) else {
-            print("Unable to create URL")
-            completion(false)
-            return
-        }
+        let url = baseUrl
+            .appendingPathComponent("status")
+            .appendingPathComponent(device.id)
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
