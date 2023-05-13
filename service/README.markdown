@@ -24,13 +24,7 @@ cd service
 docker compose up --build
 ```
 
-If you need to inspect the database, you can expose it with the overlay configuration file:
-
-```
-docker-compose -f docker-compose.yaml -f docker-compose-test.yaml up --build
-```
-
-The database will now be available at 'postgresql://hello_flask:hello_flask@localhost:5432/hello_flask_dev'.
+The database is exposed to the local machine as 'postgresql://hello_flask:hello_flask@localhost:54320/hello_flask_dev'.
 
 ### Testing APNS
 

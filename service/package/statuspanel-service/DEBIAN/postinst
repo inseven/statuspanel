@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Create the database volume.
+docker volume create statuspanel_data
+
 # Load the Docker image.
 docker load < /usr/share/statuspanel-service/statuspanel-web-latest.tar.gz
 

@@ -86,7 +86,6 @@ class TestAPI(unittest.TestCase):
             return
         subprocess.check_call(["docker", "compose",
                                "-f", os.path.join(BUILD_DIR, "docker-compose.yaml"),
-                               "-f", os.path.join(SERVICE_DIR, "docker-compose-test.yaml"),
                                "up", "-d"])
         time.sleep(1)
 
@@ -96,7 +95,6 @@ class TestAPI(unittest.TestCase):
             return
         subprocess.check_call(["docker", "compose",
                                "-f", os.path.join(BUILD_DIR, "docker-compose.yaml"),
-                               "-f", os.path.join(SERVICE_DIR, "docker-compose-test.yaml"),
                                "stop"])
 
     def setUp(self):
