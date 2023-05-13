@@ -6,26 +6,6 @@
 
   tasks:
 
-    - name: Install dependencies
-      apt:
-        pkg:
-          - python3-certbot
-          - python3-certbot-nginx
-      become: yes
-
-    - name: Create destination directory
-      file:
-        path: /opt/statuspanel
-        state: directory
-        owner: "{{ ansible_ssh_user }}"
-        group: "{{ ansible_ssh_user }}"
-      become: yes
-
-    - name: Synchronize files
-      synchronize:
-        src: "{{ playbook_dir }}/../build/"
-        dest: /opt/statuspanel/
-        delete: yes
 
     - name: Stop service
       systemd:
