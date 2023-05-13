@@ -52,6 +52,7 @@ mkdir -p "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service
 envsubst < "${SERVICE_DIRECTORY}/docker-compose.yaml" > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml"
 envsubst < "${PACKAGE_DIRECTORY}/control" > "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/control"
 envsubst < "${PACKAGE_DIRECTORY}/prerm" > "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/prerm"
+chmod 0755 "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/prerm"
 
 # Export the image the Docker image.
 docker save "${IMAGE_SHA}" | gzip > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
