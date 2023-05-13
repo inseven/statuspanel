@@ -354,14 +354,13 @@ struct PixelRenderer: Renderer {
         let spc = CGColorSpace(indexedBaseSpace: CGColorSpace(name: CGColorSpace.sRGB)!, last: colours.count - 1, colorTable: palette)!
         let w = image.width
         let h = image.height
+
         var data = Data()
-        let pixelData = CFDataGetBytePtr(image.dataProvider!.data!)!
-        for i in 0 ..< w * h {
-            let pos = i * 4
-            let r = Int(pixelData[pos + 0] / 32)
-            let g = Int(pixelData[pos + 1] / 32)
-            let b = Int(pixelData[pos + 2] / 32)
-            let c = lookupTable[(r * 8 * 8) + (g * 8) + b]
+        image.walkPixels { r, g, b in
+            let rb = Int(r) / 32
+            let gb = Int(g) / 32
+            let bb = Int(b) / 32
+            let c = lookupTable[(rb * 8 * 8) + (gb * 8) + bb]
             data.append(c)
         }
         // let elapsed = startTime.distance(to: Date.now)

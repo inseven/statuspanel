@@ -104,4 +104,47 @@ extension CGImage {
     static func New(_ size: CGSize, flipped: Bool, actions: (CGContext) -> Void) -> CGImage {
         return UIImage.New(size, flipped: flipped, actions: actions).cgImage!
     }
+
+    func walkPixels(_ callback: (_ r: UInt8, _ g: UInt8, _ b: UInt8) -> Void) {
+        let width = self.width
+        let height = self.height
+        if self.bitsPerPixel == 24 {
+            if let data = self.dataProvider?.data,
+               let pixelData = CFDataGetBytePtr(data) {
+                var i = 0
+                for _ in 0 ..< width * height {
+                    callback(pixelData[i], pixelData[i+1], pixelData[i+2])
+                    i += 3
+                }
+                return
+            }
+        } else if self.bitsPerPixel == 32 {
+            if let data = self.dataProvider?.data,
+               let pixelData = CFDataGetBytePtr(data) {
+                var i = 0
+                for _ in 0 ..< width * height {
+                    callback(pixelData[i], pixelData[i+1], pixelData[i+2])
+                    i += 4
+                }
+                return
+            }
+        }
+
+        // Otherwise, composite into a new 32bpp context and iterate the backing store for that
+        let bitmapInfo: UInt32 = CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
+        var data = Array<UInt8>(repeating: 0, count: width * height * 4)
+        let context = CGContext(data: &data,
+                                width: width,
+                                height: height,
+                                bitsPerComponent: 8,
+                                bytesPerRow: 4 * width,
+                                space: CGColorSpaceCreateDeviceRGB(),
+                                bitmapInfo: bitmapInfo)!
+        context.draw(self, in: CGRect(x: 0, y: 0, width: width, height: height))
+        var i = 0
+        for _ in 0 ..< self.width * self.height {
+            callback(data[i], data[i+1], data[i+2])
+            i += 4
+        }
+    }
 }
