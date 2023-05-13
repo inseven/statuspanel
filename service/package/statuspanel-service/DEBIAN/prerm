@@ -1,13 +1,8 @@
 #!/bin/sh
 
-# Disable the site.
-unlink /etc/nginx/sites-enabled/statuspanel.conf
-systemctl restart nginx
-
 # Stop and disable the service
 systemctl stop statuspanel-service.service
 systemctl disable statuspanel-service.service
 
 # Remove the image.
 docker rm jbmorley/statuspanel-web
-

@@ -9,7 +9,3 @@ docker load < /usr/share/statuspanel-service/statuspanel-web-latest.tar.gz
 # Enable and start the service.
 systemctl enable statuspanel-service.service
 systemctl start statuspanel-service.service
-
-# Enable the site.
-ln -s /etc/nginx/sites-available/statuspanel.conf /etc/nginx/sites-enabled/statuspanel.conf
-systemctl restart nginx
