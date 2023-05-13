@@ -54,7 +54,7 @@ docker tag jbmorley/statuspanel-web "jbmorley/statuspanel-web:${BUILD_NUMBER}"
 # Generate the Docker image and compose file.
 mkdir -p "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service"
 docker save "jbmorley/statuspanel-web:${BUILD_NUMBER}" | gzip > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
-envsubst < "${SERVICE_DIRECTORY}/docker-compose.yaml" > ${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml"
+envsubst < "${SERVICE_DIRECTORY}/docker-compose.yaml" > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml"
 
 # Create the Debian package.
 export VERSION="1.0.0"
