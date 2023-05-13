@@ -22,6 +22,9 @@ services:
       - POSTGRES_USER=hello_flask
       - POSTGRES_PASSWORD=hello_flask
       - POSTGRES_DB=hello_flask_dev
+    ports:
+      - 54320:5432
+
 
 volumes:
   postgres_data:
