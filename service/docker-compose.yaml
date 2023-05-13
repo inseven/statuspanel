@@ -3,7 +3,7 @@ name: statuspanel
 
 services:
   web:
-    image: jbmorley/statuspanel-web:$BUILD_NUMBER
+    image: $IMAGE_SHA
     ports:
       - 5000:5000
     environment:

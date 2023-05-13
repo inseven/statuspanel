@@ -31,7 +31,6 @@ SERVICE_DIRECTORY="${ROOT_DIRECTORY}/service"
 WEB_SERVICE_DIRECTORY="${SERVICE_DIRECTORY}/web"
 BUILD_DIRECTORY="${SERVICE_DIRECTORY}/build"
 PACKAGE_DIRECTORY="${SERVICE_DIRECTORY}/package"
-TESTS_DIRECTORY="${SERVICE_DIRECTORY}/tests"
 
 source "${SCRIPTS_DIRECTORY}/environment.sh"
 
@@ -42,24 +41,20 @@ mkdir -p "${BUILD_DIRECTORY}"
 
 set -x
 
-export BUILD_NUMBER=`build-tools generate-build-number`
-
 # Build the and export docker images.
-# TODO: Just reference the image by SHA here as that's guaranteed stable and will allow us to simplify versioning issues.
-# dockerSHA=$(docker inspect --format='{{index .RepoDigests 0}}' mySuperCoolTag  | perl -wnE'say /sha256.*/g')
+export IMAGE_SHA=`docker images -q jbmorley/statuspanel-web:latest`
 cd "${WEB_SERVICE_DIRECTORY}"
 docker build -t jbmorley/statuspanel-web .
-docker tag jbmorley/statuspanel-web "jbmorley/statuspanel-web:${BUILD_NUMBER}"
 
-# TODO: Make this conditional
-
-# Generate the Docker image and compose file.
+# Generate the Docker compose file.
 mkdir -p "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service"
-docker save "jbmorley/statuspanel-web:${BUILD_NUMBER}" | gzip > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
 envsubst < "${SERVICE_DIRECTORY}/docker-compose.yaml" > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml"
 
+# Export the image the Docker image.
+docker save "${IMAGE_SHA}" | gzip > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/statuspanel-web-latest.tar.gz"
+
 # Create the Debian package.
-export VERSION="1.0.0"
+export VERSION=`build-tools generate-build-number`
 envsubst < "${PACKAGE_DIRECTORY}/control" > "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/control"
 cd "$PACKAGE_DIRECTORY"
 dpkg-deb --build statuspanel-service

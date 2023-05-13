@@ -4,6 +4,7 @@
 /device/nodemcu/build
 /ios/StatusPanel/configuration.json
 /service/build
+/service/package/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml
 
 .DS_Store
 .env*
