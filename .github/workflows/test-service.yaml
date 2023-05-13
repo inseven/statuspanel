@@ -52,6 +52,7 @@ jobs:
     - name: Install the package for testing
       run: |
         sudo apt-get install ./service/build/statuspanel-service-*.deb
+        sudo systemctl status statuspanel-service.service
 
     - name: Run the tests against the local service
       env:
