@@ -33,19 +33,6 @@
         name: statuspanel.service
       become: yes
 
-    - name: Install service
-      template:
-        src: "statuspanel.service"
-        dest: /etc/systemd/system/statuspanel.service
-      become: yes
-
-    # TODO: Rename this to include the domain name?
-    - name: Create virtual host
-      template:
-        src: statuspanel.conf
-        dest: "/etc/nginx/sites-available/statuspanel.conf"
-      become: yes
-
     - name: Enable site
       file:
         src: /etc/nginx/sites-available/statuspanel.conf

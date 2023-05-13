@@ -41,18 +41,13 @@ N.B. This assumes the APNS private key is in `apns.p8` and these commands are ex
 
 ### Tests
 
-Install the Python dependencies:
+Tests can be run as follows:
 
 ```bash
-cd service/tests
-pipenv sync
+scripts/tests-service.sh
 ```
 
-The full test suite is run as part of the build script:
-
-```bash
-scripts/build-service.sh
-```
+This will install the tests' Python dependencies.
 
 By default, the tests will automatically start and stop Docker. This behaviour can be disabled to enable testing against a local resident instance by setting the environment variable `USE_SYSTEM_SERVICE=1`.
 

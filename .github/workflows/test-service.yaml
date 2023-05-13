@@ -24,11 +24,6 @@ jobs:
       run: |
         git submodule update --init --depth 1 scripts/build-tools
 
-    - name: Show the version of Docker
-      run: |
-        sudo apt search docker
-        cat /etc/passwd
-
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
@@ -60,6 +55,8 @@ jobs:
         USE_SYSTEM_SERVICE: 1
       run: |
         scripts/test-service.sh
+        ls /etc/nginx/sites-available
+        ls /etc/nginx/sites-enabled
 
     - name: Archive the Debian package
       uses: actions/upload-artifact@v3
