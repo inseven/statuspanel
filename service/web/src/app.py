@@ -51,6 +51,9 @@ import task
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(process)d] [%(levelname)s] %(message)s", datefmt='%Y-%m-%d %H:%M:%S %z')
 
 
+SERVICE_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+VERSION_PATH = os.path.join(SERVICE_DIRECTORY, "VERSION")
+
 LEGACY_IDENTIFIER = "A0198E25-8436-4439-8BE1-75C445655255"
 
 
@@ -66,11 +69,18 @@ def get_database():
     return g.database
 
 
+# Read the version.
+METADATA = {
+    "version": "Unknown"
+}
+if os.path.exists(VERSION_PATH):
+    with open(VERSION_PATH) as fh:
+        METADATA["version"] = fh.read().strip()
+
 # Create the Flask app.
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
-
 
 # Create a scheduler to run periodic tasks like database clean up and device notification.
 scheduler = BackgroundScheduler()
@@ -150,6 +160,10 @@ def device():
     logging.info(get_database().get_devices())
 
     return jsonify(request.get_json())
+
+@app.route('/api/v3/service/about', methods=['GET'])
+def service_metadata():
+    return jsonify(METADATA)
 
 
 if __name__ == '__main__':

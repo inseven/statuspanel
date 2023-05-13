@@ -80,23 +80,6 @@ def chdir(path):
 
 class TestAPI(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        if "USE_SYSTEM_SERVICE" in os.environ and os.environ["USE_SYSTEM_SERVICE"] == "1":
-            return
-        subprocess.check_call(["docker", "compose",
-                               "-f", os.path.join(BUILD_DIR, "docker-compose.yaml"),
-                               "up", "-d"])
-        time.sleep(1)
-
-    @classmethod
-    def tearDownClass(cls):
-        if "USE_SYSTEM_SERVICE" in os.environ and os.environ["USE_SYSTEM_SERVICE"] == "1":
-            return
-        subprocess.check_call(["docker", "compose",
-                               "-f", os.path.join(BUILD_DIR, "docker-compose.yaml"),
-                               "stop"])
-
     def setUp(self):
         self.client = RemoteClient(os.environ["TEST_BASE_URL"])
 
@@ -327,6 +310,10 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200, "Registering device succeeds")
         db = database.Database(readonly=True)
         self.assertTrue({"token": apns.encode_token(token), "use_sandbox": True} in db.get_devices())
+
+    def test_service_about(self):
+        response = self.client.get("/api/v3/service/about")
+        self.assertTrue("version" in response.json())
 
 
 if __name__ == "__main__":

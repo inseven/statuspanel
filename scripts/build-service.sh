@@ -42,12 +42,22 @@ mkdir -p "${BUILD_DIRECTORY}"
 # Process the command line arguments.
 POSITIONAL=()
 BUILD_PACKAGE=${BUILD_PACKAGE:-false}
+START_SERVICE=false
+TEST_SERVICE=false
 while [[ $# -gt 0 ]]
 do
     key="$1"
     case $key in
         -p|--build-package)
         BUILD_PACKAGE=true
+        shift
+        ;;
+        -s|--start)
+        START_SERVICE=true
+        shift
+        ;;
+        -t|--test)
+        TEST_SERVICE=true
         shift
         ;;
         *)
@@ -59,13 +69,15 @@ done
 
 set -x
 
+# Set the application version number.
+export VERSION=`build-tools generate-build-number`
+
 # Build the and export docker images.
 cd "${WEB_SERVICE_DIRECTORY}"
-docker build -t jbmorley/statuspanel-web .
+docker build -t jbmorley/statuspanel-web --build-arg VERSION=${VERSION} .
 export IMAGE_SHA=`docker images -q jbmorley/statuspanel-web:latest`
 
 # Generate the Docker compose and package files.
-export VERSION=`build-tools generate-build-number`
 mkdir -p "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service"
 envsubst < "${SERVICE_DIRECTORY}/docker-compose.yaml" > "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/docker-compose.yaml"
 envsubst < "${PACKAGE_DIRECTORY}/control" > "${PACKAGE_DIRECTORY}/statuspanel-service/DEBIAN/control"
@@ -79,5 +91,27 @@ if $BUILD_PACKAGE ; then
     cd "$PACKAGE_DIRECTORY"
     dpkg-deb --build statuspanel-service
     mv statuspanel-service.deb "$BUILD_DIRECTORY/statuspanel-service-$VERSION.deb"
+
+fi
+
+if $START_SERVICE ; then
+
+    cd "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/"
+    docker compose up
+
+fi
+
+if $TEST_SERVICE ; then
+
+    function cleanup {
+        cd "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/"
+        docker compose down
+    }
+
+    cd "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/"
+    docker compose up -d
+    trap cleanup EXIT
+    sleep 1
+    "${SCRIPTS_DIRECTORY}/test-service.sh"
 
 fi
