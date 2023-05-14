@@ -6,6 +6,7 @@ verify_ssl = true
 
 [packages]
 
+cryptography = ">=39.0.1"
 Flask = "*"
 "gobiko.apns" = "*"
 gunicorn = "*"
