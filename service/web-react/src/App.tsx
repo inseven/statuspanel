@@ -3,8 +3,8 @@ import { Stats } from "./Stats";
 
 export function App() {
   return (
-    <div className="h-screen bg-gray-100 px-8">
-      <h1>StatusPanel Service</h1>
+    <div className="p-8 m-auto max-w-3xl">
+      <h1 className="text-3xl font-bold">StatusPanel Service</h1>
 
       <Stats />
 
