@@ -20,32 +20,26 @@
 
 import UIKit
 
-class DataView {
+extension UIColor {
 
-    let pointer: UnsafeMutableRawPointer
-    let bytesPerPixel: Int
-    let height: Int
-    let width: Int
-
-    init(pointer: UnsafeMutableRawPointer, bytesPerPixel: Int, width: Int, height: Int) {
-        self.pointer = pointer
-        self.bytesPerPixel = bytesPerPixel
-        self.width = width
-        self.height = height
+    convenience init(r: UInt8, g: UInt8, b: UInt8, a: UInt8 = 255) {
+        self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
     }
 
-    func map(transform: (UInt8, UInt8, UInt8) -> (UInt8, UInt8, UInt8)) {
-        for index in 0 ..< width * height {
-            let offset = index * bytesPerPixel
-            let red = pointer.load(fromByteOffset: offset, as: UInt8.self)
-            let green = pointer.load(fromByteOffset: offset + 1, as: UInt8.self)
-            let blue = pointer.load(fromByteOffset: offset + 2, as: UInt8.self)
+    func rgb() -> (CGFloat, CGFloat, CGFloat) {
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        self.getRed(&r, green: &g, blue: &b, alpha: nil)
+        return (r, g, b)
+    }
 
-            let (newRed, newGreen, newBlue) = transform(red, green, blue)
-            pointer.storeBytes(of: newRed, toByteOffset: offset, as: UInt8.self)
-            pointer.storeBytes(of: newGreen, toByteOffset: offset + 1, as: UInt8.self)
-            pointer.storeBytes(of: newBlue, toByteOffset: offset + 2, as: UInt8.self)
-        }
+    func hsb() -> (CGFloat, CGFloat, CGFloat) {
+        var h: CGFloat = 0
+        var s: CGFloat = 0
+        var b: CGFloat = 0
+        self.getHue(&h, saturation: &s, brightness: &b, alpha: nil)
+        return (h, s, b)
     }
 
 }

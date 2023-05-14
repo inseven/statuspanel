@@ -60,36 +60,10 @@ extension UIImage: Transferable {
 
         let width = cgImage.width
         let height = cgImage.height
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let rawdata = calloc(height*width*4, MemoryLayout<CUnsignedChar>.size)!
-        defer {
-            free(rawdata)
-        }
-        let bytesPerPixel = 4
-        let bytesPerRow = bytesPerPixel * width
-        let bitsPerComponent = 8
-        let bitmapInfo: UInt32 = CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
-
-        guard let context = CGContext(data: rawdata,
-                                      width: width,
-                                      height: height,
-                                      bitsPerComponent: bitsPerComponent,
-                                      bytesPerRow: bytesPerRow,
-                                      space: colorSpace,
-                                      bitmapInfo: bitmapInfo) else {
-            return nil
-        }
-
-        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
-
         var slidingErrorWindow: [CGFloat] = Array(repeating: 0, count: 2 * width)
         let mask = [0, 1, width - 2, width - 1, width, (2 * width) - 1]
-
-        let pixels = DataView(pointer: rawdata, bytesPerPixel: bytesPerPixel, width: width, height: height)
-        pixels.map { red, green, blue in
-
+        let data = cgImage.mapPixels(numTasks: 1) { x, y, red, green, blue in
             let pixel: CGFloat = CGFloat(red) / 255.0
-
             let value = pixel + slidingErrorWindow.removeFirst()
             slidingErrorWindow.append(0)
             let color: CGFloat = value > 0.5 ? 1.0 : 0.0
@@ -98,13 +72,25 @@ extension UIImage: Transferable {
                 slidingErrorWindow[offset] = slidingErrorWindow[offset] + error
             }
 
-            let newRed = UInt8(255.0 * color)
-            return (newRed, newRed, newRed)
+            return UInt8(255.0 * color)
         }
 
-        let resultImage = UIImage(cgImage: context.makeImage()!)
+        if let provider = CGDataProvider(data: Data(data) as CFData),
+           let cgImage = CGImage(width: width,
+                                 height: height,
+                                 bitsPerComponent: 8,
+                                 bitsPerPixel: 8,
+                                 bytesPerRow: width,
+                                 space: CGColorSpaceCreateDeviceGray(),
+                                 bitmapInfo: .byteOrderDefault,
+                                 provider: provider,
+                                 decode: nil,
+                                 shouldInterpolate: false,
+                                 intent: .defaultIntent) {
+            return UIImage(cgImage: cgImage)
+        }
 
-        return resultImage
+        return nil
     }
 
     func scale(to size: CGSize, grayscale: Bool, contentMode: ContentMode) -> UIImage? {

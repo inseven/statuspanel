@@ -1,11 +1,11 @@
 -- init.lua
 
--- Some globals needed by everything before they're require'd
-
 idf_v4 = node.LFS ~= nil
 
+local _isFeatherTft = false
+
 function isFeatherTft()
-    return node.chipid == nil -- Basically, testing for the esp32s2
+    return _isFeatherTft
 end
 
 local _isInky = false
@@ -79,7 +79,6 @@ function configurePins_tft()
     NeoPixelPowerPin = 34
     Sda = 42
     Scl = 41
-    BatteryMonitorI2CAddress = 0xB
 
     gpio.config({
         gpio = { TFT_RESET, TFT_DC, TFT_BL, TFT_POWER, TFT_CS, StatusLed, NeoPixelPin, NeoPixelPowerPin },
@@ -104,31 +103,59 @@ function configurePins_tft()
     i2c_setup(Sda, Scl)
 end
 
--- Currently assumes huzzah32
-function configurePins_inky()
-    SpiId = 1 -- HSPI (doesn't place any restriction on pins)
-    Sda = 23 -- Pi: GP2 (SDA)
-    Scl = 22 -- Pi: GP3 (SCL)
-    Reset = 27 -- Pi: GP27 (really)
-    Busy = 34 -- A2, Pi: GP17
-    DC = 33 -- Pi: GP22
-    Mosi = 18 -- Pi: 10 (MOSI)
-    Sclk = 5 -- Pi: 11 (SCLK)
-    CS = 15 -- Pi: 8 (CE0)
-    ButtonA = 32 -- Pi: GP5
-    -- ButtonB = ? -- Pi: GP6
-    -- ButtonC = ? -- Pi: GP16
-    -- ButtonD (Pi: GP24) we connect to reset so doesn't have a esp32 GPIO pin number
+function configurePins_inky(chiptype)
+    local spiHost, spiDmaChannel
+    if chiptype == "esp32s3" then
+        spiHost = 1
+        spiDmaChannel = 3 -- SPI_DMA_CH_AUTO
+        Sda = 3 -- Pi: GP2 (SDA)
+        Scl = 4 -- Pi: GP3 (SCL)
+        Reset = 11 -- Pi: GP27
+        Busy = 16 -- A2, Pi: GP17
+        DC = 10 -- Pi: GP22
+        Mosi = 35 -- Pi: 10 (MOSI)
+        Sclk = 36 -- Pi: 11 (SCLK)
+        CS = 9 -- Pi: 8 (CE0)
+        ButtonA = 6 -- Pi: GP5
+        -- ButtonB = ? -- Pi: GP6
+        -- ButtonC = ? -- Pi: GP16
+        -- ButtonD (Pi: GP24) we connect to reset so doesn't have a esp32 GPIO pin number
 
-    AutoPin = 14
-    VBat = 7 -- That is, ADC1_CH7 aka GPIO 35 (internally connected to BAT)
-    StatusLed = 13 -- Just use the feather onboard LED
-    UnpairPin = ButtonA
-    UnpairActiveHigh = false
-    UsbDetect = 39 -- aka A3
-    -- For some reason isolating CS messes up after wakeup from deepsleep. I cannot figure out what's supposed to happen
-    -- from the docs, so it's easiest for now just not to isolate it. And it probably doesn't save any power anyway...
-    DeepSleepIsolatePins = { 12 }
+        AutoPin = 5
+        StatusLed = 13 -- feather onboard LED
+        NeoPixelPin = 33
+        NeoPixelPowerPin = 21
+        UnpairPin = ButtonA
+        UnpairActiveHigh = false
+        UsbDetect = 15 -- aka A3
+        -- Haven't looked at battery drain yet
+        DeepSleepIsolatePins = { }
+    else
+        spiHost = 1 -- HSPI (doesn't place any restriction on pins)
+        spiDmaChannel = 1 
+        Sda = 23 -- Pi: GP2 (SDA)
+        Scl = 22 -- Pi: GP3 (SCL)
+        Reset = 27 -- Pi: GP27 (really)
+        Busy = 34 -- A2, Pi: GP17
+        DC = 33 -- Pi: GP22
+        Mosi = 18 -- Pi: 10 (MOSI)
+        Sclk = 5 -- Pi: 11 (SCLK)
+        CS = 15 -- Pi: 8 (CE0)
+        ButtonA = 32 -- Pi: GP5
+        -- ButtonB = ? -- Pi: GP6
+        -- ButtonC = ? -- Pi: GP16
+        -- ButtonD (Pi: GP24) we connect to reset so doesn't have a esp32 GPIO pin number
+
+        AutoPin = 14
+        VBat = 7 -- That is, ADC1_CH7 aka GPIO 35 (internally connected to BAT)
+        StatusLed = 13 -- Just use the feather onboard LED
+        UnpairPin = ButtonA
+        UnpairActiveHigh = false
+        UsbDetect = 39 -- aka A3
+        -- For some reason isolating CS messes up after wakeup from deepsleep. I cannot figure out what's supposed to happen
+        -- from the docs, so it's easiest for now just not to isolate it. And it probably doesn't save any power anyway...
+        DeepSleepIsolatePins = { 12 }
+    end
 
     gpio.config({
         gpio = { Reset, DC, CS, StatusLed },
@@ -145,19 +172,34 @@ function configurePins_inky()
         dir = gpio.IN,
         pull = gpio.PULL_DOWN
     })
+    if NeoPixelPin then
+        gpio.config({
+            gpio = { NeoPixelPin, NeoPixelPowerPin },
+            dir = gpio.OUT,
+        })
+        gpio.write(NeoPixelPowerPin, 0)
+    end
+    if chiptype == "esp32s3" then
+        -- Disable STEMMA QT port to save a bit more power
+        local i2cPower = 7
+        gpio.config({ gpio = i2cPower, dir = gpio.OUT })
+        gpio.write(i2cPower, 0)
+    end
 
-    local spimaster = spi.master(SpiId, {
+    local spimaster = spi.master(spiHost, {
         sclk = Sclk,
         mosi = Mosi,
         max_transfer_sz = 0,
-    }, 1) -- 1 means enable DMA
+    }, spiDmaChannel)
     spidevice = spimaster:device({
         cs = CS,
         mode = 0,
         freq = 2*1000*1000, -- ie 2 MHz
     })
-    adc.setup(adc.ADC1, VBat, adc.ATTEN_11db)
-    adc.setwidth(adc.ADC1, 12)
+    if VBat then
+        adc.setup(adc.ADC1, VBat, adc.ATTEN_11db)
+        adc.setwidth(adc.ADC1, 12)
+    end
     gpio.write(Reset, 0)
 end
 
@@ -184,12 +226,12 @@ function i2c_write(addr, ...)
     i2c.write(i2c.SW, ...)
 end
 
-function i2c_try_write(addr, ...)
+-- Returns true if anything acks addr 
+function i2c_ping(addr)
     i2c.start(i2c.SW)
-    if not i2c.address(i2c.SW, addr, i2c.TRANSMITTER) then
-        return nil
-    end
-    return i2c.write(i2c.SW, ...)
+    local ok = i2c.address(i2c.SW, addr, i2c.TRANSMITTER)
+    i2c.stop(i2c.SW)
+    return ok
 end
 
 function i2c_read(addr, numBytes)
@@ -209,46 +251,17 @@ function init()
         node.egc.setmode(node.egc.ON_ALLOC_FAILURE)
     end
 
-    if idf_v4 then
-        package.loaders[3] = function(module) -- loader_flash
-            local fn = node.LFS.get(module)
-            return fn or "\n\tModule not in LFS"
-        end
-        file_open = io.open
-    else
-        local flashindex = node.flashindex
-        local lfs_t = {
-              __index = function(_, name)
-                local fn_ut, base, mapped, size, modules = flashindex(name)
-                if not base then
-                    return fn_ut
-                elseif name == '_time' then
-                    return fn_ut
-                elseif name == '_config' then
-                    local fs_ma, fs_size = file.fscfg()
-                    return {
-                        lfs_base = base, lfs_mapped = mapped, lfs_size = size,
-                        fs_mapped = fs_ma, fs_size = fs_size
-                    }
-                elseif name == '_list' then
-                    return modules
-                else
-                    return nil
-                end
-            end,
-
-            __newindex = function(_, name, value)
-                error("LFS is readonly. Invalid write to LFS." .. name, 2)
-            end,
-        }
-        _G.LFS = setmetatable(lfs_t, lfs_t)
-        -- Configure LFS
-        package.loaders[3] = function(module) -- loader_flash
-            local fn, base = flashindex(module)
-            return base and "\n\tModule not in LFS" or fn
-        end
-        file_open = file.open
+    -- We're assuming idf_v4 is true here, support for old LFS logic dropped
+    package.loaders[3] = function(module) -- loader_flash
+        local fn = node.LFS.get(module)
+        return fn or "\n\tModule not in LFS"
     end
+    file_open = io.open
+
+    local chiptype = (node.chiptype and node.chiptype()) or "esp32"
+    -- Since we never made any non-TFT S2 StatusPanels, just assume any S2 is a
+    -- Feather TFT, there isn't really a better way to do this atm.
+    _isFeatherTft = chiptype == "esp32s2"
 
     if isFeatherTft() then
         print("Configuring as ESP32-S2 TFT Feather")
@@ -257,19 +270,28 @@ function init()
         -- Have to special-case this because the "NewBusy" eink variant unwisely used SCL for NewBusy which means we
         -- can't safely try to poke around on i2c
         printf("Configuring as NewBusy WaveShare Huzzah32")
-        _isInky = false
         configurePins_eink()
     else
-        local esp32_Sda = 23
-        local esp32_Scl = 22
+        local sda, scl
+        if chiptype == "esp32" then
+            sda = 23
+            scl = 22
+        elseif chiptype == "esp32s3" then
+            sda = 3
+            scl = 4
+        else
+            error("Unsupported chip type "..chiptype)
+        end
         local inky_eeprom_addr = 0x50
-        i2c_setup(esp32_Sda, esp32_Scl)
-        _isInky = i2c_try_write(inky_eeprom_addr, 0, 0)
+        -- print("i2c_setup")
+        i2c_setup(sda, scl)
+        -- print("i2c_setup done")
+        _isInky = i2c_ping(inky_eeprom_addr)
         i2c_stop()
 
         if isInky() then
-            print("Configuring as Inky Huzzah32") 
-            configurePins_inky()
+            print("Configuring as Inky "..chiptype) 
+            configurePins_inky(chiptype)
         else
             printf("Configuring as OldBusy WaveShare Huzzah32")
             configurePins_eink()
@@ -294,20 +316,33 @@ function printf(...)
     print(string.format(...))
 end
 
+local _batt
+
 function getBatteryVoltage()
-    if isFeatherTft() then
-        if batt == nil then
-            batt = require("LC709203F")
-            batt.init(BatteryMonitorI2CAddress)
-        end
-        return batt.getVoltage()
-    else
+    if VBat then
         -- At 11db attenuation and 12 bits width, 4095 = VDD_A
         local val = adc.read(adc.ADC1, VBat)
         print("Raw ADC val", val)
         -- In theory result in mV should be (val * 3.3 * 2) / 4.096
         -- In practice, calibration seems off so we use a bigger number (~3.5)
         return (val * 6973) // 4096
+    elseif _batt == false then
+        return nil
+    else
+        if _batt == nil then
+            -- esp32s3 can ship with one of two different battery monitors, sigh
+            if i2c_ping(0xB) then
+                _batt = require("LC709203F")
+                _batt.init(0xB)
+            elseif i2c_ping(0x36) then
+                _batt = require("MAX17048")
+                _batt.init(0x36)
+            else
+                _batt = false
+                return nil
+            end
+        end
+        return _batt.getVoltage()
     end
 end
 

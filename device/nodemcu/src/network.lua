@@ -162,7 +162,19 @@ function getQRCodeURL(includeSsid)
     local pk = getPublicKey()
     -- toBase64 doesn't URL-encode the unsafe chars, so do that too
     local pkstr = encoder.toBase64(pk):gsub("[/%+%=]", function(ch) return string.format("%%%02X", ch:byte()) end)
-    local type = isFeatherTft() and 1 or isInky() and 3 or 0
+    local type
+    if isFeatherTft() then
+        type = 1
+    elseif isInky() then
+        if node.heap() > 2000000 then
+            -- We have SPI RAM and can thus support PNGs
+            type = 2
+        else
+            type = 3
+        end
+    else
+        type = 0
+    end
     local result = string.format("statuspanel:r2?id=%s&pk=%s&t=%d", id, pkstr, type)
     if includeSsid then
         result = result.."&s="..getApSSID()

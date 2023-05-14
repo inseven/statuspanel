@@ -176,15 +176,7 @@ class Panel {
     }
 
     private static func flattenColours(_ red: UInt8, _ green: UInt8, _ blue: UInt8) -> (UInt8, UInt8, UInt8) {
-        let col = UIColor.init(red: CGFloat(red) / 256,
-                               green: CGFloat(green) / 256,
-                               blue: CGFloat(blue) / 256,
-                               alpha: 0)
-        var hue: CGFloat = 0
-        var sat: CGFloat = 0
-        var brightness: CGFloat = 0
-        var alpha: CGFloat = 0
-        col.getHue(&hue, saturation: &sat, brightness: &brightness, alpha: &alpha)
+        let (hue, sat, brightness) = UIColor(r: red, g: green, b: blue).hsb()
 
         // Numbers are from 30 seconds fiddling with a HSB colour wheel
         let isYellow = hue >= 0.11 && hue <= 0.21 && sat >= 0.2 && brightness > 0.8
