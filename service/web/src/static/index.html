@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>StatusPanel API</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -10,7 +13,6 @@
                 font-family: 'Wix Madefor Display', sans-serif;
                 max-width: 800px;
                 margin: auto;
-                padding: 0 2em;
     		}
 
             table {
@@ -30,13 +32,25 @@
                 color: rgb(32, 214, 151);
             }
 
-            ul {
+            .content {
+                padding: 0 2em;
+            }
+
+            ul.widgets {
                 list-style: none;
                 margin: 0;
                 padding: 0;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 1em;
+            }
+
+            @media only screen and (max-width: 800px) {
+
+                ul.widgets {
+                    grid-template-columns: 1fr;
+                }
+
             }
 
             li {
@@ -60,43 +74,44 @@
     	</style>
     </head>
     <body>
-        <h1>StatusPanel API</h1>
-        <ul>
-            <li>
-                <table>
-                    <tr>
-                        <th>Build Number</th>
-                        <td id="build-number"></td>
-                    </tr>
-                    <tr>
-                        <th>Date</th>
-                        <td id="build-date"></td>
-                    </tr>
-                    <tr>
-                        <th>Commit</th>
-                        <td id="commit"></td>
-                    </tr>
-                </table>
-            </li>
-            <li>
-                <p class="highlight"><span id="device-count">0</span> devices</p>
-            </li>
-            <li>
-                <p class="highlight"><span id="status-count">0</span> images</p>
-                <p class="highlight"><span id="status-size">0</span> MB</p>
-            </li>
-        </ul>
-        <div class="footer">
-            <p>&copy; 2018-2023 <a href="https://jbmorley.co.uk" target="_blank">Jason Morley</a>, <a href="https://github.com/tomsci" target="_blank">Tom Sutcliffe</a></p>
-            <p><a href="https://statuspanel.io" target="_blank">https://statuspanel.io</a></p>
-            <p>Published by <a href="https://inseven.co.uk" target="_blank">InSeven Limited</a></p>
+        <div class="content">
+            <h1>StatusPanel API</h1>
+            <ul class="widgets">
+                <li>
+                    <table>
+                        <tr>
+                            <th>Build Number</th>
+                            <td id="build-number"></td>
+                        </tr>
+                        <tr>
+                            <th>Date</th>
+                            <td id="build-date"></td>
+                        </tr>
+                        <tr>
+                            <th>Commit</th>
+                            <td id="commit"></td>
+                        </tr>
+                    </table>
+                </li>
+                <li>
+                    <p class="highlight"><span id="device-count">0</span> devices</p>
+                </li>
+                <li>
+                    <p class="highlight"><span id="status-count">0</span> images</p>
+                    <p class="highlight"><span id="status-size">0</span> MB</p>
+                </li>
+            </ul>
+            <div class="footer">
+                <p>&copy; 2018-2023 <a href="https://jbmorley.co.uk" target="_blank">Jason Morley</a>, <a href="https://github.com/tomsci" target="_blank">Tom Sutcliffe</a></p>
+                <p><a href="https://statuspanel.io" target="_blank">https://statuspanel.io</a></p>
+                <p>Published by <a href="https://inseven.co.uk" target="_blank">InSeven Limited</a></p>
+            </div>
         </div>
     </body>
 
     <script type="module">
 
         const response = await fetch("/api/v3/service/about");
-        // const response = await fetch("https://staging.statuspanel.io/api/v3/service/about");
         const about = await response.json();
         const version = about["version"];
         const [year, month, day, hour, minute, commit] = [
