@@ -25,6 +25,15 @@
         state: link
       become: yes
 
+    - name: Enable site
+      file:
+        src: /etc/nginx/sites-available/api.statuspanel.io.conf
+        dest: /etc/nginx/sites-enabled/api.statuspanel.io.conf
+        owner: root
+        group: root
+        state: link
+      become: yes
+
     - name: Register certbot
       shell: |
         /usr/bin/certbot -n register --agree-tos --email webmaster@inseven.co.uk
@@ -37,7 +46,12 @@
       command: '/usr/bin/certbot -n --nginx certonly -d staging.statuspanel.io'
       args:
         creates: '/etc/letsencrypt/live/staging.statuspanel.io'
-      ignore_errors: true
+      become: true
+
+    - name: Create certificate
+      command: '/usr/bin/certbot -n --nginx certonly -d api.statuspanel.io'
+      args:
+        creates: '/etc/letsencrypt/live/api.statuspanel.io'
       become: true
 
     - name: Restart nginx
