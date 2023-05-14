@@ -1,4 +1,4 @@
-name: test-service
+name: build-service
 
 on:
   pull_request:
@@ -12,7 +12,7 @@ on:
 jobs:
   test-service:
 
-    name: test-service
+    name: build-service
     runs-on: ubuntu-latest
 
     steps:
