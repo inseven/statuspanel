@@ -62,9 +62,6 @@ ul.navigation > li {
     max-width: var(--content-width);
     margin: auto;
     padding: 2em;
-}
-
-.copyright {
     text-align: center;
 }
 
