@@ -652,15 +652,18 @@ function decryptImage(index)
     else
         -- Decrypt complete!
         print("Decrypt complete!")
+        rebootAndExecute("decryptComplete()")
+    end
+end
 
-        -- At the end of a decrypt we always want to display, while preserving the currently-selected image if any
-        local current = getCurrentDisplayIdentifier()
-        local imageToShow = current and current:match("^(img_[^,]+)") or imageFilename(1)
-        local autoMode = AutoPin and gpio.read(AutoPin) == 1
-        showFile(imageToShow)
-        if autoMode then
-            getDateAndSleep()
-        end
+function decryptComplete()
+    -- At the end of a decrypt we always want to display, while preserving the currently-selected image if any
+    local current = getCurrentDisplayIdentifier()
+    local imageToShow = current and current:match("^(img_[^,]+)") or imageFilename(1)
+    local autoMode = AutoPin and gpio.read(AutoPin) == 1
+    showFile(imageToShow)
+    if autoMode then
+        getDateAndSleep()
     end
 end
 

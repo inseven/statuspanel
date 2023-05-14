@@ -208,4 +208,13 @@ function displayPngFile(filename)
     displayLines(pixelFnToLineFn(pixelFn))
 end
 
+function testcard()
+    costart(function()
+        initp()
+        display(function(x, y)
+            return (x // 90) % 7
+        end)
+    end)
+end
+
 return _ENV
