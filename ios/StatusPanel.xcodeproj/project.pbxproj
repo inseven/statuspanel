@@ -109,6 +109,7 @@
 		DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB62F33B224FCEBA00CA5E64 /* NationalRailSettingsController.swift */; };
 		DB62F33E224FEA4400CA5E64 /* StationsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB62F33D224FEA4400CA5E64 /* StationsList.swift */; };
 		DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */; };
+		DB9255C32A10F85200A6D23B /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9255C22A10F85200A6D23B /* UIColor.swift */; };
 		DB98148A270887590029BA0A /* UnicodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB981489270887590029BA0A /* UnicodeExtensions.swift */; };
 		DBC3B36026F5FA4600BC5FF0 /* BitmapFontCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3B35F26F5FA4600BC5FF0 /* BitmapFontCache.swift */; };
 		DBCA987D2143E2920084B710 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCA987C2143E2920084B710 /* AppDelegate.swift */; };
@@ -257,6 +258,7 @@
 		DB62F33D224FEA4400CA5E64 /* StationsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationsList.swift; sourceTree = "<group>"; };
 		DB62F33F2258FD6100CA5E64 /* StatusPanel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatusPanel.entitlements; sourceTree = "<group>"; };
 		DB6CE1462413AB4800FF1160 /* BitmapFontLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapFontLabel.swift; sourceTree = "<group>"; };
+		DB9255C22A10F85200A6D23B /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		DB981489270887590029BA0A /* UnicodeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnicodeExtensions.swift; sourceTree = "<group>"; };
 		DBC3B35F26F5FA4600BC5FF0 /* BitmapFontCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitmapFontCache.swift; sourceTree = "<group>"; };
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -512,6 +514,7 @@
 				DB981489270887590029BA0A /* UnicodeExtensions.swift */,
 				D8293A0B26F787D3008CE13B /* URL.swift */,
 				D866CA1C2A02B48F007819CD /* View.swift */,
+				DB9255C22A10F85200A6D23B /* UIColor.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -756,6 +759,7 @@
 				D8DD98FF271EF8CD004088CD /* ColoredCheckbox.swift in Sources */,
 				DB17F92F249E3BAD008CD83E /* CGExtensions.swift in Sources */,
 				D8383EBC270FB8E20007EBB7 /* DayPicker.swift in Sources */,
+				DB9255C32A10F85200A6D23B /* UIColor.swift in Sources */,
 				D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */,
 				DBCA98B12143F2B30084B710 /* TFLDataSource.swift in Sources */,
 				D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */,

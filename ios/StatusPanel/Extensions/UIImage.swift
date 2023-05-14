@@ -62,12 +62,8 @@ extension UIImage: Transferable {
         let height = cgImage.height
         var slidingErrorWindow: [CGFloat] = Array(repeating: 0, count: 2 * width)
         let mask = [0, 1, width - 2, width - 1, width, (2 * width) - 1]
-        var data = Data()
-
-        cgImage.walkPixels { red, green, blue in
-
+        let data = cgImage.mapPixels(numTasks: 1) { x, y, red, green, blue in
             let pixel: CGFloat = CGFloat(red) / 255.0
-
             let value = pixel + slidingErrorWindow.removeFirst()
             slidingErrorWindow.append(0)
             let color: CGFloat = value > 0.5 ? 1.0 : 0.0
@@ -76,11 +72,10 @@ extension UIImage: Transferable {
                 slidingErrorWindow[offset] = slidingErrorWindow[offset] + error
             }
 
-            let val = UInt8(255.0 * color)
-            data.append(val)
+            return UInt8(255.0 * color)
         }
 
-        if let provider = CGDataProvider(data: data as CFData),
+        if let provider = CGDataProvider(data: Data(data) as CFData),
            let cgImage = CGImage(width: width,
                                  height: height,
                                  bitsPerComponent: 8,

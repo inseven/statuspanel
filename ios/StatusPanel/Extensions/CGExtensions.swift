@@ -105,32 +105,20 @@ extension CGImage {
         return UIImage.New(size, flipped: flipped, actions: actions).cgImage!
     }
 
-    func walkPixels(_ callback: (_ r: UInt8, _ g: UInt8, _ b: UInt8) -> Void) {
+    /// Calls `callback` on every pixel in the image and assembles the results into a single array. Callbacks will be
+    /// executed concurrently on multiple threads unless `numTasks` is set to `1` in which case all calls will be
+    /// executed sequentially.
+    func mapPixels<T>(numTasks: Int = 8, _ callback: (_ x: Int, _ y: Int, _ r: UInt8, _ g: UInt8, _ b: UInt8) -> T) -> Array<T> {
+        let startTime = Date.now
         let width = self.width
         let height = self.height
-        if self.bitsPerPixel == 24 {
-            if let data = self.dataProvider?.data,
-               let pixelData = CFDataGetBytePtr(data) {
-                var i = 0
-                for _ in 0 ..< width * height {
-                    callback(pixelData[i], pixelData[i+1], pixelData[i+2])
-                    i += 3
-                }
-                return
-            }
-        } else if self.bitsPerPixel == 32 {
-            if let data = self.dataProvider?.data,
-               let pixelData = CFDataGetBytePtr(data) {
-                var i = 0
-                for _ in 0 ..< width * height {
-                    callback(pixelData[i], pixelData[i+1], pixelData[i+2])
-                    i += 4
-                }
-                return
-            }
-        }
+        let numLinesPerTask = height / numTasks
+        let numItemsPerTask = width * numLinesPerTask
 
-        // Otherwise, composite into a new 32bpp context and iterate the backing store for that
+        // There doesn't seem to be any real benefit to special-casing this for when the bitmap is already in a format
+        // we can iterate easily. The blit is so much faster than the iterate thanks to hardware acceleration. So we
+        // elect to have simpler code instead.
+
         let bitmapInfo: UInt32 = CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
         var data = Array<UInt8>(repeating: 0, count: width * height * 4)
         let context = CGContext(data: &data,
@@ -141,10 +129,32 @@ extension CGImage {
                                 space: CGColorSpaceCreateDeviceRGB(),
                                 bitmapInfo: bitmapInfo)!
         context.draw(self, in: CGRect(x: 0, y: 0, width: width, height: height))
-        var i = 0
-        for _ in 0 ..< self.width * self.height {
-            callback(data[i], data[i+1], data[i+2])
-            i += 4
+
+        var results = Array<Array<T>>(repeating: Array<T>(), count: numTasks)
+        DispatchQueue.concurrentPerform(iterations: numTasks) { i in
+            // Last iteration does slightly more, taking up any of the rounding error of height / numTasks
+            let ny = (i == numTasks - 1) ? height - (numLinesPerTask * (numTasks - 1)) : numLinesPerTask
+            var result = Array<T>()
+            result.reserveCapacity(numItemsPerTask)
+            for y in 0 ..< ny {
+                for x in 0 ..< width {
+                    let realy = i * numLinesPerTask + y
+                    let pos = (realy * width + x) * 4
+                    result.append(callback(x, realy, data[pos], data[pos + 1], data[pos + 2]))
+                }
+            }
+            results[i] = result // Hope this is thread safe...
+        }
+        print("mapPixels took \(startTime.distance(to: Date.now))")
+        if numTasks == 1 {
+            return results[0]
+        } else {
+            var allResults = Array<T>()
+            for result in results {
+                allResults.append(contentsOf: result)
+            }
+            return allResults
         }
     }
+
 }
