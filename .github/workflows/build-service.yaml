@@ -59,16 +59,17 @@ jobs:
         sudo systemctl status statuspanel-service.service
         scripts/test-service.sh
 
-    - name: Deploy the service
-      env:
-        ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
-        ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
-      run: |
-        service/ansible/deploy.sh service/build/statuspanel-service-*.deb
-
     - name: Archive the Debian package
       uses: actions/upload-artifact@v3
       with:
         name: package
         path: service/build/statuspanel-service-*.deb
         if-no-files-found: error
+
+    - name: Deploy the service
+      if: ${{ github.ref == 'refs/heads/main' }}
+      env:
+        ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
+        ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
+      run: |
+        service/ansible/deploy.sh service/build/statuspanel-service-*.deb
