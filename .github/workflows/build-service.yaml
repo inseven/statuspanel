@@ -53,13 +53,10 @@ jobs:
         docker container ls
         docker image ls
 
-    - name: Install the package for testing
+    - name: Install and test the package
       run: |
         sudo apt-get install ./service/build/statuspanel-service-*.deb
         sudo systemctl status statuspanel-service.service
-
-    - name: Run the tests against the local service
-      run: |
         scripts/test-service.sh
 
     - name: Archive the Debian package
@@ -68,3 +65,11 @@ jobs:
         name: package
         path: service/build/statuspanel-service-*.deb
         if-no-files-found: error
+
+    - name: Deploy the service
+      if: ${{ github.ref == 'refs/heads/main' }}
+      env:
+        ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
+        ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
+      run: |
+        service/ansible/deploy.sh service/build/statuspanel-service-*.deb
