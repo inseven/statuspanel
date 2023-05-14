@@ -53,14 +53,18 @@ jobs:
         docker container ls
         docker image ls
 
-    - name: Install the package for testing
+    - name: Install and test the package
       run: |
         sudo apt-get install ./service/build/statuspanel-service-*.deb
         sudo systemctl status statuspanel-service.service
-
-    - name: Run the tests against the local service
-      run: |
         scripts/test-service.sh
+
+    - name: Deploy the service
+      environment:
+        ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
+        ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
+      run: |
+        service/ansible/deploy.sh service/build/statuspanel-service-*.deb
 
     - name: Archive the Debian package
       uses: actions/upload-artifact@v3
