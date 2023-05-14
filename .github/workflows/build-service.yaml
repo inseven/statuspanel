@@ -60,7 +60,7 @@ jobs:
         scripts/test-service.sh
 
     - name: Deploy the service
-      environment:
+      env:
         ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
         ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
       run: |
