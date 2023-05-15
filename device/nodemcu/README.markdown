@@ -119,15 +119,12 @@ $ . ./sdk/esp32-esp-idf/export.sh
 
 $ PATH=${IDF_PYTHON_ENV_PATH}:${PATH} pip install -r requirements.txt
 
-# Change this to esp32s2 if applicable
+# Change this to esp32s2 or esp32s3 if applicable (and in the make_lfs.py call below)
 $ idf.py set-target esp32
 
 $ idf.py build
-$ ./build/luac_cross/luac.cross -f -m 0x20000 -o build/lfs.tmp ../src/*.lua
-$ ./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
+$ ./make_lfs.py --max-size 0x20000 --target esp32
 ```
-
-**Note:** The magic `-a` value is unpredicable and subject to change. It is currently `0x3f030000` for the esp32s2 ROM.
 
 ## Firmware
 
@@ -176,6 +173,10 @@ To get working serial UART on anything with native USB, in `Component config -> 
 * `UART RX on GPIO# -> 2`
 
 Then attach a TTL serial cable to GND, RX and TX pins.
+
+#### esp32s3
+
+The esp32s3 supports "USB JTAG" which offers a dedicated USB serial port. Meaning the compromises needed on the S2 to work with native USB ACM are not necessary.
 
 ## How things were made
 

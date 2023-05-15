@@ -44,7 +44,7 @@ jobs:
 
     - name: Checkout required submodules
       run: |
-        git submodule update --init --recursive --depth 1 device/nodemcu/nodemcu-firmware
+        git submodule update --init --recursive --depth 1 device/nodemcu/nodemcu-firmware esptool
 
     - name: Build
       run: |

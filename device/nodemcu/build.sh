@@ -25,7 +25,6 @@ set -o pipefail
 
 FIRMWARE_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-ROOT_DIRECTORY="${FIRMWARE_DIRECTORY}/.."
 NODEMCU_FIRMWARE_DIRECTORY="${FIRMWARE_DIRECTORY}/nodemcu-firmware"
 BUILD_DIRECTORY="${FIRMWARE_DIRECTORY}/build"
 
@@ -91,12 +90,11 @@ if $CLEAN ; then
     idf.py clean
 fi
 
-# Build.
+# Build the ROM image.
 idf.py build
 
-# Build the image.
-./build/luac_cross/luac.cross -f -m 0x20000 -o build/lfs.tmp ../src/*.lua
-./build/luac_cross/luac.cross -F build/lfs.tmp -a 0x3f430000 -o build/lfs.img
+# Build the LFS image.
+${IDF_PYTHON_ENV_PATH}/bin/python ${FIRMWARE_DIRECTORY}/make_lfs.py --max-size 0x20000 --target ${TARGET}
 
 # Archive the artifacts.
 zip --junk-paths "${BUILD_DIRECTORY}/firmware-${TARGET}.zip" \
