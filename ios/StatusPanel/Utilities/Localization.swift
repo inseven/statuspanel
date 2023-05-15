@@ -73,8 +73,8 @@ func Localized(_ kind: Device.Kind) -> String {
     case .featherTft:
         return "Feather TFT"
     case .pimoroniInkyImpression4:
-        return "Pimoroni Inky Impression 4"
+        return "Pimoroni Inky Impression 4 (PNG)"
     case .pimoroniInkyImpression4_rle:
-        return "Pimoroni Inky Impression 4 (ESP32)"
+        return "Pimoroni Inky Impression 4 (RLE)"
     }
 }

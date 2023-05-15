@@ -77,7 +77,7 @@ function shortPressUnpair()
     if id == nil then
         go()
         return
-    elseif id:match("^img_1,") then
+    elseif id:match("^img_1") then
         imageToShow = imageFilename(2)
     else
         imageToShow = imageFilename(1)
@@ -338,8 +338,9 @@ if NeoPixelPin ~= nil then
     statusColours = {
         idle = neorgb(0, 0, 0), -- off
         hotspot = neorgb(0, 0, 255), -- blue
-        fetching = neorgb(0, 0, 255), -- blue
         goodWifiCreds = neorgb(0, 255, 0), -- green
+        fetching = neorgb(0, 0, 255), -- blue
+        decoding = neorgb(255, 0, 255), -- purple
         drawing = neorgb(255, 0, 255), -- purple
         unpairing = neorgb(255, 0, 0), -- red
     }
@@ -651,15 +652,18 @@ function decryptImage(index)
     else
         -- Decrypt complete!
         print("Decrypt complete!")
+        rebootAndExecute("decryptComplete()")
+    end
+end
 
-        -- At the end of a decrypt we always want to display, while preserving the currently-selected image if any
-        local current = getCurrentDisplayIdentifier()
-        local imageToShow = current and current:match("^(img_[^,]+)") or imageFilename(1)
-        local autoMode = AutoPin and gpio.read(AutoPin) == 1
-        showFile(imageToShow)
-        if autoMode then
-            getDateAndSleep()
-        end
+function decryptComplete()
+    -- At the end of a decrypt we always want to display, while preserving the currently-selected image if any
+    local current = getCurrentDisplayIdentifier()
+    local imageToShow = current and current:match("^(img_[^,]+)") or imageFilename(1)
+    local autoMode = AutoPin and gpio.read(AutoPin) == 1
+    showFile(imageToShow)
+    if autoMode then
+        getDateAndSleep()
     end
 end
 

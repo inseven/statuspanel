@@ -21,6 +21,17 @@
 import Foundation
 import UIKit
 
+// These must match the order of colours defined in inky.lua (and thus what colours the panel supports)
+private let InkyPalette: [UIColor] = [
+    .black,
+    .white,
+    .green,
+    .blue,
+    .red,
+    .yellow,
+    .orange
+]
+
 struct PixelRenderer: Renderer {
 
     private enum DividerStyle {
@@ -32,6 +43,11 @@ struct PixelRenderer: Renderer {
         dispatchPrecondition(condition: .onQueue(.main))
         let image = Self.renderImage(data: data, config: config, device: device, settings: settings)
         let privacyImage = Self.renderPrivacyImage(data: data, config: config, device: device, settings: settings)
+        if device.kind == .pimoroniInkyImpression4 {
+            let imagePalettized = Self.palettize(image: image.cgImage!, colours: InkyPalette, dither: false)
+            let privacyPalettized = Self.palettize(image: privacyImage.cgImage!, colours: InkyPalette, dither: true)
+            return [UIImage(cgImage: imagePalettized), UIImage(cgImage: privacyPalettized)]
+        }
         return [image, privacyImage]
     }
 
@@ -233,5 +249,137 @@ struct PixelRenderer: Renderer {
             }
         }
     }
-    
+
+    // Match on closeness of hue rather than manhattan proximity in the RGB colour space
+    private static func colourClosestTo(r: CGFloat, g: CGFloat, b: CGFloat, hsbColours: [CGFloat]) -> UInt8 {
+        let (h, s, b) = UIColor(red: r, green: g, blue: b, alpha: 1.0).hsb()
+        var closestDistance: CGFloat = 1.0
+        var idx: UInt8? = nil
+        let numColours = hsbColours.count / 3
+        for i in 0 ..< numColours {
+            let pos = i * 3
+            if hsbColours[pos+2] < 0.2 {
+                // Black
+                if b < 0.2 {
+                    return UInt8(i)
+                } else {
+                    // Don't compare the hue on black
+                    continue
+                }
+            } else if (hsbColours[pos + 2] > 0.9 && hsbColours[pos + 1] < 0.1) {
+                // White
+                if b > 0.8 && s < 0.2 {
+                    return UInt8(i)
+                } else {
+                    // Don't compare hue on white
+                    continue
+                }
+            }
+            var hDistance = abs(h - hsbColours[pos])
+            if hDistance > 0.5 {
+                hDistance = 1 - hDistance
+            }
+
+            if hDistance < closestDistance {
+                closestDistance = hDistance
+                idx = UInt8(i)
+            }
+        }
+        return idx!
+    }
+
+    private static func palettize(image: CGImage, colours: [UIColor], dither: Bool) -> CGImage {
+        let startTime = Date.now
+        let palette = [UInt8](unsafeUninitializedCapacity: colours.count * 3) { buffer, initializedCount in
+            var i = 0
+            for colour in colours {
+                let (r, g, b) = colour.rgb()
+                buffer[i] = UInt8(r * 255)
+                buffer[i+1] = UInt8(g * 255)
+                buffer[i+2] = UInt8(b * 255)
+                i = i + 3
+            }
+            initializedCount = i
+        }
+        let hsbColours = [CGFloat](unsafeUninitializedCapacity: colours.count * 3) { buffer, initializedCount in
+            var i = 0
+            for colour in colours {
+                let (h, s, b) = colour.hsb()
+                buffer[i] = h
+                buffer[i+1] = s
+                buffer[i+2] = b
+                i = i + 3
+            }
+            initializedCount = i
+        }
+        let spc = CGColorSpace(indexedBaseSpace: CGColorSpace(name: CGColorSpace.sRGB)!, last: colours.count - 1, colorTable: palette)!
+        let w = image.width
+        let h = image.height
+
+        // Convenience struct for temp pixel data
+        struct Pixel {
+            var r: CGFloat; var g: CGFloat; var b: CGFloat; var idx: UInt8?
+            init(r: CGFloat, g: CGFloat, b: CGFloat) {
+                self.r = r
+                self.g = g
+                self.b = b
+                self.idx = nil
+            }
+            init(index: UInt8, inPalette colours: [UIColor]) {
+                let colour = colours[Int(index)]
+                let (r, g, b) = colour.rgb()
+                self.r = r
+                self.g = g
+                self.b = b
+                self.idx = index
+            }
+            mutating func apply(delta: Pixel, proportion: Int) {
+                self.r = self.r + ((delta.r * CGFloat(proportion)) / 16.0)
+                self.g = self.g + ((delta.g * CGFloat(proportion)) / 16.0)
+                self.b = self.b + ((delta.b * CGFloat(proportion)) / 16.0)
+                self.idx = nil
+            }
+        }
+        var data: [UInt8]
+        if dither {
+            var pixels = image.mapPixels { x, y, r, g, b in
+                return Pixel(r: CGFloat(r) / 255, g: CGFloat(g) / 255, b: CGFloat(b) / 255)
+            }
+            // Apply a Floyd-Steinberg dither
+            for y in 0 ..< h {
+                for x in 0 ..< w {
+                    let old = pixels[y*w + x]
+                    let new = Pixel(index: colourClosestTo(r: old.r, g: old.g, b: old.b, hsbColours: hsbColours), inPalette: colours)
+                    pixels[y*w + x] = new
+                    let delta = Pixel(r: old.r - new.r, g: old.g - new.g, b: old.b - new.b)
+                    if x + 1 < w {
+                        pixels[y * w + x+1].apply(delta: delta, proportion: 7)
+                    }
+                    if y + 1 < h {
+                        if x > 0 {
+                            pixels[(y+1) * w + x-1].apply(delta: delta, proportion: 3)
+                        }
+                        pixels[(y+1) * w + x].apply(delta: delta, proportion: 5)
+                        if x + 1 < w {
+                            pixels[(y+1) * w + x+1].apply(delta: delta, proportion: 1)
+                        }
+                    }
+                }
+            }
+
+            data = Array<UInt8>()
+            for pixel in pixels {
+                data.append(pixel.idx!)
+            }
+        } else {
+            data = image.mapPixels { x, y, r, g, b in
+                return colourClosestTo(r: CGFloat(r) / 255, g: CGFloat(g) / 255, b: CGFloat(b) / 255, hsbColours: hsbColours)
+            }
+        }
+        let provider = CGDataProvider(data: Data(data) as CFData)!
+        print("Palettize took \(startTime.distance(to: Date.now))")
+        return CGImage(width: w, height: h, bitsPerComponent: 8, bitsPerPixel: 8, bytesPerRow: w, space: spc,
+                       bitmapInfo: .byteOrderDefault, provider: provider, decode: nil, shouldInterpolate: false,
+                       intent: .defaultIntent)!
+    }
 }

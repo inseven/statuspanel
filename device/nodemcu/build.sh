@@ -84,7 +84,7 @@ if [ ! -f "${SDKCONFIG}" ] || [ $(cat "${SDKCONFIG}" | jq '.IDF_TARGET') != "\"$
 fi
 
 # Copy the configuration.
-cp ../src/esp32/sdkconfig .
+cp ../${TARGET}/sdkconfig .
 
 # Optionally clean.
 if $CLEAN ; then

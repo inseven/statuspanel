@@ -182,6 +182,7 @@ function displayLines(lineFn)
 
     for y = 0, h - 1 do
         local data = lineFn(y)
+        collectgarbage() -- Temporary allocations that go into SRAM can deprive SPI which requires SRAM buffers for DMA
         spidevice_transfer(spidevice, data)
     end
 
@@ -196,19 +197,24 @@ function displayLines(lineFn)
 end
 
 function displayPngFile(filename)
-    local imgData, w, h = assert(lodepng.decode_file(filename, lodepng.RGB))
-    local lineFn = function(y)
-        local line = {}
-        for x = 0, w - 1 do
-            local pos = ((w * y) + x) * 3
-            local r, g, b = string.byte(imgData, 1 + pos, 3 + pos)
-            -- For now, do dumb threshold
-            local pixel = (r + g + b) < 384 and BLACK or WHITE
-            line[1 + x] = pixel
-        end
-        return table.concat(line, nil, 1, w)
+    local imgData, w, h = assert(lodepng.decode_file(filename, lodepng.PALETTE))
+    local byte = string.byte
+    local pixelFn = function(x, y)
+        local pos = w * y + x
+        -- Since the palette we use in the PNG is designed to exactly match our colour definitions, we can return the
+        -- PNG pixel value directly.
+        return byte(imgData, 1 + pos)
     end
-    displayLines(lineFn)
+    displayLines(pixelFnToLineFn(pixelFn))
+end
+
+function testcard()
+    costart(function()
+        initp()
+        display(function(x, y)
+            return (x // 90) % 7
+        end)
+    end)
 end
 
 return _ENV
