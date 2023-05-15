@@ -9,7 +9,7 @@
 	url = git@github.com:sparkfun/SparkFun-Eagle-Libraries.git
 [submodule "esptool"]
 	path = esptool
-	url = git@github.com:jbmorley/esptool.git
+	url = https://github.com/jbmorley/esptool.git
 [submodule "ios/swift-sodium"]
 	path = ios/swift-sodium
 	url = https://github.com/jedisct1/swift-sodium.git
