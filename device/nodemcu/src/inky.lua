@@ -196,10 +196,19 @@ function displayLines(lineFn)
     printf("Display complete, took %ds", elapsed)
 end
 
-function displayPngFile(filename)
+function displayPngFile(filename, statusLine)
     local imgData, w, h = assert(lodepng.decode_file(filename, lodepng.PALETTE))
     local byte = string.byte
+    local statusLineStart, statusFn
+    if statusLine then
+        local panel = require("panel")
+        statusFn = getDisplayStatusLineFn()
+        statusLineStart = h - require("font").charh
+    end
     local pixelFn = function(x, y)
+        if statusLineStart and y >= statusLineStart then
+            return statusFn(x, y - statusLineStart)
+        end
         local pos = w * y + x
         -- Since the palette we use in the PNG is designed to exactly match our colour definitions, we can return the
         -- PNG pixel value directly.
