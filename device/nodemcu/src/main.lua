@@ -699,14 +699,11 @@ function getDisplayStatusLineFn(customText, isErrText)
     local statusTable = {
         batstat,
         "Device ID: "..network.getDeviceId(),
+        "Version: "..node.version(),
     }
     if customText then
         table.insert(statusTable, customText)
     else
-        local ip = readFile("last_ip")
-        if ip then
-            table.insert(statusTable, "IP address: "..ip)
-        end
         local lastModified = readFile("last_modified")
         if lastModified then
             table.insert(statusTable, "Data from: "..lastModified)

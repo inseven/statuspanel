@@ -1,0 +1,8 @@
+#ifndef __USER_VERSION_H__
+#define __USER_VERSION_H__
+
+#define NODE_VERSION "${VERSION}"
+#define BUILD_DATE "${BUILD_NUMBER}"
+
+#endif  /* __USER_VERSION_H__ */
+
