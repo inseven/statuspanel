@@ -38,15 +38,21 @@ def main():
     print("LFS load address should be 0x{:x}".format(addr))
 
     luac_cross = os.path.join(build_dir, "luac_cross", "luac.cross")
-    lua_files = glob.glob(os.path.join(root_dir, "device", "nodemcu", "src", "*.lua"))
+    lua_dir = os.path.join(root_dir, "device", "nodemcu", "src")
+    lua_files = glob.glob(os.path.join(lua_dir, "*.lua"))
+    lua_filenames = []
+    for path in lua_files:
+        lua_filenames.append(os.path.basename(path))
     lfs_tmp = os.path.join(build_dir, "lfs.tmp")
     lfs_img = os.path.join(build_dir, "lfs.img")
+    # chdir to lua_dir here so we can pass lua filenames with no path, as the path info is stored in the debug info and
+    # we don't want build machine file paths appearing in device stacktraces.
     subprocess.check_call([
         luac_cross,
         "-f",
         "-m", "0x{:x}".format(args.max_size),
         "-o", lfs_tmp
-    ] + lua_files)
+    ] + lua_filenames, cwd=lua_dir)
 
     # Aargh the -F option is bugged and only accepts a max of 32 chars so chdir to lfs_tmp's directory to be safe...
     subprocess.check_call([

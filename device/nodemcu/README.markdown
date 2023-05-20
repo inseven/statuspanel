@@ -2,13 +2,24 @@
 
 The firmware is responsible for managing the StatusPanel device itself. It handles WiFi setup, encryption keys, device sleep, and scheduling fetching updates, and drawing on the eInk display.
 
-The device runs Lua using [NodeMCU](https://nodemcu.readthedocs.io/en/dev-esp32-idf4/). We use the [`tomsci-dev-esp32-idf4`](https://github.com/tomsci/nodemcu-firmware/tree/tomsci-dev-esp32-idf4) branch of NodeMCU which provides some additional features that have not yet been accepted upstream, as well as being based on the latest IDF v4 which supports the esp32s2.
+The device runs Lua using [NodeMCU](https://nodemcu.readthedocs.io/en/dev-esp32-idf4/). We use the [`tomsci-dev-esp32-idf4`](https://github.com/tomsci/nodemcu-firmware/tree/tomsci-dev-esp32-idf4) branch of NodeMCU which provides some additional features that have not yet been accepted upstream, as well as being based on the latest IDF v4 which supports the esp32s2 and esp32s3.
 
 ## Usage
 
 ## Status LED
 
-- **Flashing** -- the device is in pairing / hotspot mode
+- **Flashing** – the device is in pairing / hotspot mode.
+- **On, non-flashing** – device is busy, eg downloading or processing an update, or updating the display.
+
+## NeoPixel
+
+On platforms that have one, the NeoPixel will use different colours to indicate different states:
+
+- **Solid blue** – device is accessing the network.
+- **Flashing blue** – device is in pairing / hotspot mode.
+- **Solid green** – WiFi credentials were accepted (will shortly transition to blue indicating accessing the network.
+- **Solid red** – indicates unpairing is starting (and you can stop holding down the toggle/unpair button).
+- **Solid pink** – device is processing an update or updating the display.
 
 ## Development
 

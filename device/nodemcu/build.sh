@@ -86,6 +86,7 @@ fi
 
 # Copy the configuration.
 cp ../${TARGET}/sdkconfig .
+envsubst < ../user_version.h.in > components/platform/include/user_version.h
 
 # Optionally clean.
 if $CLEAN ; then

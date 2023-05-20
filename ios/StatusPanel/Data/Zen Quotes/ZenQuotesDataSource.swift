@@ -43,6 +43,7 @@ final class ZenQuotesDataSource: DataSource {
 
         static let dataSourceType: DataSourceType = .zenQuotes
 
+        var flags: DataItemFlags
         var mode: Mode
 
     }
@@ -71,6 +72,7 @@ final class ZenQuotesDataSource: DataSource {
                         Text(Settings.Mode.random.localizedName).tag(Settings.Mode.random)
                     }
                 }
+                FlagsSection(flags: $model.settings.flags)
                 Section {
                     Link("ZenQuotes", url: URL(string: "https://zenquotes.io/")!)
                     Link("Privacy Policy", url: URL(string: "https://docs.zenquotes.io/privacy-policy/")!)
@@ -101,7 +103,7 @@ final class ZenQuotesDataSource: DataSource {
     static let name = "ZenQuotes"
     static let image = Image(systemName: "quote.bubble")
     
-    let defaults = Settings(mode: .today)
+    let defaults = Settings(flags: [], mode: .today)
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
 
@@ -128,7 +130,7 @@ final class ZenQuotesDataSource: DataSource {
             }
 
             let text = "\"\(quote.quote.trimmingCharacters(in: .whitespacesAndNewlines))\"—\(quote.author)"
-            completion([DataItem(icon: "💬", text: text, flags: [])], nil)
+            completion([DataItem(icon: "💬", text: text, flags: settings.flags)], nil)
         }
     }
 
