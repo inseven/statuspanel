@@ -25,10 +25,7 @@ set -o pipefail
 
 FIRMWARE_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-NODEMCU_FIRMWARE_DIRECTORY="${FIRMWARE_DIRECTORY}/nodemcu-firmware"
-BUILD_DIRECTORY="${FIRMWARE_DIRECTORY}/build"
 
-TARGET=esp32
 
 
 # Process the command line arguments.
@@ -48,10 +45,15 @@ do
         ;;
     esac
 done
-if [ ${#POSITIONAL[@]} -ne 0 ] ; then
-    echo "Usage: build.sh [--clean]"
+set -- "${POSITIONAL[@]:-}" # restore positional parameters
+if [[ ${#POSITIONAL[@]} != 1 ]] || ! [[ "$1" =~ ^(esp32|esp32s3)$ ]]; then
+    echo "Usage: build.sh [--clean] <esp32|esp32s3>"
     exit 1
 fi
+
+TARGET=$1
+NODEMCU_FIRMWARE_DIRECTORY="${FIRMWARE_DIRECTORY}/nodemcu-firmware"
+BUILD_DIRECTORY="${FIRMWARE_DIRECTORY}/build-${TARGET}"
 
 # Check the Python version.
 if [[ $( python -V ) != "Python 3.10"* ]] ; then
@@ -77,9 +79,9 @@ export IDF_TOOLS_PATH="${FIRMWARE_DIRECTORY}/.espressif"
 PATH=${IDF_PYTHON_ENV_PATH}:${PATH} pip install -r requirements.txt
 
 # Change this to esp32s2 if applicable
-SDKCONFIG=build/config/sdkconfig.json
+SDKCONFIG="${BUILD_DIRECTORY}/config/sdkconfig.json"
 if [ ! -f "${SDKCONFIG}" ] || [ $(cat "${SDKCONFIG}" | jq '.IDF_TARGET') != "\"${TARGET}\"" ] ; then
-    idf.py set-target "${TARGET}"
+    idf.py -B "${BUILD_DIRECTORY}" set-target "${TARGET}"
 fi
 
 # Copy the configuration.
@@ -88,18 +90,18 @@ envsubst < ../user_version.h.in > components/platform/include/user_version.h
 
 # Optionally clean.
 if $CLEAN ; then
-    idf.py clean
+    idf.py -B "${BUILD_DIRECTORY}" clean
 fi
 
 # Build the ROM image.
-idf.py build
+idf.py -B "${BUILD_DIRECTORY}" build
 
 # Build the LFS image.
-${IDF_PYTHON_ENV_PATH}/bin/python ${FIRMWARE_DIRECTORY}/make_lfs.py --max-size 0x20000 --target ${TARGET}
+${IDF_PYTHON_ENV_PATH}/bin/python ${FIRMWARE_DIRECTORY}/make_lfs.py -B "${BUILD_DIRECTORY}" --max-size 0x20000 --target ${TARGET}
 
 # Archive the artifacts.
 zip --junk-paths "${BUILD_DIRECTORY}/firmware-${TARGET}.zip" \
-    build/bootloader/bootloader.bin \
-    build/partition_table/partition-table.bin \
-    build/nodemcu.bin \
-    build/lfs.img
+    "${BUILD_DIRECTORY}/bootloader/bootloader.bin" \
+    "${BUILD_DIRECTORY}/partition_table/partition-table.bin" \
+    "${BUILD_DIRECTORY}/nodemcu.bin" \
+    "${BUILD_DIRECTORY}/lfs.img"

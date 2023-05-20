@@ -14,6 +14,11 @@ jobs:
 
     name: build-firmware
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - esp32
+          - esp32s3
 
     steps:
 
@@ -40,7 +45,7 @@ jobs:
       with:
         path: |
           device/nodemcu/nodemcu-firmware/build
-        key: ${{ runner.os }}-espressif-toolchain-${{ steps.get-firmware-sha.outputs.sha }}-${{ hashFiles('device/nodemcu/src/esp32/sdkconfig') }}
+        key: ${{ runner.os }}-espressif-toolchain-${{ steps.get-firmware-sha.outputs.sha }}-${{ hashFiles('device/nodemcu/', matrix.target, '/sdkconfig') }}-${{ matrix.target }}
 
     - name: Checkout required submodules
       run: |
@@ -48,10 +53,10 @@ jobs:
 
     - name: Build
       run: |
-        device/nodemcu/build.sh
+        device/nodemcu/build.sh ${{ matrix.target }}
 
     - name: Archive the firmware
       uses: actions/upload-artifact@v3
       with:
-        path: device/nodemcu/build/firmware-esp32.zip
+        path: device/nodemcu/build-${{ matrix.target }}/firmware-${{ matrix.target }}.zip
         if-no-files-found: error
