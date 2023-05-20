@@ -195,7 +195,7 @@ struct Device: Identifiable, Equatable, Hashable {
                                               flags: [.header, .spansColumns]).anyDataSourceSettings(),
                 WeatherDataSource.Settings(flags: [],
                                            address: "Bletchley Park, Sherwood Drive, Bletchley, Milton Keynes, MK3 6EB").anyDataSourceSettings(),
-                ZenQuotesDataSource.Settings(mode: .today).anyDataSourceSettings(),
+                ZenQuotesDataSource.Settings(flags: [], mode: .today).anyDataSourceSettings(),
                 CalendarDataSource.Settings(showLocations: true,
                                             showUrls: false,
                                             offset: 0,
