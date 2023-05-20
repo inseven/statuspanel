@@ -45,7 +45,7 @@ jobs:
       with:
         path: |
           device/nodemcu/nodemcu-firmware/build
-        key: ${{ runner.os }}-espressif-toolchain-${{ steps.get-firmware-sha.outputs.sha }}-${{ hashFiles('device/nodemcu/' + matrix.target + '/sdkconfig') }}-${{ matrix.target }}
+        key: ${{ runner.os }}-espressif-toolchain-${{ steps.get-firmware-sha.outputs.sha }}-${{ hashFiles('device/nodemcu/', matrix.target, '/sdkconfig') }}-${{ matrix.target }}
 
     - name: Checkout required submodules
       run: |
