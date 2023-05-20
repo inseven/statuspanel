@@ -1,7 +1,7 @@
 /.local
 /build
 /device/nodemcu/.espressif/
-/device/nodemcu/build
+/device/nodemcu/build*
 /ios/StatusPanel/configuration.json
 /service/build
 /service/package/statuspanel-service/DEBIAN/control
