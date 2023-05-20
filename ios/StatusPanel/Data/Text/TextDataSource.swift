@@ -20,8 +20,6 @@
 
 import SwiftUI
 
-import Diligence
-
 final class TextDataSource: DataSource {
 
     struct Settings: DataSourceSettings & Equatable {
