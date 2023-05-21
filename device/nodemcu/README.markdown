@@ -187,7 +187,14 @@ Then attach a TTL serial cable to GND, RX and TX pins.
 
 #### esp32s3
 
-The esp32s3 supports "USB JTAG" which offers a dedicated USB serial port. Meaning the compromises needed on the S2 to work with native USB ACM are not necessary.
+The esp32s3 supports "USB JTAG" which offers a dedicated USB serial port. However the device will not boot until something connects to the serial port meaning this configuration is useless when using the device when not connected to a computer. Therefore, the default sdkconfig sets the primary console to be on the RX and TX pins, with debug output being mirrored to the USB serial port (but not supporting input on that port). This configuration does allow the device to boot with nothing connected to the USB port.
+
+To revert to having the console on USB serial (eg for convenience of debugging), apply the `usbdebug.patch` diff to `sdkconfig`:
+
+```bash
+cd device/nodemcu/esp32s3
+patch sdkconfig usbdebug.patch -o ../nodemcu-firmware/sdkconfig
+```
 
 ## How things were made
 
