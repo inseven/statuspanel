@@ -15,7 +15,7 @@ jobs:
     name: build-app
     strategy:
       matrix:
-        os: [macos-ventura, macos-13]
+        os: [inseven-macos-13, macos-13]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -23,8 +23,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        submodules: recursive
         fetch-depth: 0
+
+    - name: Checkout required submodules
+      run: |
+        git submodule update --init --recursive --depth 1 ios/diligence
+        git submodule update --init --recursive --depth 1 ios/swift-sodium
+        git submodule update --init --recursive --depth 1 scripts/build-tools
+        git submodule update --init --recursive --depth 1 scripts/changes
 
     - uses: actions/setup-node@v3
       with:
