@@ -13,11 +13,10 @@ jobs:
   build-app:
 
     name: build-app
-    # runs-on: macos-ventura
     strategy:
       matrix:
         os: [macos-ventura, macos-13]
-      runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
 
     steps:
 
