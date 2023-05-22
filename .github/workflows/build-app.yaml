@@ -13,7 +13,10 @@ jobs:
   build-app:
 
     name: build-app
-    runs-on: macos-ventura
+    # runs-on: macos-ventura
+    strategy:
+      matrix:
+        os: [macos-ventura, macos-13]
 
     steps:
 
