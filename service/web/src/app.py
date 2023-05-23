@@ -19,6 +19,7 @@
 # SOFTWARE.
 
 import atexit
+import datetime
 import errno
 import functools
 import logging
@@ -71,6 +72,14 @@ if os.path.exists(VERSION_PATH):
 
 logging.info("Starting service...")
 logging.info("Version %s", METADATA["version"])
+
+# Log the build details.
+build_number = METADATA["version"]
+date_string, sha_string = build_number[:10], build_number[10:]
+date = datetime.datetime.strptime(date_string, "%y%m%d%H%M")
+sha = "%06x" % int(sha_string)
+logging.info("%s (UTC)" % date)
+logging.info("https://github.com/inseven/statuspanel/commit/" + sha)
 
 
 # Check that we can create an APNS instance before proceeding.
