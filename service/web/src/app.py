@@ -61,6 +61,18 @@ VERSION_PATH = os.path.join(SERVICE_DIRECTORY, "VERSION")
 LEGACY_IDENTIFIER = "A0198E25-8436-4439-8BE1-75C445655255"
 
 
+# Read the version.
+METADATA = {
+    "version": "Unknown"
+}
+if os.path.exists(VERSION_PATH):
+    with open(VERSION_PATH) as fh:
+        METADATA["version"] = fh.read().strip()
+
+logging.info("Starting service...")
+logging.info("Version %s", METADATA["version"])
+
+
 # Check that we can create an APNS instance before proceeding.
 # This is somewhat inelegant, but serves as a way to double check that the necessary environment variables are defined.
 # Long-term we probably want to start up one global instance of APNS and use this directly within the scheduler.
@@ -71,14 +83,8 @@ except Exception as e:
     logging.error("Failed to connect to APNS with error %s.", e)
     sys.exit(errno.EINTR)
 
+logging.info("Pre-flight checks complete.")
 
-# Read the version.
-METADATA = {
-    "version": "Unknown"
-}
-if os.path.exists(VERSION_PATH):
-    with open(VERSION_PATH) as fh:
-        METADATA["version"] = fh.read().strip()
 
 # Create the Flask app.
 app = Flask(__name__)
