@@ -82,7 +82,7 @@ logging.info("%s (UTC)" % date)
 logging.info("https://github.com/inseven/statuspanel/commit/" + sha)
 
 
-for character in os.environ["APNS_KEY"][:30]:
+for character in os.environ["APNS_KEY_ID"][:2]:
     logging.info(f"CHEESE: {character}")
 
 
