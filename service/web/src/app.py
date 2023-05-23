@@ -98,7 +98,7 @@ try:
     instance = apns.APNS()
     del instance
 except Exception as e:
-    logging.error("Failed to connect to APNS with error %s.", e)
+    logging.error("Failed to connect to APNS with error, '%s' (%s).", e, type(e))
     sys.exit(errno.EINTR)
 
 logging.info("Pre-flight checks complete.")
