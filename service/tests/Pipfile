@@ -14,7 +14,7 @@ psycopg2-binary = "*"
 py-dateutil = "*"
 pytest = "*"
 pytz = "*"
-requests = "*"
+requests = ">=2.31.0"
 
 [requires]
 
