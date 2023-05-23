@@ -56,11 +56,11 @@ jobs:
         ANPS_KEY_ID: ${{ secrets.ANPS_KEY_ID }}
         APNS_KEY: ${{ secrets.APNS_KEY }}
       run: |
-        mkdir -p /usr/share/statuspanel-service/
-        echo APNS_TEAM_ID=\"$APNS_TEAM_ID\" > /usr/share/statuspanel-service/.env
-        echo APNS_BUNDLE_ID=\"$APNS_BUNDLE_ID\" >> /usr/share/statuspanel-service/.env
-        echo ANPS_KEY_ID=\"$ANPS_KEY_ID\" >> /usr/share/statuspanel-service/.env
-        echo APNS_KEY=\"$APNS_KEY\" >> /usr/share/statuspanel-service/.env
+        sudo mkdir -p /usr/share/statuspanel-service/
+        sudo echo APNS_TEAM_ID=\"$APNS_TEAM_ID\" > /usr/share/statuspanel-service/.env
+        sudo echo APNS_BUNDLE_ID=\"$APNS_BUNDLE_ID\" >> /usr/share/statuspanel-service/.env
+        sudo echo ANPS_KEY_ID=\"$ANPS_KEY_ID\" >> /usr/share/statuspanel-service/.env
+        sudo echo APNS_KEY=\"$APNS_KEY\" >> /usr/share/statuspanel-service/.env
         sudo apt-get install ./service/build/statuspanel-service-*.deb
         sudo systemctl status statuspanel-service.service
         sleep 5
