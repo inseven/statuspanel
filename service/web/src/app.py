@@ -82,26 +82,23 @@ logging.info("%s (UTC)" % date)
 logging.info("https://github.com/inseven/statuspanel/commit/" + sha)
 
 
-for character in os.environ["APNS_KEY_ID"][:2]:
-    logging.info(f"CHEESE: {character}")
-
-
 # Check that we can create an APNS instance before proceeding.
 # This is somewhat inelegant, but serves as a way to double check that the necessary environment variables are defined.
 # Long-term we probably want to start up one global instance of APNS and use this directly within the scheduler.
-try:
-    logging.info("APNS_TEAM_ID: %d characters", len(os.environ["APNS_TEAM_ID"]))
-    logging.info("APNS_BUNDLE_ID: %d characters", len(os.environ["APNS_BUNDLE_ID"]))
-    logging.info("APNS_KEY_ID: %d characters", len(os.environ["APNS_KEY_ID"]))
-    logging.info("APNS_KEY: %d characters", len(os.environ["APNS_KEY"]))
-
-    instance = apns.APNS()
-    del instance
-except Exception as e:
-    logging.error("Failed to connect to APNS with error, '%s' (%s).", e, type(e))
-    sys.exit(errno.EINTR)
-
-logging.info("Pre-flight checks complete.")
+if "SKIP_APNS_STARTUP_CHECK" in os.environ:
+    logging.warning("Skipping APNS startup check...")
+else:
+    try:
+        logging.info("APNS_TEAM_ID: %d characters", len(os.environ["APNS_TEAM_ID"]))
+        logging.info("APNS_BUNDLE_ID: %d characters", len(os.environ["APNS_BUNDLE_ID"]))
+        logging.info("APNS_KEY_ID: %d characters", len(os.environ["APNS_KEY_ID"]))
+        logging.info("APNS_KEY: %d characters", len(os.environ["APNS_KEY"]))
+        instance = apns.APNS()
+        del instance
+        logging.info("APNS startup check complete.")
+    except Exception as e:
+        logging.error("Failed to connect to APNS with error, '%s' (%s).", e, type(e))
+        sys.exit(errno.EINTR)
 
 
 # Create the Flask app.
