@@ -63,6 +63,8 @@ jobs:
         echo APNS_KEY=\"$APNS_KEY\" >> /usr/share/statuspanel-service/.env
         sudo apt-get install ./service/build/statuspanel-service-*.deb
         sudo systemctl status statuspanel-service.service
+        sleep 5
+        journalctl -u statuspanel-service.service
         scripts/test-service.sh
 
     - name: Archive the Debian package
