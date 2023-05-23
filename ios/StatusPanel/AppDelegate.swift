@@ -136,6 +136,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Aww, no APNS for us. Error: " + error.localizedDescription)
+        window?.rootViewController?.present(error: error)
     }
 
     func application(_ application: UIApplication,
