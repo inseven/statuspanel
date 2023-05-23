@@ -56,6 +56,7 @@ jobs:
         ANPS_KEY_ID: ${{ secrets.ANPS_KEY_ID }}
         APNS_KEY: ${{ secrets.APNS_KEY }}
       run: |
+        mkdir -p /usr/share/statuspanel-service/
         echo APNS_TEAM_ID=\"$APNS_TEAM_ID\" > /usr/share/statuspanel-service/.env
         echo APNS_BUNDLE_ID=\"$APNS_BUNDLE_ID\" >> /usr/share/statuspanel-service/.env
         echo ANPS_KEY_ID=\"$ANPS_KEY_ID\" >> /usr/share/statuspanel-service/.env
