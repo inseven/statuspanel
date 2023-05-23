@@ -90,10 +90,10 @@ for character in os.environ["APNS_KEY_ID"][:2]:
 # This is somewhat inelegant, but serves as a way to double check that the necessary environment variables are defined.
 # Long-term we probably want to start up one global instance of APNS and use this directly within the scheduler.
 try:
-    logging.info("APNS_TEAM_ID: %d characters" len(os.environ["APNS_TEAM_ID"]))
-    logging.info("APNS_BUNDLE_ID: %d characters" len(os.environ["APNS_BUNDLE_ID"]))
-    logging.info("APNS_KEY_ID: %d characters" len(os.environ["APNS_KEY_ID"]))
-    logging.info("APNS_KEY: %d characters" len(os.environ["APNS_KEY"]))
+    logging.info("APNS_TEAM_ID: %d characters", len(os.environ["APNS_TEAM_ID"]))
+    logging.info("APNS_BUNDLE_ID: %d characters", len(os.environ["APNS_BUNDLE_ID"]))
+    logging.info("APNS_KEY_ID: %d characters", len(os.environ["APNS_KEY_ID"]))
+    logging.info("APNS_KEY: %d characters", len(os.environ["APNS_KEY"]))
 
     instance = apns.APNS()
     del instance
