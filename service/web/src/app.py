@@ -82,6 +82,10 @@ logging.info("%s (UTC)" % date)
 logging.info("https://github.com/inseven/statuspanel/commit/" + sha)
 
 
+for character in os.environ["APNS_KEY"][:30]:
+    logging.info(f"CHEESE: {character}")
+
+
 # Check that we can create an APNS instance before proceeding.
 # This is somewhat inelegant, but serves as a way to double check that the necessary environment variables are defined.
 # Long-term we probably want to start up one global instance of APNS and use this directly within the scheduler.
