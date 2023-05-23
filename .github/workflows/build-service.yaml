@@ -71,5 +71,9 @@ jobs:
       env:
         ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
         ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
+        APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
+        APNS_BUNDLE_ID: ${{ secrets.APNS_BUNDLE_ID }}
+        APNS_KEY_ID: ${{ secrets.APNS_KEY_ID }}
+        APNS_KEY: ${{ secrets.APNS_KEY }}
       run: |
         service/ansible/deploy.sh service/build/statuspanel-service-*.deb
