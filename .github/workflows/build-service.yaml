@@ -70,7 +70,7 @@ jobs:
         echo APNS_KEY=\"$APNS_KEY\" | sudo tee -a /usr/share/statuspanel-service/.env
         sudo apt-get install ./service/build/statuspanel-service-*.deb
         sudo systemctl status statuspanel-service.service
-        sleep 5
+        sleep 10
         journalctl -u statuspanel-service.service
         scripts/test-service.sh
 
