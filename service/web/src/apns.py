@@ -42,7 +42,7 @@ class APNS(object):
         self._client = gobiko.apns.APNsClient(
             team_id=os.environ['APNS_TEAM_ID'],
             bundle_id=os.environ['APNS_BUNDLE_ID'],
-            auth_key_id=os.environ['ANPS_KEY_ID'],
+            auth_key_id=os.environ['APNS_KEY_ID'],
             auth_key=os.environ['APNS_KEY'],
             use_sandbox=use_sandbox,
         )

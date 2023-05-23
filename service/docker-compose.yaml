@@ -10,7 +10,7 @@ services:
       - DATABASE_URL=postgresql://hello_flask:hello_flask@database:5432/hello_flask_dev
       - APNS_TEAM_ID
       - APNS_BUNDLE_ID
-      - ANPS_KEY_ID
+      - APNS_KEY_ID
       - APNS_KEY
     depends_on:
       - database
