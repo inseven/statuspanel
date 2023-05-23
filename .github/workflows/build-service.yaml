@@ -59,7 +59,7 @@ jobs:
     - name: Install and test the package
       run: |
         sudo mkdir -p /usr/share/statuspanel-service/
-        echo DISABLE_APNS_STARTUP_CHECK=true | sudo tee -a /usr/share/statuspanel-service/.env
+        echo SKIP_APNS_STARTUP_CHECK=true | sudo tee -a /usr/share/statuspanel-service/.env
         sudo apt-get install ./service/build/statuspanel-service-*.deb
         sudo systemctl status statuspanel-service.service
         sleep 10
