@@ -94,6 +94,15 @@ if $BUILD_PACKAGE ; then
 
 fi
 
+# Source the development .env file if it exists.
+if [ -f "${SERVICE_DIRECTORY}/.env" ] ; then
+    set +x  # Don't echo the environment variables.
+    set -a  # Export all environment variables.
+    source "${SERVICE_DIRECTORY}/.env"
+    set +a
+    set -x
+fi
+
 if $START_SERVICE ; then
 
     cd "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/"

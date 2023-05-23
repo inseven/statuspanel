@@ -19,10 +19,12 @@
 # SOFTWARE.
 
 import atexit
+import errno
 import functools
 import logging
 import os
 import re
+import sys
 import time
 
 # Monkey patch collections to work around legacy behaviour in gobiko and dateutil.
@@ -48,7 +50,9 @@ import apns
 import database
 import task
 
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(process)d] [%(levelname)s] %(message)s", datefmt='%Y-%m-%d %H:%M:%S %z')
+logging.basicConfig(level=logging.INFO,
+                    format="[%(asctime)s] [%(process)d] [%(levelname)s] %(message)s",
+                    datefmt='%Y-%m-%d %H:%M:%S %z')
 
 
 SERVICE_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -57,16 +61,15 @@ VERSION_PATH = os.path.join(SERVICE_DIRECTORY, "VERSION")
 LEGACY_IDENTIFIER = "A0198E25-8436-4439-8BE1-75C445655255"
 
 
-def get_database():
-    if 'database' not in g:
-        logging.info("Connecting to the database...")
-        while True:
-            try:
-                g.database = database.Database()
-                break
-            except psycopg2.OperationalError:
-                time.sleep(0.1)
-    return g.database
+# Check that we can create an APNS instance before proceeding.
+# This is somewhat inelegant, but serves as a way to double check that the necessary environment variables are defined.
+# Long-term we probably want to start up one global instance of APNS and use this directly within the scheduler.
+try:
+    instance = apns.APNS()
+    del instance
+except Exception as e:
+    logging.error("Failed to connect to APNS with error \(e)")
+    sys.exit(errno.EINTR)
 
 
 # Read the version.
@@ -87,6 +90,18 @@ scheduler = BackgroundScheduler()
 scheduler.add_job(func=task.run_periodic_tasks, trigger="interval", seconds=60 * 60)  # Runs every hour.
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
+
+
+def get_database():
+    if 'database' not in g:
+        logging.info("Connecting to the database...")
+        while True:
+            try:
+                g.database = database.Database()
+                break
+            except psycopg2.OperationalError:
+                time.sleep(0.1)
+    return g.database
 
 
 @app.teardown_appcontext
