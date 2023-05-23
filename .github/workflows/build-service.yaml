@@ -49,6 +49,13 @@ jobs:
         docker container ls
         docker image ls
 
+    - name: Archive the Debian package
+      uses: actions/upload-artifact@v3
+      with:
+        name: package
+        path: service/build/statuspanel-service-*.deb
+        if-no-files-found: error
+
     - name: Install and test the package
       env:
         APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
@@ -66,13 +73,6 @@ jobs:
         sleep 5
         journalctl -u statuspanel-service.service
         scripts/test-service.sh
-
-    - name: Archive the Debian package
-      uses: actions/upload-artifact@v3
-      with:
-        name: package
-        path: service/build/statuspanel-service-*.deb
-        if-no-files-found: error
 
     - name: Deploy the service
       if: ${{ github.ref == 'refs/heads/main' }}
