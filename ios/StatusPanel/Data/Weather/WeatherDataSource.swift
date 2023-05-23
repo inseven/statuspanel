@@ -28,10 +28,31 @@ final class WeatherDataSource: DataSource {
 
     struct Settings: DataSourceSettings & Equatable {
 
+        public enum CodingKeys: String, CodingKey {
+            case flags
+            case address
+            case showLocation
+        }
+
         static let dataSourceType: DataSourceType = .weather
 
         var flags: DataItemFlags
         var address: String
+        var showLocation: Bool
+
+        init(flags: DataItemFlags, address: String, showLocation: Bool) {
+            self.flags = flags
+            self.address = address
+            self.showLocation = showLocation
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            flags = try container.decode(DataItemFlags.self, forKey: .flags)
+            address = try container.decode(String.self, forKey: .address)
+            showLocation = try container.decodeIfPresent(Bool.self, forKey: .showLocation) ?? true
+        }
+
     }
 
     struct SettingsView: View {
@@ -42,6 +63,7 @@ final class WeatherDataSource: DataSource {
             Form {
                 Section {
                     TextField("Address", text: $model.settings.address)
+                    Toggle("Show Location", isOn: $model.settings.showLocation)
                 }
                 FlagsSection(flags: $model.settings.flags)
             }
@@ -66,15 +88,19 @@ final class WeatherDataSource: DataSource {
     static let name = "Weather"
     static let image = Image(systemName: "cloud.sun")
     
-    let defaults = Settings(flags: [], address: "Bletchley Park, Sherwood Drive, Bletchley, Milton Keynes, MK3 6EB")
+    let defaults = Settings(flags: [],
+                            address: "Bletchley Park, Sherwood Drive, Bletchley, Milton Keynes, MK3 6EB",
+                            showLocation: true)
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
         Task.detached {
             do {
                 let geocoder = CLGeocoder()
-                let locations = try await geocoder.geocodeAddressString(settings.address)
-                print("locations = \(locations)")
-                guard let location = locations.first?.location else {
+                let placemarks = try await geocoder.geocodeAddressString(settings.address)
+                guard
+                    let placemark = placemarks.first,
+                    let location = placemark.location
+                else {
                     completion([DataItem(text: "Unknown Location", flags: settings.flags)], nil)
                     return
                 }
@@ -161,10 +187,14 @@ final class WeatherDataSource: DataSource {
                 formatter.unitStyle = .medium
                 formatter.numberFormatter.maximumFractionDigits = 1
 
-                let temperatureSummary = String(format: "High: %@, Low: %@",
-                                                formatter.string(from: today.highTemperature),
-                                                formatter.string(from: today.lowTemperature))
-                let dataItem = DataItem(icon: emoji, text: temperatureSummary, flags: settings.flags)
+                var components: [String] = []
+                components.append(String(format: "High: %@", formatter.string(from: today.highTemperature)))
+                components.append(String(format: "Low: %@", formatter.string(from: today.lowTemperature)))
+
+                let dataItem = DataItem(icon: emoji,
+                                        text: components.joined(separator: ", "),
+                                        subText: settings.showLocation ? placemark.name : nil,
+                                        flags: settings.flags)
                 completion([dataItem], nil)
             } catch {
                 print("failed to fetch weather with error \(error)")

@@ -25,12 +25,14 @@ class DataItem : Equatable, DataItemBase {
 
     let icon: String?
     let text: String
+    let subText: String?
     let flags: DataItemFlags
     let accentColor: UIColor?
 
-    init(icon: String?, text: String, flags: DataItemFlags = [], accentColor: UIColor? = nil) {
+    init(icon: String?, text: String, subText: String? = nil, flags: DataItemFlags = [], accentColor: UIColor? = nil) {
         self.icon = icon
         self.text = text
+        self.subText = subText
         self.flags = flags
         self.accentColor = accentColor
     }
@@ -41,10 +43,6 @@ class DataItem : Equatable, DataItemBase {
 
     var prefix: String {
         return ""
-    }
-
-    var subText: String? {
-        nil
     }
 
     func getText(checkFit: (String) -> Bool) -> String {
