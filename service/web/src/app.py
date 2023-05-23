@@ -19,10 +19,13 @@
 # SOFTWARE.
 
 import atexit
+import datetime
+import errno
 import functools
 import logging
 import os
 import re
+import sys
 import time
 
 # Monkey patch collections to work around legacy behaviour in gobiko and dateutil.
@@ -48,13 +51,66 @@ import apns
 import database
 import task
 
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(process)d] [%(levelname)s] %(message)s", datefmt='%Y-%m-%d %H:%M:%S %z')
+logging.basicConfig(level=logging.INFO,
+                    format="[%(asctime)s] [%(process)d] [%(levelname)s] %(message)s",
+                    datefmt='%Y-%m-%d %H:%M:%S %z')
 
 
 SERVICE_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 VERSION_PATH = os.path.join(SERVICE_DIRECTORY, "VERSION")
 
 LEGACY_IDENTIFIER = "A0198E25-8436-4439-8BE1-75C445655255"
+
+
+# Read the version.
+METADATA = {
+    "version": "Unknown"
+}
+if os.path.exists(VERSION_PATH):
+    with open(VERSION_PATH) as fh:
+        METADATA["version"] = fh.read().strip()
+
+logging.info("Starting service...")
+logging.info("Version %s", METADATA["version"])
+
+# Log the build details.
+build_number = METADATA["version"]
+date_string, sha_string = build_number[:10], build_number[10:]
+date = datetime.datetime.strptime(date_string, "%y%m%d%H%M")
+sha = "%06x" % int(sha_string)
+logging.info("%s (UTC)" % date)
+logging.info("https://github.com/inseven/statuspanel/commit/" + sha)
+
+
+# Check that we can create an APNS instance before proceeding.
+# This is somewhat inelegant, but serves as a way to double check that the necessary environment variables are defined.
+# Long-term we probably want to start up one global instance of APNS and use this directly within the scheduler.
+if "SKIP_APNS_STARTUP_CHECK" in os.environ:
+    logging.warning("Skipping APNS startup check...")
+else:
+    try:
+        logging.info("APNS_TEAM_ID: %d characters", len(os.environ["APNS_TEAM_ID"]))
+        logging.info("APNS_BUNDLE_ID: %d characters", len(os.environ["APNS_BUNDLE_ID"]))
+        logging.info("APNS_KEY_ID: %d characters", len(os.environ["APNS_KEY_ID"]))
+        logging.info("APNS_KEY: %d characters", len(os.environ["APNS_KEY"]))
+        instance = apns.APNS()
+        del instance
+        logging.info("APNS startup check complete.")
+    except Exception as e:
+        logging.error("Failed to connect to APNS with error, '%s' (%s).", e, type(e))
+        sys.exit(errno.EINTR)
+
+
+# Create the Flask app.
+app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
+
+# Create a scheduler to run periodic tasks like database clean up and device notification.
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=task.run_periodic_tasks, trigger="interval", seconds=60 * 60)  # Runs every hour.
+scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
 
 
 def get_database():
@@ -67,26 +123,6 @@ def get_database():
             except psycopg2.OperationalError:
                 time.sleep(0.1)
     return g.database
-
-
-# Read the version.
-METADATA = {
-    "version": "Unknown"
-}
-if os.path.exists(VERSION_PATH):
-    with open(VERSION_PATH) as fh:
-        METADATA["version"] = fh.read().strip()
-
-# Create the Flask app.
-app = Flask(__name__)
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
-
-# Create a scheduler to run periodic tasks like database clean up and device notification.
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=task.run_periodic_tasks, trigger="interval", seconds=60 * 60)  # Runs every hour.
-scheduler.start()
-atexit.register(lambda: scheduler.shutdown())
 
 
 @app.teardown_appcontext

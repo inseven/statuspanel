@@ -8,9 +8,10 @@ services:
       - 5000:5000
     environment:
       - DATABASE_URL=postgresql://hello_flask:hello_flask@database:5432/hello_flask_dev
+      - SKIP_APNS_STARTUP_CHECK
       - APNS_TEAM_ID
       - APNS_BUNDLE_ID
-      - ANPS_KEY_ID
+      - APNS_KEY_ID
       - APNS_KEY
     depends_on:
       - database

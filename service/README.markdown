@@ -33,7 +33,7 @@ When testing APNS, it can be useful to configure the environment variables requi
 ```bash
 export APNS_TEAM_ID=S4WXAUZQEV
 export APNS_BUNDLE_ID=uk.co.inseven.status-panel
-export ANPS_KEY_ID=V5XKL2D8B9
+export APNS_KEY_ID=V5XKL2D8B9
 export APNS_KEY=`cat apns.p8`
 ```
 

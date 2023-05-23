@@ -97,7 +97,7 @@ fi
 if $START_SERVICE ; then
 
     cd "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/"
-    docker compose up
+    docker compose --env-file "${SERVICE_DIRECTORY}/.env" up
 
 fi
 
@@ -109,7 +109,7 @@ if $TEST_SERVICE ; then
     }
 
     cd "${PACKAGE_DIRECTORY}/statuspanel-service/usr/share/statuspanel-service/"
-    docker compose up -d
+    docker compose --env-file "${SERVICE_DIRECTORY}/.env" up -d
     trap cleanup EXIT
     sleep 1
     "${SCRIPTS_DIRECTORY}/test-service.sh"
