@@ -68,7 +68,7 @@ try:
     instance = apns.APNS()
     del instance
 except Exception as e:
-    logging.error("Failed to connect to APNS with error \(e)")
+    logging.error("Failed to connect to APNS with error %s.", e)
     sys.exit(errno.EINTR)
 
 
