@@ -11,6 +11,12 @@
         src: "{{ package_path }}"
         dest: /tmp/statuspanel-service.deb
 
+    - name: Create the environment file
+      template:
+        src: templates/env
+        dest: /usr/share/statuspanel-service/.env
+      become: yes
+
     - name: Install the service
       apt:
         deb: /tmp/statuspanel-service.deb

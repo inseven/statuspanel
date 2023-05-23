@@ -1,0 +1,4 @@
+APNS_TEAM_ID="{{ lookup('ansible.builtin.env', 'APNS_TEAM_ID' }}"
+APNS_BUNDLE_ID="{{ lookup('ansible.builtin.env', 'APNS_BUNDLE_ID' }}"
+ANPS_KEY_ID="{{ lookup('ansible.builtin.env', 'ANPS_KEY_ID' }}"
+APNS_KEY="{{ lookup('ansible.builtin.env', 'APNS_KEY' }}"

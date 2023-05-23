@@ -4,6 +4,7 @@ After=docker.service
 Requires=docker.service
 
 [Service]
+WorkingDirectory=/usr/share/statuspanel-service/
 ExecStart=/bin/bash -c "docker compose -f /usr/share/statuspanel-service/docker-compose.yaml up"
 
 [Install]
