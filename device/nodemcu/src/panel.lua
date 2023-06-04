@@ -42,6 +42,9 @@ else
     rleLookupTable = eink.rleLookupTable
 end
 
+ERRFG = BLACK
+ERRBG = COLOURED
+
 function init()
     -- eink doesn't have any one-time init
     if isFeatherTft() then
@@ -67,7 +70,7 @@ function getTextPixelFn(text, fg, bg)
         if x < 0 or x >= #text * charw or y < 0 or y >= charh then
             return bg
         end
-        local textPos = 1 + math.floor(x / charw)
+        local textPos = 1 + (x // charw)
         local char = text:sub(textPos, textPos)
         local chx = x % charw
         return font.getPixel(char, chx, y) and fg or bg
@@ -84,17 +87,17 @@ function displayQRCode(url)
     local scale
     local textStart
     local texty
-    if isFeatherTft() then
+    if panel.h < 400 then
         scale = 3
         textStart = 0
         texty = 0
     else
         scale = 8
-        textStart = math.floor((w - urlWidth) / 2)
+        textStart = (w - urlWidth) // 2
         texty = 20
     end
-    local startx = math.floor((w - sz * scale) / 2)
-    local starty = math.floor((h - sz * scale) / 2)
+    local startx = (w - sz * scale) // 2
+    local starty = (h - sz * scale) // 2
     local textPixel = getTextPixelFn(url)
     local function getPixel(x, y)
         if y >= texty and y < texty + font.charh then

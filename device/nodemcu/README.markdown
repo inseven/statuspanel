@@ -185,6 +185,8 @@ To get working serial UART on anything with native USB, in `Component config -> 
 
 Then attach a TTL serial cable to GND, RX and TX pins.
 
+Note, this configuration is now the default, because USB CDC does not (currently) work with SPIRAM, which is required to decode PNGs and thus display anything.
+
 #### esp32s3
 
 The esp32s3 supports "USB JTAG" which offers a dedicated USB serial port. However the device will not boot until something connects to the serial port meaning this configuration is useless when using the device when not connected to a computer. Therefore, the default sdkconfig sets the primary console to be on the RX and TX pins, with debug output being mirrored to the USB serial port (but not supporting input on that port). This configuration does allow the device to boot with nothing connected to the USB port.

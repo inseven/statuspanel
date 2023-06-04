@@ -1,4 +1,4 @@
-#!/usr/local/bin/lua5.3
+#!/usr/bin/env lua
 
 font = require "font"
 

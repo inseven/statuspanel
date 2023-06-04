@@ -138,7 +138,7 @@ function sleepFromDate(date)
     end
 
     local delta = target - now
-    if gpio.read(UsbDetect) == 1 then
+    if UsbDetect and gpio.read(UsbDetect) == 1 then
         delta = 60
     end
     setStatus("idle")
@@ -146,6 +146,11 @@ function sleepFromDate(date)
 end
 
 function sleepFor(delta)
+    if isFeatherTft() then
+        -- Sleeping is pointless
+        print("Not sleeping because Feather TFT")
+        return
+    end
     wifi.stop()
     printf("Sleeping for %d secs (~%d hours)", delta, math.floor(delta / (60*60)))
     local shouldUsbDetect = true
@@ -251,8 +256,12 @@ function startNetworking()
     end
 end
 
+function isAutoMode()
+    return AutoPin ~= nil and gpio.read(AutoPin) == 1
+end
+
 function main()
-    local autoMode = AutoPin ~= nil and gpio.read(AutoPin) == 1
+    local autoMode = isAutoMode()
     local wokeByUsb, wokeByUnpair
     local reason, ext, pinslo, pinshi = node.bootreason()
     if ext == 12 then -- Deep sleep wake
@@ -532,8 +541,10 @@ function fetch()
     local result = network.getImages()
     local status = result and result.status
     local function retry()
-        -- Try again in 1 minute
-        sleepFor(60)
+        if isAutoMode() then
+            -- Try again in 1 minute
+            sleepFor(60)
+        end
     end
 
     if status == 404 then
@@ -660,9 +671,8 @@ function decryptComplete()
     -- At the end of a decrypt we always want to display, while preserving the currently-selected image if any
     local current = getCurrentDisplayIdentifier()
     local imageToShow = current and current:match("^(img_[^,]+)") or imageFilename(1)
-    local autoMode = AutoPin and gpio.read(AutoPin) == 1
     showFile(imageToShow)
-    if autoMode then
+    if isAutoMode() then
         getDateAndSleep()
     end
 end
@@ -710,9 +720,15 @@ function getDisplayStatusLineFn(customText, isErrText)
         end
     end
     local err = batteryLow or isErrText
-    local statusText = table.concat(statusTable, " | ")
-    local fg = panel.FG
-    local bg = err and panel.COLOURED or panel.BG
+    local statusText
+    if panel.w < 400 and customText then
+        -- No room for everything
+        statusText = customText
+    else
+        statusText = table.concat(statusTable, " | ")
+    end
+    local fg = err and panel.ERRFG or panel.FG
+    local bg = err and panel.ERRBG or panel.BG
     return panel.getTextPixelFn(statusText, fg, bg)
 end
 
@@ -720,13 +736,13 @@ function displayErrLine(line)
     assert(coroutine_running())
     local getTextPixel = getDisplayStatusLineFn(line, true)
     local charh = require("font").charh
-    local starth = (panel.h - charh) / 2
+    local starth = (panel.h - charh) // 2
     local endh = starth + charh
     panel.display(function(x, y)
         if y >= starth and y < endh then
             return getTextPixel(x, y - starth)
         else
-            return panel.WHITE
+            return panel.BG
         end
     end)
 end
