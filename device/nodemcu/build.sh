@@ -46,8 +46,8 @@ do
     esac
 done
 set -- "${POSITIONAL[@]:-}" # restore positional parameters
-if [[ ${#POSITIONAL[@]} != 1 ]] || ! [[ "$1" =~ ^(esp32|esp32s3)$ ]]; then
-    echo "Usage: build.sh [--clean] <esp32|esp32s3>"
+if [[ ${#POSITIONAL[@]} != 1 ]] || ! [[ "$1" =~ ^(esp32|esp32s2|esp32s3)$ ]]; then
+    echo "Usage: build.sh [--clean] <esp32|esp32s2|esp32s3>"
     exit 1
 fi
 
