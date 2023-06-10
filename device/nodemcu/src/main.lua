@@ -352,6 +352,7 @@ if NeoPixelPin ~= nil then
         decoding = neorgb(255, 0, 255), -- purple
         drawing = neorgb(255, 0, 255), -- purple
         unpairing = neorgb(255, 0, 0), -- red
+        white = neorgb(255, 255, 255), -- for testing
     }
     function setNeoPixelValue(val)
         gpio.write(NeoPixelPowerPin, 1)

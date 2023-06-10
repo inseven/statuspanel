@@ -279,15 +279,19 @@ function init()
         elseif chiptype == "esp32s3" then
             sda = 3
             scl = 4
+            -- Don't bother doing detection if we know it's an S3
+            _isInky = true
         else
             error("Unsupported chip type "..chiptype)
         end
         local inky_eeprom_addr = 0x50
         -- print("i2c_setup")
         i2c_setup(sda, scl)
-        -- print("i2c_setup done")
-        _isInky = i2c_ping(inky_eeprom_addr)
-        i2c_stop()
+        if not _isInky then
+            -- print("i2c_setup done")
+            _isInky = i2c_ping(inky_eeprom_addr)
+            i2c_stop()
+        end
 
         if isInky() then
             print("Configuring as Inky "..chiptype) 
