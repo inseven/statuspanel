@@ -18,6 +18,7 @@ jobs:
       matrix:
         target:
           - esp32
+          - esp32s2
           - esp32s3
 
     steps:
