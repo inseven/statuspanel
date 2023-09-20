@@ -94,21 +94,13 @@ class Service {
         return result
     }
 
+    // TODO: This should throw errors to make it easier to surface them to the user.
     func upload(_ images: [Data], device: Device, settings: DeviceSettings) async -> Bool {
-        return await withCheckedContinuation { continuation in
-            self.upload(images, device: device, settings: settings) { change in
-                continuation.resume(with: .success(change))
-            }
-        }
-    }
-
-    func upload(_ images: [Data], device: Device, settings: DeviceSettings, completion: @escaping (Bool) -> Void) {
         let flags = device.encoding == .png ? IMAGE_FLAG_PNG : 0
         let sodium = Sodium()
         guard let key = sodium.utils.base642bin(device.publicKey, variant: .ORIGINAL) else {
             print("Failed to decode key from publickey userdefault!")
-            completion(false)
-            return
+            return false
         }
 
         let localUpdateTime = settings.localUpdateTime()
@@ -120,21 +112,20 @@ class Service {
                                                      parts: images,
                                                      flags: flags))
         let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: message)!, variant: .ORIGINAL)!
-        if hash == DispatchQueue.main.sync(execute: { return Config().getLastUploadHash(for: device.id) }) {
+
+        let lastUploadHash = await Config().getLastUploadHash(for: device.id)
+        guard hash != lastUploadHash else {
             print("Data for \(device.id) is the same as before, not uploading")
-            completion(false)
-            return
+            return false
         }
 
         var encryptedParts: [Data] = []
         for image in images {
-            let encryptedDataBytes = sodium.box.seal(message: Array(image), recipientPublicKey: key)
-            if encryptedDataBytes == nil {
+            guard let encryptedDataBytes = sodium.box.seal(message: Array(image), recipientPublicKey: key) else {
                 print("Failed to seal box")
-                completion(false)
-                return
+                return false
             }
-            encryptedParts.append(Data(encryptedDataBytes!))
+            encryptedParts.append(Data(encryptedDataBytes))
         }
         let encryptedData = Self.makeMultipartUpload(localUpdateTime: localUpdateTime,
                                                      parts: encryptedParts,
@@ -166,18 +157,16 @@ class Service {
         body.append("--\(boundary)--\r\n".data(using: String.Encoding.utf8)!)
 
         request.httpBody = body
-        let task = URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-            // print(response ?? "")
-            if let error = error {
-                print(error)
-            } else {
-                DispatchQueue.main.sync {
-                    Config().setLastUploadHash(for: device.id, to: hash)
-                }
-            }
-            completion(true)
-        })
-        task.resume()
+
+        do {
+            _ = try await URLSession.shared.data(for: request)
+            await Config().setLastUploadHash(for: device.id, to: hash)
+        } catch {
+            print(error)
+            return false
+        }
+
+        return true
     }
 
     private static func makeMultipartUpload(localUpdateTime: TimeInterval, parts: [Data], flags: UInt16) -> Data {
