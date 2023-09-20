@@ -46,6 +46,8 @@ jobs:
     - name: Build, test, and release
       env:
 
+        IPHONE_SIMULATOR: ${{ matrix.simulator }}
+
         APPLE_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_BASE64 }}
         APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD }}
 
