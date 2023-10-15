@@ -1,12 +1,17 @@
 :root {
     --content-width: 800px;
     --vertical-spacing: 1.5em;
+    --accent-color: rgb(32, 214, 151);
 }
 
 body {
     font-family: Helvetica, sans-serif;
     font-weight: 200;
     margin: 0;
+}
+
+a {
+    color: var(--accent-color);
 }
 
 table {
@@ -29,6 +34,10 @@ ul.navigation {
     width: 100%;
     z-index: 1000;
     box-sizing: border-box;
+    font-weight: 400;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 ul.navigation a {
