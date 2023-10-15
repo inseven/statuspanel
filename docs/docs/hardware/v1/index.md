@@ -1,6 +1,10 @@
+---
+title: Version 1
+---
+
 # PCB
 
-## Bill of Materials
+# Bill of Materials
 
 | *Part*                                                                              | *Supplier*        | *Link*                                              | *Cost* | *Quantity* |
 | ----------------------------------------------------------------------------------- | ----------------- | --------------------------------------------------- | ------ | ---------- |
@@ -16,16 +20,16 @@ Possible future display:
 
 It looks like Waveshare are phasing out the display we're currently using and replacing it with one of the same physical size, but a higher resolution.
 
-## Components
+# Components
 
 The EagleCAD files make use of the following component libraries which are added to the project as submodules:
 
 - pcb/libraries/SparkFun-Eagle-Libraries/SparkFun-LED.lbr
 
-## Schematics
+# Schematics
 
 ![Schematics](statuspanel.png)
 
-## Pinouts
+# Pinouts
 
 ![Tom's notes](pinout.jpg)
