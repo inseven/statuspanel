@@ -19,6 +19,16 @@ In order to ease prototyping and development, we have two hardware platforms:
 
 Our long-term focus is on designing a custom PCB for ESP32-based devices.
 
+## Version 1
+
+![](/images/v1.jpg)
+
+## Version 2
+
+![](/images/v2.jpg)
+
+## Mini
+
 ## Building Your Own
 
 Until we can offer a custom PCB to make it really easy to build an ESP32-based StatusPanel, the Raspberry Pi-based Version 2 device is the easiest to build. Right now, this also offers the largest choice of third-party cases.
