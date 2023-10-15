@@ -12,9 +12,9 @@ There are three versions of StatusPanel with each being defined by its choice of
 
 In order to ease prototyping and development, we have two hardware platforms:
 
-- **ESP32**--Lua \
+- **ESP32** (Lua) \
   Low-power, robust to power cycling and perfect for battery powered devices.
-- **Raspberry Pi**--Python \
+- **Raspberry Pi** (Python) \
   Enables incredibly rapid bring-up and testing of new screens as they are often well supported on Raspberry Pis.
 
 Our long-term focus is on designing a custom PCB for ESP32-based devices.
