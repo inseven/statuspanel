@@ -8,8 +8,6 @@ eInk desk calendar and status board
 
 ![Photo of the original StatusPanel](images/hero.jpg)
 
-StatusPanel is a modern take on the desk calendar. It shows you just what you need to know about your upcoming day, without the temptation of messages, social media feeds, or the other online distractions that come from checking your phone.
-
 Content is curated through an iOS app, meaning your StatusPanel can show events from any of the calendars you have on your phone, without sharing that content to any third-party service.
 
 ### Content Sources

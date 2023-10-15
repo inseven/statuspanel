@@ -89,7 +89,7 @@ ul.navigation > li {
 .content {
     max-width: var(--content-width);
     margin: auto;
-    padding: 2em;
+    padding: 0 2em;
     font-size: 1.1em;
     line-height: var(--vertical-spacing);
 }
@@ -103,6 +103,12 @@ ul.navigation > li {
 .footer {
     max-width: var(--content-width);
     margin: auto;
+    padding: 2em;
+    text-align: center;
+}
+
+.info {
+    background: #fafafa;
     padding: 2em;
     text-align: center;
 }
