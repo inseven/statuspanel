@@ -52,9 +52,12 @@ table {
     border-collapse: collapse;
 }
 
+table th, table td {
+    padding: 0.5em;
+}
+
 table td {
     border: 1px solid #ddd;
-    padding: 0.5em;
 }
 
 ul.navigation {
