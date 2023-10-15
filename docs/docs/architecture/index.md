@@ -2,19 +2,17 @@
 title: Architecture
 ---
 
-# Architecture
-
 StatusPanel is designed with a simple modular architecture to make individual components easily replaceable, reducing the dependence on a single party to provide hosting and hopefully future proofing the devices.
 
 There are three primary components in the StatusPanel architecture:
 
-- Client – publishes updates; typically a cellphone
-- Service – pigeon-hole service; stores updates from clients for devices to pick up on their own schedule)
-- Device – renders updates; lower-power network-attached display
+- **Client** – publishes updates; typically a cellphone
+- **Service** – pigeon-hole service; stores updates from clients for devices to pick up on their own schedule)
+- **Device** – renders updates; lower-power network-attached display
 
 Unlike many centralised systems, the service has no access to any user data–it simply serves as an asynchronous message exchange mechanism for delivering end-to-end encrypted updates from client to device. Key exchange occurs when initially pairing a device with a client.
 
-## Device Registration
+# Device Registration
 
 Device registration and key exchange (and optionally initial Wi-Fi configuration), is performed using a QR code. The QR code encodes a URL containing the device's public key and details and is of the format:
 
@@ -24,7 +22,7 @@ statuspanel:r2?id=<identifier>&pk=<public key>&t=<type>&s=<SSID>
 
 This URL has a scheme of `statuspanel`, an empty host, and path of `r2`. The path refers to 'registration v2'.
 
-### Query Parameters
+## Query Parameters
 
 | Parameter | Type                                         | Description                                                  | Required |
 | --------- | -------------------------------------------- | ------------------------------------------------------------ | -------- |
@@ -33,7 +31,7 @@ This URL has a scheme of `statuspanel`, an empty host, and path of `r2`. The pat
 | `t`       | Int                                          | Type:<br />`0` – eInk Version 1<br />`1` – Feather TFT<br />`2` – Pimoroni Inky Impression 4 (using full colour PNG)<br />`3` – Pimoroni Inky Impression 4 (using 2BPP RLE) | Optional |
 | `s`       | String                                       | SSID of ad-hoc Wi-Fi hotspot to connect to for initial configuration | Optional |
 
-## Updates
+# Updates
 
 ```
 GET https://api.statuspanel.io/api/v3/status/<device identifier>
