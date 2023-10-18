@@ -3,6 +3,7 @@
     --vertical-spacing: 1.5em;
     --accent-color: rgb(32, 214, 151);
     --foreground-color: black;
+    --spacing-unit: 2em;
 }
 
 @font-face {
@@ -126,6 +127,7 @@ img {
 hr {
     border: 0;
     border-bottom: 2px solid var(--foreground-color);
+    margin-bottom: var(--spacing-unit);
 }
 
 .grid {
@@ -141,15 +143,16 @@ ul.grid > li {
     padding: 0;
     text-indent: 0;
     box-sizing: border-box;
-    text-align: center;
 }
 
 .grid.prefer-2-columns {
     grid-template-columns: 1fr 1fr;
 }
 
-.grid a {
+.grid h1 {
     font-weight: bold;
+    font-size: 1.4em;
+    margin: 0.2em 0;
 }
 
 .grid p {

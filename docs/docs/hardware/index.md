@@ -8,21 +8,21 @@ There are three versions of StatusPanel with each being defined by its choice of
     <li>
         <a href="v2">
             <img src="v2/hero.jpg">
-            Version 2
+            <h1>Version 2</h1>
         </a>
         <p>Based on the <a href="https://shop.pimoroni.com/products/inky-impression-4?variant=39599238807635">Pimoroni Inky Impression 4</a>.</p>
     </li>
     <li>
         <a href="v1">
             <img src="v1/hero.jpg">
-            Version 1<br />
+            <h1>Version 1</h1>
         </a>
         <p>Based on the <a href="https://www.waveshare.com/7.5inch-e-paper-hat-c.htm">Waveshare 640x384 7.5" Three-Color E-Ink HAT for Raspberry Pi</a>.</p>
     </li>
     <li>
         <a href="mini">
             <img src="mini/hero.jpg">
-            Mini
+            <h1>Mini</h1>
         </a>
         <p>Based on the <a href="https://www.adafruit.com/product/5300">Adafruit ESP32-S2 TFT Feather.</a></p>
     </li>
