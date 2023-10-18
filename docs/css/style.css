@@ -45,6 +45,7 @@ header h1 {
 a {
     color: var(--accent-color);
     text-decoration: none;
+    font-weight: bold;
 }
 
 table {
