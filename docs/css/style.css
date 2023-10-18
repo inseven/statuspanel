@@ -2,6 +2,8 @@
     --content-width: 800px;
     --vertical-spacing: 1.5em;
     --accent-color: rgb(32, 214, 151);
+    --foreground-color: black;
+    --spacing-unit: 2em;
 }
 
 @font-face {
@@ -119,4 +121,46 @@ ul.navigation > li {
 img {
     max-width: 100%;
     margin: auto;
+    border-radius: 0.4em;
+}
+
+hr {
+    border: 0;
+    border-bottom: 2px solid var(--foreground-color);
+    margin-bottom: var(--spacing-unit);
+}
+
+.grid {
+    list-style: none;
+    display: grid;
+    grid-gap: 1em;
+    margin: 0 0 0 0;
+    margin-bottom: var(--spacing-unit);
+    padding: 0;
+}
+
+ul.grid > li {
+    padding: 0;
+    text-indent: 0;
+    box-sizing: border-box;
+}
+
+.grid.prefer-2-columns {
+    grid-template-columns: 1fr 1fr;
+}
+
+.grid h1 {
+    font-weight: bold;
+    font-size: 1.4em;
+    margin: 0.2em 0;
+}
+
+.grid p {
+    margin: 0;
+}
+
+@media screen and (max-width: 600px) { /* Palm */
+    .grid.prefer-2-columns {
+        grid-template-columns: 1fr;
+    }
 }
