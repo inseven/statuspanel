@@ -8,24 +8,12 @@ eInk desk calendar and status board
 
 ![Photo of the original StatusPanel](images/hero.jpg)
 
-Content is curated through an iOS app, meaning your StatusPanel can show events from any of the calendars you have on your phone, without sharing that content to any third-party service.
-
-### Content Sources
-
-The StatusPanel iOS app has built-in support for a number of content sources:
-
-- Calendar
-- [London Underground](https://tfl.gov.uk/modes/tube/) (UK)
-- [ZenQuotes](https://zenquotes.io)
-
 ## Technical Details
 
-- [Architecture](docs/architecture/index.markdown)
 - Devices
     - Firmware
         - [NodeMCU](device/nodemcu/README.markdown)
         - [Python](device/python/README.md)
-    - [Hardware](hardware/README.markdown)
 - Clients
     - [iOS](ios/README.markdown)
 
