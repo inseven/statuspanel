@@ -18,18 +18,6 @@ The StatusPanel iOS app has built-in support for a number of content sources:
 - [London Underground](https://tfl.gov.uk/modes/tube/) (UK)
 - [ZenQuotes](https://zenquotes.io)
 
-### Privacy
-
-StatusPanel uses end-to-end encryption to ensure your data remains private to you. Keys exchanged directly between StatusPanel and your phone are used to encrypt all updates; no one but you can see your updates.
-
-StatusPanel can optionally show a privacy image or redact content at the touch of a button if you're worried who might see your calendar.
-
-### Getting StatusPanel
-
-StatusPanel is an open source project in the fairly early stages of development. We're planning to submit our [iOS app](ios/README,markdown) to the app store in the coming months and would love to manufacture a small batch of PCBs to make it easy for people to assemble their own. (It's 2021 though, so that might take longer than usual.)
-
-If you can't wait to try it out, have a little technical experience, and don't mind getting your hands dirty, check out the [device documentation](device/README.markdown) for part listings and PCB schematics. If something's not clear, please reach out; we're happy to help out where we can and always appreciate code and documentation [contributions](#contributing) big or small.
-
 ## Technical Details
 
 - [Architecture](docs/architecture/index.markdown)
