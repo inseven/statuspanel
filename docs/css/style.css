@@ -4,6 +4,10 @@
     --accent-color: rgb(32, 214, 151);
     --foreground-color: black;
     --spacing-unit: 2em;
+    --character-width: 16px;
+    --character-height: 16px;
+    --character-scale: 1.5;
+    --characters-per-row: 256;
 }
 
 @font-face {
@@ -128,6 +132,48 @@ hr {
     border: 0;
     border-bottom: 2px solid var(--foreground-color);
     margin-bottom: var(--spacing-unit);
+}
+
+.character {
+    /*
+     * Character offsets are typically calculated as (code % 256, floor(code / 256)).
+     *
+     * You can copy-and-paste the following code into a Swift repl to get a useful function:
+     *
+     * func offset(_ value: Int) -> (Int, Int) { (value % 256, value / 256) }
+     */
+    width: var(--character-width);
+    height: var(--character-height);
+    display: inline-block;
+    background: url('/images/unifont.png');
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    scale: var(--character-scale);
+}
+
+.weary-cat {
+    /* 0x1F640 */
+    background-position: calc(-1 * 64 * var(--character-width)) calc(-1 * 502 * var(--character-height));
+}
+
+.cloud-with-rain {
+    /* 0x1F327 */
+    background-position: calc(-1 * 39 * var(--character-width)) calc(-1 * 499 * var(--character-height));
+}
+
+.metro {
+    /* 0x1F687 */
+    background-position: calc(-1 * 135 * var(--character-width)) calc(-1 * 502 * var(--character-height));
+}
+
+.speech-balloon {
+    /* 0x1F4AC */
+    background-position: calc(-1 * 172 * var(--character-width)) calc(-1 * 500 * var(--character-height));
+}
+
+.spiral-calendar {
+    /* 0x1F5D3 */
+    background-position: calc(-1 * 211 * var(--character-width)) calc(-1 * 501 * var(--character-height));
 }
 
 .grid {
