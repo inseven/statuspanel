@@ -4,8 +4,6 @@ title: Version 1
 
 ![](hero.jpg)
 
-# PCB
-
 # Bill of Materials
 
 | *Part*                                                                              | *Link*                                              | *Cost* | *Quantity* |
@@ -24,7 +22,7 @@ The EagleCAD files make use of the following component libraries which are added
 
 # Schematics
 
-![Schematics](statuspanel.png)
+![Schematics](pcb.png)
 
 # Pinouts
 
