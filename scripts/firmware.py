@@ -166,7 +166,7 @@ def command_flash(options):
              "0x10000",
              os.path.join(path, "NodeMCU.bin"),
              "0x8000",
-             os.path.join(path, "partitions.bin"),
+             os.path.join(path, "partition-table.bin"),
              "0x190000",
              os.path.join(path, "lfs.img")])
 
