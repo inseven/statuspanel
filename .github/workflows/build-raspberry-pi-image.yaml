@@ -30,7 +30,7 @@ jobs:
         image-name: statuspanel
         hostname: statuspanel
         stage-list: stage0 stage1 stage2 device/python/raspberry-pi-image
-        pi-gen-version: master
+        pi-gen-version: bullseye-arm64
         verbose-output: true
 
     - uses: actions/upload-artifact@v3
