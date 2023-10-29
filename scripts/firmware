@@ -22,8 +22,6 @@
 
 SCRIPT=$( basename "$0" )
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-# ROOT_DIR="${SCRIPTS_DIR}/.."
-# NODEMCU_DIR="${ROOT_DIR}/device/nodemcu"
 
 export PIPENV_PIPFILE="${SCRIPTS_DIR}/Pipfile"
 pipenv run python3 "${SCRIPTS_DIR}/${SCRIPT}.py" $@
