@@ -12,6 +12,13 @@ on:
 jobs:
   build-raspberry-pi-image:
 
+    strategy:
+      matrix:
+        include:
+          - pi-gen-version: bullseye-arm64
+            release: bullseye
+          - pi-gen-version: bullseye
+            release: bullseye
     runs-on: ubuntu-latest
 
     steps:
@@ -30,10 +37,13 @@ jobs:
         image-name: statuspanel
         hostname: statuspanel
         stage-list: stage0 stage1 stage2 device/python/raspberry-pi-image
-        pi-gen-version: bullseye-arm64
+        pi-gen-version: ${{ matrix.pi-gen-version }}
+        release: ${{ matrix.release }}
         verbose-output: true
 
-    - uses: actions/upload-artifact@v3
+    - name: Archive the image
+      uses: actions/upload-artifact@v3
       with:
         name: pi-gen-image
         path: ${{ steps.build.outputs.image-path }}
+        if-no-files-found: error
