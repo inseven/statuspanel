@@ -17,8 +17,8 @@ jobs:
         include:
           - pi-gen-version: bullseye-arm64
             release: bullseye
-          # - pi-gen-version: bullseye
-          #   release: bullseye
+          - pi-gen-version: bullseye
+            release: bullseye
     runs-on: ubuntu-latest
 
     steps:
