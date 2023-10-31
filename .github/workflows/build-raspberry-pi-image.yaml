@@ -34,7 +34,7 @@ jobs:
 
     - name: Build image
       id: build
-      uses: usimd/pi-gen-action@v1
+      uses: jbmorley/pi-gen-action@jbmorley/update-source
       with:
         image-name: statuspanel
         hostname: statuspanel
