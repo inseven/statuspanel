@@ -15,10 +15,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - pi-gen-version: bullseye-arm64
-            release: bullseye
-          - pi-gen-version: bullseye
-            release: bullseye
+          # - pi-gen-version: bullseye-arm64
+          #   release: bullseye
+          # - pi-gen-version: bullseye
+          #   release: bullseye
+          - pi-gen-version: arm64
+            release: bookworm
     runs-on: ubuntu-latest
 
     steps:
