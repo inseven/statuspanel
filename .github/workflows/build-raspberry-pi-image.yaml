@@ -19,7 +19,7 @@ jobs:
           #   release: bullseye
           # - pi-gen-version: bullseye
           #   release: bullseye
-          - pi-gen-version: arm64
+          - pi-gen-version: master
             release: bookworm
     runs-on: ubuntu-latest
 
