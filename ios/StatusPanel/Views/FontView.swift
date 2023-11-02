@@ -40,7 +40,7 @@ struct FontView: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> UILabel {
-        let label = UILabel.getLabel(frame: .zero, font: font, style: .text, redactMode: redactMode)
+        let label = UILabel.getLabel(frame: .zero, font: font, style: .text, colorHint: .monochrome, redactMode: redactMode)
         label.text = text
         label.textColor = UIColor(color)
         return label

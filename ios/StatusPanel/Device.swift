@@ -28,7 +28,7 @@ struct Device: Identifiable, Equatable, Hashable {
     enum Kind: String, CaseIterable, Identifiable {
 
         static let demoDevices: [Kind] = [
-            .pimoroniInkyImpression4_rle,
+            .pimoroniInkyImpression4,
             .einkV1,
             .featherTft
         ]
