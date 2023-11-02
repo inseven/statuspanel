@@ -59,8 +59,7 @@ jobs:
 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-        # RELEASE: ${{ github.ref == 'refs/heads/main' && matrix.os == 'macos-13' }}
-        RELEASE: ${{ matrix.os == 'inseven-macos-14' }}
+        RELEASE: ${{ github.ref == 'refs/heads/main' && matrix.os == 'inseven-macos-14' }}
 
       run: |
         scripts/build.sh
