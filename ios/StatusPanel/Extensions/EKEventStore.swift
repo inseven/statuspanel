@@ -30,11 +30,15 @@ extension EKEventStore {
     }
 
     func requestAccessToEvents(completion: @escaping EKEventStoreRequestAccessCompletionHandler) {
+#if swift(>=5.9)
         if #available(iOS 17.0, *) {
             requestFullAccessToEvents(completion: completion)
         } else {
             requestAccess(to: EKEntityType.event, completion: completion)
         }
+#else
+        requestAccess(to: EKEntityType.event, completion: completion)
+#endif
     }
 
 }
