@@ -21,10 +21,32 @@
 import UIKit
 import CoreImage
 
+fileprivate func colorForCharacter(_ char: Character) -> UIColor? {
+    guard let charName = char.unicodeScalars.first!.properties.name else {
+        return nil
+    }
+    let words = charName.split(separator: " ")
+    if words.contains("GREEN") {
+        return UIColor.green
+    } else if words.contains("RED") {
+        return UIColor.red
+    } else if words.contains("BLUE") {
+        return UIColor.blue
+    } else if words.contains("ORANGE") {
+        return UIColor.orange
+    } else if words.contains("YELLOW") {
+        return UIColor.yellow
+    }
+
+    return nil
+}
+
 class BitmapFontLabel: UILabel {
+
     var style: BitmapFontCache.Style
     let maxFullSizeLines = Int.max
     var redactMode: RedactMode
+    var colorHint = ColorHint.monochrome
 
     init(frame: CGRect, bitmapFont: Fonts.BitmapInfo, scale: Int = 1, redactMode: RedactMode = .none) {
         self.style = BitmapFontCache.Style(font: bitmapFont, scale: scale, darkMode: false)
@@ -165,6 +187,9 @@ class BitmapFontLabel: UILabel {
                 } else {
                     ctx.saveGState()
                     ctx.clip(to: rect, mask: chImg)
+                    if colorHint == .inkyPalette, let charColor = colorForCharacter(ch) {
+                        ctx.setFillColor(charColor.cgColor)
+                    }
                     ctx.fill(rect)
                     ctx.restoreGState()
                 }

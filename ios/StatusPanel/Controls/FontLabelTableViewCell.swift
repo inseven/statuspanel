@@ -26,7 +26,7 @@ class FontLabelTableViewCell: UITableViewCell {
     let redactMode: RedactMode
 
     lazy var label: UILabel = {
-        let label = UILabel.getLabel(frame: .zero, font: labelFont.configName, style: .text, redactMode: redactMode)
+        let label = UILabel.getLabel(frame: .zero, font: labelFont.configName, style: .text, colorHint: .monochrome, redactMode: redactMode)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
