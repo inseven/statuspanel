@@ -27,6 +27,12 @@ struct Device: Identifiable, Equatable, Hashable {
 
     enum Kind: String, CaseIterable, Identifiable {
 
+        static let demoDevices: [Kind] = [
+            .pimoroniInkyImpression4_rle,
+            .einkV1,
+            .featherTft
+        ]
+
         var id: Self { self }
 
         case einkV1 = "0"

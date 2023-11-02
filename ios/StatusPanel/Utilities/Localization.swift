@@ -69,12 +69,12 @@ func Localized(_ style: DataItemFlags.Style) -> String {
 func Localized(_ kind: Device.Kind) -> String {
     switch kind {
     case .einkV1:
-        return "eInk Version 1"
+        return "Version 1"
     case .featherTft:
-        return "Feather TFT"
+        return "Mini"
     case .pimoroniInkyImpression4:
-        return "Pimoroni Inky Impression 4 (PNG)"
+        return "Version 2"
     case .pimoroniInkyImpression4_rle:
-        return "Pimoroni Inky Impression 4 (RLE)"
+        return "Version 2"
     }
 }

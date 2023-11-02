@@ -101,7 +101,7 @@ struct AddDeviceView: View {
                     .edgesIgnoringSafeArea(.all)
                 case .demoDevice:
                     ScrollView {
-                        ForEach(Device.Kind.allCases) { kind in
+                        ForEach(Device.Kind.demoDevices) { kind in
                             Button {
                                 applicationModel.addDemoDevice(kind: kind)
                                 dismiss()
