@@ -152,7 +152,7 @@ final class CalendarDataSource : DataSource {
     }
 
     func data(settings: Settings, completion: @escaping ([DataItemBase], Error?) -> Void) {
-        eventStore.requestAccess(to: EKEntityType.event) { (granted: Bool, err: Error?) in
+        eventStore.requestAccessToEvents { (granted: Bool, err: Error?) in
             if (granted) {
                 self.getData(settings: settings, callback: completion)
             } else {
