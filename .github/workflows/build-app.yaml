@@ -13,14 +13,7 @@ jobs:
   build-app:
 
     name: build-app
-    strategy:
-      matrix:
-        include:
-          - os: inseven-macos-14
-            simulator: iPhone 15 Pro
-          - os: macos-13
-            simulator: iPhone 14 Pro
-    runs-on: ${{ matrix.os }}
+    runs-on: inseven-macos-14
 
     steps:
 
@@ -46,7 +39,7 @@ jobs:
     - name: Build, test, and release
       env:
 
-        IPHONE_SIMULATOR: ${{ matrix.simulator }}
+        IPHONE_SIMULATOR: iPhone 15 Pro
 
         APPLE_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_BASE64 }}
         APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD }}
