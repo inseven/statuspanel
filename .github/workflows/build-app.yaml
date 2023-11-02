@@ -13,8 +13,6 @@ jobs:
   build-app:
 
     name: build-app
-
-    strategy:
     runs-on: inseven-macos-14
 
     steps:
