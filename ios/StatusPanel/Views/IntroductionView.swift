@@ -48,7 +48,8 @@ struct IntroductionView: View {
                 Image("Hero")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Viverra maecenas accumsan lacus vel facilisis volutpat est velit egestas. Sit amet facilisis magna etiam tempor. Rutrum quisque non tellus orci ac auctor augue.")
+                Text("Welcome to the modern desk calendar.\n\nStatusPanel shows you just what you need to know about your upcoming day, without the temptation of messages, social media feeds, or the other online distractions that come from checking your phone.")
+                    .multilineTextAlignment(.center)
                     .padding()
             }
         }
@@ -57,7 +58,7 @@ struct IntroductionView: View {
                 Button {
                     onScanQRCode()
                 } label: {
-                    Text("Scan QR Code")
+                    Text("Pair Device")
                         .centerContent()
                 }
                 .buttonStyle(.borderedProminent)
