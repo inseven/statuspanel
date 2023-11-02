@@ -40,7 +40,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Read calendar events.</string>
+	<string>StatusPanel requires access to your calendar to show events.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>StatusPanel requires access to your calendar to show events.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>StatusPanel requires temporary camera access to scan the pairing QR code.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
