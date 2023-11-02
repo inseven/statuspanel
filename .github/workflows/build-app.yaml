@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: inseven-macos-13
+          - os: inseven-macos-14
             simulator: iPhone 15 Pro
           - os: macos-13
             simulator: iPhone 14 Pro
@@ -59,7 +59,7 @@ jobs:
 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-        RELEASE: ${{ github.ref == 'refs/heads/main' && matrix.os == 'macos-13' }}
+        RELEASE: ${{ github.ref == 'refs/heads/main' && matrix.os == 'inseven-macos-14' }}
 
       run: |
         scripts/build.sh
