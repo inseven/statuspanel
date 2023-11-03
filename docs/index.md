@@ -19,3 +19,5 @@ Content is curated with our iOS app meaning StatusPanel can show events from any
     <li><div class="character cloud-with-rain"></div> <a href="https://apps.apple.com/us/app/weather/id1069513131">Weather</a></li>
     <li><div class="character speech-balloon"></div> <a href="https://zenquotes.io">ZenQuotes</a></li>
 </ul>
+
+StatusPanel can optionally show a privacy image or redact content at the touch of a button if you're worried who might see your calendar.
