@@ -9,6 +9,7 @@ import { useSodium } from "./utils/sodium"
 import { useLocalStorageUint8Array } from "./utils/storage"
 import { RLEDecoder } from "./utils/RLEDecoder"
 import { useLocalStorage, usePrevious, usePreviousDistinct } from "react-use"
+import { v4 as uuidv4 } from "uuid"
 
 export const App = () => {
   const windowFocused = useWindowFocus()
@@ -20,7 +21,7 @@ export const App = () => {
   }, [windowFocused, prevWindowFocused])
 
   const sodium = useSodium()
-  const [id, setId] = useLocalStorage("id", "reactsim")
+  const [id, setId] = useLocalStorage("id", uuidv4())
   const [keyPairPub, setKeyPairPub] = useLocalStorageUint8Array("keyPairPub", undefined)
   const [keyPairPriv, setKeyPairPriv] = useLocalStorageUint8Array("keyPairPriv", undefined)
 
@@ -35,6 +36,10 @@ export const App = () => {
   const cycleImages = () => {
     if (imageIndex === null) return
     setImageIndex((imageIndex + 1) % images.length)
+  }
+
+  const reset = () => {
+    setId(uuidv4())
   }
 
   const imagePixels = useMemo(() => {
@@ -86,8 +91,7 @@ export const App = () => {
     <main className="flex min-h-screen flex-col items-center bg-gray-900 text-white">
       <div className="container flex flex-col items-center justify-center gap-8 px-4 py-16">
         <div className="flex flex-row gap-2">
-          <input className="text-black" value={id} onChange={(e) => void setId(e.target.value)} />
-          <p className={id.length === 8 ? `text-green-500` : `text-red-500`}>{id.length} chars</p>
+          <p>{id}</p>
         </div>
         <div className="p-[4px] bg-white">
           <QRCode value={url} />
@@ -96,6 +100,7 @@ export const App = () => {
         <button onClick={() => void fetchImages()}>Fetch bundle</button>
         <p>Status: {status}</p>
         <button onClick={() => cycleImages()}>Cycle images</button>
+        <button onClick={() => reset()}>Reset</button>
         {imageIndex !== null && (
           <Canvas width="640px" height="380px" pixels={imagePixels[imageIndex]} />
         )}
