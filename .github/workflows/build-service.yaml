@@ -10,8 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-service:
-
+  build-service:
     name: build-service
     runs-on: ubuntu-latest
 
@@ -66,8 +65,24 @@ jobs:
         journalctl -u statuspanel-service.service
         scripts/test-service.sh
 
+  deploy-service:
+    needs: build-service
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency: production
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Download the build package
+      uses: actions/download-artifact@v3
+      with:
+        name: package
+
     - name: Deploy the service
-      if: ${{ github.ref == 'refs/heads/main' }}
       env:
         ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
         ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
@@ -76,4 +91,4 @@ jobs:
         APNS_KEY_ID: ${{ secrets.APNS_KEY_ID }}
         APNS_KEY: ${{ secrets.APNS_KEY }}
       run: |
-        service/ansible/deploy.sh service/build/statuspanel-service-*.deb
+        service/ansible/deploy.sh statuspanel-service-*.deb
