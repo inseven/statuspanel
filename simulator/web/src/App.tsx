@@ -91,19 +91,34 @@ export const App = () => {
     <main>
       <div>
         <div>
-          <p>{id}</p>
-        </div>
-        <div>
           <QRCode value={url} />
         </div>
-        <p>{url}</p>
-        <button onClick={() => void fetchImages()}>Fetch bundle</button>
+        <ul>
+          <li><button onClick={() => cycleImages()}>Action</button></li>
+          <li><button onClick={() => void fetchImages()}>Refresh</button></li>
+          <li><button onClick={() => reset()}>Reset</button></li>
+        </ul>
         <p>Status: {status}</p>
-        <button onClick={() => cycleImages()}>Cycle images</button>
-        <button onClick={() => reset()}>Reset</button>
         {imageIndex !== null && (
           <Canvas width="640px" height="380px" pixels={imagePixels[imageIndex]} />
         )}
+        <details>
+          <summary>Device Information</summary>
+          <table>
+            <tr>
+              <th>Pairing URL</th>
+              <td>{url}</td>
+            </tr>
+            <tr>
+              <th>Identifier</th>
+              <td>{id}</td>
+            </tr>
+            <tr>
+              <th>Wakeup Time</th>
+              <td></td>
+            </tr>
+          </table>
+        </details>
       </div>
     </main>
   )

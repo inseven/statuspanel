@@ -122,6 +122,10 @@ ul.navigation > li {
     text-align: center;
 }
 
+details table {
+    background: #fafafa;
+}
+
 img {
     max-width: 100%;
     margin: auto;
