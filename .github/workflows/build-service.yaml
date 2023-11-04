@@ -10,8 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-service:
-
+  build-service:
     name: build-service
     runs-on: ubuntu-latest
 
@@ -65,6 +64,21 @@ jobs:
         sudo systemctl status statuspanel-service.service
         journalctl -u statuspanel-service.service
         scripts/test-service.sh
+
+  deploy-service:
+    needs: build-service
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Download the build package
+      uses: actions/download-artifact@v3
+      with:
+        name: package
+
+    - name: Debug information
+      run: |
+        ls
 
     - name: Deploy the service
       if: ${{ github.ref == 'refs/heads/main' }}
