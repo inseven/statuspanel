@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     concurrency: production
-    # if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
 
     steps:
 
