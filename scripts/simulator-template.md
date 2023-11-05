@@ -2,7 +2,7 @@
 title: Simulator
 ---
 
-We provide [macOS](#macos) and [web-based](#web) simulators for development purposes and to let you try out StatusPanel before building your own.
+We provide [macOS](#macos) and [web-based](#web) simulators for development and to let you try out StatusPanel before building your own.
 
 # Web
 
