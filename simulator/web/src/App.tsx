@@ -96,39 +96,39 @@ export const App = () => {
 
   return (
     <main>
-      <div>
-
-        <div className="screen" style={{width: 640, height: 380}}>
-            {imageIndex !== null ? (
-              <Canvas width="640px" height="380px" pixels={imagePixels[imageIndex]} />
-            ) : (
-              <QRCode value={url} />
-            )}
+      <div className="simulator">
+        <div className="device">
+          <div className="screen" style={{width: 640, height: 380}}>
+              {imageIndex !== null ? (
+                <Canvas width="640px" height="380px" pixels={imagePixels[imageIndex]} />
+              ) : (
+                <QRCode className="qrcode" value={url} />
+              )}
+          </div>
+          <ul className="buttons">
+            <li><button onClick={() => cycleImages()}>Action</button></li>
+            <li><button onClick={() => void fetchImages()}>Refresh</button></li>
+            <li><button onClick={() => reset()}>Reset</button></li>
+          </ul>
+          <p>Status: {status}</p>
+          <details>
+            <summary>Device Information</summary>
+            <table style={{maxWidth: "640px"}}>
+              <tr>
+                <th>Pairing URL</th>
+                <td>{url}</td>
+              </tr>
+              <tr>
+                <th>Identifier</th>
+                <td>{id}</td>
+              </tr>
+              <tr>
+                <th>Wakeup Time</th>
+                <td></td>
+              </tr>
+            </table>
+          </details>
         </div>
-
-        <ul>
-          <li><button onClick={() => cycleImages()}>Action</button></li>
-          <li><button onClick={() => void fetchImages()}>Refresh</button></li>
-          <li><button onClick={() => reset()}>Reset</button></li>
-        </ul>
-        <p>Status: {status}</p>
-        <details>
-          <summary>Device Information</summary>
-          <table>
-            <tr>
-              <th>Pairing URL</th>
-              <td>{url}</td>
-            </tr>
-            <tr>
-              <th>Identifier</th>
-              <td>{id}</td>
-            </tr>
-            <tr>
-              <th>Wakeup Time</th>
-              <td></td>
-            </tr>
-          </table>
-        </details>
       </div>
     </main>
   )
