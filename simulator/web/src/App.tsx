@@ -90,18 +90,22 @@ export const App = () => {
   return (
     <main>
       <div>
-        <div>
+
+        <div className="screen" style={{width: 640, height: 380}}>
           <QRCode value={url} />
         </div>
+        <div className="screen" style={{width: 640, height: 380}}>
+          {imageIndex !== null && (
+            <Canvas width="640px" height="380px" pixels={imagePixels[imageIndex]} />
+        )}
+        </div>
+
         <ul>
           <li><button onClick={() => cycleImages()}>Action</button></li>
           <li><button onClick={() => void fetchImages()}>Refresh</button></li>
           <li><button onClick={() => reset()}>Reset</button></li>
         </ul>
         <p>Status: {status}</p>
-        {imageIndex !== null && (
-          <Canvas width="640px" height="380px" pixels={imagePixels[imageIndex]} />
-        )}
         <details>
           <summary>Device Information</summary>
           <table>

@@ -6,18 +6,23 @@ export const decodeBundle = (
   sodiumSealOpen: (imageData: Uint8Array) => Uint8Array
 ): Array<Uint8Array> => {
   const data = new StreamDataView(bundle, true)
+
+  // Check for a header marker.
   const marker = data.getNextUint16()
-
   if (marker !== 0xff00) {
-    throw new Error("invalid marker")
+    throw new Error("Invalid marker")
   }
 
+  // Read the header.
   const headerLength = data.getNextUint8()
-  const wakeupTime = data.getNextUint16()
-  let imageCount = null
-  if (headerLength >= 6) {
-    imageCount = data.getNextUint8()
+  if (headerLength != 8) {
+    console.log(headerLength)
+    throw new Error("Unsupported update")
   }
+
+  const wakeupTime = data.getNextUint16()
+  const imageCount = data.getNextUint8()
+  const encodingValue = data.getNextUint16()  // TODO: This is LE.
 
   const offsets = []
   if (imageCount === null) {
