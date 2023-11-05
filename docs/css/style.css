@@ -3,6 +3,7 @@
     --vertical-spacing: 1.5em;
     --accent-color: rgb(32, 214, 151);
     --foreground-color: black;
+    --secondary-color: #ddd;
     --spacing-unit: 2em;
     --character-width: 16px;
     --character-height: 16px;
@@ -213,4 +214,12 @@ ul.grid > li {
     .grid.prefer-2-columns {
         grid-template-columns: 1fr;
     }
+}
+
+.screen {
+    border: 1px solid var(--secondary-color);
+    margin: auto;
+    text-align: center;
+    display: flex;
+    align-items: center;
 }
