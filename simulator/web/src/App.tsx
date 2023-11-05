@@ -26,7 +26,7 @@ export const App = () => {
   const [keyPairPriv, setKeyPairPriv] = useLocalStorageUint8Array("keyPairPriv", undefined)
 
   const [images, setImages] = useState<Array<Uint8Array>>([])
-  const [status, setStatus] = useState("Ready")
+  const [status, setStatus] = useState("")
   const [url, setURL] = useState("")
   const [imageIndex, setImageIndex] = useState<number | null>(null)
 
@@ -54,7 +54,7 @@ export const App = () => {
       map(RLEDecoder),
       tap(() => setStatus("Expanding to BPP..")),
       map(expand2BPPValues),
-      tap(() => setStatus("Ready")),
+      tap(() => setStatus("")),
     )
   }, [images])
 
@@ -110,7 +110,7 @@ export const App = () => {
             <li><button onClick={() => void fetchImages()}>Refresh</button></li>
             <li><button onClick={() => reset()}>Reset</button></li>
           </ul>
-          <p>Status: {status}</p>
+          {status && <p>{status}</p>}
           <details>
             <summary>Device Information</summary>
             <table style={{maxWidth: "640px"}}>
