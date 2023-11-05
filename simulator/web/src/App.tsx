@@ -27,6 +27,7 @@ export const App = () => {
 
   const [images, setImages] = useState<Array<Uint8Array>>([])
   const [status, setStatus] = useState("Ready")
+  const [url, setURL] = useState("")
   const [imageIndex, setImageIndex] = useState<number | null>(null)
 
   useEffect(() => {
@@ -40,6 +41,8 @@ export const App = () => {
 
   const reset = () => {
     setId(uuidv4())
+    setImageIndex(null)
+    setImages([])
   }
 
   const imagePixels = useMemo(() => {
@@ -55,25 +58,29 @@ export const App = () => {
     )
   }, [images])
 
-  if (sodium === undefined) {
-    return <p>Waiting for sodium..</p>
-  }
+  useEffect(() => {
+    if (sodium === undefined) {
+      return
+    }
 
-  if (keyPairPub === undefined || keyPairPriv === undefined) {
-    const kp = sodium.crypto_box_keypair()
-    setKeyPairPriv(kp.privateKey)
-    setKeyPairPub(kp.publicKey)
-    return <p>Generating keypair..</p>
-  }
+    if (keyPairPub === undefined || keyPairPriv === undefined) {
+      const kp = sodium.crypto_box_keypair()
+      setKeyPairPriv(kp.privateKey)
+      setKeyPairPub(kp.publicKey)
+      return
+    }
 
-  if (id === undefined) {
-    return <p>should never happen. types are wrong.</p>
-  }
+    const pubBase64 = sodium.to_base64(keyPairPub, sodium.base64_variants.ORIGINAL)
+    setURL(`statuspanel:r2?id=${id}&pk=${encodeURIComponent(pubBase64)}`)
 
-  const pubBase64 = sodium.to_base64(keyPairPub, sodium.base64_variants.ORIGINAL)
-  const url = `statuspanel:r2?id=${id}&pk=${encodeURIComponent(pubBase64)}`
+    fetchImages()
+
+  }, [sodium, keyPairPub, keyPairPriv, id])
 
   const fetchImages = async () => {
+    if (id === undefined || sodium === undefined || keyPairPub === undefined || keyPairPriv == undefined) {
+      return
+    }
     setStatus("Fetching bundle..")
     const bundle = await (
       await fetch(`https://api.statuspanel.io/api/v3/status/${id}`)
@@ -92,12 +99,11 @@ export const App = () => {
       <div>
 
         <div className="screen" style={{width: 640, height: 380}}>
-          <QRCode value={url} />
-        </div>
-        <div className="screen" style={{width: 640, height: 380}}>
-          {imageIndex !== null && (
-            <Canvas width="640px" height="380px" pixels={imagePixels[imageIndex]} />
-        )}
+            {imageIndex !== null ? (
+              <Canvas width="640px" height="380px" pixels={imagePixels[imageIndex]} />
+            ) : (
+              <QRCode value={url} />
+            )}
         </div>
 
         <ul>
