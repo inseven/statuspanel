@@ -123,10 +123,6 @@ ul.navigation > li {
     text-align: center;
 }
 
-details table {
-    background: #fafafa;
-}
-
 img {
     max-width: 100%;
     margin: auto;
@@ -216,10 +212,46 @@ ul.grid > li {
     }
 }
 
-.screen {
+.simulator .device {
+    max-width: max-content;
+    margin: auto;
+}
+
+.simulator .screen {
     border: 1px solid var(--secondary-color);
     margin: auto;
     text-align: center;
-    display: flex;
-    align-items: center;
+    position: relative;
+}
+
+.simulator .qrcode {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+}
+
+.simulator ul.buttons {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: right;
+}
+
+.simulator ul.buttons li {
+    display: inline;
+    margin-left: 0.5em;
+}
+
+.simulator details {
+    font-size: 0.8em;
+}
+
+.simulator details table {
+    background: #fafafa;
+}
+
+.simulator details table td {
+    word-break: break-all;
 }
