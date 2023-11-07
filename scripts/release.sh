@@ -36,7 +36,7 @@ xcrun altool --validate-app \
     --type ios
 xcrun altool --upload-app \
     -f "$1" \
-    --primary-bundle-id "uk.co.inseven.status-panel" \
+    --primary-bundle-id "io.statuspanel.apps.ios" \
     --apiKey "$APPLE_API_KEY_ID" \
     --apiIssuer "$APPLE_API_KEY_ISSUER_ID" \
     --type ios

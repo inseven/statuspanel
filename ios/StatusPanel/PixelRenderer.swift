@@ -79,6 +79,7 @@ struct PixelRenderer: Renderer {
         var columnItemCount = 0 // Number of items assigned to the current column
         var divider: DividerStyle? = twoCols ? .vertical(originY: 0) : nil
         let redactMode: RedactMode = (redact ? (settings.privacyMode == .redactWords ? .redactWords : .redactLines) : .none)
+        let colorHint: UILabel.ColorHint = device.kind == .pimoroniInkyImpression4 ? .inkyPalette : .monochrome
 
         for item in data {
 
@@ -97,6 +98,7 @@ struct PixelRenderer: Renderer {
                 let prefixLabel = UILabel.getLabel(frame: textFrame,
                                                    font: font,
                                                    style: flags.labelStyle,
+                                                   colorHint: colorHint,
                                                    redactMode: redactMode)
                 prefixLabel.textColor = (device.isFullColor && !redact) ? (item.accentColor ?? foregroundColor) : foregroundColor
                 prefixLabel.numberOfLines = numPrefixLines
@@ -116,6 +118,7 @@ struct PixelRenderer: Renderer {
             let label = UILabel.getLabel(frame: textFrame,
                                          font: font,
                                          style: flags.labelStyle,
+                                         colorHint: colorHint,
                                          redactMode: redactMode)
             label.numberOfLines = 1 // Temporarily while we're using it in checkFit
 
@@ -145,6 +148,7 @@ struct PixelRenderer: Renderer {
                 let subLabel = UILabel.getLabel(frame: textFrame,
                                                 font: font,
                                                 style: .subText,
+                                                colorHint: colorHint,
                                                 redactMode: redactMode)
                 subLabel.textColor = foregroundColor
                 subLabel.numberOfLines = settings.maxLines

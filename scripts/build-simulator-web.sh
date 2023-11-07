@@ -32,17 +32,22 @@ WEBSITE_DIRECTORY="${ROOT_DIRECTORY}/docs"
 WEBSITE_SIMULATOR_DIRECTORY="${ROOT_DIRECTORY}/docs/simulator"
 SIMULATOR_WEB_DIRECTORY="${ROOT_DIRECTORY}/simulator/web"
 
-RELEASE_NOTES_TEMPLATE_PATH="${SCRIPTS_DIRECTORY}/release-notes.markdown"
-RELEASE_NOTES_DIRECTORY="${ROOT_DIRECTORY}/docs/release-notes"
-RELEASE_NOTES_PATH="${RELEASE_NOTES_DIRECTORY}/index.markdown"
+SIMULATOR_INDEX_TEMPLATE_PATH="${SCRIPTS_DIRECTORY}/simulator-template.md"
 
-source "${SCRIPTS_DIRECTORY}/environment.sh"
-
-cd "$ROOT_DIRECTORY"
-if [ -d "${RELEASE_NOTES_DIRECTORY}" ]; then
-    rm -r "${RELEASE_NOTES_DIRECTORY}"
+# Clean up any previous builds.
+if [ -d "${WEBSITE_SIMULATOR_DIRECTORY}" ]; then
+    rm -r "${WEBSITE_SIMULATOR_DIRECTORY}"
 fi
-mkdir -p "${RELEASE_NOTES_DIRECTORY}"
-changes notes --pre-release --all --released --template "$RELEASE_NOTES_TEMPLATE_PATH" > "$RELEASE_NOTES_PATH"
 
-"${SCRIPTS_DIRECTORY}/build-simulator-web.sh"
+# Build the simulator.
+cd "$SIMULATOR_WEB_DIRECTORY"
+npm run build
+mkdir -p "${WEBSITE_SIMULATOR_DIRECTORY}"
+
+# Copy the build output.
+cp -R dist/assets "${WEBSITE_SIMULATOR_DIRECTORY}"
+
+# Generate the index page.
+pushd dist/assets
+INDEX_FILENAME=`ls index*.js` envsubst < "${SIMULATOR_INDEX_TEMPLATE_PATH}" > "${WEBSITE_SIMULATOR_DIRECTORY}/index.md"
+popd

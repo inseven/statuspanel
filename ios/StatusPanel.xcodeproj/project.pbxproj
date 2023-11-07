@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1069,14 +1069,14 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = $BUILD_NUMBER;
-				DEVELOPMENT_TEAM = S4WXAUZQEV;
+				DEVELOPMENT_TEAM = QS82QFHKWB;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "uk.co.inseven.status-panel";
+				PRODUCT_BUNDLE_IDENTIFIER = io.statuspanel.apps.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "StatusPanel/StatusPanel-Bridging-Header.h";
@@ -1096,15 +1096,17 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = $BUILD_NUMBER;
 				DEVELOPMENT_TEAM = S4WXAUZQEV;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = QS82QFHKWB;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "uk.co.inseven.status-panel";
+				PRODUCT_BUNDLE_IDENTIFIER = io.statuspanel.apps.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "StatusPanel App Store Profile";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "StatusPanel App Store Profile";
 				SWIFT_OBJC_BRIDGING_HEADER = "StatusPanel/StatusPanel-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

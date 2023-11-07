@@ -102,7 +102,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // that request here--a better approach would be to introduce a an asynchronous DataSource API that allows
         // each source to request access to the stores it requires.
         let eventStore = EKEventStore()
-        eventStore.requestAccess(to: EKEntityType.event) { granted, error in
+        eventStore.requestAccessToEvents { granted, error in
             DispatchQueue.main.async {
                 do {
                     let calendars = eventStore.allCalendars().map { $0.calendarIdentifier }
