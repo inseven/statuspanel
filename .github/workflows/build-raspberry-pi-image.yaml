@@ -15,10 +15,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - pi-gen-version: bullseye-arm64
+          - pi-gen-version: bullseye
             release: bullseye
-          # - pi-gen-version: bullseye
-          #   release: bullseye
     runs-on: ubuntu-latest
 
     steps:
@@ -32,7 +30,7 @@ jobs:
 
     - name: Build image
       id: build
-      uses: usimd/pi-gen-action@v1
+      uses: jbmorley/pi-gen-action@jbmorley/update-source
       with:
         image-name: statuspanel
         hostname: statuspanel
