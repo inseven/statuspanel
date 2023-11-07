@@ -1,8 +1,8 @@
 name: build-raspberry-pi-image
 
 on:
-  pull_request:
-    branches: [ main ]
+  # pull_request:
+  #   branches: [ main ]
   push:
     branches: [ main ]
   schedule:
