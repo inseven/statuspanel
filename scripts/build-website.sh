@@ -46,3 +46,15 @@ mkdir -p "${RELEASE_NOTES_DIRECTORY}"
 changes notes --pre-release --all --released --template "$RELEASE_NOTES_TEMPLATE_PATH" > "$RELEASE_NOTES_PATH"
 
 "${SCRIPTS_DIRECTORY}/build-simulator-web.sh"
+
+# Install the Jekyll dependencies.
+export GEM_HOME="${ROOT_DIRECTORY}/.local/ruby"
+mkdir -p "$GEM_HOME"
+export PATH="${GEM_HOME}/bin":$PATH
+gem install bundler
+cd "${WEBSITE_DIRECTORY}"
+bundle install
+
+# Build the website.
+cd "${WEBSITE_DIRECTORY}"
+bundle exec jekyll build
