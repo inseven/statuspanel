@@ -1,8 +1,16 @@
 /.local
+
 /build
+
 /device/nodemcu/.espressif/
 /device/nodemcu/build*
+
+/docs/release-notes/index.markdown
+/docs/simulator/assets
+/docs/simulator/index.md
+
 /ios/StatusPanel/configuration.json
+
 /service/build
 /service/package/statuspanel-service/DEBIAN/control
 /service/package/statuspanel-service/DEBIAN/prerm
