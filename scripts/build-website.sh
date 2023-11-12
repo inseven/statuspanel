@@ -46,3 +46,6 @@ mkdir -p "${RELEASE_NOTES_DIRECTORY}"
 changes notes --pre-release --all --released --template "$RELEASE_NOTES_TEMPLATE_PATH" > "$RELEASE_NOTES_PATH"
 
 "${SCRIPTS_DIRECTORY}/build-simulator-web.sh"
+
+cd "${WEBSITE_DIRECTORY}"
+bundle exec jekyll build
