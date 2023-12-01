@@ -72,7 +72,7 @@ jobs:
       name: staging
       url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
     concurrency: staging
-    # if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
 
     steps:
 
@@ -106,7 +106,7 @@ jobs:
     # Ideally we'd enforce concurrency here, but there doesn't seem to be a nice
     # way to combine concurrency and 'manual' deployments triggered by a review.
     # concurrency: production
-    # if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
 
     steps:
 
