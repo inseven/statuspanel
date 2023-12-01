@@ -68,9 +68,9 @@ jobs:
   deploy-service:
     needs: build-service
     runs-on: ubuntu-latest
-    environment: production
-    concurrency: production
-    if: ${{ github.ref == 'refs/heads/main' }}
+    environment: staging
+    concurrency: staging
+    # if: ${{ github.ref == 'refs/heads/main' }}
 
     steps:
 
@@ -84,6 +84,8 @@ jobs:
 
     - name: Deploy the service
       env:
+        STATUSPANEL_DEPLOYMENT_GROUP: ${{ secrets.STATUSPANEL_DEPLOYMENT_GROUP }}
+        STATUSPANEL_SERVICE_ADDRESS: ${{ secrets.STATUSPANEL_SERVICE_ADDRESS }}
         ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
         ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
         APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}

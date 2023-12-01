@@ -1,17 +1,14 @@
 - name: statuspanel.io
-  hosts: inseven
-
-  # As of right now, the server uses ufw for firewall management.
-  # sudo ufw allow 443
+  hosts: all
 
   tasks:
 
-    - name: Copy the Debian package
+    - name: Copy Debian package
       copy:
         src: "{{ package_path }}"
         dest: /tmp/statuspanel-service.deb
 
-    - name: Create the environment file
+    - name: Create environment file
       template:
         src: templates/env
         dest: /usr/share/statuspanel-service/.env
@@ -24,29 +21,15 @@
 
     - name: Enable site
       file:
-        src: /etc/nginx/sites-available/api.statuspanel.io.conf
-        dest: /etc/nginx/sites-enabled/api.statuspanel.io.conf
+        src: templates/site.caddy
+        dest: "/etc/caddy/statuspanel.caddy"
         owner: root
         group: root
         state: link
       become: yes
 
-    - name: Register certbot
-      shell: |
-        /usr/bin/certbot -n register --agree-tos --email webmaster@inseven.co.uk
-        touch /etc/letsencrypt/.registered
-      args:
-        creates: /etc/letsencrypt/.registered
-      become: yes
-
-    - name: Create certificate
-      command: '/usr/bin/certbot -n --nginx certonly -d api.statuspanel.io'
-      args:
-        creates: '/etc/letsencrypt/live/api.statuspanel.io'
-      become: true
-
-    - name: Restart nginx
+    - name: Reload Caddy
       service:
-        name: nginx
-        state: restarted
+        name: caddy
+        state: reloaded
       become: yes
