@@ -98,7 +98,7 @@ jobs:
         service/ansible/deploy.sh statuspanel-service-*.deb
 
   deploy-service-production:
-    needs: build-service
+    needs: [build-service, deploy-service-staging]
     runs-on: ubuntu-latest
     environment:
       name: production
