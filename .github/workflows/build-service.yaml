@@ -68,7 +68,9 @@ jobs:
   deploy-service-staging:
     needs: build-service
     runs-on: ubuntu-latest
-    environment: staging
+    environment:
+      name: staging
+      url: https://staging.statuspanel.io
     concurrency: staging
     # if: ${{ github.ref == 'refs/heads/main' }}
 
@@ -98,7 +100,9 @@ jobs:
   deploy-service-production:
     needs: build-service
     runs-on: ubuntu-latest
-    environment: production
+    environment:
+      name: production
+      url: https://production.statuspanel.io
     concurrency: production
     # if: ${{ github.ref == 'refs/heads/main' }}
 
