@@ -8,6 +8,12 @@
         src: "{{ package_path }}"
         dest: /tmp/statuspanel-service.deb
 
+    - name: Create service directory
+      file:
+        path: /usr/share/statuspanel-service
+        state: directory
+      become: yes
+
     - name: Create environment file
       template:
         src: templates/env
