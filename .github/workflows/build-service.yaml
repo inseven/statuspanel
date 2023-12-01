@@ -65,11 +65,41 @@ jobs:
         journalctl -u statuspanel-service.service
         scripts/test-service.sh
 
-  deploy-service:
+  deploy-service-staging:
     needs: build-service
     runs-on: ubuntu-latest
     environment: staging
     concurrency: staging
+    # if: ${{ github.ref == 'refs/heads/main' }}
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Download the build package
+      uses: actions/download-artifact@v3
+      with:
+        name: package
+
+    - name: Deploy the service
+      env:
+        STATUSPANEL_DEPLOYMENT_GROUP: ${{ secrets.STATUSPANEL_DEPLOYMENT_GROUP }}
+        STATUSPANEL_SERVICE_ADDRESS: ${{ secrets.STATUSPANEL_SERVICE_ADDRESS }}
+        ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
+        ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
+        APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
+        APNS_BUNDLE_ID: ${{ secrets.APNS_BUNDLE_ID }}
+        APNS_KEY_ID: ${{ secrets.APNS_KEY_ID }}
+        APNS_KEY: ${{ secrets.APNS_KEY }}
+      run: |
+        service/ansible/deploy.sh statuspanel-service-*.deb
+
+  deploy-service-production:
+    needs: build-service
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency: production
     # if: ${{ github.ref == 'refs/heads/main' }}
 
     steps:
