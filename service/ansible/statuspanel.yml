@@ -1,5 +1,5 @@
 - name: statuspanel.io
-  hosts: all
+  hosts: "{{ deployment_group }}"
 
   tasks:
 
@@ -26,12 +26,11 @@
       become: yes
 
     - name: Enable site
-      file:
+      template:
         src: templates/site.caddy
         dest: "/etc/caddy/statuspanel.caddy"
         owner: root
         group: root
-        state: link
       become: yes
 
     - name: Reload Caddy
