@@ -13,12 +13,14 @@ The production service is hosted on a DigitalOcean droplet and backups are achie
 
 ## Deployment
 
-Deployment is performed using an Ansible playbook located in the 'ansible' directory. This is automated using GitHub Actions and Environments. Environments are configured to expose the following environment variables:
+Deployment is performed using an Ansible playbook located in the 'ansible' directory. This is automated using GitHub Actions and Environments. Environments are configured to expose the following details:
 
-- `ANSIBLE_BECOME_PASS`
-- `ANSIBLE_SSH_KEY`
-- `STATUSPANEL_DEPLOYMENT_GROUP`–one of 'staging' or 'production'
-- `STATUSPANEL_SERVICE_ADDRESS`
+- Secrets
+     - `ANSIBLE_BECOME_PASS`
+     - `ANSIBLE_SSH_KEY`
+- Variables
+     - `STATUSPANEL_DEPLOYMENT_GROUP`–one of 'staging' or 'production'
+     - `STATUSPANEL_SERVICE_ADDRESS`
 
 There are currently two environments configured: 'staging' and 'production'.
 
