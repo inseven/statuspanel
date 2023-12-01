@@ -1,4 +1,4 @@
-name: build-service
+name: service
 
 on:
   pull_request:
