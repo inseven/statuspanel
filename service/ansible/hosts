@@ -1,3 +1,7 @@
-[inseven]
+[staging]
 
-inseven-build-01.inseven.co.uk ansible_ssh_user=jbmorley
+staging-01.jbmorley.co.uk ansible_ssh_user=jbmorley
+
+[production]
+
+production-01.jbmorley.co.uk ansible_ssh_user=jbmorley

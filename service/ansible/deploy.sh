@@ -51,6 +51,8 @@ ansible-playbook \
     -vv \
     -i hosts \
     statuspanel.yml \
-    --extra-vars package_path="${PACKAGE_PATH}" \
-    --extra-vars ansible_ssh_private_key_file="${SSH_KEY_FILE}" \
+    --extra-vars package_path="$PACKAGE_PATH" \
+    --extra-vars deployment_group="$STATUSPANEL_DEPLOYMENT_GROUP" \
+    --extra-vars service_address="$STATUSPANEL_SERVICE_ADDRESS" \
+    --extra-vars ansible_ssh_private_key_file="$SSH_KEY_FILE" \
     --extra-vars ansible_become_pass='{{ lookup("env", "ANSIBLE_BECOME_PASS") }}'

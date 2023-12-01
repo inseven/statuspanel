@@ -7,9 +7,22 @@ The StatusPanel service provides two pieces of functionality:
 
 ## Infrastructure
 
-StatusPanel is hosted using Docker behind an nginx reverse proxy. Deployment is performed using an Ansible playbook located in the 'ansible' directory.
+StatusPanel is hosted as a Docker container behind the Caddy web server using a reverse proxy.
 
 The production service is hosted on a DigitalOcean droplet and backups are achieved by enabling droplet backups.
+
+## Deployment
+
+Deployment is performed using an Ansible playbook located in the 'ansible' directory. This is automated using GitHub Actions and Environments. Environments are configured to expose the following details:
+
+- Secrets
+     - `ANSIBLE_BECOME_PASS`
+     - `ANSIBLE_SSH_KEY`
+- Variables
+     - `STATUSPANEL_DEPLOYMENT_GROUP`–one of 'staging' or 'production'
+     - `STATUSPANEL_SERVICE_ADDRESS`
+
+There are currently two environments configured: 'staging' and 'production'.
 
 ## Development
 
