@@ -103,7 +103,9 @@ jobs:
     environment:
       name: production
       url: https://production.statuspanel.io
-    concurrency: production
+    # Ideally we'd enforce concurrency here, but there doesn't seem to be a nice
+    # way to combine concurrency and 'manual' deployments triggered by a review.
+    # concurrency: production
     # if: ${{ github.ref == 'refs/heads/main' }}
 
     steps:
