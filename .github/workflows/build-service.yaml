@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: staging
-      url: ${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
+      url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
     concurrency: staging
     # if: ${{ github.ref == 'refs/heads/main' }}
 
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://production.statuspanel.io
+      url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
     # Ideally we'd enforce concurrency here, but there doesn't seem to be a nice
     # way to combine concurrency and 'manual' deployments triggered by a review.
     # concurrency: production
