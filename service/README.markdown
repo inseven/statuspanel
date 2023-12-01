@@ -24,6 +24,20 @@ Deployment is performed using an Ansible playbook located in the 'ansible' direc
 
 There are currently two environments configured: 'staging' and 'production'.
 
+## Logs
+
+View the service logs on the server:
+
+```bash
+sudo journalctl -u statuspanel-service
+```
+
+Tail the logs:
+
+```bash
+sudo journalctl -u statuspanel-service -f
+```
+
 ## Development
 
 ### Installing Dependencies
