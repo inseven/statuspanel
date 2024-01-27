@@ -303,9 +303,7 @@ jobs:
 
     - name: Fix permissions
       run: |
-        chmod -v -R +rX "_site/" | while read line; do
-          echo "::warning title=Invalid file permissions automatically fixed::$line"
-        done
+        chmod -v -R +rX "_site/"
 
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v2
