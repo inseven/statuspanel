@@ -11,7 +11,6 @@ on:
 
 jobs:
   build-service:
-    name: build-service
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +34,7 @@ jobs:
     - name: Install dependencies
       run: scripts/install-dependencies.sh
 
-    - name: Build and test
+    - name: Build Debian package
       env:
         BUILD_PACKAGE: true
       run: |
