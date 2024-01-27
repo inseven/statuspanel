@@ -102,7 +102,7 @@ jobs:
         device/nodemcu/build.sh ${{ matrix.target }}
 
     - name: Archive the firmware
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: device/nodemcu/build-${{ matrix.target }}/firmware-${{ matrix.target }}.zip
         if-no-files-found: error
@@ -137,7 +137,7 @@ jobs:
         verbose-output: true
 
     - name: Archive the image
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: pi-gen-image
         path: ${{ steps.build.outputs.image-path }}
@@ -181,7 +181,7 @@ jobs:
         docker image ls
 
     - name: Archive the Debian package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: package
         path: service/build/statuspanel-service-*.deb
@@ -213,7 +213,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Download the build package
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: package
 
@@ -248,7 +248,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Download the build package
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: package
 
