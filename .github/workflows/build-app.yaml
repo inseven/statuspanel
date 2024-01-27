@@ -104,6 +104,7 @@ jobs:
     - name: Archive the firmware
       uses: actions/upload-artifact@v4
       with:
+        name: firmware
         path: device/nodemcu/build-${{ matrix.target }}/firmware-${{ matrix.target }}.zip
         if-no-files-found: error
 
