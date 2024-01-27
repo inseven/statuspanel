@@ -300,9 +300,6 @@ jobs:
     - name: Build website
       run: |
         scripts/build-website.sh
-
-    - name: Fix permissions
-      run: |
         chmod -v -R +rX "_site/"
 
     - name: Upload Pages artifact
