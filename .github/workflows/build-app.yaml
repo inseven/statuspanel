@@ -58,7 +58,6 @@ jobs:
 
   firmware-build:
 
-    name: build-firmware
     runs-on: ubuntu-latest
     strategy:
       matrix:
