@@ -78,7 +78,7 @@ jobs:
       shell: bash
 
     - name: Cache Espressif submodule and toolchain
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           .git/modules/firmware/nodemcu-firmware
@@ -87,7 +87,7 @@ jobs:
         key: ${{ runner.os }}-espressif-toolchain-${{ steps.get-firmware-sha.outputs.sha }}
 
     - name: Cache NodeMCU build
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           device/nodemcu/nodemcu-firmware/build
