@@ -1,6 +1,6 @@
 # StatusPanel
 
-[![build-app](https://github.com/inseven/statuspanel/actions/workflows/build-app.yaml/badge.svg)](https://github.com/inseven/statuspanel/actions/workflows/build-app.yaml)
+[![build](https://github.com/inseven/statuspanel/actions/workflows/build.yaml/badge.svg)](https://github.com/inseven/statuspanel/actions/workflows/build.yaml)
 
 eInk desk calendar and status board
 
