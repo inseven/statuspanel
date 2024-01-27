@@ -20,9 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# This script expects to find the SSH key for the remote server in the ANSIBLE_SSH_KEY environment variable, and the
-# become password in ANSIBLE_BECOME_PASS.
-
 set -e
 
 ANSIBLE_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"

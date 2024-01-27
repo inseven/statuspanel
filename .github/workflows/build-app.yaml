@@ -10,15 +10,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-app:
+  app-build:
 
-    name: build-app
     runs-on: inseven-macos-14
 
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
@@ -29,7 +28,7 @@ jobs:
         git submodule update --init --recursive --depth 1 scripts/build-tools
         git submodule update --init --recursive --depth 1 scripts/changes
 
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
         node-version: 18
 
@@ -56,3 +55,273 @@ jobs:
 
       run: |
         scripts/build.sh
+
+  firmware-build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - esp32
+          - esp32s2
+          - esp32s3
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Get nodemcu-firmware sha
+      id: get-firmware-sha
+      run: |
+        echo "sha=$(git rev-parse HEAD:device/nodemcu/nodemcu-firmware)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache Espressif submodule and toolchain
+      uses: actions/cache@v4
+      with:
+        path: |
+          .git/modules/firmware/nodemcu-firmware
+          device/nodemcu/nodemcu-firmware
+          device/nodemcu/.espressif
+        key: ${{ runner.os }}-espressif-toolchain-${{ steps.get-firmware-sha.outputs.sha }}
+
+    - name: Cache NodeMCU build
+      uses: actions/cache@v4
+      with:
+        path: |
+          device/nodemcu/nodemcu-firmware/build
+        key: ${{ runner.os }}-espressif-toolchain-${{ steps.get-firmware-sha.outputs.sha }}-${{ hashFiles('device/nodemcu/', matrix.target, '/sdkconfig') }}-${{ matrix.target }}
+
+    - name: Checkout required submodules
+      run: |
+        git submodule update --init --recursive --depth 1 device/nodemcu/nodemcu-firmware esptool
+
+    - name: Build
+      run: |
+        device/nodemcu/build.sh ${{ matrix.target }}
+
+    - name: Archive the firmware
+      uses: actions/upload-artifact@v4
+      with:
+        name: firmware-${{ matrix.target }}
+        path: device/nodemcu/build-${{ matrix.target }}/firmware-${{ matrix.target }}.zip
+        if-no-files-found: error
+
+  raspberry-pi-image-build:
+
+    strategy:
+      matrix:
+        include:
+          - pi-gen-version: bullseye
+            release: bullseye
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Copy Python source
+      run: |
+        cp -R device/python/src device/python/raspberry-pi-image/00-install-statuspanel/files
+
+    - name: Build image
+      id: build
+      uses: jbmorley/pi-gen-action@jbmorley/update-source
+      with:
+        image-name: statuspanel
+        hostname: statuspanel
+        stage-list: stage0 stage1 stage2 device/python/raspberry-pi-image
+        pi-gen-version: ${{ matrix.pi-gen-version }}
+        release: ${{ matrix.release }}
+        verbose-output: true
+
+    - name: Archive the image
+      uses: actions/upload-artifact@v4
+      with:
+        name: raspberry-pi-image
+        path: ${{ steps.build.outputs.image-path }}
+        if-no-files-found: error
+
+  service-build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Checkout required submodules
+      run: |
+        git submodule update --init --depth 1 scripts/build-tools
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.9"
+
+    - name: Install pipenv
+      run: |
+        python -m pip install --upgrade pipenv wheel
+
+    - name: Install dependencies
+      run: scripts/install-dependencies.sh
+
+    - name: Build Debian package
+      env:
+        BUILD_PACKAGE: true
+      run: |
+        scripts/build-service.sh
+
+    - name: Purge all Docker images
+      run: |
+        docker system prune --all --force
+        docker image prune --all --force
+        docker container ls
+        docker image ls
+
+    - name: Archive the Debian package
+      uses: actions/upload-artifact@v4
+      with:
+        name: service
+        path: service/build/statuspanel-service-*.deb
+        if-no-files-found: error
+
+    - name: Install and test the package
+      run: |
+        sudo mkdir -p /usr/share/statuspanel-service/
+        echo SKIP_APNS_STARTUP_CHECK=true | sudo tee -a /usr/share/statuspanel-service/.env
+        sudo apt-get install ./service/build/statuspanel-service-*.deb
+        sleep 5
+        sudo systemctl status statuspanel-service.service
+        journalctl -u statuspanel-service.service
+        scripts/test-service.sh
+
+  service-deploy-staging:
+
+    needs: service-build
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
+    concurrency: staging
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download the build package
+      uses: actions/download-artifact@v4
+      with:
+        name: service
+
+    - name: Deploy the service
+      env:
+        STATUSPANEL_DEPLOYMENT_GROUP: ${{ vars.STATUSPANEL_DEPLOYMENT_GROUP }}
+        STATUSPANEL_SERVICE_ADDRESS: ${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
+        ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
+        ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
+        APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
+        APNS_BUNDLE_ID: ${{ secrets.APNS_BUNDLE_ID }}
+        APNS_KEY_ID: ${{ secrets.APNS_KEY_ID }}
+        APNS_KEY: ${{ secrets.APNS_KEY }}
+      run: |
+        service/ansible/deploy.sh statuspanel-service-*.deb
+
+  service-deploy-production:
+
+    needs: [service-build, service-deploy-staging]
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
+    # Ideally we'd enforce concurrency here, but there doesn't seem to be a nice
+    # way to combine concurrency and 'manual' deployments triggered by a review.
+    # concurrency: production
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download the build package
+      uses: actions/download-artifact@v4
+      with:
+        name: service
+
+    - name: Deploy the service
+      env:
+        STATUSPANEL_DEPLOYMENT_GROUP: ${{ vars.STATUSPANEL_DEPLOYMENT_GROUP }}
+        STATUSPANEL_SERVICE_ADDRESS: ${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
+        ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
+        ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
+        APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
+        APNS_BUNDLE_ID: ${{ secrets.APNS_BUNDLE_ID }}
+        APNS_KEY_ID: ${{ secrets.APNS_KEY_ID }}
+        APNS_KEY: ${{ secrets.APNS_KEY }}
+      run: |
+        service/ansible/deploy.sh statuspanel-service-*.deb
+
+  website-build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Checkout required submodules
+      run: |
+        git submodule update --init --depth 1 scripts/changes
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.9"
+
+    - name: Install pipenv
+      run: |
+        python -m pip install --upgrade pipenv wheel
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Install dependencies
+      run: scripts/install-dependencies.sh
+
+    - name: Build website
+      run: |
+        scripts/build-website.sh
+        chmod -v -R +rX "_site/"
+
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
+
+  website-deploy:
+    needs: website-build
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    # Specify runner + deployment step
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2 # or the latest "vX.X.X" version tag for this action
