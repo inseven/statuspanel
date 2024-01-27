@@ -197,7 +197,7 @@ jobs:
         journalctl -u statuspanel-service.service
         scripts/test-service.sh
 
-  deploy-service-staging:
+  service-deploy-staging:
 
     needs: service-build
     runs-on: ubuntu-latest
@@ -230,9 +230,9 @@ jobs:
       run: |
         service/ansible/deploy.sh statuspanel-service-*.deb
 
-  deploy-service-production:
+  service-deploy-production:
 
-    needs: [service-build, deploy-service-staging]
+    needs: [service-build, service-deploy-staging]
     runs-on: ubuntu-latest
     environment:
       name: production
