@@ -184,7 +184,7 @@ jobs:
     - name: Archive the Debian package
       uses: actions/upload-artifact@v4
       with:
-        name: package
+        name: service
         path: service/build/statuspanel-service-*.deb
         if-no-files-found: error
 
@@ -216,7 +216,7 @@ jobs:
     - name: Download the build package
       uses: actions/download-artifact@v4
       with:
-        name: package
+        name: service
 
     - name: Deploy the service
       env:
@@ -251,7 +251,7 @@ jobs:
     - name: Download the build package
       uses: actions/download-artifact@v4
       with:
-        name: package
+        name: service
 
     - name: Deploy the service
       env:
