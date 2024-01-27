@@ -17,7 +17,7 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
@@ -69,7 +69,7 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Get nodemcu-firmware sha
       id: get-firmware-sha
@@ -119,7 +119,7 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Copy Python source
       run: |
