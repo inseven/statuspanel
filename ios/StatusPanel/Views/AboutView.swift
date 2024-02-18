@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2023 Jason Morley, Tom Sutcliffe
+// Copyright (c) 2018-2024 Jason Morley, Tom Sutcliffe
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ struct AboutView: View {
 
     var body: some View {
         Diligence.AboutView(repository: "inseven/statuspanel",
-                            copyright: "Copyright © 2018-2023\nJason Morley, Tom Sutcliffe") {
+                            copyright: "Copyright © 2018-2024\nJason Morley, Tom Sutcliffe") {
             Action("Website", url: URL(string: "https://statuspanel.io")!)
             Action("Privacy Policy", url: URL(string: "https://statuspanel.io/privacy-policy")!)
             Action("GitHub", url: URL(string: "https://github.com/inseven/statuspanel")!)
