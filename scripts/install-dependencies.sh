@@ -38,7 +38,6 @@ source "$ENVIRONMENT_PATH"
 
 # Install the Python dependencies
 # This only install dependencies for submodules that have been checked out locally.
-pip3 install --user pipenv
 if [ -f "$CHANGES_DIRECTORY/Pipfile" ] ; then
     PIPENV_PIPFILE="$CHANGES_DIRECTORY/Pipfile" pipenv install
 fi
