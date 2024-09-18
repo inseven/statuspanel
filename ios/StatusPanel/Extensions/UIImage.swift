@@ -21,7 +21,7 @@
 import SwiftUI
 import UIKit
 
-extension UIImage: Transferable {
+extension UIImage: @retroactive Transferable {
 
     public static var transferRepresentation: some TransferRepresentation {
         DataRepresentation(exportedContentType: .png) { image in

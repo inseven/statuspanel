@@ -128,7 +128,7 @@ class Config: ObservableObject {
 
     let userDefaults = UserDefaults.standard
 
-    @MainActor init() {
+    init() {
         devices = Self.loadDevices()
         lastBackgroundUpdate = object(for: .lastBackgroundUpdate) as? Date
         showDeveloperTools = bool(for: .showDeveloperTools)
@@ -217,7 +217,7 @@ class Config: ObservableObject {
     }
 
     // Old way of storing a single device and key
-    @MainActor static private func getDeviceAndKey() -> Device? {
+    static private func getDeviceAndKey() -> Device? {
         let userDefaults = UserDefaults.standard
         guard let deviceid = userDefaults.string(forKey: "deviceid"),
               let publickey = userDefaults.string(forKey: "publickey")
@@ -227,7 +227,7 @@ class Config: ObservableObject {
         return Device(kind: .einkV1, id: deviceid, publicKey: publickey)
     }
 
-    @MainActor static private func loadDevices() -> Set<Device> {
+    static private func loadDevices() -> Set<Device> {
         let userDefaults = UserDefaults.standard
         if let oldStyle = getDeviceAndKey() {
             // Migrate
@@ -252,7 +252,7 @@ class Config: ObservableObject {
         return Set(result)
     }
 
-    @MainActor @Published var devices: Set<Device> {
+    @Published var devices: Set<Device> {
         didSet {
             var objs: [Dictionary<String, String>] = []
             for device in devices {
@@ -262,13 +262,13 @@ class Config: ObservableObject {
         }
     }
 
-    @MainActor @Published var showDeveloperTools: Bool = false {
+    @Published var showDeveloperTools: Bool = false {
         didSet {
             set(showDeveloperTools, for: .showDeveloperTools)
         }
     }
 
-    @MainActor func removeDevice(_ device: Device) {
+    func removeDevice(_ device: Device) {
         self.devices.remove(device)
     }
 
@@ -276,7 +276,7 @@ class Config: ObservableObject {
         return "lastUploadedHash_\(deviceid)"
     }
 
-    @MainActor func setLastUploadHash(for deviceid: String, to hash:String?) {
+    func setLastUploadHash(for deviceid: String, to hash:String?) {
         dispatchPrecondition(condition: .onQueue(.main))
         let key = Config.getLastUploadHashKey(for: deviceid)
         if let hash = hash {
@@ -286,12 +286,12 @@ class Config: ObservableObject {
         }
     }
 
-    @MainActor func getLastUploadHash(for deviceid: String) -> String? {
+    func getLastUploadHash(for deviceid: String) -> String? {
         dispatchPrecondition(condition: .onQueue(.main  ))
         return self.userDefaults.string(forKey: Config.getLastUploadHashKey(for: deviceid))
     }
 
-    @MainActor func clearUploadHashes() {
+    func clearUploadHashes() {
         for device in devices {
             setLastUploadHash(for: device.id, to: nil)
         }
