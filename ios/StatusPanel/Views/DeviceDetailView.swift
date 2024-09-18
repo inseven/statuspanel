@@ -20,7 +20,7 @@
 
 import SwiftUI
 
-extension UIImage: Identifiable {
+extension UIImage: @retroactive Identifiable {
 
     public var id: Int { self.hash }
 
