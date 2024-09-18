@@ -60,10 +60,6 @@ do
     esac
 done
 
-# iPhone to be used for smoke test builds and tests.
-# This doesn't specify the OS version to allow the build script to recover from minor build changes.
-IPHONE_DESTINATION="platform=iOS Simulator,name=$IPHONE_SIMULATOR"
-
 # Generate a random string to secure the local keychain.
 export TEMPORARY_KEYCHAIN_PASSWORD=`openssl rand -base64 14`
 
@@ -104,7 +100,7 @@ xcode_project -list
 # iOS
 build_scheme "StatusPanel" clean build build-for-testing test \
     -sdk iphonesimulator \
-    -destination "$IPHONE_DESTINATION"
+    -destination "$DEFAULT_IPHONE_DESTINATION"
 
 # Clean up the build directory.
 if [ -d "$BUILD_DIRECTORY" ] ; then
