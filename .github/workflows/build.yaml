@@ -108,41 +108,41 @@ jobs:
         path: device/nodemcu/build-${{ matrix.target }}/firmware-${{ matrix.target }}.zip
         if-no-files-found: error
 
-  raspberry-pi-image-build:
-
-    strategy:
-      matrix:
-        include:
-          - pi-gen-version: bullseye
-            release: bullseye
-    runs-on: ubuntu-latest
-
-    steps:
-
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Copy Python source
-      run: |
-        cp -R device/python/src device/python/raspberry-pi-image/00-install-statuspanel/files
-
-    - name: Build image
-      id: build
-      uses: jbmorley/pi-gen-action@jbmorley/update-source
-      with:
-        image-name: statuspanel
-        hostname: statuspanel
-        stage-list: stage0 stage1 stage2 device/python/raspberry-pi-image
-        pi-gen-version: ${{ matrix.pi-gen-version }}
-        release: ${{ matrix.release }}
-        verbose-output: true
-
-    - name: Archive the image
-      uses: actions/upload-artifact@v4
-      with:
-        name: raspberry-pi-image
-        path: ${{ steps.build.outputs.image-path }}
-        if-no-files-found: error
+#   raspberry-pi-image-build:
+#
+#     strategy:
+#       matrix:
+#         include:
+#           - pi-gen-version: bullseye
+#             release: bullseye
+#     runs-on: ubuntu-latest
+#
+#     steps:
+#
+#     - name: Checkout repository
+#       uses: actions/checkout@v4
+#
+#     - name: Copy Python source
+#       run: |
+#         cp -R device/python/src device/python/raspberry-pi-image/00-install-statuspanel/files
+#
+#     - name: Build image
+#       id: build
+#       uses: jbmorley/pi-gen-action@jbmorley/update-source
+#       with:
+#         image-name: statuspanel
+#         hostname: statuspanel
+#         stage-list: stage0 stage1 stage2 device/python/raspberry-pi-image
+#         pi-gen-version: ${{ matrix.pi-gen-version }}
+#         release: ${{ matrix.release }}
+#         verbose-output: true
+#
+#     - name: Archive the image
+#       uses: actions/upload-artifact@v4
+#       with:
+#         name: raspberry-pi-image
+#         path: ${{ steps.build.outputs.image-path }}
+#         if-no-files-found: error
 
   service-build:
     runs-on: ubuntu-latest
