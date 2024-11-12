@@ -29,13 +29,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     var window: UIWindow?
-    var config = Config()
     var dataSourceController: DataSourceController
     var applicationModel: ApplicationModel
     var apnsToken: Data?
     var client: Service = Service(baseUrl: "https://api.statuspanel.io/")
 
     override init() {
+        let config = Config.shared
         dataSourceController = DataSourceController(config: config)
         applicationModel = ApplicationModel(dataSourceController: dataSourceController, config: config)
         super.init()
@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.registerForRemoteNotifications()
         window = UIWindow()
         window?.rootViewController = UIHostingController(rootView: ContentView(applicationModel: applicationModel,
-                                                                               config: config,
+                                                                               config: Config.shared,
                                                                                dataSourceController: dataSourceController))
         window?.tintColor = UIColor(named: "TintColor")
         window?.makeKeyAndVisible()
@@ -80,7 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                             settings: T) throws -> DataSourceInstance.Details {
         let instanceId = UUID()
         let details = DataSourceInstance.Details(id: instanceId, type: type)
-        try config.save(settings: settings, instanceId: instanceId)
+        try Config.shared.save(settings: settings, instanceId: instanceId)
         return details
     }
 
@@ -89,7 +89,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         for settings in dataSourceSettings {
             let instanceId = UUID()
             let details = DataSourceInstance.Details(id: instanceId, type: settings.dataSourceType)
-            try config.save(settings: settings, instanceId: instanceId)
+            try Config.shared.save(settings: settings, instanceId: instanceId)
             result.append(details)
         }
         return result
@@ -104,17 +104,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let eventStore = EKEventStore()
         eventStore.requestAccessToEvents { granted, error in
             DispatchQueue.main.async {
+                let config = Config.shared
                 do {
                     let calendars = eventStore.allCalendars().map { $0.calendarIdentifier }
                     var settings = device.defaultSettings()
                     let dataSourceSettings = device.defaultDataSourceSettings(calendars: calendars)
                     settings.dataSources = try self.configureDataSourceInstances(dataSourceSettings)
-                    try self.config.save(settings: settings, deviceId: device.id)
+                    try config.save(settings: settings, deviceId: device.id)
                 } catch {
                     self.window?.rootViewController?.present(error: error)
                     return
                 }
-                self.config.devices.insert(device)
+                config.devices.insert(device)
             }
         }
     }
@@ -144,7 +145,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 
         // Record the last background update time.
-        config.lastBackgroundUpdate = Date()
+        Config.shared.lastBackgroundUpdate = Date()
 
         // Re-register the device to ensure it doesn't time out on the server.
         if let deviceToken = apnsToken {
@@ -172,6 +173,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func updateDevices(completion: @escaping (UIBackgroundFetchResult) -> Void = { _ in }) {
         Task {
             do {
+                let config = Config.shared
                 let updates = try await config.devices
                     .asyncMap { device in
                         print("Generating update for \(device.id)...")

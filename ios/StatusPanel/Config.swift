@@ -125,10 +125,15 @@ class Config: ObservableObject {
             }
         }
     }
+    
+    static var shared: Config = {
+        return Config()
+    }()
+
 
     let userDefaults = UserDefaults.standard
 
-    init() {
+    private init() {
         devices = Self.loadDevices()
         lastBackgroundUpdate = object(for: .lastBackgroundUpdate) as? Date
         showDeveloperTools = bool(for: .showDeveloperTools)
@@ -277,7 +282,6 @@ class Config: ObservableObject {
     }
 
     func setLastUploadHash(for deviceid: String, to hash:String?) {
-        dispatchPrecondition(condition: .onQueue(.main))
         let key = Config.getLastUploadHashKey(for: deviceid)
         if let hash = hash {
             self.userDefaults.set(hash, forKey: key)
@@ -287,7 +291,6 @@ class Config: ObservableObject {
     }
 
     func getLastUploadHash(for deviceid: String) -> String? {
-        dispatchPrecondition(condition: .onQueue(.main  ))
         return self.userDefaults.string(forKey: Config.getLastUploadHashKey(for: deviceid))
     }
 
@@ -321,7 +324,6 @@ class Config: ObservableObject {
     }
 
     func settings(forDevice deviceId: String) throws -> DeviceSettings {
-        dispatchPrecondition(condition: .onQueue(.main))
         guard let data = object(for: .deviceSettings(deviceId)) as? Data else {
             var settings = DeviceSettings(deviceId: deviceId)
             settings.displayTwoColumns = !bool(for: .displaySingleColumn)
@@ -341,7 +343,6 @@ class Config: ObservableObject {
     }
 
     func save(settings: DeviceSettings, deviceId: String) throws {
-        dispatchPrecondition(condition: .onQueue(.main))
         let data = try JSONEncoder().encode(settings)
         set(data, for: .deviceSettings(deviceId))
     }
