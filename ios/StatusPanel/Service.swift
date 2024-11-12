@@ -113,7 +113,7 @@ class Service {
                                                      flags: flags))
         let hash = sodium.utils.bin2base64(sodium.genericHash.hash(message: message)!, variant: .ORIGINAL)!
 
-        let lastUploadHash = Config().getLastUploadHash(for: device.id)
+        let lastUploadHash = Config.shared.getLastUploadHash(for: device.id)
         guard hash != lastUploadHash else {
             print("Data for \(device.id) is the same as before, not uploading")
             return false
@@ -160,7 +160,7 @@ class Service {
 
         do {
             _ = try await URLSession.shared.data(for: request)
-            Config().setLastUploadHash(for: device.id, to: hash)
+            Config.shared.setLastUploadHash(for: device.id, to: hash)
         } catch {
             print(error)
             return false
