@@ -88,6 +88,15 @@ struct AddDeviceView: View {
                         }
                         return true
                     }
+                    .navigationBarBackButtonHidden()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem( placement: .navigationBarLeading) {
+                            Button("Cancel", role: .cancel) {
+                                dismiss()
+                            }
+                        }
+                    }
                     .edgesIgnoringSafeArea(.all)
                     .navigationTitle("Scan QR Code")
                     .toolbarBackground(.visible, for: .navigationBar)
@@ -97,6 +106,15 @@ struct AddDeviceView: View {
                         dismiss()
                     } cancel: {
                         dismiss()
+                    }
+                    .navigationBarBackButtonHidden()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem( placement: .navigationBarLeading) {
+                            Button("Cancel", role: .cancel) {
+                                dismiss()
+                            }
+                        }
                     }
                     .edgesIgnoringSafeArea(.all)
                 case .demoDevice:
@@ -130,6 +148,7 @@ struct AddDeviceView: View {
                 }
             }
         }
+        .interactiveDismissDisabled()
         .onAppear {
             model.start()
         }

@@ -48,7 +48,9 @@ struct WiFiProvisionerView: UIViewControllerRepresentable {
     let cancel: () -> Void
 
     func makeUIViewController(context: Context) -> some UIViewController {
-        return WifiProvisionerViewController(device: device, ssid: ssid)
+        let viewController = WifiProvisionerViewController(device: device, ssid: ssid)
+        viewController.delegate = context.coordinator
+        return viewController
     }
 
     func updateUIViewController(_ viewController: UIViewControllerType, context: Context) {
