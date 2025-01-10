@@ -25,7 +25,7 @@ import NetworkExtension
 protocol WifiProvisionerViewControllerDelegate: AnyObject {
 
     func wifiProvisionerViewController(_ wifiProvisionerViewController: WifiProvisionerViewController,
-                                   didConfigureDevice device: Device)
+                                       didConfigureDevice device: Device)
 
 }
 
