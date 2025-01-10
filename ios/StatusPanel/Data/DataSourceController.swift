@@ -58,17 +58,16 @@ class DataSourceController: ObservableObject {
     }
 
     func fetch(details: [DataSourceInstance.Details]) async throws -> [DataItemBase] {
+        dispatchPrecondition(condition: .notOnQueue(syncQueue))
         return try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.main.async {
-                self.fetch(details: details) { items, error in
-                    guard error == nil,
-                          let items = items
-                    else {
-                        continuation.resume(with: .failure(error ?? StatusPanelError.internalInconsistency))
-                        return
-                    }
-                    continuation.resume(with: .success(items))
+            self.fetch(details: details) { items, error in
+                guard error == nil,
+                      let items = items
+                else {
+                    continuation.resume(with: .failure(error ?? StatusPanelError.internalInconsistency))
+                    return
                 }
+                continuation.resume(with: .success(items))
             }
         }
     }
