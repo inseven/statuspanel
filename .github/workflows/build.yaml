@@ -71,6 +71,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Install the tool dependencies
+      uses: jdx/mise-action@v2
+
     - name: Get nodemcu-firmware sha
       id: get-firmware-sha
       run: |
