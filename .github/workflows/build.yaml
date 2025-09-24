@@ -164,6 +164,10 @@ jobs:
       with:
         python-version: "3.9"
 
+    - name: Install pipenv
+      run: |
+        python -m pip install --upgrade pipenv wheel
+
     - name: Install mise
       run: |
         curl https://mise.run | sh
