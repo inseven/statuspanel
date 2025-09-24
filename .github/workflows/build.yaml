@@ -164,11 +164,6 @@ jobs:
       with:
         python-version: "3.9"
 
-    # TODO: Shouldn't be necessary any more.
-    - name: Install pipenv
-      run: |
-        python -m pip install --upgrade pipenv wheel
-
     - name: Install mise
       run: |
         curl https://mise.run | sh
@@ -295,11 +290,6 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: "3.9"
-
-    # TODO: Not required?
-    - name: Install pipenv
-      run: |
-        python -m pip install --upgrade pipenv wheel
 
     - name: Install mise
       run: |
