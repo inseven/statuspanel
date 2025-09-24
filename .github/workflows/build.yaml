@@ -164,9 +164,16 @@ jobs:
       with:
         python-version: "3.9"
 
+    # TODO: Shouldn't be necessary any more.
     - name: Install pipenv
       run: |
         python -m pip install --upgrade pipenv wheel
+
+    - name: Install mise
+      run: |
+        curl https://mise.run | sh
+        echo "$HOME/.local/share/mise/bin" >> $GITHUB_PATH
+        echo "$HOME/.local/share/mise/shims" >> $GITHUB_PATH
 
     - name: Install dependencies
       run: scripts/install-dependencies.sh
@@ -289,9 +296,16 @@ jobs:
       with:
         python-version: "3.9"
 
+    # TODO: Not required?
     - name: Install pipenv
       run: |
         python -m pip install --upgrade pipenv wheel
+
+    - name: Install mise
+      run: |
+        curl https://mise.run | sh
+        echo "$HOME/.local/share/mise/bin" >> $GITHUB_PATH
+        echo "$HOME/.local/share/mise/shims" >> $GITHUB_PATH
 
     - uses: actions/setup-node@v4
       with:
