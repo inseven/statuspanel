@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bookworm
+FROM python:3.10.7-slim-buster
 ARG VERSION
 
 ENV PYTHONDONTWRITEBYTECODE 1
