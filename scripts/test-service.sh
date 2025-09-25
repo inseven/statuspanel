@@ -25,13 +25,12 @@ set -o pipefail
 set -x
 set -u
 
-SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-
-ROOT_DIRECTORY="$SCRIPTS_DIRECTORY/.."
+ROOT_DIRECTORY="$( cd "$( dirname "$( dirname "${BASH_SOURCE[0]}" )" )" &> /dev/null && pwd )"
+SCRIPTS_DIRECTORY="$ROOT_DIRECTORY/scripts"
 SERVICE_DIRECTORY="$ROOT_DIRECTORY/service"
 TESTS_DIRECTORY="$SERVICE_DIRECTORY/tests"
 
-source "$ROOT_DIRECTORY/environment.sh"
+source "$SCRIPTS_DIRECTORY/environment.sh"
 
 cd "$TESTS_DIRECTORY"
 
