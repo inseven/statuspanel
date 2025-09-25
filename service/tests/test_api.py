@@ -33,6 +33,7 @@ import urllib
 
 # Monkey patch collections to work around legacy behaviour in gobiko and dateutil.
 import collections.abc
+collections.Callable = collections.abc.Callable
 collections.Iterable = collections.abc.Iterable
 collections.Mapping = collections.abc.Mapping
 collections.MutableSet = collections.abc.MutableSet
