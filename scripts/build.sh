@@ -45,6 +45,7 @@ which gh || (echo "GitHub cli (gh) not available on the path." && exit 1)
 # Process the command line arguments.
 POSITIONAL=()
 RELEASE=${RELEASE:-false}
+UPLOAD_TO_TESTFLIGHT=${UPLOAD_TO_TESTFLIGHT:-false}
 while [[ $# -gt 0 ]]
 do
     key="$1"
@@ -53,12 +54,21 @@ do
         RELEASE=true
         shift
         ;;
+        -t|--upload-to-testflight)
+        UPLOAD_TO_TESTFLIGHT=true
+        shift
+        ;;
         *)
         POSITIONAL+=("$1")
         shift
         ;;
     esac
 done
+
+# We always need to upload to TestFlight if we're attempting to make a release.
+if $RELEASE ; then
+    UPLOAD_TO_TESTFLIGHT=true
+fi
 
 # Generate a random string to secure the local keychain.
 export TEMPORARY_KEYCHAIN_PASSWORD=`openssl rand -base64 14`
@@ -156,27 +166,45 @@ xcodebuild \
     -exportPath "$BUILD_DIRECTORY" \
     -exportOptionsPlist "${APP_DIRECTORY}/ExportOptions.plist"
 
+# Archive the build directory.
+ZIP_BASENAME="build-$VERSION_NUMBER-$BUILD_NUMBER.zip"
+ZIP_PATH="$BUILD_DIRECTORY/$ZIP_BASENAME"
+pushd "$BUILD_DIRECTORY"
+zip -r "$ZIP_BASENAME" .
+popd
+
+IPA_PATH="$BUILD_DIRECTORY/StatusPanel.ipa"
+
+# Install the private key.
+mkdir -p ~/.appstoreconnect/private_keys/
+echo -n "$APPLE_API_KEY_BASE64" | base64 --decode -o ~/".appstoreconnect/private_keys/AuthKey_$APPLE_API_KEY_ID.p8"
+
+if $UPLOAD_TO_TESTFLIGHT ; then
+
+    # Validate and upload the iOS build.
+    xcrun altool --validate-app \
+        -f "$IPA_PATH" \
+        --apiKey "$APPLE_API_KEY_ID" \
+        --apiIssuer "$APPLE_API_KEY_ISSUER_ID" \
+        --output-format json \
+        --type ios
+    xcrun altool --upload-app \
+        -f "$IPA_PATH" \
+        --primary-bundle-id "io.statuspanel.apps.ios" \
+        --apiKey "$APPLE_API_KEY_ID" \
+        --apiIssuer "$APPLE_API_KEY_ISSUER_ID" \
+        --type ios
+
+fi
+
 if $RELEASE ; then
 
-    IPA_PATH="$BUILD_DIRECTORY/StatusPanel.ipa"
-
-    # Archive the build directory.
-    ZIP_BASENAME="build-${VERSION_NUMBER}-${BUILD_NUMBER}.zip"
-    ZIP_PATH="${BUILD_DIRECTORY}/${ZIP_BASENAME}"
-    pushd "${BUILD_DIRECTORY}"
-    zip -r "${ZIP_BASENAME}" .
-    popd
-
-    mkdir -p ~/.appstoreconnect/private_keys/
-    echo -n "$APPLE_API_KEY_BASE64" | base64 --decode -o ~/".appstoreconnect/private_keys/AuthKey_${APPLE_API_KEY_ID}.p8"
-    ls ~/.appstoreconnect/private_keys/
     changes \
         release \
         --skip-if-empty \
         --pre-release \
         --push \
-        --exec "${RELEASE_SCRIPT_PATH}" \
-        "${IPA_PATH}" "${ZIP_PATH}"
-
+        --exec "$RELEASE_SCRIPT_PATH" \
+        "$IPA_PATH" "$ZIP_PATH"
 
 fi
