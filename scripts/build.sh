@@ -65,6 +65,11 @@ do
     esac
 done
 
+# We always need to upload to TestFlight if we're attempting to make a release.
+if $RELEASE ; then
+    UPLOAD_TO_TESTFLIGHT=true
+fi
+
 # Generate a random string to secure the local keychain.
 export TEMPORARY_KEYCHAIN_PASSWORD=`openssl rand -base64 14`
 
@@ -170,6 +175,10 @@ popd
 
 IPA_PATH="$BUILD_DIRECTORY/StatusPanel.ipa"
 
+# Install the private key.
+mkdir -p ~/.appstoreconnect/private_keys/
+echo -n "$APPLE_API_KEY_BASE64" | base64 --decode -o ~/".appstoreconnect/private_keys/AuthKey_$APPLE_API_KEY_ID.p8"
+
 if $UPLOAD_TO_TESTFLIGHT ; then
 
     # Validate and upload the iOS build.
@@ -190,9 +199,6 @@ fi
 
 if $RELEASE ; then
 
-    mkdir -p ~/.appstoreconnect/private_keys/
-    echo -n "$APPLE_API_KEY_BASE64" | base64 --decode -o ~/".appstoreconnect/private_keys/AuthKey_$APPLE_API_KEY_ID.p8"
-    ls ~/.appstoreconnect/private_keys/
     changes \
         release \
         --skip-if-empty \
