@@ -1,0 +1,19 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ service_address }};
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name {{ service_address }};
+
+    ssl_certificate /etc/letsencrypt/live/{{ service_address }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ service_address }}/privkey.pem;
+
+    location / {
+        proxy_pass http://localhost:5000;
+    }
+}

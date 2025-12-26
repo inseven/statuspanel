@@ -205,7 +205,6 @@ jobs:
       name: staging
       url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
     concurrency: staging
-    if: ${{ github.ref == 'refs/heads/main' }}
 
     steps:
 
