@@ -17,7 +17,7 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
@@ -28,7 +28,7 @@ jobs:
         git submodule update --init --recursive --depth 1 scripts/build-tools
         git submodule update --init --recursive --depth 1 scripts/changes
 
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v6
       with:
         node-version: 18
 
@@ -70,10 +70,10 @@ jobs:
 #     steps:
 #
 #     - name: Checkout repository
-#       uses: actions/checkout@v4
+#       uses: actions/checkout@v6
 #
 #     - name: Install the tool dependencies
-#       uses: jdx/mise-action@v2
+#       uses: jdx/mise-action@v4
 #
 #     - name: Get nodemcu-firmware sha
 #       id: get-firmware-sha
@@ -106,7 +106,7 @@ jobs:
 #         device/nodemcu/build.sh ${{ matrix.target }}
 #
 #     - name: Archive the firmware
-#       uses: actions/upload-artifact@v4
+#       uses: actions/upload-artifact@v7
 #       with:
 #         name: firmware-${{ matrix.target }}
 #         path: device/nodemcu/build-${{ matrix.target }}/firmware-${{ matrix.target }}.zip
@@ -124,7 +124,7 @@ jobs:
 #     steps:
 #
 #     - name: Checkout repository
-#       uses: actions/checkout@v4
+#       uses: actions/checkout@v6
 #
 #     - name: Copy Python source
 #       run: |
@@ -142,7 +142,7 @@ jobs:
 #         verbose-output: true
 #
 #     - name: Archive the image
-#       uses: actions/upload-artifact@v4
+#       uses: actions/upload-artifact@v7
 #       with:
 #         name: raspberry-pi-image
 #         path: ${{ steps.build.outputs.image-path }}
@@ -154,14 +154,14 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Checkout required submodules
       run: |
         git submodule update --init --depth 1 scripts/build-tools
 
     - name: Install mise
-      uses: jdx/mise-action@v2
+      uses: jdx/mise-action@v4
 
     - name: Install dependencies
       run: |
@@ -181,7 +181,7 @@ jobs:
         docker image ls
 
     - name: Archive the Debian package
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: service
         path: service/build/statuspanel-service-*.deb
@@ -209,10 +209,10 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Download the build package
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: service
 
@@ -244,10 +244,10 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Download the build package
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: service
 
@@ -271,7 +271,7 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
@@ -280,7 +280,7 @@ jobs:
         git submodule update --init --depth 1 scripts/changes
 
     - name: Install mise
-      uses: jdx/mise-action@v2
+      uses: jdx/mise-action@v4
 
     - name: Install dependencies
       run: scripts/install-dependencies.sh
@@ -291,7 +291,7 @@ jobs:
         chmod -v -R +rX "_site/"
 
     - name: Upload Pages artifact
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v5
 
   website-deploy:
     needs: website-build
@@ -312,4 +312,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 # or the latest "vX.X.X" version tag for this action
+        uses: actions/deploy-pages@v5 # or the latest "vX.X.X" version tag for this action
