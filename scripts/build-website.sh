@@ -36,8 +36,6 @@ RELEASE_NOTES_TEMPLATE_PATH="${SCRIPTS_DIRECTORY}/release-notes.markdown"
 RELEASE_NOTES_DIRECTORY="${ROOT_DIRECTORY}/docs/release-notes"
 RELEASE_NOTES_PATH="${RELEASE_NOTES_DIRECTORY}/index.markdown"
 
-source "${SCRIPTS_DIRECTORY}/environment.sh"
-
 cd "$ROOT_DIRECTORY"
 if [ -d "${RELEASE_NOTES_DIRECTORY}" ]; then
     rm -r "${RELEASE_NOTES_DIRECTORY}"
@@ -48,10 +46,6 @@ changes notes --pre-release --all --released --template "$RELEASE_NOTES_TEMPLATE
 "${SCRIPTS_DIRECTORY}/build-simulator-web.sh"
 
 # Install the Jekyll dependencies.
-export GEM_HOME="${ROOT_DIRECTORY}/.local/ruby"
-mkdir -p "$GEM_HOME"
-export PATH="${GEM_HOME}/bin":$PATH
-gem install bundler
 cd "${WEBSITE_DIRECTORY}"
 bundle install
 

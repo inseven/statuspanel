@@ -41,6 +41,7 @@ fi
 
 # Build the simulator.
 cd "$SIMULATOR_WEB_DIRECTORY"
+npm install
 npm run build
 mkdir -p "${WEBSITE_SIMULATOR_DIRECTORY}"
 

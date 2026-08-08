@@ -33,25 +33,12 @@ git submodule update --init --recursive
 
 N.B. You'll also need to run this command if the submodules change.
 
-Once your submodules are up-to-date, you can install the dependencies for all StatusPanel components using the `install-dependencies.sh` script:
+Use [mise](https://mise.jdx.dev), to install the required build tools and dependencies:
 
 ```bash
-scripts/install-dependencies.sh
+mise install
 ```
 
-This script installs all dependencies in the `.local` folder within the project root, does not require root, and should not impact your local machine configuration. Scripts that rely on these dependencies source the `scripts/environment.sh` script which configures the path at runtime.
-
-Tools versioning for local development can be done with [asdf](http://asdf-vm.com) and `.tool-versions` is already set up correctly. In order to use `asdf`, you will need to have the NodeJS and Ruby plugins installed:
-
-```bash
-# Install required plugins.
-asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-asdf plugin add python
-asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-
-# Install appropriate tools versions.
-asdf install
-```
 
 ### Website
 

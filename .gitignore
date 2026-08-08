@@ -1,5 +1,3 @@
-/.local
-
 /build
 
 /device/nodemcu/.espressif/
@@ -8,6 +6,7 @@
 /docs/release-notes/index.markdown
 /docs/simulator/assets
 /docs/simulator/index.md
+/docs/vendor
 
 /ios/StatusPanel/configuration.json
 

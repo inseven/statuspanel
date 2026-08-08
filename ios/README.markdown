@@ -53,7 +53,7 @@ YYmmddHHMMxxxxxxxx
 These can be quickly decoded using the `build-tools` script:
 
 ```
-% scripts/build-tools/build-tools parse-build-number 210727192100869578
+% build-tools parse-build-number 210727192100869578
 2021-07-27 19:21:00 (UTC)
 0d44ca
 ```
