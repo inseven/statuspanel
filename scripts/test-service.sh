@@ -26,11 +26,8 @@ set -x
 set -u
 
 ROOT_DIRECTORY="$( cd "$( dirname "$( dirname "${BASH_SOURCE[0]}" )" )" &> /dev/null && pwd )"
-SCRIPTS_DIRECTORY="$ROOT_DIRECTORY/scripts"
 SERVICE_DIRECTORY="$ROOT_DIRECTORY/service"
 TESTS_DIRECTORY="$SERVICE_DIRECTORY/tests"
-
-source "$SCRIPTS_DIRECTORY/environment.sh"
 
 cd "$TESTS_DIRECTORY"
 
