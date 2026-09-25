@@ -40,8 +40,8 @@ struct PrivacyImagePicker<Content: View>: View {
         func start() {
             $selection
                 .compactMap { $0 }
-                .sink { selection in
-                    selection.loadTransferable(type: Data.self) { [weak self] result in
+                .sink { [weak self] selection in
+                    selection.loadTransferable(type: Data.self) { result in
                         guard let self else { return }
                         switch result {
                         case .success(let optionalData):
