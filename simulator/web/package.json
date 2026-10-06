@@ -19,7 +19,7 @@
     "rollup": "^4.22.5",
     "stream-data-view": "^1.7.2",
     "use-window-focus": "^1.4.2",
-    "uuid": "^9.0.1"
+    "uuid": "^11.0.0"
   },
   "devDependencies": {
     "@types/libsodium-wrappers": "^0.7.10",
