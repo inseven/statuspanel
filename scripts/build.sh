@@ -77,20 +77,6 @@ if [ -f "$ENV_PATH" ] ; then
     source "$ENV_PATH"
 fi
 
-function xcode_project {
-    xcodebuild \
-        -project StatusPanel.xcodeproj "$@"
-}
-
-function build_scheme {
-    # Disable code signing for the build server.
-    xcode_project \
-        -scheme "$1" \
-        CODE_SIGN_IDENTITY="" \
-        CODE_SIGNING_REQUIRED=NO \
-        CODE_SIGNING_ALLOWED=NO "${@:2}"
-}
-
 cd "$APP_DIRECTORY"
 
 # Create the configuration file.
@@ -101,12 +87,20 @@ IOS_XCODE_PATH=${IOS_XCODE_PATH:-/Applications/Xcode.app}
 sudo xcode-select --switch "$IOS_XCODE_PATH"
 
 # List the available schemes.
-xcode_project -list
+xcodebuild \
+    -project StatusPanel.xcodeproj \
+    -list
 
 # Smoke test builds.
 
 # iOS
-build_scheme "StatusPanel" clean build build-for-testing test \
+xcodebuild \
+    -project StatusPanel.xcodeproj \
+    -scheme "StatusPanel" \
+    CODE_SIGN_IDENTITY="" \
+    CODE_SIGNING_REQUIRED=NO \
+    CODE_SIGNING_ALLOWED=NO \
+    clean build build-for-testing test \
     -sdk iphonesimulator \
     -destination "$DEFAULT_IPHONE_DESTINATION"
 
@@ -150,7 +144,8 @@ echo "$APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD" | build-tools import-base64-cert
 build-tools install-provisioning-profile "${APP_DIRECTORY}/StatusPanel_App_Store_Profile.mobileprovision"
 
 # Build and archive the iOS project.
-xcode_project \
+xcodebuild \
+    -project StatusPanel.xcodeproj \
     -scheme "StatusPanel" \
     -config Release \
     -archivePath "$ARCHIVE_PATH" \
