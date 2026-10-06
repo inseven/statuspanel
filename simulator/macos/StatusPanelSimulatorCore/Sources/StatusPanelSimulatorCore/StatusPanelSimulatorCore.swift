@@ -17,19 +17,3 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-
-import Foundation
-
-import DataStream
-
-extension DataReadStream {
-
-    // Read as little endian, ignoring the default stream settings.
-    func readLE<T: FixedWidthInteger>() throws -> T {
-        let valueSize = MemoryLayout<T>.size
-        let raw: Data = try read(count: valueSize)
-        let value = raw.withUnsafeBytes { $0.loadUnaligned(as: T.self) }
-        return T(littleEndian: value)
-    }
-
-}

@@ -33,6 +33,7 @@
 		D81A015829A95E3C005EA47A /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		D81A015A29A95F9F005EA47A /* DataReadStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataReadStream.swift; sourceTree = "<group>"; };
 		D81A015C29A96130005EA47A /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
+		D81D80DB307592AA00E86504 /* StatusPanelSimulatorCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = StatusPanelSimulatorCore; sourceTree = "<group>"; };
 		D841391329A74772003DD0B7 /* NSImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSImage.swift; sourceTree = "<group>"; };
 		D841391529A74A15003DD0B7 /* RLEDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RLEDecoder.swift; sourceTree = "<group>"; };
 		D84D5B1129D4DCDE00F63DC7 /* DeviceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceModel.swift; sourceTree = "<group>"; };
@@ -43,7 +44,6 @@
 		D88B3D2029A661F8000DEDE3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D88B3D2329A661F8000DEDE3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D88B3D2529A661F8000DEDE3 /* StatusPanel_Simulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StatusPanel_Simulator.entitlements; sourceTree = "<group>"; };
-		D88B3D3929A694AE000DEDE3 /* DataStream */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DataStream; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,7 +119,7 @@
 		D88B3D3829A694AE000DEDE3 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				D88B3D3929A694AE000DEDE3 /* DataStream */,
+				D81D80DB307592AA00E86504 /* StatusPanelSimulatorCore */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
