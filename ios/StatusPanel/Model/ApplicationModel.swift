@@ -185,6 +185,16 @@ class ApplicationModel: ObservableObject {
         }
     }
 
+    @MainActor func removeDevice(_ device: Device) {
+        let config = Config.shared
+        config.removeDevice(device)
+        DispatchQueue.main.async {
+            withAnimation {
+                self.selection = nil
+            }
+        }
+    }
+
     @MainActor
     func openURL(_ url: URL) {
         guard let operation = ExternalOperation(url: url) else {

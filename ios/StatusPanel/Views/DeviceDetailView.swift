@@ -46,6 +46,8 @@ struct DeviceDetailView: View {
         case dataSourceSettings(UUID)
     }
 
+    let applicationModel: ApplicationModel
+
     @Environment(\.dismiss) var dismiss
 
     @ObservedObject var config: Config
@@ -55,7 +57,11 @@ struct DeviceDetailView: View {
     @State var editMode: EditMode = .inactive
     @State var sheet: SheetType? = nil
 
-    init(config: Config, dataSourceController: DataSourceController, deviceModel: DeviceModel) {
+    init(applicationModel: ApplicationModel,
+         config: Config,
+         dataSourceController: DataSourceController,
+         deviceModel: DeviceModel) {
+        self.applicationModel = applicationModel
         self.config = config
         self.dataSourceController = dataSourceController
         self.deviceModel = deviceModel
@@ -72,7 +78,7 @@ struct DeviceDetailView: View {
         withAnimation {
             editMode = .inactive
         }
-        config.removeDevice(deviceModel.device)
+        applicationModel.removeDevice(deviceModel.device)
     }
 
     func showDeviceSettings() {
