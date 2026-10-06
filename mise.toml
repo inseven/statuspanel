@@ -2,7 +2,7 @@
 
 node = "24.21.0"
 python = "3.12.13"
-ruby = "3.4.8"
+ruby = "4.0.7"
 uv = "latest"
 
 "pipx:changes-semver" = "6"
