@@ -28,6 +28,10 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Checkout required submodules
+      run: |
+        git submodule update --init --recursive --depth 1 simulator/macos/DataStream
+
     - name: Cache mise
       id: cache-mise
       uses: actions/cache@v6
@@ -298,10 +302,6 @@ jobs:
       uses: actions/checkout@v7
       with:
         fetch-depth: 0
-
-    - name: Checkout required submodules
-      run: |
-        git submodule update --init --recursive --depth 1 simulator/macos/DataStream
 
     - name: Cache mise
       id: cache-mise
