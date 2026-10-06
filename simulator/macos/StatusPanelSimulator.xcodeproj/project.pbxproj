@@ -74,7 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				D88B3D3829A694AE000DEDE3 /* Packages */,
-				D88B3D1B29A661F6000DEDE3 /* StatusPanel Simulator */,
+				D88B3D1B29A661F6000DEDE3 /* Simulator */,
 				D88B3D1A29A661F6000DEDE3 /* Products */,
 				D88F9FDA29A6960B004ABE73 /* Frameworks */,
 			);
@@ -88,7 +88,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D88B3D1B29A661F6000DEDE3 /* StatusPanel Simulator */ = {
+		D88B3D1B29A661F6000DEDE3 /* Simulator */ = {
 			isa = PBXGroup;
 			children = (
 				D88B3D2529A661F8000DEDE3 /* StatusPanel_Simulator.entitlements */,
@@ -105,7 +105,7 @@
 				D841391229A74768003DD0B7 /* Extensions */,
 				D88B3D2229A661F8000DEDE3 /* Preview Content */,
 			);
-			path = "StatusPanel Simulator";
+			path = Simulator;
 			sourceTree = "<group>";
 		};
 		D88B3D2229A661F8000DEDE3 /* Preview Content */ = {
@@ -171,7 +171,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D88B3D1429A661F6000DEDE3 /* Build configuration list for PBXProject "StatusPanel Simulator" */;
+			buildConfigurationList = D88B3D1429A661F6000DEDE3 /* Build configuration list for PBXProject "StatusPanelSimulator" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -345,11 +345,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "StatusPanel Simulator/StatusPanel_Simulator.entitlements";
+				CODE_SIGN_ENTITLEMENTS = Simulator/StatusPanel_Simulator.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"StatusPanel Simulator/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Simulator/Preview Content\"";
 				DEVELOPMENT_TEAM = QS82QFHKWB;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -373,12 +373,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "StatusPanel Simulator/StatusPanel_Simulator.entitlements";
+				CODE_SIGN_ENTITLEMENTS = Simulator/StatusPanel_Simulator.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"StatusPanel Simulator/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Simulator/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = QS82QFHKWB;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -403,7 +403,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D88B3D1429A661F6000DEDE3 /* Build configuration list for PBXProject "StatusPanel Simulator" */ = {
+		D88B3D1429A661F6000DEDE3 /* Build configuration list for PBXProject "StatusPanelSimulator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D88B3D2629A661F8000DEDE3 /* Debug */,
