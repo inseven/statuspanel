@@ -9,6 +9,10 @@ on:
     - cron: '0 14 * * 1'  # 04:00 Monday, HST.
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   app-build:
 
