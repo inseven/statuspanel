@@ -75,7 +75,10 @@ struct ContentView: View {
         } detail: {
             if let selection = applicationModel.selection,
                let deviceModel = applicationModel.deviceModels.first(where: {$0.id == selection }) {
-                DeviceDetailView(config: config, dataSourceController: dataSourceController, deviceModel: deviceModel)
+                DeviceDetailView(applicationModel: applicationModel,
+                                 config: config,
+                                 dataSourceController: dataSourceController,
+                                 deviceModel: deviceModel)
                     .navigationBarTitleDisplayMode(.inline)
                     .id(deviceModel.id)
             } else {
