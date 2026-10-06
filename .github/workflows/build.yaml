@@ -14,6 +14,13 @@ jobs:
 
     runs-on: inseven-macos-26
 
+    env:
+
+      MISE_CACHE_DIR: ${{ github.workspace }}/.mise/cache
+      MISE_CONFIG_DIR: ${{ github.workspace }}/.mise/config
+      MISE_DATA_DIR: ${{ github.workspace }}/.mise/data
+      MISE_STATE_DIR: ${{ github.workspace }}/.mise/state
+
     steps:
 
     - name: Checkout repository
@@ -26,17 +33,18 @@ jobs:
         git submodule update --init --recursive --depth 1 ios/diligence
         git submodule update --init --recursive --depth 1 ios/swift-sodium
 
-    # Ensure we're using the latest version of mise in an attempt to catch upstream errors early.
-    - name: Get the latest mise version
-      id: mise
-      run: echo "version=$(curl -fsSL https://mise.jdx.dev/VERSION)" >> "$GITHUB_OUTPUT"
+    - name: Cache mise
+      id: cache-mise
+      uses: actions/cache@v6
+      with:
+        path: .mise
+        key: ${{ runner.os }}-${{ runner.arch }}-mise--${{ hashFiles('mise.toml') }}
 
     - name: Install mise
-      uses: jdx/mise-action@v4
+      uses: jdx/mise-action@v4.3.0
       with:
-        version: ${{ steps.mise.outputs.version }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        version: 2026.9.10
+        cache: false
 
     - name: Build, test, and release
       env:
@@ -154,22 +162,30 @@ jobs:
   service-build:
     runs-on: ubuntu-26.04
 
+    env:
+
+      MISE_CACHE_DIR: ${{ github.workspace }}/.mise/cache
+      MISE_CONFIG_DIR: ${{ github.workspace }}/.mise/config
+      MISE_DATA_DIR: ${{ github.workspace }}/.mise/data
+      MISE_STATE_DIR: ${{ github.workspace }}/.mise/state
+
     steps:
 
     - name: Checkout repository
       uses: actions/checkout@v7
 
-    # Ensure we're using the latest version of mise in an attempt to catch upstream errors early.
-    - name: Get the latest mise version
-      id: mise
-      run: echo "version=$(curl -fsSL https://mise.jdx.dev/VERSION)" >> "$GITHUB_OUTPUT"
+    - name: Cache mise
+      id: cache-mise
+      uses: actions/cache@v6
+      with:
+        path: .mise
+        key: ${{ runner.os }}-${{ runner.arch }}-mise--${{ hashFiles('mise.toml') }}
 
     - name: Install mise
-      uses: jdx/mise-action@v4
+      uses: jdx/mise-action@v4.3.0
       with:
-        version: ${{ steps.mise.outputs.version }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        version: 2026.9.10
+        cache: false
 
     - name: Build Debian package
       env:
@@ -272,6 +288,13 @@ jobs:
 
     runs-on: ubuntu-26.04
 
+    env:
+
+      MISE_CACHE_DIR: ${{ github.workspace }}/.mise/cache
+      MISE_CONFIG_DIR: ${{ github.workspace }}/.mise/config
+      MISE_DATA_DIR: ${{ github.workspace }}/.mise/data
+      MISE_STATE_DIR: ${{ github.workspace }}/.mise/state
+
     steps:
 
     - name: Checkout repository
@@ -279,17 +302,18 @@ jobs:
       with:
         fetch-depth: 0
 
-    # Ensure we're using the latest version of mise in an attempt to catch upstream errors early.
-    - name: Get the latest mise version
-      id: mise
-      run: echo "version=$(curl -fsSL https://mise.jdx.dev/VERSION)" >> "$GITHUB_OUTPUT"
+    - name: Cache mise
+      id: cache-mise
+      uses: actions/cache@v6
+      with:
+        path: .mise
+        key: ${{ runner.os }}-${{ runner.arch }}-mise--${{ hashFiles('mise.toml') }}
 
     - name: Install mise
-      uses: jdx/mise-action@v4
+      uses: jdx/mise-action@v4.3.0
       with:
-        version: ${{ steps.mise.outputs.version }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        version: 2026.9.10
+        cache: false
 
     - name: Cache the Jekyll dependencies
       uses: actions/cache@v6
