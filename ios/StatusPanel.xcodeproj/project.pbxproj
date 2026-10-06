@@ -41,8 +41,8 @@
 
 /* Begin PBXFileReference section */
 		D835EC972471D811003E402E /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
-		D87439012730C3A100B676A5 /* diligence */ = {isa = PBXFileReference; lastKnownFileType = folder; path = diligence; sourceTree = "<group>"; };
-		D89FF2342721037B0028EC16 /* StatusPanelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = StatusPanelTests.xctest; path = "/Users/jbmorley/Projects/statuspanel/ios/build/Debug-iphoneos/StatusPanel.app/PlugIns/StatusPanelTests.xctest"; sourceTree = "<absolute>"; };
+		D83C4B513074F5DD00F26138 /* StatusPanelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StatusPanelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D83C4C4E3074F60900F26138 /* StatusPanelCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = StatusPanelCore; sourceTree = "<group>"; };
 		D89FF2362721037B0028EC16 /* ExternalOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalOperationTests.swift; sourceTree = "<group>"; };
 		D8A9B1472A043C0500D306F8 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		D8CD32D22471D0AA00D82722 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
@@ -50,7 +50,7 @@
 		D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
 		D8DC8D8026E1ADAF004B081D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		D8EED7EF2630EEFF009E2166 /* swift-sodium */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "swift-sodium"; sourceTree = "<group>"; };
-		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = StatusPanel.app; path = "/Users/jbmorley/Projects/statuspanel/ios/build/Debug-iphoneos/StatusPanel.app"; sourceTree = "<absolute>"; };
+		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF15BC82471CAB7004AA972 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -96,7 +96,7 @@
 		D87439002730C3A100B676A5 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				D87439012730C3A100B676A5 /* diligence */,
+				D83C4C4E3074F60900F26138 /* StatusPanelCore */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -131,6 +131,8 @@
 				D8BBDDAF3074CFDD00101A2D /* StatusPanel */,
 				D89FF2352721037B0028EC16 /* StatusPanelTests */,
 				DBB2D354217C9AC3009F7549 /* Frameworks */,
+				DBCA98792143E2920084B710 /* StatusPanel.app */,
+				D83C4B513074F5DD00F26138 /* StatusPanelTests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -152,7 +154,7 @@
 			);
 			name = StatusPanelTests;
 			productName = StatusPanelTests;
-			productReference = D89FF2342721037B0028EC16 /* StatusPanelTests.xctest */;
+			productReference = D83C4B513074F5DD00F26138 /* StatusPanelTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		DBCA98782143E2920084B710 /* StatusPanel */ = {

@@ -30,7 +30,6 @@ jobs:
 
     - name: Checkout required submodules
       run: |
-        git submodule update --init --recursive --depth 1 ios/diligence
         git submodule update --init --recursive --depth 1 ios/swift-sodium
 
     - name: Cache mise
