@@ -25,17 +25,18 @@ set -o pipefail
 set -x
 set -u
 
-SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+ROOT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )"
+SCRIPTS_DIRECTORY="$ROOT_DIRECTORY/scripts"
+BUILD_DIRECTORY="$ROOT_DIRECTORY/build"
+TEMPORARY_DIRECTORY="$ROOT_DIRECTORY/temp"
+APP_DIRECTORY="$ROOT_DIRECTORY/ios"
+SIMULATOR_DIRECTORY="$ROOT_DIRECTORY/simulator/macos"
 
-ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
-BUILD_DIRECTORY="${ROOT_DIRECTORY}/build"
-TEMPORARY_DIRECTORY="${ROOT_DIRECTORY}/temp"
-APP_DIRECTORY="${ROOT_DIRECTORY}/ios"
-
-KEYCHAIN_PATH="${TEMPORARY_DIRECTORY}/temporary.keychain"
-ARCHIVE_PATH="${BUILD_DIRECTORY}/StatusPanel.xcarchive"
-ENV_PATH="${APP_DIRECTORY}/.env"
-RELEASE_SCRIPT_PATH="${SCRIPTS_DIRECTORY}/release.sh"
+KEYCHAIN_PATH="$TEMPORARY_DIRECTORY/temporary.keychain"
+ARCHIVE_PATH="$BUILD_DIRECTORY/StatusPanel.xcarchive"
+SIMULATOR_ARCHIVE_PATH="$BUILD_DIRECTORY/StatusPanel Simulator.xcarchive"
+ENV_PATH="$APP_DIRECTORY/.env"
+RELEASE_SCRIPT_PATH="$SCRIPTS_DIRECTORY/release.sh"
 
 # Check that the GitHub command is available on the path.
 which gh || (echo "GitHub cli (gh) not available on the path." && exit 1)
@@ -80,7 +81,7 @@ fi
 cd "$APP_DIRECTORY"
 
 # Create the configuration file.
-echo $APP_CONFIGURATION > "${APP_DIRECTORY}/StatusPanel/configuration.json"
+echo $APP_CONFIGURATION > "$APP_DIRECTORY/StatusPanel/configuration.json"
 
 # Select the correct Xcode.
 IOS_XCODE_PATH=${IOS_XCODE_PATH:-/Applications/Xcode.app}
@@ -134,16 +135,31 @@ function cleanup {
 trap cleanup EXIT
 
 # Determine the version and build number.
-VERSION_NUMBER=`changes --scope ios version`
+VERSION_NUMBER=`changes version`
 BUILD_NUMBER=`build-tools generate-build-number`
 
 # Import the certificates into our dedicated keychain.
 echo "$APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD" | build-tools import-base64-certificate --password "$KEYCHAIN_PATH" "$APPLE_DISTRIBUTION_CERTIFICATE_BASE64"
+echo "$DEVELOPER_ID_APPLICATION_CERTIFICATE_PASSWORD" | build-tools import-base64-certificate --password "$KEYCHAIN_PATH" "$DEVELOPER_ID_APPLICATION_CERTIFICATE_BASE64"
 
 # Install the provisioning profiles.
-build-tools install-provisioning-profile "${APP_DIRECTORY}/StatusPanel_App_Store_Profile.mobileprovision"
+build-tools install-provisioning-profile "$ROOT_DIRECTORY/profiles/StatusPanel_App_Store_Profile.mobileprovision"
+build-tools install-provisioning-profile "$ROOT_DIRECTORY/profiles/StatusPanel_Simulator_Developer_ID_Profile.provisionprofile"
+
+# Build and archive the simulator.
+cd "$SIMULATOR_DIRECTORY"
+xcodebuild \
+    -project "StatusPanel Simulator.xcodeproj" \
+    -scheme "StatusPanel Simulator" \
+    -config Release \
+    -archivePath "$SIMULATOR_ARCHIVE_PATH" \
+    OTHER_CODE_SIGN_FLAGS="--keychain=\"$KEYCHAIN_PATH\"" \
+    CURRENT_PROJECT_VERSION=$BUILD_NUMBER \
+    MARKETING_VERSION=$VERSION_NUMBER \
+    clean archive
 
 # Build and archive the iOS project.
+cd "$APP_DIRECTORY"
 xcodebuild \
     -project StatusPanel.xcodeproj \
     -scheme "StatusPanel" \
@@ -157,7 +173,7 @@ xcodebuild \
     -archivePath "$ARCHIVE_PATH" \
     -exportArchive \
     -exportPath "$BUILD_DIRECTORY" \
-    -exportOptionsPlist "${APP_DIRECTORY}/ExportOptions.plist"
+    -exportOptionsPlist "$APP_DIRECTORY/ExportOptions.plist"
 
 # Archive the build directory.
 ZIP_BASENAME="build-$VERSION_NUMBER-$BUILD_NUMBER.zip"
