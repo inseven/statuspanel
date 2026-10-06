@@ -159,8 +159,9 @@ class ApplicationModel: ObservableObject {
     // each source to request access to the stores it requires.
     @MainActor func addDevice(_ device: Device) {
         let eventStore = EKEventStore()
-        eventStore.requestAccessToEvents { granted, error in
+        eventStore.requestAccessToEvents { [weak self] granted, error in
             DispatchQueue.main.async {
+                guard let self else { return }
                 let config = Config.shared
                 do {
                     let calendars = eventStore.allCalendars().map { $0.calendarIdentifier }
@@ -173,6 +174,7 @@ class ApplicationModel: ObservableObject {
                     return
                 }
                 config.devices.insert(device)
+                self.sheet = nil
             }
         }
     }
