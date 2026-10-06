@@ -84,6 +84,8 @@ extension Data {
     }
 
     func rgbaImage(size: CGSize) -> NSImage {
+        var bitmapInfo: CGBitmapInfo = .byteOrderDefault
+        bitmapInfo.alpha = .premultipliedLast
         let dataProvider = CGDataProvider(data: self as NSData)!
         let cgImage = CGImage(width: Int(size.width),
                               height: Int(size.height),
@@ -91,7 +93,7 @@ extension Data {
                               bitsPerPixel: 32,
                               bytesPerRow: Int(size.width) * 4,
                               space: CGColorSpaceCreateDeviceRGB(),
-                              bitmapInfo: .byteOrderDefault,
+                              bitmapInfo: bitmapInfo,
                               provider: dataProvider,
                               decode: nil,
                               shouldInterpolate: true,
