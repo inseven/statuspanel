@@ -461,6 +461,7 @@
 				CURRENT_PROJECT_VERSION = $BUILD_NUMBER;
 				DEVELOPMENT_TEAM = QS82QFHKWB;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -489,6 +490,7 @@
 				DEVELOPMENT_TEAM = S4WXAUZQEV;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = QS82QFHKWB;
 				INFOPLIST_FILE = StatusPanel/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
