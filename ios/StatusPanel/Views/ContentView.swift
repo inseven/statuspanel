@@ -46,12 +46,6 @@ struct ContentView: View {
                             .id(deviceModel.id)
                     }
                 }
-                .onDelete { indexSet in
-                    let deviceModels = indexSet.map { applicationModel.deviceModels[$0] }
-                    for deviceModel in deviceModels {
-                        config.removeDevice(deviceModel.device)
-                    }
-                }
             }
             .listStyle(.insetGrouped)
             .navigationTitle("StatusPanel")
