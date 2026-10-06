@@ -52,11 +52,6 @@ struct ContentView: View {
                         config.removeDevice(deviceModel.device)
                     }
                 }
-                Section {
-                    Button("Add Device") {
-                        applicationModel.sheet = .add
-                    }
-                }
             }
             .listStyle(.insetGrouped)
             .navigationTitle("StatusPanel")
@@ -68,13 +63,21 @@ struct ContentView: View {
                         Label("Settings", systemImage: "gear")
                     }
                 }
+
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Add", systemImage: "plus") {
+                        applicationModel.showIntroduction()
+                    }
+                }
+
             }
             .sheet(item: $applicationModel.sheet) { sheet in
                 switch sheet {
                 case .settings:
                     SettingsView(config: config, dataSourceController: dataSourceController)
-                case .add:
-                    AddDeviceView(config: config, applicationModel: applicationModel)
+                case .add(let page):
+                    AddDeviceView(config: config, applicationModel: applicationModel, page: page)
+                        .id(page)
                 }
             }
         } detail: {
@@ -92,6 +95,7 @@ struct ContentView: View {
             applicationModel.start()
         }
         .navigationSplitViewStyle(.balanced)
+        .presents($applicationModel.error)
     }
 
 }

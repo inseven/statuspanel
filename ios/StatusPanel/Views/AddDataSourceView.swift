@@ -67,7 +67,7 @@ struct AddDataSourceView: View {
             .navigationBarTitle("Add Data Source", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button("Cancel", systemImage: "xmark") {
                         dismiss()
                     }
                 }
