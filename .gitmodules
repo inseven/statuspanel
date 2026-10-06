@@ -16,9 +16,6 @@
 [submodule "firmware/nodemcu-firmware"]
 	path = device/nodemcu/nodemcu-firmware
 	url = https://github.com/tomsci/nodemcu-firmware.git
-[submodule "ios/diligence"]
-	path = ios/diligence
-	url = https://github.com/inseven/diligence.git
 [submodule "simulator/DataStream"]
 	path = simulator/macos/DataStream
 	url = https://github.com/jbmorley/DataStream.git
