@@ -12,12 +12,14 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/inseven/diligence.git", from: "2.0.1"),
+        .package(url: "https://github.com/jedisct1/swift-sodium.git", from: "0.11.0"),
     ],
     targets: [
         .target(
             name: "StatusPanelCore",
             dependencies: [
                 .product(name: "Diligence", package: "diligence"),
+                .product(name: "Sodium", package: "swift-sodium"),
             ],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
