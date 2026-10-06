@@ -49,7 +49,6 @@
 		D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
 		D8DC8D8026E1ADAF004B081D /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
-		D8EED7EF2630EEFF009E2166 /* swift-sodium */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "swift-sodium"; sourceTree = "<group>"; };
 		DBCA98792143E2920084B710 /* StatusPanel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StatusPanel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBF15BC82471CAB7004AA972 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -127,7 +126,6 @@
 				D8DC8D7F26E1ADAF004B081D /* Common.xcconfig */,
 				D8DC8D7E26E1ADAF004B081D /* Debug.xcconfig */,
 				D8DC8D8026E1ADAF004B081D /* Release.xcconfig */,
-				D8EED7EF2630EEFF009E2166 /* swift-sodium */,
 				D8BBDDAF3074CFDD00101A2D /* StatusPanel */,
 				D89FF2352721037B0028EC16 /* StatusPanelTests */,
 				DBB2D354217C9AC3009F7549 /* Frameworks */,

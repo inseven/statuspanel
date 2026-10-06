@@ -10,9 +10,6 @@
 [submodule "esptool"]
 	path = esptool
 	url = https://github.com/jbmorley/esptool.git
-[submodule "ios/swift-sodium"]
-	path = ios/swift-sodium
-	url = https://github.com/jedisct1/swift-sodium.git
 [submodule "firmware/nodemcu-firmware"]
 	path = device/nodemcu/nodemcu-firmware
 	url = https://github.com/tomsci/nodemcu-firmware.git
