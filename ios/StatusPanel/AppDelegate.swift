@@ -32,6 +32,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let config = Config.shared
         dataSourceController = DataSourceController(config: config)
         applicationModel = ApplicationModel(dataSourceController: dataSourceController, config: config)
+
+        // Setting the page control appearance still isn't supported in SwiftUI, so we set it globally for the whole
+        // app to ensure it displays correctly in the DeviceDetailView. This should be safe as we're not using any
+        // paged views anywhere else in the app.
+        UIPageControl.appearance().currentPageIndicatorTintColor = .label
+        UIPageControl.appearance().pageIndicatorTintColor = .tertiaryLabel
+
         super.init()
     }
 
