@@ -2,5 +2,18 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>inseven/renovate-config"
-  ]
+  ],
+  "packageRules": [
+      {
+        "matchManagers": [
+          "git-submodules"
+        ],
+        "matchDepNames": [
+          "device/nodemcu/nodemcu-firmware",
+          "hardware/v1/pcb/libraries/Eagle-Libraries",
+          "hardware/v1/pcb/libraries/SparkFun-Eagle-Libraries"
+        ],
+        "enabled": false
+      }
+    ]
 }
