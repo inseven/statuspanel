@@ -33,6 +33,7 @@ class Config: ObservableObject {
         case redactLines = 0
         case redactWords = 1
         case customImage = 2
+        case wallpaper = 3
     }
 
     private enum Key: RawRepresentable {

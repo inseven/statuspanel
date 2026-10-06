@@ -54,6 +54,8 @@ func Localized(_ privacyMode: Config.PrivacyMode) -> String {
         return LocalizedString("privacy_mode_redact_words")
     case .customImage:
         return LocalizedString("privacy_mode_custom_image")
+    case .wallpaper:
+        return LocalizedString("privacy_mode_wallpaper")
     }
 }
 

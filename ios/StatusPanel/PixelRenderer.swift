@@ -227,30 +227,30 @@ struct PixelRenderer: Renderer {
         case .redactLines, .redactWords:
             return renderImage(data: data, config: config, device: device, settings: settings, redact: true)
         case .customImage:
-
             guard let privacyImageFilename = settings.privacyImage,
                   let privacyImage = try? PrivacyImageManager.privacyImage(filename: privacyImageFilename)
             else {
                 return device.blankImage()
             }
+            return prepareImage(image: privacyImage, device: device, contentMode: settings.privacyImageContentMode)
+        case .wallpaper:
+            return prepareImage(image: UIImage(named: "GreatWave")!, device: device, contentMode: .fill)
+        }
+    }
 
-            if device.isFullColor {
-                if let image = privacyImage.scale(to: device.size,
-                                                  grayscale: false,
-                                                  contentMode: settings.privacyImageContentMode) {
-                    return image
-                }
-                print("Failed to scale privacy image.")
-                return device.blankImage()
-            } else {
-                if let image = Panel.privacyImage(from: privacyImage,
-                                                  size: device.size,
-                                                  contentMode: settings.privacyImageContentMode) {
-                    return image
-                }
-                print("Failed to generate privacy image.")
-                return device.blankImage()
+    private static func prepareImage(image: UIImage, device: Device, contentMode: ContentMode) -> UIImage {
+        if device.isFullColor {
+            if let image = image.scale(to: device.size, grayscale: false, contentMode: contentMode) {
+                return image
             }
+            print("Failed to scale privacy image.")
+            return device.blankImage()
+        } else {
+            if let image = Panel.privacyImage(from: image, size: device.size, contentMode: contentMode) {
+                return image
+            }
+            print("Failed to generate privacy image.")
+            return device.blankImage()
         }
     }
 
