@@ -61,6 +61,27 @@ struct DeviceDetailView: View {
         self.deviceModel = deviceModel
     }
 
+    func addDataSource() {
+        withAnimation {
+            editMode = .inactive
+        }
+        sheet = .add
+    }
+
+    func deleteDevice() {
+        withAnimation {
+            editMode = .inactive
+        }
+        config.removeDevice(deviceModel.device)
+    }
+
+    func showDeviceSettings() {
+        withAnimation {
+            editMode = .inactive
+        }
+        sheet = .settings
+    }
+
     var body: some View {
         Form {
             Section {
@@ -98,23 +119,7 @@ struct DeviceDetailView: View {
                         .foregroundColor(.secondary)
                 }
             }
-            Section {
-                Button("Add Data Source") {
-                    withAnimation {
-                        editMode = .inactive
-                    }
-                    sheet = .add
-                }
-            }
-            Section {
-                Button("Device Settings") {
-                    withAnimation {
-                        editMode = .inactive
-                    }
-                    sheet = .settings
-                }
-            }
-            if config.showDeveloperTools {
+            if config.showDeveloperTools && editMode == .inactive {
                 Section {
                     LabeledContent("Identifier", value: deviceModel.device.id)
                     LabeledContent("Type", value: deviceModel.device.kind.description)
@@ -123,30 +128,46 @@ struct DeviceDetailView: View {
                         Text(String(format: "%.0f x %.0f", size.width, size.height))
                     }
                 }
-                Section {
-                    ShareLink(items: deviceModel.images) { image in
-                        SharePreview(deviceModel.name, image: Image(uiImage: image))
-                    } label: {
-                        Text("Share Previews")
-                    }
-                }
-            }
-            Section {
-                Button(role: .destructive) {
-                    withAnimation {
-                        editMode = .inactive
-                    }
-                    config.removeDevice(deviceModel.device)
-                } label: {
-                    Text("Delete Device")
-                }
             }
         }
         .presents($deviceModel.error)
         .navigationTitle(deviceModel.name)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                EditButton()
+            ToolbarItem(placement: .primaryAction) {
+                if editMode == .inactive {
+                    Menu {
+                        Button("Edit", systemImage: "checkmark.circle") {
+                            withAnimation {
+                                editMode = .active
+                            }
+                        }
+                        Button("Add Data Source", systemImage: "plus.circle.fill") {
+                            addDataSource()
+                        }
+                        Divider()
+                        Button("Device Settings", systemImage: "gear") {
+                            showDeviceSettings()
+                        }
+                        Divider()
+                        ShareLink(items: deviceModel.images) { image in
+                            SharePreview(deviceModel.name, image: Image(uiImage: image))
+                        } label: {
+                            Label("Share Previews", systemImage: "square.and.arrow.up")
+                        }
+                        Divider()
+                        Button("Remove Device", systemImage: "trash", role: .destructive) {
+                            deleteDevice()
+                        }
+                    } label: {
+                        Label("More", systemImage: "ellipsis")
+                    }
+                } else {
+                    Button("Done", systemImage: "checkmark", role: .prefersConfirm) {
+                        withAnimation {
+                            editMode = .inactive
+                        }
+                    }
+                }
             }
         }
         .environment(\.editMode, $editMode)
