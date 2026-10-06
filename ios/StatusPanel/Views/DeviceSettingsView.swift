@@ -74,6 +74,8 @@ struct DeviceSettingsView: View {
                         .tag(Config.PrivacyMode.redactLines)
                     Text(Localized(Config.PrivacyMode.redactWords))
                         .tag(Config.PrivacyMode.redactWords)
+                    Text(Localized(Config.PrivacyMode.wallpaper))
+                        .tag(Config.PrivacyMode.wallpaper)
                     Text(Localized(Config.PrivacyMode.customImage))
                         .tag(Config.PrivacyMode.customImage)
                 }
@@ -114,6 +116,10 @@ struct DeviceSettingsView: View {
                             Text("Choose Image")
                         }
                     }
+                case .wallpaper:
+                    Image("GreatWave")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                 }
             }
             Section("Schedule") {

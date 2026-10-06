@@ -42,7 +42,8 @@
 
 "privacy_mode_redact_lines" = "Redact Lines";
 "privacy_mode_redact_words" = "Redact Words";
-"privacy_mode_custom_image" = "Custom Image";
+"privacy_mode_custom_image" = "Photo";
+"privacy_mode_wallpaper" = "Wallpaper";
 
 "calendar_calendars_label" = "Calendars";
 "calendar_day_label" = "Day";
