@@ -153,6 +153,7 @@ xcodebuild \
     -scheme "StatusPanel Simulator" \
     -config Release \
     -archivePath "$SIMULATOR_ARCHIVE_PATH" \
+    OTHER_CODE_SIGN_FLAGS="--keychain=\"$KEYCHAIN_PATH\"" \
     CURRENT_PROJECT_VERSION=$BUILD_NUMBER \
     MARKETING_VERSION=$VERSION_NUMBER \
     clean archive
