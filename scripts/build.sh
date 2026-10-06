@@ -34,7 +34,7 @@ SIMULATOR_DIRECTORY="$ROOT_DIRECTORY/simulator/macos"
 
 KEYCHAIN_PATH="$TEMPORARY_DIRECTORY/temporary.keychain"
 ARCHIVE_PATH="$BUILD_DIRECTORY/StatusPanel.xcarchive"
-SIMULATOR_ARCHIVE_PATH="$BUILD_DIRECTORY/StatusPanel Simulator.xcarchive"
+SIMULATOR_ARCHIVE_PATH="$BUILD_DIRECTORY/StatusPanelSimulator.xcarchive"
 ENV_PATH="$APP_DIRECTORY/.env"
 RELEASE_SCRIPT_PATH="$SCRIPTS_DIRECTORY/release.sh"
 
@@ -149,7 +149,7 @@ build-tools install-provisioning-profile "$ROOT_DIRECTORY/profiles/StatusPanel_S
 # Build and archive the simulator.
 cd "$SIMULATOR_DIRECTORY"
 xcodebuild \
-    -project "StatusPanel Simulator.xcodeproj" \
+    -project "StatusPanelSimulator.xcodeproj" \
     -scheme "StatusPanel Simulator" \
     -config Release \
     -archivePath "$SIMULATOR_ARCHIVE_PATH" \
