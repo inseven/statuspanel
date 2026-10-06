@@ -42,36 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func application(_ application: UIApplication,
-                     open url: URL,
-                     options: [UIApplication.OpenURLOptionsKey : Any] = [:] ) -> Bool {
-
-        guard let operation = ExternalOperation(url: url) else {
-            qrcodeParseFailed(url)
-            return false
-        }
-
-        switch operation {
-        case .registerDevice(let device):
-            applicationModel.addDevice(device)
-        case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
-            let viewController = WifiProvisionerViewController(device: device, ssid: ssid)
-            viewController.delegate = self
-            let navigationController = UINavigationController(rootViewController: viewController)
-            window?.rootViewController?.present(navigationController, animated: true)
-        }
-        return true
-    }
-
-    func qrcodeParseFailed(_ url: URL) {
-        let alert = UIAlertController(title: "Device add failed",
-                                      message: "Unable to parse URL \(url)",
-                                      preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"),
-                                      style: .default))
-        window?.rootViewController?.present(alert, animated: true)
-    }
-
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         apnsToken = deviceToken
         applicationModel.registerDevice(token: deviceToken)
@@ -94,21 +64,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         applicationModel.updateDevices(completion: completionHandler)
-    }
-
-}
-
-extension AppDelegate: WifiProvisionerViewControllerDelegate {
-
-    func wifiProvisionerViewController(_ wifiProvisionerViewController: WifiProvisionerViewController,
-                                   didConfigureDevice device: Device) {
-        wifiProvisionerViewController.navigationController?.dismiss(animated: true) {
-            self.applicationModel.addDevice(device)
-        }
-    }
-
-    func wifiProvisionerViewControllerDidCancel(_ wifiProvisionerViewController: WifiProvisionerViewController) {
-        wifiProvisionerViewController.navigationController?.dismiss(animated: true)
     }
 
 }

@@ -24,6 +24,7 @@ import NetworkExtension
 
 protocol WifiProvisionerViewControllerDelegate: AnyObject {
 
+    @MainActor
     func wifiProvisionerViewController(_ wifiProvisionerViewController: WifiProvisionerViewController,
                                        didConfigureDevice device: Device)
 
@@ -221,6 +222,15 @@ class WifiProvisionerViewController: UITableViewController, UITextFieldDelegate 
 
         guard let networkDetails = self.networkDetails else {
             print("Incomplete network details")
+            return
+        }
+
+        guard hotspotSsid != "demo" else {
+            connecting = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                self.delegate?.wifiProvisionerViewController(self, didConfigureDevice: self.device)
+                self.connecting = false
+            }
             return
         }
 

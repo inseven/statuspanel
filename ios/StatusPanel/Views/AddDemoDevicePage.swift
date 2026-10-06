@@ -20,22 +20,40 @@
 
 import Combine
 import SwiftUI
-import UIKit
 
-@main
-struct StatusPanelApp: App {
+struct AddDemoDevicePage: View {
 
-    @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
+    let complete: @MainActor (ExternalOperation) -> Void
 
-    var body: some Scene {
-        WindowGroup(id: "main") {
-            ContentView(applicationModel: appDelegate.applicationModel,
-                        config: Config.shared,
-                        dataSourceController: appDelegate.applicationModel.dataSourceController)
-            .onOpenURL { url in
-                appDelegate.applicationModel.openURL(url)
+    init(complete: @escaping @MainActor (ExternalOperation) -> Void) {
+        self.complete = complete
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack {
+                ForEach(Device.Kind.demoDevices) { kind in
+                    Button {
+                        complete(ExternalOperation.registerDevice(Device(kind: kind)))
+                    } label: {
+                        Text(Localized(kind))
+                            .centerContent()
+                    }
+                }
+                Button {
+                    let device = Device(kind: .einkV1)
+                    let operation = ExternalOperation.registerDeviceAndConfigureWiFi(device, ssid: "demo")
+                    complete(operation)
+                } label: {
+                    Text("WiFi Device")
+                        .centerContent()
+                }
             }
+            .padding()
         }
+        .navigationTitle("Add Demo Device")
+        .buttonStyle(.bordered)
+        .controlSize(.large)
     }
 
 }

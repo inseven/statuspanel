@@ -26,10 +26,17 @@ import UIKit
 class ApplicationModel: ObservableObject {
 
     enum SheetType: Identifiable {
-        var id: Self { return self }
+        var id: String {
+            switch self {
+            case .settings:
+                return "settings"
+            case .add(let page):
+                return "add-\(page.id)"
+            }
+        }
 
         case settings
-        case add
+        case add(AddDeviceView.Page)
     }
 
     public let dataSourceController: DataSourceController
@@ -105,7 +112,7 @@ class ApplicationModel: ObservableObject {
             .debounceOnMain(for: 0.5) { [weak self] deviceModels in
                 guard let self else { return }
                 if deviceModels.isEmpty {
-                    self.sheet = .add
+                    showIntroduction()
                 }
             }
             .store(in: &cancellables)
@@ -143,7 +150,7 @@ class ApplicationModel: ObservableObject {
     }
 
     @MainActor func showIntroduction() {
-        sheet = .add
+        sheet = .add(.introduction)
     }
 
     // Set up the initial data sources if necessary.
@@ -167,6 +174,21 @@ class ApplicationModel: ObservableObject {
                 }
                 config.devices.insert(device)
             }
+        }
+    }
+
+    @MainActor
+    func openURL(_ url: URL) {
+        guard let operation = ExternalOperation(url: url) else {
+            error = StatusPanelError.invalidUrl
+            return
+        }
+
+        switch operation {
+        case .registerDevice(let device):
+            addDevice(device)
+        case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
+            self.sheet = .add(.configureWiFi(device, ssid))
         }
     }
 

@@ -66,7 +66,7 @@ struct ContentView: View {
 
                 ToolbarItem(placement: .primaryAction) {
                     Button("Add", systemImage: "plus") {
-                        applicationModel.sheet = .add
+                        applicationModel.showIntroduction()
                     }
                 }
 
@@ -75,8 +75,9 @@ struct ContentView: View {
                 switch sheet {
                 case .settings:
                     SettingsView(config: config, dataSourceController: dataSourceController)
-                case .add:
-                    AddDeviceView(config: config, applicationModel: applicationModel)
+                case .add(let page):
+                    AddDeviceView(config: config, applicationModel: applicationModel, page: page)
+                        .id(page)
                 }
             }
         } detail: {

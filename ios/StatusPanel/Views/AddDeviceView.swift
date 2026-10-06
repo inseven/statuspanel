@@ -50,13 +50,29 @@ struct AddDeviceView: View {
 
     }
 
-    enum Page: Hashable {
+    enum Page: Identifiable, Hashable {
+
+        var id: String {
+            switch self {
+            case .introduction:
+                return "introduction"
+            case .scan:
+                return "scan"
+            case .configureWiFi(let device, let ssid):
+                return "configure-wifi-\(device)-\(ssid)"
+            case .demoDevice:
+                return "demo-device"
+            }
+        }
+
+        case introduction
         case scan
         case configureWiFi(Device, String)
         case demoDevice
     }
 
     @Environment(\.dismiss) var dismiss
+    @Environment(\.openURL) var openURL
 
     var config: Config
     var applicationModel: ApplicationModel
@@ -64,77 +80,83 @@ struct AddDeviceView: View {
     @StateObject var model = Model()
     @State var pages: [Page] = []
 
-    var body: some View {
-        NavigationStack(path: $pages) {
+    let root: Page
+
+    init(config: Config, applicationModel: ApplicationModel, page: Page) {
+        self.config = config
+        self.applicationModel = applicationModel
+        self.root = page
+    }
+
+    @ViewBuilder
+    func view(for page: Page) -> some View {
+        switch page {
+        case .introduction:
             IntroductionView(config: config, applicationModel: applicationModel) {
                 pages.append(.scan)
             } onAddDemoDevice: {
                 pages.append(.demoDevice)
             }
-            .navigationDestination(for: Page.self) { page in
-                switch page {
-                case .scan:
-                    QRCodeView { url in
-                        guard let operation = ExternalOperation(url: url) else {
-                            model.showError()
-                            return false
-                        }
-                        switch operation {
-                        case .registerDevice(let device):
-                            applicationModel.addDevice(device)
-                            dismiss()
-                        case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
-                            pages.append(.configureWiFi(device, ssid))
-                        }
-                        return true
-                    }
-                    .navigationBarBackButtonHidden()
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem( placement: .navigationBarLeading) {
-                            Button("Cancel", systemImage: "xmark", role: .cancel) {
-                                dismiss()
-                            }
-                        }
-                    }
-                    .edgesIgnoringSafeArea(.all)
-                    .navigationTitle("Scan QR Code")
-                    .toolbarBackground(.visible, for: .navigationBar)
-                case .configureWiFi(let device, let ssid):
-                    WiFiProvisionerView(device: device, ssid: ssid) { device in
-                        applicationModel.addDevice(device)
-                        dismiss()
-                    } cancel: {
+        case .scan:
+            QRCodeView { url in
+                guard let operation = ExternalOperation(url: url) else {
+                    model.showError()
+                    return false
+                }
+                switch operation {
+                case .registerDevice(let device):
+                    applicationModel.addDevice(device)
+                    dismiss()
+                case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
+                    pages.append(.configureWiFi(device, ssid))
+                }
+                return true
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem( placement: .navigationBarLeading) {
+                    Button("Cancel", systemImage: "xmark", role: .cancel) {
                         dismiss()
                     }
-                    .navigationBarBackButtonHidden()
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem( placement: .navigationBarLeading) {
-                            Button("Cancel", systemImage: "xmark", role: .cancel) {
-                                dismiss()
-                            }
-                        }
-                    }
-                    .edgesIgnoringSafeArea(.all)
-                case .demoDevice:
-                    ScrollView {
-                        ForEach(Device.Kind.demoDevices) { kind in
-                            Button {
-                                applicationModel.addDemoDevice(kind: kind)
-                                dismiss()
-                            } label: {
-                                Text(Localized(kind))
-                                    .centerContent()
-                            }
-                        }
-                        .buttonStyle(.bordered)
-                        .controlSize(.large)
-                        .padding()
-                    }
-                    .navigationTitle("Add Demo Device")
                 }
             }
+            .edgesIgnoringSafeArea(.all)
+            .navigationTitle("Scan QR Code")
+            .toolbarBackground(.visible, for: .navigationBar)
+        case .configureWiFi(let device, let ssid):
+            WiFiProvisionerView(device: device, ssid: ssid) { device in
+                applicationModel.addDevice(device)
+                dismiss()
+            } cancel: {
+                dismiss()
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem( placement: .navigationBarLeading) {
+                    Button("Cancel", systemImage: "xmark", role: .cancel) {
+                        dismiss()
+                    }
+                }
+            }
+            .edgesIgnoringSafeArea(.all)
+        case .demoDevice:
+            AddDemoDevicePage { operation in
+                dismiss()
+                DispatchQueue.main.async {
+                    openURL(operation.url)
+                }
+            }
+        }
+
+    }
+
+    var body: some View {
+        NavigationStack(path: $pages) {
+            view(for: root)
+                .navigationBarBackButtonHidden()
+                .navigationDestination(for: Page.self) { page in
+                    view(for: page)
+                }
         }
         .overlay {
             if model.showInvalidCodeError {
