@@ -29,8 +29,6 @@ struct ContentView: View {
     let config: Config
     let dataSourceController: DataSourceController
 
-    @State var selection: String? = nil
-
     init(applicationModel: ApplicationModel, config: Config, dataSourceController: DataSourceController) {
         self.applicationModel = applicationModel
         self.config = config
@@ -39,7 +37,7 @@ struct ContentView: View {
 
     var body: some View {
         NavigationSplitView(columnVisibility: Binding.constant(NavigationSplitViewVisibility.all)) {
-            List(selection: $selection) {
+            List(selection: $applicationModel.selection) {
                 ForEach(applicationModel.deviceModels) { deviceModel in
                     Section {
                         DeviceView(deviceModel: deviceModel)
@@ -75,7 +73,7 @@ struct ContentView: View {
                 }
             }
         } detail: {
-            if let selection,
+            if let selection = applicationModel.selection,
                let deviceModel = applicationModel.deviceModels.first(where: {$0.id == selection }) {
                 DeviceDetailView(config: config, dataSourceController: dataSourceController, deviceModel: deviceModel)
                     .navigationBarTitleDisplayMode(.inline)

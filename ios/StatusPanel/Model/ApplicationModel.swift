@@ -48,6 +48,7 @@ class ApplicationModel: ObservableObject {
     @MainActor private var updateCancellable: AnyCancellable? = nil
 
     @MainActor @Published var deviceModels: [DeviceModel] = []
+    @MainActor @Published var selection: String? = nil
     @MainActor @Published var sheet: SheetType? = nil
     @MainActor @Published var error: Error? = nil
 
@@ -174,7 +175,12 @@ class ApplicationModel: ObservableObject {
                     return
                 }
                 config.devices.insert(device)
-                self.sheet = nil
+                DispatchQueue.main.async {
+                    withAnimation {
+                        self.sheet = nil
+                        self.selection = device.id
+                    }
+                }
             }
         }
     }
