@@ -26,18 +26,6 @@ extension UIImage: @retroactive Identifiable {
 
 }
 
-extension ButtonRole {
-
-    static var prefersConfirm: ButtonRole? = {
-        if #available(iOS 26, *) {
-            return .confirm
-        } else {
-            return nil
-        }
-    }()
-
-}
-
 struct DeviceDetailView: View {
 
     enum SheetType: Identifiable {
