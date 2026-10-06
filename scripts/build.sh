@@ -135,7 +135,7 @@ function cleanup {
 trap cleanup EXIT
 
 # Determine the version and build number.
-VERSION_NUMBER=`changes --scope ios version`
+VERSION_NUMBER=`changes version`
 BUILD_NUMBER=`build-tools generate-build-number`
 
 # Import the certificates into our dedicated keychain.
