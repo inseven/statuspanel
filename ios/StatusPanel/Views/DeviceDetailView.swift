@@ -161,11 +161,8 @@ struct DeviceDetailView: View {
                     DeviceSettingsView(config: config, deviceModel: deviceModel)
                         .toolbar {
                             ToolbarItem(placement: .navigationBarTrailing) {
-                                Button {
+                                Button("Done", systemImage: "xmark") {
                                     self.sheet = nil
-                                } label: {
-                                    Text("Done")
-                                        .fontWeight(.bold)
                                 }
                             }
                         }
@@ -176,11 +173,8 @@ struct DeviceDetailView: View {
                         dataSourceInstance.settingsView
                             .toolbar {
                                 ToolbarItem {
-                                    Button {
+                                    Button("Done", systemImage: "xmark") {
                                         self.sheet = nil
-                                    } label: {
-                                        Text("Done")
-                                            .fontWeight(.bold)
                                     }
                                 }
                             }
