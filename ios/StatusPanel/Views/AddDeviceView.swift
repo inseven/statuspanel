@@ -113,13 +113,6 @@ struct AddDeviceView: View {
                 return true
             }
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem( placement: .navigationBarLeading) {
-                    Button("Cancel", systemImage: "xmark", role: .cancel) {
-                        dismiss()
-                    }
-                }
-            }
             .edgesIgnoringSafeArea(.all)
             .navigationTitle("Scan QR Code")
             .toolbarBackground(.visible, for: .navigationBar)
