@@ -92,7 +92,7 @@ struct AddDeviceView: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem( placement: .navigationBarLeading) {
-                            Button("Cancel", role: .cancel) {
+                            Button("Cancel", systemImage: "xmark", role: .cancel) {
                                 dismiss()
                             }
                         }
@@ -111,7 +111,7 @@ struct AddDeviceView: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem( placement: .navigationBarLeading) {
-                            Button("Cancel", role: .cancel) {
+                            Button("Cancel", systemImage: "xmark", role: .cancel) {
                                 dismiss()
                             }
                         }

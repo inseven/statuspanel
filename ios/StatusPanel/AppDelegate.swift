@@ -21,18 +21,12 @@
 import EventKit
 import SwiftUI
 
-@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    @MainActor static var shared: AppDelegate {
-        return UIApplication.shared.delegate as! AppDelegate
-    }
-
     var window: UIWindow?
-    var dataSourceController: DataSourceController
-    var applicationModel: ApplicationModel
+    let dataSourceController: DataSourceController
+    let applicationModel: ApplicationModel
     var apnsToken: Data?
-    var client: Service = Service(baseUrl: "https://api.statuspanel.io/")
 
     override init() {
         let config = Config.shared
@@ -45,13 +39,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         application.registerForRemoteNotifications()
-        window = UIWindow()
-        window?.rootViewController = UIHostingController(rootView: ContentView(applicationModel: applicationModel,
-                                                                               config: Config.shared,
-                                                                               dataSourceController: dataSourceController))
-        window?.tintColor = UIColor(named: "TintColor")
-        window?.makeKeyAndVisible()
-
         return true
     }
 
@@ -66,7 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         switch operation {
         case .registerDevice(let device):
-            addDevice(device)
+            applicationModel.addDevice(device)
         case .registerDeviceAndConfigureWiFi(let device, ssid: let ssid):
             let viewController = WifiProvisionerViewController(device: device, ssid: ssid)
             viewController.delegate = self
@@ -74,50 +61,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.rootViewController?.present(navigationController, animated: true)
         }
         return true
-    }
-
-    func configureDataSourceInstance<T: DataSourceSettings>(type: DataSourceType,
-                                                            settings: T) throws -> DataSourceInstance.Details {
-        let instanceId = UUID()
-        let details = DataSourceInstance.Details(id: instanceId, type: type)
-        try Config.shared.save(settings: settings, instanceId: instanceId)
-        return details
-    }
-
-    func configureDataSourceInstances(_ dataSourceSettings: [AnyDataSourceSettings]) throws -> [DataSourceInstance.Details] {
-        var result: [DataSourceInstance.Details] = []
-        for settings in dataSourceSettings {
-            let instanceId = UUID()
-            let details = DataSourceInstance.Details(id: instanceId, type: settings.dataSourceType)
-            try Config.shared.save(settings: settings, instanceId: instanceId)
-            result.append(details)
-        }
-        return result
-    }
-
-    func addDevice(_ device: Device) {
-
-        // Set up the initial data sources if necessary.
-        // This is a little inelegant as it presumes we'll only need to request access to EKEventStore and hard-codes
-        // that request here--a better approach would be to introduce a an asynchronous DataSource API that allows
-        // each source to request access to the stores it requires.
-        let eventStore = EKEventStore()
-        eventStore.requestAccessToEvents { granted, error in
-            DispatchQueue.main.async {
-                let config = Config.shared
-                do {
-                    let calendars = eventStore.allCalendars().map { $0.calendarIdentifier }
-                    var settings = device.defaultSettings()
-                    let dataSourceSettings = device.defaultDataSourceSettings(calendars: calendars)
-                    settings.dataSources = try self.configureDataSourceInstances(dataSourceSettings)
-                    try config.save(settings: settings, deviceId: device.id)
-                } catch {
-                    self.window?.rootViewController?.present(error: error)
-                    return
-                }
-                config.devices.insert(device)
-            }
-        }
     }
 
     func qrcodeParseFailed(_ url: URL) {
@@ -130,14 +73,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print("Got APNS token")
         apnsToken = deviceToken
-        registerDevice(token: deviceToken)
+        applicationModel.registerDevice(token: deviceToken)
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("Aww, no APNS for us. Error: " + error.localizedDescription)
-        window?.rootViewController?.present(error: error)
+        self.applicationModel.error = error
     }
 
     func application(_ application: UIApplication,
@@ -149,46 +90,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Re-register the device to ensure it doesn't time out on the server.
         if let deviceToken = apnsToken {
-            registerDevice(token: deviceToken)
+            applicationModel.registerDevice(token: deviceToken)
         }
 
-        updateDevices(completion: completionHandler)
-    }
-
-    func registerDevice(token: Data) {
-        print("Registering device...")
-        self.client.registerDevice(token: token) { success, error in
-            guard success else {
-                print("Failed to register device with error \(String(describing: error)).")
-                return
-            }
-            print("Successfully registered device.")
-        }
-    }
-
-    // Fetch items, generate updates, and upload per-device updates.
-    // Counter-intuitively, this is now called from the `ApplicationModel` instance as application lifecycle is now
-    // split between the model and delegate.
-    // Ultimately, this functionality should probably be pushed into `ApplicationModel`.
-    func updateDevices(completion: @escaping (UIBackgroundFetchResult) -> Void = { _ in }) {
-        Task {
-            do {
-                let config = Config.shared
-                let updates = try await config.devices
-                    .asyncMap { device in
-                        print("Generating update for \(device.id)...")
-                        let settings = try config.settings(forDevice: device.id)
-                        let items = try await AppDelegate.shared.dataSourceController.fetch(details: settings.dataSources)
-                        let images = device.renderer.render(data: items, config: config, device: device, settings: settings)
-                        let payloads = Panel.encode(images: images, encoding: device.encoding)
-                        return Service.Update(device: device, settings: settings, images: payloads)
-                    }
-                let change = await AppDelegate.shared.client.upload(updates)
-                completion(change ? .newData : .noData)
-            } catch {
-                completion(.failed)
-            }
-        }
+        applicationModel.updateDevices(completion: completionHandler)
     }
 
 }
@@ -198,7 +103,7 @@ extension AppDelegate: WifiProvisionerViewControllerDelegate {
     func wifiProvisionerViewController(_ wifiProvisionerViewController: WifiProvisionerViewController,
                                    didConfigureDevice device: Device) {
         wifiProvisionerViewController.navigationController?.dismiss(animated: true) {
-            self.addDevice(device)
+            self.applicationModel.addDevice(device)
         }
     }
 

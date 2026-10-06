@@ -95,7 +95,7 @@ struct IntroductionView: View {
             // Don't allow the view to be dismissed if there are no devices.
             if !applicationModel.deviceModels.isEmpty {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button("Cancel", systemImage: "xmark") {
                         dismiss()
                     }
                 }

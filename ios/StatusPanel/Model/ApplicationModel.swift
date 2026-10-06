@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 import Combine
+import EventKit
 import SwiftUI
 import UIKit
 
@@ -31,27 +32,29 @@ class ApplicationModel: ObservableObject {
         case add
     }
 
-    private let dataSourceController: DataSourceController
+    public let dataSourceController: DataSourceController
     private let config: Config
 
-    private var cancellables: Set<AnyCancellable> = []
-    private var updateCancellable: AnyCancellable? = nil
+    private let client: Service = Service(baseUrl: "https://api.statuspanel.io/")
 
-    @Published var deviceModels: [DeviceModel] = []
-    @Published var sheet: SheetType? = nil
+    @MainActor private var cancellables: Set<AnyCancellable> = []
+    @MainActor private var updateCancellable: AnyCancellable? = nil
+
+    @MainActor @Published var deviceModels: [DeviceModel] = []
+    @MainActor @Published var sheet: SheetType? = nil
+    @MainActor @Published var error: Error? = nil
 
     init(dataSourceController: DataSourceController, config: Config) {
         self.dataSourceController = dataSourceController
         self.config = config
     }
 
-    func start() {
+    @MainActor func start() {
 
         // Keep the list of devices up to date.
         config
             .$devices
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] devices in
+            .sinkOnMain { [weak self] devices in
                 guard let self else { return }
                 var identifiers = Set(devices.map { $0.id })
                 self.deviceModels.removeAll { !identifiers.contains($0.id) }
@@ -73,8 +76,7 @@ class ApplicationModel: ObservableObject {
         // top-level device model `objectWillChange` publisher as this also includes the preview images; instead, it
         // watches just the `deviceSettings` and `settingsDidChange` publishers as these model config changes.
         $deviceModels
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] deviceModels in
+            .sinkOnMain { [weak self] deviceModels in
                 guard let self else { return }
                 let deviceModelChangePublishers = self.deviceModels.map { deviceModel in
                     return deviceModel
@@ -86,8 +88,7 @@ class ApplicationModel: ObservableObject {
                     .debounce(for: 1, scheduler: DispatchQueue.main)
                     .sink { [weak self] _ in
                         guard let self else { return }
-                        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                        appDelegate.updateDevices()
+                        updateDevices()
                         withAnimation {
                             let sortedDeviceModels = self.deviceModels.sorted {
                                 $0.name.localizedStandardCompare($1.name) == .orderedAscending
@@ -101,8 +102,7 @@ class ApplicationModel: ObservableObject {
             .store(in: &cancellables)
 
         $deviceModels
-            .debounce(for: 0.5, scheduler: DispatchQueue.main)
-            .sink { [weak self] deviceModels in
+            .debounceOnMain(for: 0.5) { [weak self] deviceModels in
                 guard let self else { return }
                 if deviceModels.isEmpty {
                     self.sheet = .add
@@ -112,23 +112,100 @@ class ApplicationModel: ObservableObject {
     }
 
     @MainActor func addFromClipboard() {
-        guard let clipboard = UIPasteboard.general.string,
-           let url = URL(string: clipboard) else {
-            return
+//        guard let clipboard = UIPasteboard.general.string,
+//           let url = URL(string: clipboard) else {
+//            return
+//        }
+//        _ = AppDelegate.shared.application(UIApplication.shared, open: url, options: [:])
+    }
+
+    func configureDataSourceInstance<T: DataSourceSettings>(type: DataSourceType,
+                                                            settings: T) throws -> DataSourceInstance.Details {
+        let instanceId = UUID()
+        let details = DataSourceInstance.Details(id: instanceId, type: type)
+        try Config.shared.save(settings: settings, instanceId: instanceId)
+        return details
+    }
+
+    func configureDataSourceInstances(_ dataSourceSettings: [AnyDataSourceSettings]) throws -> [DataSourceInstance.Details] {
+        var result: [DataSourceInstance.Details] = []
+        for settings in dataSourceSettings {
+            let instanceId = UUID()
+            let details = DataSourceInstance.Details(id: instanceId, type: settings.dataSourceType)
+            try Config.shared.save(settings: settings, instanceId: instanceId)
+            result.append(details)
         }
-        _ = AppDelegate.shared.application(UIApplication.shared, open: url, options: [:])
+        return result
     }
 
     @MainActor func addDemoDevice(kind: Device.Kind) {
-        AppDelegate.shared.addDevice(Device(kind: kind))
+        addDevice(Device(kind: kind))
     }
 
     @MainActor func showIntroduction() {
         sheet = .add
     }
 
+    // Set up the initial data sources if necessary.
+    // This is a little inelegant as it presumes we'll only need to request access to EKEventStore and hard-codes
+    // that request here--a better approach would be to introduce a an asynchronous DataSource API that allows
+    // each source to request access to the stores it requires.
     @MainActor func addDevice(_ device: Device) {
-        AppDelegate.shared.addDevice(device)
+        let eventStore = EKEventStore()
+        eventStore.requestAccessToEvents { granted, error in
+            DispatchQueue.main.async {
+                let config = Config.shared
+                do {
+                    let calendars = eventStore.allCalendars().map { $0.calendarIdentifier }
+                    var settings = device.defaultSettings()
+                    let dataSourceSettings = device.defaultDataSourceSettings(calendars: calendars)
+                    settings.dataSources = try self.configureDataSourceInstances(dataSourceSettings)
+                    try config.save(settings: settings, deviceId: device.id)
+                } catch {
+                    self.error = error
+                    return
+                }
+                config.devices.insert(device)
+            }
+        }
+    }
+
+    func registerDevice(token: Data) {
+        print("Registering device...")
+        self.client.registerDevice(token: token) { success, error in
+            guard success else {
+                print("Failed to register device with error \(String(describing: error)).")
+                return
+            }
+            print("Successfully registered device.")
+        }
+    }
+
+    // Fetch items, generate updates, and upload per-device updates.
+    // Counter-intuitively, this is now called from the `ApplicationModel` instance as application lifecycle is now
+    // split between the model and delegate.
+    // Ultimately, this functionality should probably be pushed into `ApplicationModel`.
+    func updateDevices(completion: @escaping (UIBackgroundFetchResult) -> Void = { _ in }) {
+        Task {
+            do {
+                let config = Config.shared
+                let updates = try await config.devices
+                    .asyncMap { device in
+                        print("Generating update for \(device.id)...")
+                        let settings = try config.settings(forDevice: device.id)
+                        let items = try await dataSourceController.fetch(details: settings.dataSources)
+                        let images = await MainActor.run {
+                            device.renderer.render(data: items, config: config, device: device, settings: settings)
+                        }
+                        let payloads = Panel.encode(images: images, encoding: device.encoding)
+                        return Service.Update(device: device, settings: settings, images: payloads)
+                    }
+                let change = await client.upload(updates)
+                completion(change ? .newData : .noData)
+            } catch {
+                completion(.failed)
+            }
+        }
     }
 
 }

@@ -62,6 +62,8 @@
 		D8AAC26726FA60D300215C1A /* CalendarHeaderSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */; };
 		D8B98749270FF70F00EC2BA4 /* Binding+mappedToBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */; };
 		D8B9874B270FF88D00EC2BA4 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B9874A270FF88D00EC2BA4 /* Alert.swift */; };
+		D8BBD95C30747A4700101A2D /* StatusPanelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBD95B30747A4700101A2D /* StatusPanelApp.swift */; };
+		D8BBDAA43074880000101A2D /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBDAA3307487FE00101A2D /* Publisher.swift */; };
 		D8C20D1E271C2A6200F3F22A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D8C20D20271C2A6200F3F22A /* Localizable.strings */; };
 		D8C20D23271C6C1500F3F22A /* EKCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D22271C6C1500F3F22A /* EKCalendar.swift */; };
 		D8C20D25271C7A2000F3F22A /* CalendarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C20D24271C7A2000F3F22A /* CalendarSettingsView.swift */; };
@@ -205,6 +207,8 @@
 		D8AAC26626FA60D300215C1A /* CalendarHeaderSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderSource.swift; sourceTree = "<group>"; };
 		D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+mappedToBool.swift"; sourceTree = "<group>"; };
 		D8B9874A270FF88D00EC2BA4 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
+		D8BBD95B30747A4700101A2D /* StatusPanelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusPanelApp.swift; sourceTree = "<group>"; };
+		D8BBDAA3307487FE00101A2D /* Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Publisher.swift; sourceTree = "<group>"; };
 		D8C20D1F271C2A6200F3F22A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D8C20D21271C2B0D00F3F22A /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		D8C20D22271C6C1500F3F22A /* EKCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKCalendar.swift; sourceTree = "<group>"; };
@@ -493,6 +497,7 @@
 		D8DAED7526E3F3C40002F388 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				D8BBDAA3307487FE00101A2D /* Publisher.swift */,
 				D8B9874A270FF88D00EC2BA4 /* Alert.swift */,
 				D8DD9900271EF971004088CD /* Binding.swift */,
 				D8B98748270FF70E00EC2BA4 /* Binding+mappedToBool.swift */,
@@ -606,6 +611,7 @@
 				D81DA7BE2712952D0052D32C /* Utilities */,
 				D842A401265BE916009C1156 /* View Controllers */,
 				D812523427093BAB00C9D80A /* Views */,
+				D8BBD95B30747A4700101A2D /* StatusPanelApp.swift */,
 			);
 			path = StatusPanel;
 			sourceTree = "<group>";
@@ -748,6 +754,7 @@
 				DBFCBB7C24B8B6AD00E3B3D3 /* Fonts.swift in Sources */,
 				D825A55D26F6811400B85206 /* DummyDataSource.swift in Sources */,
 				DBF15EFD21597808006B0A58 /* NationalRailDataSource.swift in Sources */,
+				D8BBDAA43074880000101A2D /* Publisher.swift in Sources */,
 				D866E9D62A07BE02004B47D7 /* DataItem.swift in Sources */,
 				DB62F335224FB47A00CA5E64 /* Station.swift in Sources */,
 				DB62F33C224FCEBA00CA5E64 /* NationalRailSettingsController.swift in Sources */,
@@ -766,6 +773,7 @@
 				D8808DFC2A04495300F57C9A /* WiFiProvisionerView.swift in Sources */,
 				D816655327277407005BDA9E /* UIActivityIndicatorView.swift in Sources */,
 				D866E9D22A07BC9A004B47D7 /* DataItemFlags.swift in Sources */,
+				D8BBD95C30747A4700101A2D /* StatusPanelApp.swift in Sources */,
 				D816655527277632005BDA9E /* FileManager.swift in Sources */,
 				DB6CE1472413AB4800FF1160 /* BitmapFontLabel.swift in Sources */,
 				D848A19A270D16AD00681F62 /* AddDataSourceView.swift in Sources */,
@@ -1064,6 +1072,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = TintColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = StatusPanel/StatusPanel.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1090,6 +1099,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = TintColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = StatusPanel/StatusPanel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
