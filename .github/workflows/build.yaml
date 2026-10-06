@@ -152,7 +152,7 @@ jobs:
 #         if-no-files-found: error
 
   service-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
 
@@ -204,7 +204,7 @@ jobs:
   service-deploy-staging:
 
     needs: service-build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     environment:
       name: staging
       url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
@@ -236,7 +236,7 @@ jobs:
   service-deploy-production:
 
     needs: [service-build, service-deploy-staging]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     environment:
       name: production
       url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
@@ -270,7 +270,7 @@ jobs:
 
   website-build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
 
@@ -308,20 +308,17 @@ jobs:
 
   website-deploy:
     needs: website-build
+    runs-on: ubuntu-26.04
     if: ${{ github.ref == 'refs/heads/main' }}
 
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
-      pages: write      # to deploy to Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
+      pages: write
+      id-token: write
 
-    # Deploy to the github-pages environment
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
-    # Specify runner + deployment step
-    runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
