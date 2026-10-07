@@ -142,17 +142,17 @@ struct DeviceDetailView: View {
             ToolbarItem(placement: .primaryAction) {
                 if editMode == .inactive {
                     Menu {
-                        Button("Edit", systemImage: "checkmark.circle") {
+                        Button("Device Settings", systemImage: "gear") {
+                            showDeviceSettings()
+                        }
+                        Divider()
+                        Button("Edit Layout", systemImage: "rectangle.split.2x1") {
                             withAnimation {
                                 editMode = .active
                             }
                         }
-                        Button("Add Data Source", systemImage: "plus.circle.fill") {
+                        Button("Add Data Source", systemImage: "plus.rectangle") {
                             addDataSource()
-                        }
-                        Divider()
-                        Button("Device Settings", systemImage: "gear") {
-                            showDeviceSettings()
                         }
                         Divider()
                         ShareLink(items: deviceModel.images) { image in
