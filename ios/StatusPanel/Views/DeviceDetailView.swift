@@ -104,7 +104,7 @@ struct DeviceDetailView: View {
                     .frame(minHeight: 300)
                 }
             }
-            Section {
+            Section("Layout") {
                 if !deviceModel.dataSources.isEmpty {
                     ForEach(deviceModel.dataSources) { dataSourceInstance in
                         Button {
@@ -126,7 +126,7 @@ struct DeviceDetailView: View {
                 }
             }
             if config.showDeveloperTools && editMode == .inactive {
-                Section {
+                Section("Developer Tools") {
                     LabeledContent("Identifier", value: deviceModel.device.id)
                     LabeledContent("Type", value: deviceModel.device.kind.description)
                     LabeledContent("Size") {
