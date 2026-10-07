@@ -3,6 +3,9 @@
   "extends": [
     "local>inseven/renovate-config"
   ],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "packageRules": [
       {
         "matchManagers": [
@@ -15,6 +18,16 @@
           "nodemcu-uploader"
         ],
         "enabled": false
+      },
+      {
+        "matchManagers": [
+          "npm"
+        ],
+        "matchUpdateTypes": [
+          "minor",
+          "patch"
+        ],
+        "automerge": true
       }
     ]
 }
