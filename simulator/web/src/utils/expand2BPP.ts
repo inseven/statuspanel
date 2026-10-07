@@ -7,7 +7,7 @@ const colorMap: Record<number, number> = {
 }
 
 export const expand2BPPValues = (img: Uint8Array): Uint8Array => {
-  const input = new StreamDataView(img.buffer, true)
+  const input = new StreamDataView(img.buffer as ArrayBuffer, true)
   const inputLength = input.getLength()
 
   const output = new StreamDataView(undefined, true)

@@ -2,7 +2,7 @@ import { range } from "remeda"
 import { StreamDataView } from "stream-data-view"
 
 export const RLEDecoder = (input: Uint8Array) => {
-  const data = new StreamDataView(input.buffer, true)
+  const data = new StreamDataView(input.buffer as ArrayBuffer, true)
   const dataLength = data.getLength()
 
   const output = new StreamDataView(undefined, true)
