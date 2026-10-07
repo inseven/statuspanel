@@ -8,7 +8,7 @@ const libsodium = async () => {
 
 export const useSodium = (): undefined | typeof _sodium => {
   const [ready, setReady] = useState(false)
-  const sod = useRef<typeof _sodium>()
+  const sod = useRef<typeof _sodium | undefined>(undefined)
 
   useEffect(() => {
     const doIt = async () => {
