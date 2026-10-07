@@ -39,8 +39,8 @@ export const decodeBundle = (
   const ranges: Array<[number, number]> = []
   pipe(
     offsets,
-    reverse,
-    forEach.indexed((offset: number, i) => {
+    reverse(),
+    forEach((offset: number, i) => {
       ranges.push([offset, i === 0 ? data.getLength() : ranges[i - 1]![0]])
     }),
     () => ranges.reverse()
