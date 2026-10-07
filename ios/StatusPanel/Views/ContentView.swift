@@ -47,6 +47,7 @@ struct ContentView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("StatusPanel")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
