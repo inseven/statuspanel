@@ -24,6 +24,11 @@ import UIKit
 
 struct ContentView: View {
 
+    struct LayoutMetrics {
+        static let topContentMargin: CGFloat = 0.0
+        static let listSectionSpacing: CGFloat = 16.0
+    }
+
     @ObservedObject var applicationModel: ApplicationModel
 
     let config: Config
@@ -46,6 +51,8 @@ struct ContentView: View {
                 }
             }
             .listStyle(.insetGrouped)
+            .prefersScrollContentMargins(.top, LayoutMetrics.topContentMargin)
+            .prefersCompactListSectionSpacing(LayoutMetrics.listSectionSpacing)
             .navigationTitle("StatusPanel")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

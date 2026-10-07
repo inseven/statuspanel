@@ -28,6 +28,22 @@ extension View {
             .multilineTextAlignment(.center)
     }
 
+    func prefersCompactListSectionSpacing(_ spacing: CGFloat) -> some View {
+        if #available(iOS 17.0, *) {
+            return listSectionSpacing(spacing)
+        } else {
+            return self
+        }
+    }
+
+    func prefersScrollContentMargins(_ edges: Edge.Set = .all, _ length: CGFloat?) -> some View {
+        if #available(iOS 17.0, *) {
+            return contentMargins(edges, length, for: .scrollContent)
+        } else {
+            return self
+        }
+    }
+
     func presents(_ error: Binding<Error?>) -> some View {
         return alert(isPresented: error.mappedToBool()) {
             Alert(error: error.wrappedValue)
