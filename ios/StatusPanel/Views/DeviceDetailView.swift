@@ -28,6 +28,10 @@ extension UIImage: @retroactive Identifiable {
 
 struct DeviceDetailView: View {
 
+    struct LayoutMetrics {
+        static let topContentMargin: CGFloat = 0.0
+    }
+
     enum SheetType: Identifiable {
 
         public var id: String {
@@ -136,6 +140,7 @@ struct DeviceDetailView: View {
                 }
             }
         }
+        .prefersScrollContentMargins(.top, LayoutMetrics.topContentMargin)
         .presents($deviceModel.error)
         .navigationTitle(deviceModel.name)
         .toolbar {
