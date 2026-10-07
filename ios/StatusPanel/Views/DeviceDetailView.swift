@@ -187,8 +187,8 @@ struct DeviceDetailView: View {
                 NavigationView {
                     DeviceSettingsView(config: config, deviceModel: deviceModel)
                         .toolbar {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                Button("Done", systemImage: "xmark") {
+                            ToolbarItem(placement: .primaryAction) {
+                                Button("Done", systemImage: "checkmark") {
                                     self.sheet = nil
                                 }
                             }
@@ -199,8 +199,8 @@ struct DeviceDetailView: View {
                     NavigationView {
                         dataSourceInstance.settingsView
                             .toolbar {
-                                ToolbarItem {
-                                    Button("Done", systemImage: "xmark") {
+                                ToolbarItem(placement: .primaryAction) {
+                                    Button("Done", systemImage: "checkmark") {
                                         self.sheet = nil
                                     }
                                 }
