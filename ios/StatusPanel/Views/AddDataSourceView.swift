@@ -39,8 +39,8 @@ struct AddDataSourceView: View {
                     NavigationLink {
                         try! dataSource.views(config: config, instanceId: uuid).settingsView
                             .toolbar {
-                                ToolbarItem(placement: .navigationBarTrailing) {
-                                    Button("Add") {
+                                ToolbarItem(placement: .primaryAction) {
+                                    Button("Add", systemImage: "checkmark", role: .prefersConfirm) {
                                         do {
                                             let details = DataSourceInstance.Details(id: uuid, type: dataSource.id)
                                             let dataSource = try dataSourceController.dataSourceInstance(for: details)

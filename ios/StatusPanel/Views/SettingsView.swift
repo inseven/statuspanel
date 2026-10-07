@@ -67,7 +67,7 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Done", systemImage: "xmark") {
+                    Button("Done", systemImage: "checkmark") {
                         dismiss()
                     }
                     .fontWeight(.bold)
