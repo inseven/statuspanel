@@ -18,12 +18,12 @@
     "default": {
         "pick": {
             "hashes": [
-                "sha256:2b07be18d16d655c7f491e1ecca7a29de3be85e1e000c8d46193672f14faa203",
-                "sha256:71f1b1b5d83652f87652fea5f51a3ba0b3388a71718cdcf8c6bc1326f85ae0b9"
+                "sha256:2acd5cad09be96398fba3b8be89454929de7b05362e01c69d94a05801820871f",
+                "sha256:f24434a845ae9265ebf7657fc224b9a203ac75aa576b568e061484a72e27be82"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.7'",
-            "version": "==2.4.0"
+            "markers": "python_version >= '3.8'",
+            "version": "==2.6.0"
         }
     },
     "develop": {}
