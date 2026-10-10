@@ -207,6 +207,7 @@ jobs:
         name: service
         path: service/build/statuspanel-service-*.deb
         if-no-files-found: error
+        retention-days: 1
 
     - name: Install and test the package
       run: |
