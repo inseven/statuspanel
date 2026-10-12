@@ -16,7 +16,7 @@ services:
     depends_on:
       - database
   database:
-    image: postgres:13-alpine
+    image: postgres:18-alpine
     volumes:
       - statuspanel_data:/var/lib/postgresql/data/
     environment:
