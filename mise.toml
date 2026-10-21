@@ -1,6 +1,6 @@
 [tools]
 
-node = "24.22.0"
+node = "24.22.1"
 python = "3.12.13"
 ruby = "4.0.7"
 uv = "latest"
