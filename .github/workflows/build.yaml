@@ -40,9 +40,9 @@ jobs:
         key: ${{ runner.os }}-${{ runner.arch }}-mise--${{ hashFiles('mise.toml') }}
 
     - name: Install mise
-      uses: jdx/mise-action@v5.1.1
+      uses: jdx/mise-action@v5.2.4
       with:
-        version: 2026.9.10
+        version: 2026.10.24
         cache: false
 
     - name: Build, test, and release
@@ -183,9 +183,9 @@ jobs:
         key: ${{ runner.os }}-${{ runner.arch }}-mise--${{ hashFiles('mise.toml') }}
 
     - name: Install mise
-      uses: jdx/mise-action@v5.1.1
+      uses: jdx/mise-action@v5.2.4
       with:
-        version: 2026.9.10
+        version: 2026.10.24
         cache: false
 
     - name: Build Debian package
@@ -312,9 +312,9 @@ jobs:
         key: ${{ runner.os }}-${{ runner.arch }}-mise--${{ hashFiles('mise.toml') }}
 
     - name: Install mise
-      uses: jdx/mise-action@v5.1.1
+      uses: jdx/mise-action@v5.2.4
       with:
-        version: 2026.9.10
+        version: 2026.10.24
         cache: false
 
     - name: Cache the Jekyll dependencies
