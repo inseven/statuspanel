@@ -219,72 +219,72 @@ jobs:
         journalctl -u statuspanel-service.service
         scripts/test-service.sh
 
-  service-deploy-staging:
+  # service-deploy-staging:
 
-    needs: service-build
-    runs-on: ubuntu-26.04
-    environment:
-      name: staging
-      url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
-    concurrency: staging
+  #   needs: service-build
+  #   runs-on: ubuntu-26.04
+  #   environment:
+  #     name: staging
+  #     url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
+  #   concurrency: staging
 
-    steps:
+  #   steps:
 
-    - name: Checkout repository
-      uses: actions/checkout@v7
+  #   - name: Checkout repository
+  #     uses: actions/checkout@v7
 
-    - name: Download the build package
-      uses: actions/download-artifact@v8
-      with:
-        name: service
+  #   - name: Download the build package
+  #     uses: actions/download-artifact@v8
+  #     with:
+  #       name: service
 
-    - name: Deploy the service
-      env:
-        STATUSPANEL_DEPLOYMENT_GROUP: ${{ vars.STATUSPANEL_DEPLOYMENT_GROUP }}
-        STATUSPANEL_SERVICE_ADDRESS: ${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
-        ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
-        ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
-        APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
-        APNS_BUNDLE_ID: ${{ secrets.APNS_BUNDLE_ID }}
-        APNS_KEY_ID: ${{ secrets.APNS_KEY_ID }}
-        APNS_KEY: ${{ secrets.APNS_KEY }}
-      run: |
-        service/ansible/deploy.sh statuspanel-service-*.deb
+  #   - name: Deploy the service
+  #     env:
+  #       STATUSPANEL_DEPLOYMENT_GROUP: ${{ vars.STATUSPANEL_DEPLOYMENT_GROUP }}
+  #       STATUSPANEL_SERVICE_ADDRESS: ${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
+  #       ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
+  #       ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
+  #       APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
+  #       APNS_BUNDLE_ID: ${{ secrets.APNS_BUNDLE_ID }}
+  #       APNS_KEY_ID: ${{ secrets.APNS_KEY_ID }}
+  #       APNS_KEY: ${{ secrets.APNS_KEY }}
+  #     run: |
+  #       service/ansible/deploy.sh statuspanel-service-*.deb
 
-  service-deploy-production:
+  # service-deploy-production:
 
-    needs: [service-build, service-deploy-staging]
-    runs-on: ubuntu-26.04
-    environment:
-      name: production
-      url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
-    # Ideally we'd enforce concurrency here, but there doesn't seem to be a nice
-    # way to combine concurrency and 'manual' deployments triggered by a review.
-    # concurrency: production
-    if: ${{ github.ref == 'refs/heads/main' }}
+  #   needs: [service-build, service-deploy-staging]
+  #   runs-on: ubuntu-26.04
+  #   environment:
+  #     name: production
+  #     url: https://${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
+  #   # Ideally we'd enforce concurrency here, but there doesn't seem to be a nice
+  #   # way to combine concurrency and 'manual' deployments triggered by a review.
+  #   # concurrency: production
+  #   if: ${{ github.ref == 'refs/heads/main' }}
 
-    steps:
+  #   steps:
 
-    - name: Checkout repository
-      uses: actions/checkout@v7
+  #   - name: Checkout repository
+  #     uses: actions/checkout@v7
 
-    - name: Download the build package
-      uses: actions/download-artifact@v8
-      with:
-        name: service
+  #   - name: Download the build package
+  #     uses: actions/download-artifact@v8
+  #     with:
+  #       name: service
 
-    - name: Deploy the service
-      env:
-        STATUSPANEL_DEPLOYMENT_GROUP: ${{ vars.STATUSPANEL_DEPLOYMENT_GROUP }}
-        STATUSPANEL_SERVICE_ADDRESS: ${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
-        ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
-        ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
-        APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
-        APNS_BUNDLE_ID: ${{ secrets.APNS_BUNDLE_ID }}
-        APNS_KEY_ID: ${{ secrets.APNS_KEY_ID }}
-        APNS_KEY: ${{ secrets.APNS_KEY }}
-      run: |
-        service/ansible/deploy.sh statuspanel-service-*.deb
+  #   - name: Deploy the service
+  #     env:
+  #       STATUSPANEL_DEPLOYMENT_GROUP: ${{ vars.STATUSPANEL_DEPLOYMENT_GROUP }}
+  #       STATUSPANEL_SERVICE_ADDRESS: ${{ vars.STATUSPANEL_SERVICE_ADDRESS }}
+  #       ANSIBLE_SSH_KEY: ${{ secrets.ANSIBLE_SSH_KEY }}
+  #       ANSIBLE_BECOME_PASS: ${{ secrets.ANSIBLE_BECOME_PASS }}
+  #       APNS_TEAM_ID: ${{ secrets.APNS_TEAM_ID }}
+  #       APNS_BUNDLE_ID: ${{ secrets.APNS_BUNDLE_ID }}
+  #       APNS_KEY_ID: ${{ secrets.APNS_KEY_ID }}
+  #       APNS_KEY: ${{ secrets.APNS_KEY }}
+  #     run: |
+  #       service/ansible/deploy.sh statuspanel-service-*.deb
 
   website-build:
 
