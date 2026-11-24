@@ -42,7 +42,7 @@ jobs:
     - name: Install mise
       uses: jdx/mise-action@v5.3.0
       with:
-        version: 2026.11.12
+        version: 2026.11.13
         cache: false
 
     - name: Build, test, and release
@@ -185,7 +185,7 @@ jobs:
     - name: Install mise
       uses: jdx/mise-action@v5.3.0
       with:
-        version: 2026.11.12
+        version: 2026.11.13
         cache: false
 
     - name: Build Debian package
@@ -247,7 +247,7 @@ jobs:
     - name: Install mise
       uses: jdx/mise-action@v5.3.0
       with:
-        version: 2026.11.12
+        version: 2026.11.13
         cache: false
 
     - name: Cache the Jekyll dependencies
