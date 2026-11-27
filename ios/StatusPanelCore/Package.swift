@@ -11,7 +11,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/inseven/diligence.git", from: "2.0.1"),
+        .package(url: "https://github.com/inseven/diligence.git", from: "2.0.2"),
         .package(url: "https://github.com/jedisct1/swift-sodium.git", from: "0.12.0"),
     ],
     targets: [
